@@ -3,6 +3,7 @@ package com.bixin.ido.server.controller;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.bean.vo.HomeProductVO;
 import com.bixin.ido.server.bean.vo.R;
+import com.bixin.ido.server.constants.IdoDxPathConstant;
 import com.bixin.ido.server.enums.ProductState;
 import com.bixin.ido.server.service.IIdoDxProductService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +17,16 @@ import java.util.Map;
 
 /**
  * @author zhangcheng
- * @create 2021-08-06 5:34 下午
+ * create 2021-08-06 5:34 下午
  */
 @RestController
-@RequestMapping("/v1/ido/dx")
+@RequestMapping(IdoDxPathConstant.REQUEST_PATH_PREFIX +"/product")
 public class IdoDxProductController {
 
     @Resource
     IIdoDxProductService idoDxProductService;
 
-    @GetMapping("/product/getAll")
+    @GetMapping("/getAll")
     public R getAll() {
 
         List<HomeProductVO> initProducts = idoDxProductService.getHomeProducts(ProductState.INIT);
@@ -40,7 +41,7 @@ public class IdoDxProductController {
 
     }
 
-    @GetMapping("/product/get")
+    @GetMapping("/get")
     public R getProduct(@RequestParam(value = "pId", defaultValue = "0") long pId) {
         if (pId <= 0) {
             return R.failed("parameter is invalid");

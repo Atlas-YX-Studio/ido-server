@@ -7,30 +7,28 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-/**
- * @author zhangcheng
- * @create 2021-08-06 5:34 下午
- */
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class IdoDxUserRecord {
     private Long id;
 
-    private Long prdId;
+    private String prdAddress;
 
-    private String address;
+    private String userAddress;
 
     private BigDecimal amount;
 
     private BigDecimal gasCost;
 
+    private BigDecimal tokenAmount;
+
     private String currency;
 
-    private String state;
+    private String extInfo;
 
-    private Integer version;
+    private Short tokenVersion;
 
     private Long createTime;
 

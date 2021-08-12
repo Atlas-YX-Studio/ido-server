@@ -8,12 +8,18 @@ import java.util.List;
 
 /**
  * @author zhangcheng
- * @create 2021-08-06 5:00 下午
+ * create 2021-08-06 5:00 下午
  */
 public interface IIdoDxProductService {
 
     List<HomeProductVO> getHomeProducts(ProductState productState);
 
+    List<IdoDxProduct> getProducts(ProductState productState);
+
+    List<IdoDxProduct> getLastFinishProducts(long intervalTime);
+
     IdoDxProduct getProduct(long pId);
+
+    int updateProduct(IdoDxProduct product);
 
 }

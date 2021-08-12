@@ -62,6 +62,7 @@ public class IdoDxProductImpl implements IIdoDxProductService {
         } else if (ProductState.FINISH == productState) {
             criteria.andEndTimeLessThanOrEqualTo(currentTime);
         }
+        dxProductDDL.setOrderByClause("createTime desc");
 
         List<IdoDxProduct> idoDxProducts = idoDxProductMapper.selectByDDL(dxProductDDL);
 
@@ -129,12 +130,12 @@ public class IdoDxProductImpl implements IIdoDxProductService {
                     .payEndTime(p.getPayEndTime())
                     .pledgeStartTime(p.getPledgeStartTime())
                     .pledgeEndTime(p.getPledgeEndTime())
-                    .pledgeTotal(p.getPledgeTotal())
                     .prdDesc(p.getPrdDesc())
                     .prdName(p.getPrdName())
                     .prdDescEn(p.getPrdDescEn())
                     .raiseTotal(p.getRaiseTotal())
                     .rate(p.getRate())
+                    .tokenPrecision(p.getTokenPrecision())
                     .ruleDesc(p.getRuleDesc())
                     .ruleDescEn(p.getRuleDescEn())
                     .startTime(p.getStartTime())
@@ -147,8 +148,46 @@ public class IdoDxProductImpl implements IIdoDxProductService {
     }
 
     @Override
-    public IdoDxProduct getProduct(long pId){
-       return idoDxProductMapper.selectByPrimaryKey(pId);
+    public List<IdoDxProduct> getProducts(ProductState productState) {
+
+        IdoDxProductDDL dxProductDDL = new IdoDxProductDDL();
+        IdoDxProductDDL.Criteria criteria = dxProductDDL.createCriteria();
+
+        Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+
+        if (ProductState.INIT == productState) {
+            criteria.andStartTimeGreaterThan(currentTime);
+        } else if (ProductState.PROCESSING == productState) {
+            criteria.andStartTimeLessThanOrEqualTo(currentTime)
+                    .andEndTimeGreaterThan(currentTime);
+        } else if (ProductState.FINISH == productState) {
+            criteria.andEndTimeLessThanOrEqualTo(currentTime);
+        }
+
+        return idoDxProductMapper.selectByDDL(dxProductDDL);
+    }
+
+    @Override
+    public List<IdoDxProduct> getLastFinishProducts(long intervalTime) {
+        Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+
+        IdoDxProductDDL dxProductDDL = new IdoDxProductDDL();
+        IdoDxProductDDL.Criteria criteria = dxProductDDL.createCriteria();
+        criteria.andStateEqualTo(ProductState.FINISH.getDesc());
+        criteria.andEndTimeGreaterThan(currentTime - intervalTime);
+
+        return idoDxProductMapper.selectByDDL(dxProductDDL);
+    }
+
+
+    @Override
+    public IdoDxProduct getProduct(long pId) {
+        return idoDxProductMapper.selectByPrimaryKey(pId);
+    }
+
+    @Override
+    public int updateProduct(IdoDxProduct product) {
+        return idoDxProductMapper.updateByPrimaryKeySelective(product);
     }
 
 }

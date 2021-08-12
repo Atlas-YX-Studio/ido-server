@@ -4,10 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author zhangcheng
- * @create 2021-08-06 5:34 下午
- */
 public class IdoDxUserRecordDDL {
     protected String orderByClause;
 
@@ -169,133 +165,143 @@ public class IdoDxUserRecordDDL {
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdIsNull() {
-            addCriterion("prdId is null");
+        public Criteria andPrdAddressIsNull() {
+            addCriterion("prdAddress is null");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdIsNotNull() {
-            addCriterion("prdId is not null");
+        public Criteria andPrdAddressIsNotNull() {
+            addCriterion("prdAddress is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdEqualTo(Long value) {
-            addCriterion("prdId =", value, "prdId");
+        public Criteria andPrdAddressEqualTo(String value) {
+            addCriterion("prdAddress =", value, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdNotEqualTo(Long value) {
-            addCriterion("prdId <>", value, "prdId");
+        public Criteria andPrdAddressNotEqualTo(String value) {
+            addCriterion("prdAddress <>", value, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdGreaterThan(Long value) {
-            addCriterion("prdId >", value, "prdId");
+        public Criteria andPrdAddressGreaterThan(String value) {
+            addCriterion("prdAddress >", value, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("prdId >=", value, "prdId");
+        public Criteria andPrdAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("prdAddress >=", value, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdLessThan(Long value) {
-            addCriterion("prdId <", value, "prdId");
+        public Criteria andPrdAddressLessThan(String value) {
+            addCriterion("prdAddress <", value, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdLessThanOrEqualTo(Long value) {
-            addCriterion("prdId <=", value, "prdId");
+        public Criteria andPrdAddressLessThanOrEqualTo(String value) {
+            addCriterion("prdAddress <=", value, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdIn(List<Long> values) {
-            addCriterion("prdId in", values, "prdId");
+        public Criteria andPrdAddressLike(String value) {
+            addCriterion("prdAddress like", value, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdNotIn(List<Long> values) {
-            addCriterion("prdId not in", values, "prdId");
+        public Criteria andPrdAddressNotLike(String value) {
+            addCriterion("prdAddress not like", value, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdBetween(Long value1, Long value2) {
-            addCriterion("prdId between", value1, value2, "prdId");
+        public Criteria andPrdAddressIn(List<String> values) {
+            addCriterion("prdAddress in", values, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andPrdIdNotBetween(Long value1, Long value2) {
-            addCriterion("prdId not between", value1, value2, "prdId");
+        public Criteria andPrdAddressNotIn(List<String> values) {
+            addCriterion("prdAddress not in", values, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressIsNull() {
-            addCriterion("address is null");
+        public Criteria andPrdAddressBetween(String value1, String value2) {
+            addCriterion("prdAddress between", value1, value2, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressIsNotNull() {
-            addCriterion("address is not null");
+        public Criteria andPrdAddressNotBetween(String value1, String value2) {
+            addCriterion("prdAddress not between", value1, value2, "prdAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressEqualTo(String value) {
-            addCriterion("address =", value, "address");
+        public Criteria andUserAddressIsNull() {
+            addCriterion("userAddress is null");
             return (Criteria) this;
         }
 
-        public Criteria andAddressNotEqualTo(String value) {
-            addCriterion("address <>", value, "address");
+        public Criteria andUserAddressIsNotNull() {
+            addCriterion("userAddress is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAddressGreaterThan(String value) {
-            addCriterion("address >", value, "address");
+        public Criteria andUserAddressEqualTo(String value) {
+            addCriterion("userAddress =", value, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressGreaterThanOrEqualTo(String value) {
-            addCriterion("address >=", value, "address");
+        public Criteria andUserAddressNotEqualTo(String value) {
+            addCriterion("userAddress <>", value, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressLessThan(String value) {
-            addCriterion("address <", value, "address");
+        public Criteria andUserAddressGreaterThan(String value) {
+            addCriterion("userAddress >", value, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressLessThanOrEqualTo(String value) {
-            addCriterion("address <=", value, "address");
+        public Criteria andUserAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("userAddress >=", value, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressLike(String value) {
-            addCriterion("address like", value, "address");
+        public Criteria andUserAddressLessThan(String value) {
+            addCriterion("userAddress <", value, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressNotLike(String value) {
-            addCriterion("address not like", value, "address");
+        public Criteria andUserAddressLessThanOrEqualTo(String value) {
+            addCriterion("userAddress <=", value, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressIn(List<String> values) {
-            addCriterion("address in", values, "address");
+        public Criteria andUserAddressLike(String value) {
+            addCriterion("userAddress like", value, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressNotIn(List<String> values) {
-            addCriterion("address not in", values, "address");
+        public Criteria andUserAddressNotLike(String value) {
+            addCriterion("userAddress not like", value, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressBetween(String value1, String value2) {
-            addCriterion("address between", value1, value2, "address");
+        public Criteria andUserAddressIn(List<String> values) {
+            addCriterion("userAddress in", values, "userAddress");
             return (Criteria) this;
         }
 
-        public Criteria andAddressNotBetween(String value1, String value2) {
-            addCriterion("address not between", value1, value2, "address");
+        public Criteria andUserAddressNotIn(List<String> values) {
+            addCriterion("userAddress not in", values, "userAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserAddressBetween(String value1, String value2) {
+            addCriterion("userAddress between", value1, value2, "userAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserAddressNotBetween(String value1, String value2) {
+            addCriterion("userAddress not between", value1, value2, "userAddress");
             return (Criteria) this;
         }
 
@@ -419,6 +425,66 @@ public class IdoDxUserRecordDDL {
             return (Criteria) this;
         }
 
+        public Criteria andTokenAmountIsNull() {
+            addCriterion("tokenAmount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountIsNotNull() {
+            addCriterion("tokenAmount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountEqualTo(BigDecimal value) {
+            addCriterion("tokenAmount =", value, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountNotEqualTo(BigDecimal value) {
+            addCriterion("tokenAmount <>", value, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountGreaterThan(BigDecimal value) {
+            addCriterion("tokenAmount >", value, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("tokenAmount >=", value, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountLessThan(BigDecimal value) {
+            addCriterion("tokenAmount <", value, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("tokenAmount <=", value, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountIn(List<BigDecimal> values) {
+            addCriterion("tokenAmount in", values, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountNotIn(List<BigDecimal> values) {
+            addCriterion("tokenAmount not in", values, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("tokenAmount between", value1, value2, "tokenAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenAmountNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("tokenAmount not between", value1, value2, "tokenAmount");
+            return (Criteria) this;
+        }
+
         public Criteria andCurrencyIsNull() {
             addCriterion("currency is null");
             return (Criteria) this;
@@ -489,133 +555,133 @@ public class IdoDxUserRecordDDL {
             return (Criteria) this;
         }
 
-        public Criteria andStateIsNull() {
-            addCriterion("state is null");
+        public Criteria andExtInfoIsNull() {
+            addCriterion("extInfo is null");
             return (Criteria) this;
         }
 
-        public Criteria andStateIsNotNull() {
-            addCriterion("state is not null");
+        public Criteria andExtInfoIsNotNull() {
+            addCriterion("extInfo is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStateEqualTo(String value) {
-            addCriterion("state =", value, "state");
+        public Criteria andExtInfoEqualTo(String value) {
+            addCriterion("extInfo =", value, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotEqualTo(String value) {
-            addCriterion("state <>", value, "state");
+        public Criteria andExtInfoNotEqualTo(String value) {
+            addCriterion("extInfo <>", value, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateGreaterThan(String value) {
-            addCriterion("state >", value, "state");
+        public Criteria andExtInfoGreaterThan(String value) {
+            addCriterion("extInfo >", value, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateGreaterThanOrEqualTo(String value) {
-            addCriterion("state >=", value, "state");
+        public Criteria andExtInfoGreaterThanOrEqualTo(String value) {
+            addCriterion("extInfo >=", value, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateLessThan(String value) {
-            addCriterion("state <", value, "state");
+        public Criteria andExtInfoLessThan(String value) {
+            addCriterion("extInfo <", value, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateLessThanOrEqualTo(String value) {
-            addCriterion("state <=", value, "state");
+        public Criteria andExtInfoLessThanOrEqualTo(String value) {
+            addCriterion("extInfo <=", value, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateLike(String value) {
-            addCriterion("state like", value, "state");
+        public Criteria andExtInfoLike(String value) {
+            addCriterion("extInfo like", value, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotLike(String value) {
-            addCriterion("state not like", value, "state");
+        public Criteria andExtInfoNotLike(String value) {
+            addCriterion("extInfo not like", value, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateIn(List<String> values) {
-            addCriterion("state in", values, "state");
+        public Criteria andExtInfoIn(List<String> values) {
+            addCriterion("extInfo in", values, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotIn(List<String> values) {
-            addCriterion("state not in", values, "state");
+        public Criteria andExtInfoNotIn(List<String> values) {
+            addCriterion("extInfo not in", values, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateBetween(String value1, String value2) {
-            addCriterion("state between", value1, value2, "state");
+        public Criteria andExtInfoBetween(String value1, String value2) {
+            addCriterion("extInfo between", value1, value2, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotBetween(String value1, String value2) {
-            addCriterion("state not between", value1, value2, "state");
+        public Criteria andExtInfoNotBetween(String value1, String value2) {
+            addCriterion("extInfo not between", value1, value2, "extInfo");
             return (Criteria) this;
         }
 
-        public Criteria andVersionIsNull() {
-            addCriterion("version is null");
+        public Criteria andTokenVersionIsNull() {
+            addCriterion("tokenVersion is null");
             return (Criteria) this;
         }
 
-        public Criteria andVersionIsNotNull() {
-            addCriterion("version is not null");
+        public Criteria andTokenVersionIsNotNull() {
+            addCriterion("tokenVersion is not null");
             return (Criteria) this;
         }
 
-        public Criteria andVersionEqualTo(Integer value) {
-            addCriterion("version =", value, "version");
+        public Criteria andTokenVersionEqualTo(Short value) {
+            addCriterion("tokenVersion =", value, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionNotEqualTo(Integer value) {
-            addCriterion("version <>", value, "version");
+        public Criteria andTokenVersionNotEqualTo(Short value) {
+            addCriterion("tokenVersion <>", value, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionGreaterThan(Integer value) {
-            addCriterion("version >", value, "version");
+        public Criteria andTokenVersionGreaterThan(Short value) {
+            addCriterion("tokenVersion >", value, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionGreaterThanOrEqualTo(Integer value) {
-            addCriterion("version >=", value, "version");
+        public Criteria andTokenVersionGreaterThanOrEqualTo(Short value) {
+            addCriterion("tokenVersion >=", value, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionLessThan(Integer value) {
-            addCriterion("version <", value, "version");
+        public Criteria andTokenVersionLessThan(Short value) {
+            addCriterion("tokenVersion <", value, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionLessThanOrEqualTo(Integer value) {
-            addCriterion("version <=", value, "version");
+        public Criteria andTokenVersionLessThanOrEqualTo(Short value) {
+            addCriterion("tokenVersion <=", value, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionIn(List<Integer> values) {
-            addCriterion("version in", values, "version");
+        public Criteria andTokenVersionIn(List<Short> values) {
+            addCriterion("tokenVersion in", values, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionNotIn(List<Integer> values) {
-            addCriterion("version not in", values, "version");
+        public Criteria andTokenVersionNotIn(List<Short> values) {
+            addCriterion("tokenVersion not in", values, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionBetween(Integer value1, Integer value2) {
-            addCriterion("version between", value1, value2, "version");
+        public Criteria andTokenVersionBetween(Short value1, Short value2) {
+            addCriterion("tokenVersion between", value1, value2, "tokenVersion");
             return (Criteria) this;
         }
 
-        public Criteria andVersionNotBetween(Integer value1, Integer value2) {
-            addCriterion("version not between", value1, value2, "version");
+        public Criteria andTokenVersionNotBetween(Short value1, Short value2) {
+            addCriterion("tokenVersion not between", value1, value2, "tokenVersion");
             return (Criteria) this;
         }
 

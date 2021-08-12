@@ -8,10 +8,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
-/**
- * @author zhangcheng
- * @create 2021-08-06 5:34 下午
- */
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -27,11 +23,11 @@ public class IdoDxProduct {
 
     private BigDecimal rate;
 
-    private BigDecimal pledgeTotal;
-
     private BigDecimal raiseTotal;
 
     private BigDecimal currencyTotal;
+
+    private Short tokenPrecision;
 
     private String address;
 

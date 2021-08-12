@@ -18,3 +18,9 @@ spring:
     port: 6379
     password:
 ## ------------------------------业务相关配置写到下面-------------------------
+
+ido:
+  dx:
+    star:
+      url: https://barnard-seed.starcoin.org
+      moduleName: 0xd501465255d22d1751aae83651421198::Offering8

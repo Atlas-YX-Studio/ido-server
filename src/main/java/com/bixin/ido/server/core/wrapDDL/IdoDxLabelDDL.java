@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * @author zhangcheng
- * @create 2021-08-06 5:34 下午
+ * create 2021-08-06 5:34 下午
  */
 public class IdoDxLabelDDL {
     protected String orderByClause;

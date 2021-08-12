@@ -4,10 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author zhangcheng
- * @create 2021-08-06 5:34 下午
- */
 public class IdoDxProductDDL {
     protected String orderByClause;
 
@@ -439,66 +435,6 @@ public class IdoDxProductDDL {
             return (Criteria) this;
         }
 
-        public Criteria andPledgeTotalIsNull() {
-            addCriterion("pledgeTotal is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalIsNotNull() {
-            addCriterion("pledgeTotal is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalEqualTo(BigDecimal value) {
-            addCriterion("pledgeTotal =", value, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalNotEqualTo(BigDecimal value) {
-            addCriterion("pledgeTotal <>", value, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalGreaterThan(BigDecimal value) {
-            addCriterion("pledgeTotal >", value, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalGreaterThanOrEqualTo(BigDecimal value) {
-            addCriterion("pledgeTotal >=", value, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalLessThan(BigDecimal value) {
-            addCriterion("pledgeTotal <", value, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalLessThanOrEqualTo(BigDecimal value) {
-            addCriterion("pledgeTotal <=", value, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalIn(List<BigDecimal> values) {
-            addCriterion("pledgeTotal in", values, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalNotIn(List<BigDecimal> values) {
-            addCriterion("pledgeTotal not in", values, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("pledgeTotal between", value1, value2, "pledgeTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andPledgeTotalNotBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("pledgeTotal not between", value1, value2, "pledgeTotal");
-            return (Criteria) this;
-        }
-
         public Criteria andRaiseTotalIsNull() {
             addCriterion("raiseTotal is null");
             return (Criteria) this;
@@ -616,6 +552,66 @@ public class IdoDxProductDDL {
 
         public Criteria andCurrencyTotalNotBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("currencyTotal not between", value1, value2, "currencyTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionIsNull() {
+            addCriterion("tokenPrecision is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionIsNotNull() {
+            addCriterion("tokenPrecision is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionEqualTo(Short value) {
+            addCriterion("tokenPrecision =", value, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionNotEqualTo(Short value) {
+            addCriterion("tokenPrecision <>", value, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionGreaterThan(Short value) {
+            addCriterion("tokenPrecision >", value, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionGreaterThanOrEqualTo(Short value) {
+            addCriterion("tokenPrecision >=", value, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionLessThan(Short value) {
+            addCriterion("tokenPrecision <", value, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionLessThanOrEqualTo(Short value) {
+            addCriterion("tokenPrecision <=", value, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionIn(List<Short> values) {
+            addCriterion("tokenPrecision in", values, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionNotIn(List<Short> values) {
+            addCriterion("tokenPrecision not in", values, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionBetween(Short value1, Short value2) {
+            addCriterion("tokenPrecision between", value1, value2, "tokenPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenPrecisionNotBetween(Short value1, Short value2) {
+            addCriterion("tokenPrecision not between", value1, value2, "tokenPrecision");
             return (Criteria) this;
         }
 
@@ -1289,6 +1285,126 @@ public class IdoDxProductDDL {
             return (Criteria) this;
         }
 
+        public Criteria andEndTimeIsNull() {
+            addCriterion("endTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeIsNotNull() {
+            addCriterion("endTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeEqualTo(Long value) {
+            addCriterion("endTime =", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeNotEqualTo(Long value) {
+            addCriterion("endTime <>", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeGreaterThan(Long value) {
+            addCriterion("endTime >", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("endTime >=", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeLessThan(Long value) {
+            addCriterion("endTime <", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeLessThanOrEqualTo(Long value) {
+            addCriterion("endTime <=", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeIn(List<Long> values) {
+            addCriterion("endTime in", values, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeNotIn(List<Long> values) {
+            addCriterion("endTime not in", values, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeBetween(Long value1, Long value2) {
+            addCriterion("endTime between", value1, value2, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeNotBetween(Long value1, Long value2) {
+            addCriterion("endTime not between", value1, value2, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeIsNull() {
+            addCriterion("pledgeStartTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeIsNotNull() {
+            addCriterion("pledgeStartTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeEqualTo(Long value) {
+            addCriterion("pledgeStartTime =", value, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeNotEqualTo(Long value) {
+            addCriterion("pledgeStartTime <>", value, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeGreaterThan(Long value) {
+            addCriterion("pledgeStartTime >", value, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("pledgeStartTime >=", value, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeLessThan(Long value) {
+            addCriterion("pledgeStartTime <", value, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeLessThanOrEqualTo(Long value) {
+            addCriterion("pledgeStartTime <=", value, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeIn(List<Long> values) {
+            addCriterion("pledgeStartTime in", values, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeNotIn(List<Long> values) {
+            addCriterion("pledgeStartTime not in", values, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeBetween(Long value1, Long value2) {
+            addCriterion("pledgeStartTime between", value1, value2, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeStartTimeNotBetween(Long value1, Long value2) {
+            addCriterion("pledgeStartTime not between", value1, value2, "pledgeStartTime");
+            return (Criteria) this;
+        }
+
         public Criteria andPledgeEndTimeIsNull() {
             addCriterion("pledgeEndTime is null");
             return (Criteria) this;
@@ -1346,6 +1462,66 @@ public class IdoDxProductDDL {
 
         public Criteria andPledgeEndTimeNotBetween(Long value1, Long value2) {
             addCriterion("pledgeEndTime not between", value1, value2, "pledgeEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeIsNull() {
+            addCriterion("lockStartTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeIsNotNull() {
+            addCriterion("lockStartTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeEqualTo(Long value) {
+            addCriterion("lockStartTime =", value, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeNotEqualTo(Long value) {
+            addCriterion("lockStartTime <>", value, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeGreaterThan(Long value) {
+            addCriterion("lockStartTime >", value, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("lockStartTime >=", value, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeLessThan(Long value) {
+            addCriterion("lockStartTime <", value, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeLessThanOrEqualTo(Long value) {
+            addCriterion("lockStartTime <=", value, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeIn(List<Long> values) {
+            addCriterion("lockStartTime in", values, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeNotIn(List<Long> values) {
+            addCriterion("lockStartTime not in", values, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeBetween(Long value1, Long value2) {
+            addCriterion("lockStartTime between", value1, value2, "lockStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLockStartTimeNotBetween(Long value1, Long value2) {
+            addCriterion("lockStartTime not between", value1, value2, "lockStartTime");
             return (Criteria) this;
         }
 
@@ -1409,183 +1585,243 @@ public class IdoDxProductDDL {
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeIsNull() {
-            addCriterion("endTime is null");
+        public Criteria andPayStartTimeIsNull() {
+            addCriterion("payStartTime is null");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeIsNotNull() {
-            addCriterion("endTime is not null");
+        public Criteria andPayStartTimeIsNotNull() {
+            addCriterion("payStartTime is not null");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeEqualTo(Long value) {
-            addCriterion("endTime =", value, "endTime");
+        public Criteria andPayStartTimeEqualTo(Long value) {
+            addCriterion("payStartTime =", value, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeNotEqualTo(Long value) {
-            addCriterion("endTime <>", value, "endTime");
+        public Criteria andPayStartTimeNotEqualTo(Long value) {
+            addCriterion("payStartTime <>", value, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeGreaterThan(Long value) {
-            addCriterion("endTime >", value, "endTime");
+        public Criteria andPayStartTimeGreaterThan(Long value) {
+            addCriterion("payStartTime >", value, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeGreaterThanOrEqualTo(Long value) {
-            addCriterion("endTime >=", value, "endTime");
+        public Criteria andPayStartTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("payStartTime >=", value, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeLessThan(Long value) {
-            addCriterion("endTime <", value, "endTime");
+        public Criteria andPayStartTimeLessThan(Long value) {
+            addCriterion("payStartTime <", value, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeLessThanOrEqualTo(Long value) {
-            addCriterion("endTime <=", value, "endTime");
+        public Criteria andPayStartTimeLessThanOrEqualTo(Long value) {
+            addCriterion("payStartTime <=", value, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeIn(List<Long> values) {
-            addCriterion("endTime in", values, "endTime");
+        public Criteria andPayStartTimeIn(List<Long> values) {
+            addCriterion("payStartTime in", values, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeNotIn(List<Long> values) {
-            addCriterion("endTime not in", values, "endTime");
+        public Criteria andPayStartTimeNotIn(List<Long> values) {
+            addCriterion("payStartTime not in", values, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeBetween(Long value1, Long value2) {
-            addCriterion("endTime between", value1, value2, "endTime");
+        public Criteria andPayStartTimeBetween(Long value1, Long value2) {
+            addCriterion("payStartTime between", value1, value2, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andEndTimeNotBetween(Long value1, Long value2) {
-            addCriterion("endTime not between", value1, value2, "endTime");
+        public Criteria andPayStartTimeNotBetween(Long value1, Long value2) {
+            addCriterion("payStartTime not between", value1, value2, "payStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeIsNull() {
-            addCriterion("payTime is null");
+        public Criteria andPayEndTimeIsNull() {
+            addCriterion("payEndTime is null");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeIsNotNull() {
-            addCriterion("payTime is not null");
+        public Criteria andPayEndTimeIsNotNull() {
+            addCriterion("payEndTime is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeEqualTo(Long value) {
-            addCriterion("payTime =", value, "payTime");
+        public Criteria andPayEndTimeEqualTo(Long value) {
+            addCriterion("payEndTime =", value, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeNotEqualTo(Long value) {
-            addCriterion("payTime <>", value, "payTime");
+        public Criteria andPayEndTimeNotEqualTo(Long value) {
+            addCriterion("payEndTime <>", value, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeGreaterThan(Long value) {
-            addCriterion("payTime >", value, "payTime");
+        public Criteria andPayEndTimeGreaterThan(Long value) {
+            addCriterion("payEndTime >", value, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeGreaterThanOrEqualTo(Long value) {
-            addCriterion("payTime >=", value, "payTime");
+        public Criteria andPayEndTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("payEndTime >=", value, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeLessThan(Long value) {
-            addCriterion("payTime <", value, "payTime");
+        public Criteria andPayEndTimeLessThan(Long value) {
+            addCriterion("payEndTime <", value, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeLessThanOrEqualTo(Long value) {
-            addCriterion("payTime <=", value, "payTime");
+        public Criteria andPayEndTimeLessThanOrEqualTo(Long value) {
+            addCriterion("payEndTime <=", value, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeIn(List<Long> values) {
-            addCriterion("payTime in", values, "payTime");
+        public Criteria andPayEndTimeIn(List<Long> values) {
+            addCriterion("payEndTime in", values, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeNotIn(List<Long> values) {
-            addCriterion("payTime not in", values, "payTime");
+        public Criteria andPayEndTimeNotIn(List<Long> values) {
+            addCriterion("payEndTime not in", values, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeBetween(Long value1, Long value2) {
-            addCriterion("payTime between", value1, value2, "payTime");
+        public Criteria andPayEndTimeBetween(Long value1, Long value2) {
+            addCriterion("payEndTime between", value1, value2, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andPayTimeNotBetween(Long value1, Long value2) {
-            addCriterion("payTime not between", value1, value2, "payTime");
+        public Criteria andPayEndTimeNotBetween(Long value1, Long value2) {
+            addCriterion("payEndTime not between", value1, value2, "payEndTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeIsNull() {
-            addCriterion("assignmentTime is null");
+        public Criteria andAssignmentStartTimeIsNull() {
+            addCriterion("assignmentStartTime is null");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeIsNotNull() {
-            addCriterion("assignmentTime is not null");
+        public Criteria andAssignmentStartTimeIsNotNull() {
+            addCriterion("assignmentStartTime is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeEqualTo(Long value) {
-            addCriterion("assignmentTime =", value, "assignmentTime");
+        public Criteria andAssignmentStartTimeEqualTo(Long value) {
+            addCriterion("assignmentStartTime =", value, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeNotEqualTo(Long value) {
-            addCriterion("assignmentTime <>", value, "assignmentTime");
+        public Criteria andAssignmentStartTimeNotEqualTo(Long value) {
+            addCriterion("assignmentStartTime <>", value, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeGreaterThan(Long value) {
-            addCriterion("assignmentTime >", value, "assignmentTime");
+        public Criteria andAssignmentStartTimeGreaterThan(Long value) {
+            addCriterion("assignmentStartTime >", value, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeGreaterThanOrEqualTo(Long value) {
-            addCriterion("assignmentTime >=", value, "assignmentTime");
+        public Criteria andAssignmentStartTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("assignmentStartTime >=", value, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeLessThan(Long value) {
-            addCriterion("assignmentTime <", value, "assignmentTime");
+        public Criteria andAssignmentStartTimeLessThan(Long value) {
+            addCriterion("assignmentStartTime <", value, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeLessThanOrEqualTo(Long value) {
-            addCriterion("assignmentTime <=", value, "assignmentTime");
+        public Criteria andAssignmentStartTimeLessThanOrEqualTo(Long value) {
+            addCriterion("assignmentStartTime <=", value, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeIn(List<Long> values) {
-            addCriterion("assignmentTime in", values, "assignmentTime");
+        public Criteria andAssignmentStartTimeIn(List<Long> values) {
+            addCriterion("assignmentStartTime in", values, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeNotIn(List<Long> values) {
-            addCriterion("assignmentTime not in", values, "assignmentTime");
+        public Criteria andAssignmentStartTimeNotIn(List<Long> values) {
+            addCriterion("assignmentStartTime not in", values, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeBetween(Long value1, Long value2) {
-            addCriterion("assignmentTime between", value1, value2, "assignmentTime");
+        public Criteria andAssignmentStartTimeBetween(Long value1, Long value2) {
+            addCriterion("assignmentStartTime between", value1, value2, "assignmentStartTime");
             return (Criteria) this;
         }
 
-        public Criteria andAssignmentTimeNotBetween(Long value1, Long value2) {
-            addCriterion("assignmentTime not between", value1, value2, "assignmentTime");
+        public Criteria andAssignmentStartTimeNotBetween(Long value1, Long value2) {
+            addCriterion("assignmentStartTime not between", value1, value2, "assignmentStartTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeIsNull() {
+            addCriterion("assignmentEndTime is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeIsNotNull() {
+            addCriterion("assignmentEndTime is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeEqualTo(Long value) {
+            addCriterion("assignmentEndTime =", value, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeNotEqualTo(Long value) {
+            addCriterion("assignmentEndTime <>", value, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeGreaterThan(Long value) {
+            addCriterion("assignmentEndTime >", value, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("assignmentEndTime >=", value, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeLessThan(Long value) {
+            addCriterion("assignmentEndTime <", value, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeLessThanOrEqualTo(Long value) {
+            addCriterion("assignmentEndTime <=", value, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeIn(List<Long> values) {
+            addCriterion("assignmentEndTime in", values, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeNotIn(List<Long> values) {
+            addCriterion("assignmentEndTime not in", values, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeBetween(Long value1, Long value2) {
+            addCriterion("assignmentEndTime between", value1, value2, "assignmentEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignmentEndTimeNotBetween(Long value1, Long value2) {
+            addCriterion("assignmentEndTime not between", value1, value2, "assignmentEndTime");
             return (Criteria) this;
         }
     }

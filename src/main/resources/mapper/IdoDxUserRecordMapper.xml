@@ -3,13 +3,14 @@
 <mapper namespace="com.bixin.ido.server.core.mapper.IdoDxUserRecordMapper">
   <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="prdId" jdbcType="BIGINT" property="prdId" />
-    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="prdAddress" jdbcType="VARCHAR" property="prdAddress" />
+    <result column="userAddress" jdbcType="VARCHAR" property="userAddress" />
     <result column="amount" jdbcType="DECIMAL" property="amount" />
     <result column="gasCost" jdbcType="DECIMAL" property="gasCost" />
+    <result column="tokenAmount" jdbcType="DECIMAL" property="tokenAmount" />
     <result column="currency" jdbcType="VARCHAR" property="currency" />
-    <result column="state" jdbcType="VARCHAR" property="state" />
-    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="extInfo" jdbcType="VARCHAR" property="extInfo" />
+    <result column="tokenVersion" jdbcType="SMALLINT" property="tokenVersion" />
     <result column="createTime" jdbcType="BIGINT" property="createTime" />
     <result column="updateTime" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
@@ -72,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, prdId, address, amount, gasCost, currency, state, version, createTime,
-    updateTime
+    id, prdAddress, userAddress, amount, gasCost, tokenAmount, currency, extInfo, tokenVersion, 
+    createTime, updateTime
   </sql>
   <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL" resultMap="BaseResultMap">
     select
@@ -106,13 +107,13 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
-    insert into ido_dx_user_record (id, prdId,
-      address, amount, gasCost, 
-      currency, state, version, 
+    insert into ido_dx_user_record (id, prdAddress, userAddress, 
+      amount, gasCost, tokenAmount, 
+      currency, extInfo, tokenVersion, 
       createTime, updateTime)
-    values (#{id,jdbcType=BIGINT}, #{prdId,jdbcType=BIGINT},
-      #{address,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{gasCost,jdbcType=DECIMAL}, 
-      #{currency,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=BIGINT}, #{prdAddress,jdbcType=VARCHAR}, #{userAddress,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=DECIMAL}, #{gasCost,jdbcType=DECIMAL}, #{tokenAmount,jdbcType=DECIMAL}, 
+      #{currency,jdbcType=VARCHAR}, #{extInfo,jdbcType=VARCHAR}, #{tokenVersion,jdbcType=SMALLINT}, 
       #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
@@ -121,11 +122,11 @@
       <if test="id != null">
         id,
       </if>
-      <if test="prdId != null">
-        prdId,
+      <if test="prdAddress != null">
+        prdAddress,
       </if>
-      <if test="address != null">
-        address,
+      <if test="userAddress != null">
+        userAddress,
       </if>
       <if test="amount != null">
         amount,
@@ -133,14 +134,17 @@
       <if test="gasCost != null">
         gasCost,
       </if>
+      <if test="tokenAmount != null">
+        tokenAmount,
+      </if>
       <if test="currency != null">
         currency,
       </if>
-      <if test="state != null">
-        state,
+      <if test="extInfo != null">
+        extInfo,
       </if>
-      <if test="version != null">
-        version,
+      <if test="tokenVersion != null">
+        tokenVersion,
       </if>
       <if test="createTime != null">
         createTime,
@@ -153,11 +157,11 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="prdId != null">
-        #{prdId,jdbcType=BIGINT},
+      <if test="prdAddress != null">
+        #{prdAddress,jdbcType=VARCHAR},
       </if>
-      <if test="address != null">
-        #{address,jdbcType=VARCHAR},
+      <if test="userAddress != null">
+        #{userAddress,jdbcType=VARCHAR},
       </if>
       <if test="amount != null">
         #{amount,jdbcType=DECIMAL},
@@ -165,14 +169,17 @@
       <if test="gasCost != null">
         #{gasCost,jdbcType=DECIMAL},
       </if>
+      <if test="tokenAmount != null">
+        #{tokenAmount,jdbcType=DECIMAL},
+      </if>
       <if test="currency != null">
         #{currency,jdbcType=VARCHAR},
       </if>
-      <if test="state != null">
-        #{state,jdbcType=VARCHAR},
+      <if test="extInfo != null">
+        #{extInfo,jdbcType=VARCHAR},
       </if>
-      <if test="version != null">
-        #{version,jdbcType=INTEGER},
+      <if test="tokenVersion != null">
+        #{tokenVersion,jdbcType=SMALLINT},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=BIGINT},
@@ -194,11 +201,11 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.prdId != null">
-        prdId = #{record.prdId,jdbcType=BIGINT},
+      <if test="record.prdAddress != null">
+        prdAddress = #{record.prdAddress,jdbcType=VARCHAR},
       </if>
-      <if test="record.address != null">
-        address = #{record.address,jdbcType=VARCHAR},
+      <if test="record.userAddress != null">
+        userAddress = #{record.userAddress,jdbcType=VARCHAR},
       </if>
       <if test="record.amount != null">
         amount = #{record.amount,jdbcType=DECIMAL},
@@ -206,14 +213,17 @@
       <if test="record.gasCost != null">
         gasCost = #{record.gasCost,jdbcType=DECIMAL},
       </if>
+      <if test="record.tokenAmount != null">
+        tokenAmount = #{record.tokenAmount,jdbcType=DECIMAL},
+      </if>
       <if test="record.currency != null">
         currency = #{record.currency,jdbcType=VARCHAR},
       </if>
-      <if test="record.state != null">
-        state = #{record.state,jdbcType=VARCHAR},
+      <if test="record.extInfo != null">
+        extInfo = #{record.extInfo,jdbcType=VARCHAR},
       </if>
-      <if test="record.version != null">
-        version = #{record.version,jdbcType=INTEGER},
+      <if test="record.tokenVersion != null">
+        tokenVersion = #{record.tokenVersion,jdbcType=SMALLINT},
       </if>
       <if test="record.createTime != null">
         createTime = #{record.createTime,jdbcType=BIGINT},
@@ -229,13 +239,14 @@
   <update id="updateByDDL" parameterType="map">
     update ido_dx_user_record
     set id = #{record.id,jdbcType=BIGINT},
-      prdId = #{record.prdId,jdbcType=BIGINT},
-      address = #{record.address,jdbcType=VARCHAR},
+      prdAddress = #{record.prdAddress,jdbcType=VARCHAR},
+      userAddress = #{record.userAddress,jdbcType=VARCHAR},
       amount = #{record.amount,jdbcType=DECIMAL},
       gasCost = #{record.gasCost,jdbcType=DECIMAL},
+      tokenAmount = #{record.tokenAmount,jdbcType=DECIMAL},
       currency = #{record.currency,jdbcType=VARCHAR},
-      state = #{record.state,jdbcType=VARCHAR},
-      version = #{record.version,jdbcType=INTEGER},
+      extInfo = #{record.extInfo,jdbcType=VARCHAR},
+      tokenVersion = #{record.tokenVersion,jdbcType=SMALLINT},
       createTime = #{record.createTime,jdbcType=BIGINT},
       updateTime = #{record.updateTime,jdbcType=BIGINT}
     <if test="_parameter != null">
@@ -245,11 +256,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
     update ido_dx_user_record
     <set>
-      <if test="prdId != null">
-        prdId = #{prdId,jdbcType=BIGINT},
+      <if test="prdAddress != null">
+        prdAddress = #{prdAddress,jdbcType=VARCHAR},
       </if>
-      <if test="address != null">
-        address = #{address,jdbcType=VARCHAR},
+      <if test="userAddress != null">
+        userAddress = #{userAddress,jdbcType=VARCHAR},
       </if>
       <if test="amount != null">
         amount = #{amount,jdbcType=DECIMAL},
@@ -257,14 +268,17 @@
       <if test="gasCost != null">
         gasCost = #{gasCost,jdbcType=DECIMAL},
       </if>
+      <if test="tokenAmount != null">
+        tokenAmount = #{tokenAmount,jdbcType=DECIMAL},
+      </if>
       <if test="currency != null">
         currency = #{currency,jdbcType=VARCHAR},
       </if>
-      <if test="state != null">
-        state = #{state,jdbcType=VARCHAR},
+      <if test="extInfo != null">
+        extInfo = #{extInfo,jdbcType=VARCHAR},
       </if>
-      <if test="version != null">
-        version = #{version,jdbcType=INTEGER},
+      <if test="tokenVersion != null">
+        tokenVersion = #{tokenVersion,jdbcType=SMALLINT},
       </if>
       <if test="createTime != null">
         createTime = #{createTime,jdbcType=BIGINT},
@@ -277,13 +291,14 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
     update ido_dx_user_record
-    set prdId = #{prdId,jdbcType=BIGINT},
-      address = #{address,jdbcType=VARCHAR},
+    set prdAddress = #{prdAddress,jdbcType=VARCHAR},
+      userAddress = #{userAddress,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=DECIMAL},
       gasCost = #{gasCost,jdbcType=DECIMAL},
+      tokenAmount = #{tokenAmount,jdbcType=DECIMAL},
       currency = #{currency,jdbcType=VARCHAR},
-      state = #{state,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER},
+      extInfo = #{extInfo,jdbcType=VARCHAR},
+      tokenVersion = #{tokenVersion,jdbcType=SMALLINT},
       createTime = #{createTime,jdbcType=BIGINT},
       updateTime = #{updateTime,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}

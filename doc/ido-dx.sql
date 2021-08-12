@@ -8,10 +8,10 @@ CREATE TABLE ido_dx_product (
     currency VARCHAR(10) NOT NULL COMMENT '需要购买的代币名称',
     baseCurrency VARCHAR(10) NOT NULL COMMENT '用户质押币种名称',
     rate DECIMAL(18,8) NOT NULL COMMENT '兑换率',
-    pledgeTotal DECIMAL(36,18) NOT NULL COMMENT '总质押量',
     raiseTotal DECIMAL(36,18) NOT NULL COMMENT '筹集总量',
     currencyTotal DECIMAL(36,18) NOT NULL COMMENT '代币预发行总量',
-    address VARCHAR(50) NOT NULL COMMENT '公链地址',
+    address VARCHAR(300) NOT NULL COMMENT '公链地址',
+    tokenPrecision SMALLINT DEFAULT 9 COMMENT '精度',
     icon VARCHAR(500) NOT NULL COMMENT '图标',
     state VARCHAR(20) NOT NULL COMMENT '项目状态：init，processing，finish',
     prdDesc VARCHAR(2500) NOT NULL COMMENT '项目描述',
@@ -31,8 +31,10 @@ CREATE TABLE ido_dx_product (
     assignmentStartTime BIGINT(20) NOT NULL COMMENT '代币分配开始时间',
     assignmentEndTime BIGINT(20) NOT NULL COMMENT '代币分配结束时间',
     PRIMARY KEY(id),
-    INDEX idx_setime(startTime,endTime),
-    INDEX idx_state(state)
+    INDEX idx_stime(startTime),
+    INDEX idx_etime(endTime),
+    INDEX idx_state(state),
+    INDEX idx_state(address)
 ) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT '打新项目详情';
 
 DROP TABLE IF EXISTS ido_dx_label;
@@ -72,28 +74,17 @@ CREATE TABLE ido_dx_attribute (
 DROP TABLE IF EXISTS ido_dx_user_record;
 CREATE TABLE ido_dx_user_record (
     id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
-    prdId BIGINT(20) NOT NULL COMMENT '项目Id',
-    address VARCHAR(50) NOT NULL COMMENT '用户地址',
+    prdAddress VARCHAR(50) NOT NULL COMMENT '项目公链地址',
+    userAddress VARCHAR(50) NOT NULL COMMENT '用户地址',
     amount DECIMAL(36,18) NOT NULL COMMENT '该用户质押量',
-    gasCost DECIMAL(36,18) NOT NULL COMMENT 'gas费用',
+    tokenAmount DECIMAL(36,18) DEFAULT -1 COMMENT '链上实际质押量',
+    gasCost DECIMAL(36,18) DEFAULT -1 COMMENT 'gas费用',
     currency VARCHAR(10) NOT NULL COMMENT '质押币种',
-    version INT(5) NOT NULL COMMENT '更新版本',
+    extInfo VARCHAR(2500) DEFAULT NULL COMMENT '扩展字段：质押/解押记录 等',
+    tokenVersion SMALLINT DEFAULT 0 COMMENT '更新链上实际质押量 版本号',
     createTime BIGINT(20) NOT NULL COMMENT '创建时间',
     updateTime BIGINT(20) NOT NULL COMMENT '更新时间',
     PRIMARY KEY(id),
     INDEX idx_pid(prdId),
-    INDEX idx_address(address)
+    INDEX idx_address(userAddress)
 ) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT '打新用户质押记录';
-
-DROP TABLE IF EXISTS ido_dx_event_logs;
-CREATE TABLE ido_dx_event_logs (
-    id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
-    prdId BIGINT(20) NOT NULL COMMENT '项目Id',
-    address VARCHAR(50)NOT NULL COMMENT '用户地址',
-    event VARCHAR(50) DEFAULT NULL COMMENT '事件',
-    createTime BIGINT(20) NOT NULL COMMENT '创建时间',
-    updateTime BIGINT(20) NOT NULL COMMENT '更新时间',
-    PRIMARY KEY(id),
-    INDEX idx_pid(prdId),
-    INDEX idx_address(address)
-) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT '打新合约事件记录';
