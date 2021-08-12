@@ -1,0 +1,121 @@
+## 默认配置
+spring:
+  profiles:
+    active: @env@
+
+---
+## application name
+spring:
+  application:
+    name: ido-server-server
+
+server:
+  port: 8999
+  tomcat:
+    uri-encoding: UTF-8
+    # 最大线程数 #默认200
+    max-threads: 200
+    # 接受和处理的最大连接数 默认10000
+    max-connections: 10000
+    # 最大排队数 默认100
+    accept-count: 100
+    #默认10 初始化时创建的线程数 适当增大一些，以便应对突然增长的访问量100
+    min-spare-threads: 50
+
+---
+# database HikariCP相关配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://101.201.46.114:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: crypto_rw
+    password: crypto_rw_password
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+    type: com.zaxxer.hikari.HikariDataSource
+
+# MyBatis
+mybatis:
+  # 搜索指定包别名
+  type-aliases-package: com.bixin.ido.server.bean
+  # 加载全局的配置文件
+  config_location: classpath:mybatis/mybatis-config.xml
+  mapper_locations: classpath:mapper/*.xml
+
+# pagehelper
+pagehelper:
+  # 方言
+  helperDialect: mysql
+  # 分页合理化参数，默认值为false。当该参数设置为 true 时，pageNum<=0 时会查询第一页，
+  # pageNum>pages（超过总数时），会查询最后一页。默认false 时，直接根据参数进行查询。
+  reasonable: true
+  # # 默认值false，分页插件会从查询方法的参数值中，自动根据上面 params 配置的字段中取值，查找到合适的值时就会自动分页。
+  supportMethodsArguments: true
+  # 用于从对象中根据属性名取值， 可以配置 pageNum,pageSize,count,pageSizeZero,reasonable，不配置映射的用默认值，
+  # 默认值为pageNum=pageNum;pageSize=pageSize;count=countSql;reasonable=reasonable;pageSizeZero=pageSizeZero
+  params: count=countSql
+  returnPageInfo: check
+
+---
+# redis config
+spring:
+  redis:
+    # Redis默认情况下有16个分片，这里配置具体使用的分片
+    database: 0
+    host: 101.201.46.114
+    port: 6379
+    password:
+    # 连接超时时间（毫秒）
+    timeout: 3000
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 20
+        # 连接池中的最大空闲连接
+        max-idle: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1
+        # 连接池中的最小空闲连接
+        min-idle: 0
+
+# 允许/actuator/bus-refresh接口被外部调用
+management:
+  endpoints:
+    web:
+      exposure:
+        # 开放监控内容
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true #启用shutdown端点
+    health:
+      # health/detail 细节（）
+      show-details: always
+
+
+## 日志配置
+logging:
+  config: classpath:logback/logback-spring.xml
+  path: logs
+  level:
+    # 全局日志级别
+    default: INFO
+    # 项目日志级别
+    project: INFO
+    # mybatis日志级别
+    mybatis: DEBUG
+
+---
+#控制台输出彩色
+spring:
+  output:
+    ansi:
+      enabled: always
+## ------------------------------业务相关配置写到下面-------------------------

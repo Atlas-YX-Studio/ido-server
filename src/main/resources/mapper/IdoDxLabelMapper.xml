@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.core.mapper.IdoDxLabelMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxLabel">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="prdId" jdbcType="BIGINT" property="prdId" />
+    <result column="label" jdbcType="VARCHAR" property="label" />
+    <result column="createTime" jdbcType="BIGINT" property="createTime" />
+    <result column="updateTime" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="DDL_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_DDL_Where_Clause">
+    <where>
+      <foreach collection="DDL.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, prdId, label, createTime, updateTime
+  </sql>
+  <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxLabelDDL" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ido_dx_label
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ido_dx_label
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ido_dx_label
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxLabelDDL">
+    delete from ido_dx_label
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxLabel">
+    insert into ido_dx_label (id, prdId, label, 
+      createTime, updateTime)
+    values (#{id,jdbcType=BIGINT}, #{prdId,jdbcType=BIGINT}, #{label,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxLabel">
+    insert into ido_dx_label
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="prdId != null">
+        prdId,
+      </if>
+      <if test="label != null">
+        label,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="prdId != null">
+        #{prdId,jdbcType=BIGINT},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxLabelDDL" resultType="java.lang.Long">
+    select count(*) from ido_dx_label
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByDDLSelective" parameterType="map">
+    update ido_dx_label
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.prdId != null">
+        prdId = #{record.prdId,jdbcType=BIGINT},
+      </if>
+      <if test="record.label != null">
+        label = #{record.label,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        createTime = #{record.createTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null">
+        updateTime = #{record.updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_DDL_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByDDL" parameterType="map">
+    update ido_dx_label
+    set id = #{record.id,jdbcType=BIGINT},
+      prdId = #{record.prdId,jdbcType=BIGINT},
+      label = #{record.label,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=BIGINT},
+      updateTime = #{record.updateTime,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_DDL_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxLabel">
+    update ido_dx_label
+    <set>
+      <if test="prdId != null">
+        prdId = #{prdId,jdbcType=BIGINT},
+      </if>
+      <if test="label != null">
+        label = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxLabel">
+    update ido_dx_label
+    set prdId = #{prdId,jdbcType=BIGINT},
+      label = #{label,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=BIGINT},
+      updateTime = #{updateTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

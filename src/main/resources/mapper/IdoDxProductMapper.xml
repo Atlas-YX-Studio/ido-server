@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.core.mapper.IdoDxProductMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxProduct">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="prdName" jdbcType="VARCHAR" property="prdName" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
+    <result column="baseCurrency" jdbcType="VARCHAR" property="baseCurrency" />
+    <result column="rate" jdbcType="DECIMAL" property="rate" />
+    <result column="pledgeTotal" jdbcType="DECIMAL" property="pledgeTotal" />
+    <result column="raiseTotal" jdbcType="DECIMAL" property="raiseTotal" />
+    <result column="currencyTotal" jdbcType="DECIMAL" property="currencyTotal" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="prdDesc" jdbcType="VARCHAR" property="prdDesc" />
+    <result column="prdDescEn" jdbcType="VARCHAR" property="prdDescEn" />
+    <result column="ruleDesc" jdbcType="VARCHAR" property="ruleDesc" />
+    <result column="ruleDescEn" jdbcType="VARCHAR" property="ruleDescEn" />
+    <result column="createTime" jdbcType="BIGINT" property="createTime" />
+    <result column="updateTime" jdbcType="BIGINT" property="updateTime" />
+    <result column="startTime" jdbcType="BIGINT" property="startTime" />
+    <result column="endTime" jdbcType="BIGINT" property="endTime" />
+    <result column="pledgeStartTime" jdbcType="BIGINT" property="pledgeStartTime" />
+    <result column="pledgeEndTime" jdbcType="BIGINT" property="pledgeEndTime" />
+    <result column="lockStartTime" jdbcType="BIGINT" property="lockStartTime" />
+    <result column="lockEndTime" jdbcType="BIGINT" property="lockEndTime" />
+    <result column="payStartTime" jdbcType="BIGINT" property="payStartTime" />
+    <result column="payEndTime" jdbcType="BIGINT" property="payEndTime" />
+    <result column="assignmentStartTime" jdbcType="BIGINT" property="assignmentStartTime" />
+    <result column="assignmentEndTime" jdbcType="BIGINT" property="assignmentEndTime" />
+  </resultMap>
+  <sql id="DDL_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_DDL_Where_Clause">
+    <where>
+      <foreach collection="DDL.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, prdName, currency, baseCurrency, rate, pledgeTotal, raiseTotal, currencyTotal, 
+    address, icon, state, prdDesc, prdDescEn, ruleDesc, ruleDescEn, createTime, updateTime, 
+    startTime, endTime, pledgeStartTime, pledgeEndTime, lockStartTime, lockEndTime, payStartTime, 
+    payEndTime, assignmentStartTime, assignmentEndTime
+  </sql>
+  <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ido_dx_product
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ido_dx_product
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ido_dx_product
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL">
+    delete from ido_dx_product
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+    insert into ido_dx_product (id, prdName, currency, 
+      baseCurrency, rate, pledgeTotal, 
+      raiseTotal, currencyTotal, address, 
+      icon, state, prdDesc, 
+      prdDescEn, ruleDesc, ruleDescEn, 
+      createTime, updateTime, startTime, 
+      endTime, pledgeStartTime, pledgeEndTime, 
+      lockStartTime, lockEndTime, payStartTime, 
+      payEndTime, assignmentStartTime, assignmentEndTime
+      )
+    values (#{id,jdbcType=BIGINT}, #{prdName,jdbcType=VARCHAR}, #{currency,jdbcType=VARCHAR}, 
+      #{baseCurrency,jdbcType=VARCHAR}, #{rate,jdbcType=DECIMAL}, #{pledgeTotal,jdbcType=DECIMAL}, 
+      #{raiseTotal,jdbcType=DECIMAL}, #{currencyTotal,jdbcType=DECIMAL}, #{address,jdbcType=VARCHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{prdDesc,jdbcType=VARCHAR}, 
+      #{prdDescEn,jdbcType=VARCHAR}, #{ruleDesc,jdbcType=VARCHAR}, #{ruleDescEn,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{startTime,jdbcType=BIGINT}, 
+      #{endTime,jdbcType=BIGINT}, #{pledgeStartTime,jdbcType=BIGINT}, #{pledgeEndTime,jdbcType=BIGINT}, 
+      #{lockStartTime,jdbcType=BIGINT}, #{lockEndTime,jdbcType=BIGINT}, #{payStartTime,jdbcType=BIGINT}, 
+      #{payEndTime,jdbcType=BIGINT}, #{assignmentStartTime,jdbcType=BIGINT}, #{assignmentEndTime,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+    insert into ido_dx_product
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="prdName != null">
+        prdName,
+      </if>
+      <if test="currency != null">
+        currency,
+      </if>
+      <if test="baseCurrency != null">
+        baseCurrency,
+      </if>
+      <if test="rate != null">
+        rate,
+      </if>
+      <if test="pledgeTotal != null">
+        pledgeTotal,
+      </if>
+      <if test="raiseTotal != null">
+        raiseTotal,
+      </if>
+      <if test="currencyTotal != null">
+        currencyTotal,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="prdDesc != null">
+        prdDesc,
+      </if>
+      <if test="prdDescEn != null">
+        prdDescEn,
+      </if>
+      <if test="ruleDesc != null">
+        ruleDesc,
+      </if>
+      <if test="ruleDescEn != null">
+        ruleDescEn,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+      <if test="startTime != null">
+        startTime,
+      </if>
+      <if test="endTime != null">
+        endTime,
+      </if>
+      <if test="pledgeStartTime != null">
+        pledgeStartTime,
+      </if>
+      <if test="pledgeEndTime != null">
+        pledgeEndTime,
+      </if>
+      <if test="lockStartTime != null">
+        lockStartTime,
+      </if>
+      <if test="lockEndTime != null">
+        lockEndTime,
+      </if>
+      <if test="payStartTime != null">
+        payStartTime,
+      </if>
+      <if test="payEndTime != null">
+        payEndTime,
+      </if>
+      <if test="assignmentStartTime != null">
+        assignmentStartTime,
+      </if>
+      <if test="assignmentEndTime != null">
+        assignmentEndTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="prdName != null">
+        #{prdName,jdbcType=VARCHAR},
+      </if>
+      <if test="currency != null">
+        #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="baseCurrency != null">
+        #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null">
+        #{rate,jdbcType=DECIMAL},
+      </if>
+      <if test="pledgeTotal != null">
+        #{pledgeTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="raiseTotal != null">
+        #{raiseTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="currencyTotal != null">
+        #{currencyTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="prdDesc != null">
+        #{prdDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="prdDescEn != null">
+        #{prdDescEn,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleDesc != null">
+        #{ruleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleDescEn != null">
+        #{ruleDescEn,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="pledgeStartTime != null">
+        #{pledgeStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="pledgeEndTime != null">
+        #{pledgeEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="lockStartTime != null">
+        #{lockStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="lockEndTime != null">
+        #{lockEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="payStartTime != null">
+        #{payStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="payEndTime != null">
+        #{payEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="assignmentStartTime != null">
+        #{assignmentStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="assignmentEndTime != null">
+        #{assignmentEndTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL" resultType="java.lang.Long">
+    select count(*) from ido_dx_product
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByDDLSelective" parameterType="map">
+    update ido_dx_product
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.prdName != null">
+        prdName = #{record.prdName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.currency != null">
+        currency = #{record.currency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.baseCurrency != null">
+        baseCurrency = #{record.baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rate != null">
+        rate = #{record.rate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.pledgeTotal != null">
+        pledgeTotal = #{record.pledgeTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="record.raiseTotal != null">
+        raiseTotal = #{record.raiseTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="record.currencyTotal != null">
+        currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.icon != null">
+        icon = #{record.icon,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prdDesc != null">
+        prdDesc = #{record.prdDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prdDescEn != null">
+        prdDescEn = #{record.prdDescEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ruleDesc != null">
+        ruleDesc = #{record.ruleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ruleDescEn != null">
+        ruleDescEn = #{record.ruleDescEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        createTime = #{record.createTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null">
+        updateTime = #{record.updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.startTime != null">
+        startTime = #{record.startTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.endTime != null">
+        endTime = #{record.endTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.pledgeStartTime != null">
+        pledgeStartTime = #{record.pledgeStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.pledgeEndTime != null">
+        pledgeEndTime = #{record.pledgeEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.lockStartTime != null">
+        lockStartTime = #{record.lockStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.lockEndTime != null">
+        lockEndTime = #{record.lockEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.payStartTime != null">
+        payStartTime = #{record.payStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.payEndTime != null">
+        payEndTime = #{record.payEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.assignmentStartTime != null">
+        assignmentStartTime = #{record.assignmentStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.assignmentEndTime != null">
+        assignmentEndTime = #{record.assignmentEndTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_DDL_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByDDL" parameterType="map">
+    update ido_dx_product
+    set id = #{record.id,jdbcType=BIGINT},
+      prdName = #{record.prdName,jdbcType=VARCHAR},
+      currency = #{record.currency,jdbcType=VARCHAR},
+      baseCurrency = #{record.baseCurrency,jdbcType=VARCHAR},
+      rate = #{record.rate,jdbcType=DECIMAL},
+      pledgeTotal = #{record.pledgeTotal,jdbcType=DECIMAL},
+      raiseTotal = #{record.raiseTotal,jdbcType=DECIMAL},
+      currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
+      address = #{record.address,jdbcType=VARCHAR},
+      icon = #{record.icon,jdbcType=VARCHAR},
+      state = #{record.state,jdbcType=VARCHAR},
+      prdDesc = #{record.prdDesc,jdbcType=VARCHAR},
+      prdDescEn = #{record.prdDescEn,jdbcType=VARCHAR},
+      ruleDesc = #{record.ruleDesc,jdbcType=VARCHAR},
+      ruleDescEn = #{record.ruleDescEn,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=BIGINT},
+      updateTime = #{record.updateTime,jdbcType=BIGINT},
+      startTime = #{record.startTime,jdbcType=BIGINT},
+      endTime = #{record.endTime,jdbcType=BIGINT},
+      pledgeStartTime = #{record.pledgeStartTime,jdbcType=BIGINT},
+      pledgeEndTime = #{record.pledgeEndTime,jdbcType=BIGINT},
+      lockStartTime = #{record.lockStartTime,jdbcType=BIGINT},
+      lockEndTime = #{record.lockEndTime,jdbcType=BIGINT},
+      payStartTime = #{record.payStartTime,jdbcType=BIGINT},
+      payEndTime = #{record.payEndTime,jdbcType=BIGINT},
+      assignmentStartTime = #{record.assignmentStartTime,jdbcType=BIGINT},
+      assignmentEndTime = #{record.assignmentEndTime,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_DDL_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+    update ido_dx_product
+    <set>
+      <if test="prdName != null">
+        prdName = #{prdName,jdbcType=VARCHAR},
+      </if>
+      <if test="currency != null">
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="baseCurrency != null">
+        baseCurrency = #{baseCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null">
+        rate = #{rate,jdbcType=DECIMAL},
+      </if>
+      <if test="pledgeTotal != null">
+        pledgeTotal = #{pledgeTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="raiseTotal != null">
+        raiseTotal = #{raiseTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="currencyTotal != null">
+        currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="prdDesc != null">
+        prdDesc = #{prdDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="prdDescEn != null">
+        prdDescEn = #{prdDescEn,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleDesc != null">
+        ruleDesc = #{ruleDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleDescEn != null">
+        ruleDescEn = #{ruleDescEn,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=BIGINT},
+      </if>
+      <if test="startTime != null">
+        startTime = #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        endTime = #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="pledgeStartTime != null">
+        pledgeStartTime = #{pledgeStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="pledgeEndTime != null">
+        pledgeEndTime = #{pledgeEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="lockStartTime != null">
+        lockStartTime = #{lockStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="lockEndTime != null">
+        lockEndTime = #{lockEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="payStartTime != null">
+        payStartTime = #{payStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="payEndTime != null">
+        payEndTime = #{payEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="assignmentStartTime != null">
+        assignmentStartTime = #{assignmentStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="assignmentEndTime != null">
+        assignmentEndTime = #{assignmentEndTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+    update ido_dx_product
+    set prdName = #{prdName,jdbcType=VARCHAR},
+      currency = #{currency,jdbcType=VARCHAR},
+      baseCurrency = #{baseCurrency,jdbcType=VARCHAR},
+      rate = #{rate,jdbcType=DECIMAL},
+      pledgeTotal = #{pledgeTotal,jdbcType=DECIMAL},
+      raiseTotal = #{raiseTotal,jdbcType=DECIMAL},
+      currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
+      address = #{address,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR},
+      prdDesc = #{prdDesc,jdbcType=VARCHAR},
+      prdDescEn = #{prdDescEn,jdbcType=VARCHAR},
+      ruleDesc = #{ruleDesc,jdbcType=VARCHAR},
+      ruleDescEn = #{ruleDescEn,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=BIGINT},
+      updateTime = #{updateTime,jdbcType=BIGINT},
+      startTime = #{startTime,jdbcType=BIGINT},
+      endTime = #{endTime,jdbcType=BIGINT},
+      pledgeStartTime = #{pledgeStartTime,jdbcType=BIGINT},
+      pledgeEndTime = #{pledgeEndTime,jdbcType=BIGINT},
+      lockStartTime = #{lockStartTime,jdbcType=BIGINT},
+      lockEndTime = #{lockEndTime,jdbcType=BIGINT},
+      payStartTime = #{payStartTime,jdbcType=BIGINT},
+      payEndTime = #{payEndTime,jdbcType=BIGINT},
+      assignmentStartTime = #{assignmentStartTime,jdbcType=BIGINT},
+      assignmentEndTime = #{assignmentEndTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
