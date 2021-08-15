@@ -4,13 +4,18 @@
   <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxProduct">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="prdName" jdbcType="VARCHAR" property="prdName" />
-    <result column="currency" jdbcType="VARCHAR" property="currency" />
-    <result column="baseCurrency" jdbcType="VARCHAR" property="baseCurrency" />
+    <result column="pledgeCurrency" jdbcType="VARCHAR" property="pledgeCurrency" />
+    <result column="pledgePrecision" jdbcType="SMALLINT" property="pledgePrecision" />
+    <result column="pledgeAddress" jdbcType="VARCHAR" property="pledgeAddress" />
+    <result column="payCurrency" jdbcType="VARCHAR" property="payCurrency" />
+    <result column="payPrecision" jdbcType="SMALLINT" property="payPrecision" />
+    <result column="payAddress" jdbcType="VARCHAR" property="payAddress" />
+    <result column="assignCurrency" jdbcType="VARCHAR" property="assignCurrency" />
+    <result column="assignPrecision" jdbcType="SMALLINT" property="assignPrecision" />
+    <result column="assignAddress" jdbcType="VARCHAR" property="assignAddress" />
     <result column="rate" jdbcType="DECIMAL" property="rate" />
     <result column="raiseTotal" jdbcType="DECIMAL" property="raiseTotal" />
     <result column="currencyTotal" jdbcType="DECIMAL" property="currencyTotal" />
-    <result column="tokenPrecision" jdbcType="SMALLINT" property="tokenPrecision" />
-    <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
     <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="prdDesc" jdbcType="VARCHAR" property="prdDesc" />
@@ -89,9 +94,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, prdName, currency, baseCurrency, rate, raiseTotal, currencyTotal, tokenPrecision, 
-    address, icon, state, prdDesc, prdDescEn, ruleDesc, ruleDescEn, createTime, updateTime, 
-    startTime, endTime, pledgeStartTime, pledgeEndTime, lockStartTime, lockEndTime, payStartTime, 
+    id, prdName, pledgeCurrency, pledgePrecision, pledgeAddress, payCurrency, payPrecision, 
+    payAddress, assignCurrency, assignPrecision, assignAddress, rate, raiseTotal, currencyTotal, 
+    icon, state, prdDesc, prdDescEn, ruleDesc, ruleDescEn, createTime, updateTime, startTime, 
+    endTime, pledgeStartTime, pledgeEndTime, lockStartTime, lockEndTime, payStartTime, 
     payEndTime, assignmentStartTime, assignmentEndTime
   </sql>
   <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL" resultMap="BaseResultMap">
@@ -124,27 +130,29 @@
       <include refid="DDL_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
-    insert into ido_dx_product (id, prdName, currency, 
-      baseCurrency, rate, raiseTotal, 
-      currencyTotal, tokenPrecision, address, 
-      icon, state, prdDesc, 
-      prdDescEn, ruleDesc, ruleDescEn, 
-      createTime, updateTime, startTime, 
-      endTime, pledgeStartTime, pledgeEndTime, 
-      lockStartTime, lockEndTime, payStartTime, 
-      payEndTime, assignmentStartTime, assignmentEndTime
-      )
-    values (#{id,jdbcType=BIGINT}, #{prdName,jdbcType=VARCHAR}, #{currency,jdbcType=VARCHAR}, 
-      #{baseCurrency,jdbcType=VARCHAR}, #{rate,jdbcType=DECIMAL}, #{raiseTotal,jdbcType=DECIMAL}, 
-      #{currencyTotal,jdbcType=DECIMAL}, #{tokenPrecision,jdbcType=SMALLINT}, #{address,jdbcType=VARCHAR}, 
-      #{icon,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{prdDesc,jdbcType=VARCHAR}, 
-      #{prdDescEn,jdbcType=VARCHAR}, #{ruleDesc,jdbcType=VARCHAR}, #{ruleDescEn,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{startTime,jdbcType=BIGINT}, 
-      #{endTime,jdbcType=BIGINT}, #{pledgeStartTime,jdbcType=BIGINT}, #{pledgeEndTime,jdbcType=BIGINT}, 
-      #{lockStartTime,jdbcType=BIGINT}, #{lockEndTime,jdbcType=BIGINT}, #{payStartTime,jdbcType=BIGINT}, 
-      #{payEndTime,jdbcType=BIGINT}, #{assignmentStartTime,jdbcType=BIGINT}, #{assignmentEndTime,jdbcType=BIGINT}
-      )
+  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct" useGeneratedKeys="true" keyProperty="id">
+    insert into ido_dx_product (prdName, pledgeCurrency,
+      pledgePrecision, pledgeAddress, payCurrency, 
+      payPrecision, payAddress, assignCurrency, 
+      assignPrecision, assignAddress, rate, 
+      raiseTotal, currencyTotal, icon, 
+      state, prdDesc, prdDescEn, 
+      ruleDesc, ruleDescEn, createTime, 
+      updateTime, startTime, endTime, 
+      pledgeStartTime, pledgeEndTime, lockStartTime, 
+      lockEndTime, payStartTime, payEndTime, 
+      assignmentStartTime, assignmentEndTime)
+    values (#{prdName,jdbcType=VARCHAR}, #{pledgeCurrency,jdbcType=VARCHAR},
+      #{pledgePrecision,jdbcType=SMALLINT}, #{pledgeAddress,jdbcType=VARCHAR}, #{payCurrency,jdbcType=VARCHAR}, 
+      #{payPrecision,jdbcType=SMALLINT}, #{payAddress,jdbcType=VARCHAR}, #{assignCurrency,jdbcType=VARCHAR}, 
+      #{assignPrecision,jdbcType=SMALLINT}, #{assignAddress,jdbcType=VARCHAR}, #{rate,jdbcType=DECIMAL}, 
+      #{raiseTotal,jdbcType=DECIMAL}, #{currencyTotal,jdbcType=DECIMAL}, #{icon,jdbcType=VARCHAR}, 
+      #{state,jdbcType=VARCHAR}, #{prdDesc,jdbcType=VARCHAR}, #{prdDescEn,jdbcType=VARCHAR}, 
+      #{ruleDesc,jdbcType=VARCHAR}, #{ruleDescEn,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=BIGINT}, #{startTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, 
+      #{pledgeStartTime,jdbcType=BIGINT}, #{pledgeEndTime,jdbcType=BIGINT}, #{lockStartTime,jdbcType=BIGINT}, 
+      #{lockEndTime,jdbcType=BIGINT}, #{payStartTime,jdbcType=BIGINT}, #{payEndTime,jdbcType=BIGINT}, 
+      #{assignmentStartTime,jdbcType=BIGINT}, #{assignmentEndTime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
     insert into ido_dx_product
@@ -155,11 +163,32 @@
       <if test="prdName != null">
         prdName,
       </if>
-      <if test="currency != null">
-        currency,
+      <if test="pledgeCurrency != null">
+        pledgeCurrency,
       </if>
-      <if test="baseCurrency != null">
-        baseCurrency,
+      <if test="pledgePrecision != null">
+        pledgePrecision,
+      </if>
+      <if test="pledgeAddress != null">
+        pledgeAddress,
+      </if>
+      <if test="payCurrency != null">
+        payCurrency,
+      </if>
+      <if test="payPrecision != null">
+        payPrecision,
+      </if>
+      <if test="payAddress != null">
+        payAddress,
+      </if>
+      <if test="assignCurrency != null">
+        assignCurrency,
+      </if>
+      <if test="assignPrecision != null">
+        assignPrecision,
+      </if>
+      <if test="assignAddress != null">
+        assignAddress,
       </if>
       <if test="rate != null">
         rate,
@@ -169,12 +198,6 @@
       </if>
       <if test="currencyTotal != null">
         currencyTotal,
-      </if>
-      <if test="tokenPrecision != null">
-        tokenPrecision,
-      </if>
-      <if test="address != null">
-        address,
       </if>
       <if test="icon != null">
         icon,
@@ -238,11 +261,32 @@
       <if test="prdName != null">
         #{prdName,jdbcType=VARCHAR},
       </if>
-      <if test="currency != null">
-        #{currency,jdbcType=VARCHAR},
+      <if test="pledgeCurrency != null">
+        #{pledgeCurrency,jdbcType=VARCHAR},
       </if>
-      <if test="baseCurrency != null">
-        #{baseCurrency,jdbcType=VARCHAR},
+      <if test="pledgePrecision != null">
+        #{pledgePrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="pledgeAddress != null">
+        #{pledgeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="payCurrency != null">
+        #{payCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="payPrecision != null">
+        #{payPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="payAddress != null">
+        #{payAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="assignCurrency != null">
+        #{assignCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="assignPrecision != null">
+        #{assignPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="assignAddress != null">
+        #{assignAddress,jdbcType=VARCHAR},
       </if>
       <if test="rate != null">
         #{rate,jdbcType=DECIMAL},
@@ -252,12 +296,6 @@
       </if>
       <if test="currencyTotal != null">
         #{currencyTotal,jdbcType=DECIMAL},
-      </if>
-      <if test="tokenPrecision != null">
-        #{tokenPrecision,jdbcType=SMALLINT},
-      </if>
-      <if test="address != null">
-        #{address,jdbcType=VARCHAR},
       </if>
       <if test="icon != null">
         #{icon,jdbcType=VARCHAR},
@@ -330,11 +368,32 @@
       <if test="record.prdName != null">
         prdName = #{record.prdName,jdbcType=VARCHAR},
       </if>
-      <if test="record.currency != null">
-        currency = #{record.currency,jdbcType=VARCHAR},
+      <if test="record.pledgeCurrency != null">
+        pledgeCurrency = #{record.pledgeCurrency,jdbcType=VARCHAR},
       </if>
-      <if test="record.baseCurrency != null">
-        baseCurrency = #{record.baseCurrency,jdbcType=VARCHAR},
+      <if test="record.pledgePrecision != null">
+        pledgePrecision = #{record.pledgePrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="record.pledgeAddress != null">
+        pledgeAddress = #{record.pledgeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payCurrency != null">
+        payCurrency = #{record.payCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payPrecision != null">
+        payPrecision = #{record.payPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="record.payAddress != null">
+        payAddress = #{record.payAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.assignCurrency != null">
+        assignCurrency = #{record.assignCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.assignPrecision != null">
+        assignPrecision = #{record.assignPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="record.assignAddress != null">
+        assignAddress = #{record.assignAddress,jdbcType=VARCHAR},
       </if>
       <if test="record.rate != null">
         rate = #{record.rate,jdbcType=DECIMAL},
@@ -344,12 +403,6 @@
       </if>
       <if test="record.currencyTotal != null">
         currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
-      </if>
-      <if test="record.tokenPrecision != null">
-        tokenPrecision = #{record.tokenPrecision,jdbcType=SMALLINT},
-      </if>
-      <if test="record.address != null">
-        address = #{record.address,jdbcType=VARCHAR},
       </if>
       <if test="record.icon != null">
         icon = #{record.icon,jdbcType=VARCHAR},
@@ -414,13 +467,18 @@
     update ido_dx_product
     set id = #{record.id,jdbcType=BIGINT},
       prdName = #{record.prdName,jdbcType=VARCHAR},
-      currency = #{record.currency,jdbcType=VARCHAR},
-      baseCurrency = #{record.baseCurrency,jdbcType=VARCHAR},
+      pledgeCurrency = #{record.pledgeCurrency,jdbcType=VARCHAR},
+      pledgePrecision = #{record.pledgePrecision,jdbcType=SMALLINT},
+      pledgeAddress = #{record.pledgeAddress,jdbcType=VARCHAR},
+      payCurrency = #{record.payCurrency,jdbcType=VARCHAR},
+      payPrecision = #{record.payPrecision,jdbcType=SMALLINT},
+      payAddress = #{record.payAddress,jdbcType=VARCHAR},
+      assignCurrency = #{record.assignCurrency,jdbcType=VARCHAR},
+      assignPrecision = #{record.assignPrecision,jdbcType=SMALLINT},
+      assignAddress = #{record.assignAddress,jdbcType=VARCHAR},
       rate = #{record.rate,jdbcType=DECIMAL},
       raiseTotal = #{record.raiseTotal,jdbcType=DECIMAL},
       currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
-      tokenPrecision = #{record.tokenPrecision,jdbcType=SMALLINT},
-      address = #{record.address,jdbcType=VARCHAR},
       icon = #{record.icon,jdbcType=VARCHAR},
       state = #{record.state,jdbcType=VARCHAR},
       prdDesc = #{record.prdDesc,jdbcType=VARCHAR},
@@ -449,11 +507,32 @@
       <if test="prdName != null">
         prdName = #{prdName,jdbcType=VARCHAR},
       </if>
-      <if test="currency != null">
-        currency = #{currency,jdbcType=VARCHAR},
+      <if test="pledgeCurrency != null">
+        pledgeCurrency = #{pledgeCurrency,jdbcType=VARCHAR},
       </if>
-      <if test="baseCurrency != null">
-        baseCurrency = #{baseCurrency,jdbcType=VARCHAR},
+      <if test="pledgePrecision != null">
+        pledgePrecision = #{pledgePrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="pledgeAddress != null">
+        pledgeAddress = #{pledgeAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="payCurrency != null">
+        payCurrency = #{payCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="payPrecision != null">
+        payPrecision = #{payPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="payAddress != null">
+        payAddress = #{payAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="assignCurrency != null">
+        assignCurrency = #{assignCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="assignPrecision != null">
+        assignPrecision = #{assignPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="assignAddress != null">
+        assignAddress = #{assignAddress,jdbcType=VARCHAR},
       </if>
       <if test="rate != null">
         rate = #{rate,jdbcType=DECIMAL},
@@ -463,12 +542,6 @@
       </if>
       <if test="currencyTotal != null">
         currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
-      </if>
-      <if test="tokenPrecision != null">
-        tokenPrecision = #{tokenPrecision,jdbcType=SMALLINT},
-      </if>
-      <if test="address != null">
-        address = #{address,jdbcType=VARCHAR},
       </if>
       <if test="icon != null">
         icon = #{icon,jdbcType=VARCHAR},
@@ -530,13 +603,18 @@
   <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
     update ido_dx_product
     set prdName = #{prdName,jdbcType=VARCHAR},
-      currency = #{currency,jdbcType=VARCHAR},
-      baseCurrency = #{baseCurrency,jdbcType=VARCHAR},
+      pledgeCurrency = #{pledgeCurrency,jdbcType=VARCHAR},
+      pledgePrecision = #{pledgePrecision,jdbcType=SMALLINT},
+      pledgeAddress = #{pledgeAddress,jdbcType=VARCHAR},
+      payCurrency = #{payCurrency,jdbcType=VARCHAR},
+      payPrecision = #{payPrecision,jdbcType=SMALLINT},
+      payAddress = #{payAddress,jdbcType=VARCHAR},
+      assignCurrency = #{assignCurrency,jdbcType=VARCHAR},
+      assignPrecision = #{assignPrecision,jdbcType=SMALLINT},
+      assignAddress = #{assignAddress,jdbcType=VARCHAR},
       rate = #{rate,jdbcType=DECIMAL},
       raiseTotal = #{raiseTotal,jdbcType=DECIMAL},
       currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
-      tokenPrecision = #{tokenPrecision,jdbcType=SMALLINT},
-      address = #{address,jdbcType=VARCHAR},
       icon = #{icon,jdbcType=VARCHAR},
       state = #{state,jdbcType=VARCHAR},
       prdDesc = #{prdDesc,jdbcType=VARCHAR},

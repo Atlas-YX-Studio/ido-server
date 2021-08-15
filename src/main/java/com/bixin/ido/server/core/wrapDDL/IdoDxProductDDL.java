@@ -235,143 +235,603 @@ public class IdoDxProductDDL {
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyIsNull() {
-            addCriterion("currency is null");
+        public Criteria andPledgeCurrencyIsNull() {
+            addCriterion("pledgeCurrency is null");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyIsNotNull() {
-            addCriterion("currency is not null");
+        public Criteria andPledgeCurrencyIsNotNull() {
+            addCriterion("pledgeCurrency is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyEqualTo(String value) {
-            addCriterion("currency =", value, "currency");
+        public Criteria andPledgeCurrencyEqualTo(String value) {
+            addCriterion("pledgeCurrency =", value, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyNotEqualTo(String value) {
-            addCriterion("currency <>", value, "currency");
+        public Criteria andPledgeCurrencyNotEqualTo(String value) {
+            addCriterion("pledgeCurrency <>", value, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyGreaterThan(String value) {
-            addCriterion("currency >", value, "currency");
+        public Criteria andPledgeCurrencyGreaterThan(String value) {
+            addCriterion("pledgeCurrency >", value, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyGreaterThanOrEqualTo(String value) {
-            addCriterion("currency >=", value, "currency");
+        public Criteria andPledgeCurrencyGreaterThanOrEqualTo(String value) {
+            addCriterion("pledgeCurrency >=", value, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyLessThan(String value) {
-            addCriterion("currency <", value, "currency");
+        public Criteria andPledgeCurrencyLessThan(String value) {
+            addCriterion("pledgeCurrency <", value, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyLessThanOrEqualTo(String value) {
-            addCriterion("currency <=", value, "currency");
+        public Criteria andPledgeCurrencyLessThanOrEqualTo(String value) {
+            addCriterion("pledgeCurrency <=", value, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyLike(String value) {
-            addCriterion("currency like", value, "currency");
+        public Criteria andPledgeCurrencyLike(String value) {
+            addCriterion("pledgeCurrency like", value, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyNotLike(String value) {
-            addCriterion("currency not like", value, "currency");
+        public Criteria andPledgeCurrencyNotLike(String value) {
+            addCriterion("pledgeCurrency not like", value, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyIn(List<String> values) {
-            addCriterion("currency in", values, "currency");
+        public Criteria andPledgeCurrencyIn(List<String> values) {
+            addCriterion("pledgeCurrency in", values, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyNotIn(List<String> values) {
-            addCriterion("currency not in", values, "currency");
+        public Criteria andPledgeCurrencyNotIn(List<String> values) {
+            addCriterion("pledgeCurrency not in", values, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyBetween(String value1, String value2) {
-            addCriterion("currency between", value1, value2, "currency");
+        public Criteria andPledgeCurrencyBetween(String value1, String value2) {
+            addCriterion("pledgeCurrency between", value1, value2, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andCurrencyNotBetween(String value1, String value2) {
-            addCriterion("currency not between", value1, value2, "currency");
+        public Criteria andPledgeCurrencyNotBetween(String value1, String value2) {
+            addCriterion("pledgeCurrency not between", value1, value2, "pledgeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyIsNull() {
-            addCriterion("baseCurrency is null");
+        public Criteria andPledgePrecisionIsNull() {
+            addCriterion("pledgePrecision is null");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyIsNotNull() {
-            addCriterion("baseCurrency is not null");
+        public Criteria andPledgePrecisionIsNotNull() {
+            addCriterion("pledgePrecision is not null");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyEqualTo(String value) {
-            addCriterion("baseCurrency =", value, "baseCurrency");
+        public Criteria andPledgePrecisionEqualTo(Short value) {
+            addCriterion("pledgePrecision =", value, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyNotEqualTo(String value) {
-            addCriterion("baseCurrency <>", value, "baseCurrency");
+        public Criteria andPledgePrecisionNotEqualTo(Short value) {
+            addCriterion("pledgePrecision <>", value, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyGreaterThan(String value) {
-            addCriterion("baseCurrency >", value, "baseCurrency");
+        public Criteria andPledgePrecisionGreaterThan(Short value) {
+            addCriterion("pledgePrecision >", value, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyGreaterThanOrEqualTo(String value) {
-            addCriterion("baseCurrency >=", value, "baseCurrency");
+        public Criteria andPledgePrecisionGreaterThanOrEqualTo(Short value) {
+            addCriterion("pledgePrecision >=", value, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyLessThan(String value) {
-            addCriterion("baseCurrency <", value, "baseCurrency");
+        public Criteria andPledgePrecisionLessThan(Short value) {
+            addCriterion("pledgePrecision <", value, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyLessThanOrEqualTo(String value) {
-            addCriterion("baseCurrency <=", value, "baseCurrency");
+        public Criteria andPledgePrecisionLessThanOrEqualTo(Short value) {
+            addCriterion("pledgePrecision <=", value, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyLike(String value) {
-            addCriterion("baseCurrency like", value, "baseCurrency");
+        public Criteria andPledgePrecisionIn(List<Short> values) {
+            addCriterion("pledgePrecision in", values, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyNotLike(String value) {
-            addCriterion("baseCurrency not like", value, "baseCurrency");
+        public Criteria andPledgePrecisionNotIn(List<Short> values) {
+            addCriterion("pledgePrecision not in", values, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyIn(List<String> values) {
-            addCriterion("baseCurrency in", values, "baseCurrency");
+        public Criteria andPledgePrecisionBetween(Short value1, Short value2) {
+            addCriterion("pledgePrecision between", value1, value2, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyNotIn(List<String> values) {
-            addCriterion("baseCurrency not in", values, "baseCurrency");
+        public Criteria andPledgePrecisionNotBetween(Short value1, Short value2) {
+            addCriterion("pledgePrecision not between", value1, value2, "pledgePrecision");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyBetween(String value1, String value2) {
-            addCriterion("baseCurrency between", value1, value2, "baseCurrency");
+        public Criteria andPledgeAddressIsNull() {
+            addCriterion("pledgeAddress is null");
             return (Criteria) this;
         }
 
-        public Criteria andBaseCurrencyNotBetween(String value1, String value2) {
-            addCriterion("baseCurrency not between", value1, value2, "baseCurrency");
+        public Criteria andPledgeAddressIsNotNull() {
+            addCriterion("pledgeAddress is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressEqualTo(String value) {
+            addCriterion("pledgeAddress =", value, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressNotEqualTo(String value) {
+            addCriterion("pledgeAddress <>", value, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressGreaterThan(String value) {
+            addCriterion("pledgeAddress >", value, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("pledgeAddress >=", value, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressLessThan(String value) {
+            addCriterion("pledgeAddress <", value, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressLessThanOrEqualTo(String value) {
+            addCriterion("pledgeAddress <=", value, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressLike(String value) {
+            addCriterion("pledgeAddress like", value, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressNotLike(String value) {
+            addCriterion("pledgeAddress not like", value, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressIn(List<String> values) {
+            addCriterion("pledgeAddress in", values, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressNotIn(List<String> values) {
+            addCriterion("pledgeAddress not in", values, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressBetween(String value1, String value2) {
+            addCriterion("pledgeAddress between", value1, value2, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPledgeAddressNotBetween(String value1, String value2) {
+            addCriterion("pledgeAddress not between", value1, value2, "pledgeAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyIsNull() {
+            addCriterion("payCurrency is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyIsNotNull() {
+            addCriterion("payCurrency is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyEqualTo(String value) {
+            addCriterion("payCurrency =", value, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyNotEqualTo(String value) {
+            addCriterion("payCurrency <>", value, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyGreaterThan(String value) {
+            addCriterion("payCurrency >", value, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyGreaterThanOrEqualTo(String value) {
+            addCriterion("payCurrency >=", value, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyLessThan(String value) {
+            addCriterion("payCurrency <", value, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyLessThanOrEqualTo(String value) {
+            addCriterion("payCurrency <=", value, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyLike(String value) {
+            addCriterion("payCurrency like", value, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyNotLike(String value) {
+            addCriterion("payCurrency not like", value, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyIn(List<String> values) {
+            addCriterion("payCurrency in", values, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyNotIn(List<String> values) {
+            addCriterion("payCurrency not in", values, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyBetween(String value1, String value2) {
+            addCriterion("payCurrency between", value1, value2, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayCurrencyNotBetween(String value1, String value2) {
+            addCriterion("payCurrency not between", value1, value2, "payCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionIsNull() {
+            addCriterion("payPrecision is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionIsNotNull() {
+            addCriterion("payPrecision is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionEqualTo(Short value) {
+            addCriterion("payPrecision =", value, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionNotEqualTo(Short value) {
+            addCriterion("payPrecision <>", value, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionGreaterThan(Short value) {
+            addCriterion("payPrecision >", value, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionGreaterThanOrEqualTo(Short value) {
+            addCriterion("payPrecision >=", value, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionLessThan(Short value) {
+            addCriterion("payPrecision <", value, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionLessThanOrEqualTo(Short value) {
+            addCriterion("payPrecision <=", value, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionIn(List<Short> values) {
+            addCriterion("payPrecision in", values, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionNotIn(List<Short> values) {
+            addCriterion("payPrecision not in", values, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionBetween(Short value1, Short value2) {
+            addCriterion("payPrecision between", value1, value2, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayPrecisionNotBetween(Short value1, Short value2) {
+            addCriterion("payPrecision not between", value1, value2, "payPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressIsNull() {
+            addCriterion("payAddress is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressIsNotNull() {
+            addCriterion("payAddress is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressEqualTo(String value) {
+            addCriterion("payAddress =", value, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressNotEqualTo(String value) {
+            addCriterion("payAddress <>", value, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressGreaterThan(String value) {
+            addCriterion("payAddress >", value, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("payAddress >=", value, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressLessThan(String value) {
+            addCriterion("payAddress <", value, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressLessThanOrEqualTo(String value) {
+            addCriterion("payAddress <=", value, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressLike(String value) {
+            addCriterion("payAddress like", value, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressNotLike(String value) {
+            addCriterion("payAddress not like", value, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressIn(List<String> values) {
+            addCriterion("payAddress in", values, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressNotIn(List<String> values) {
+            addCriterion("payAddress not in", values, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressBetween(String value1, String value2) {
+            addCriterion("payAddress between", value1, value2, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andPayAddressNotBetween(String value1, String value2) {
+            addCriterion("payAddress not between", value1, value2, "payAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyIsNull() {
+            addCriterion("assignCurrency is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyIsNotNull() {
+            addCriterion("assignCurrency is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyEqualTo(String value) {
+            addCriterion("assignCurrency =", value, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyNotEqualTo(String value) {
+            addCriterion("assignCurrency <>", value, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyGreaterThan(String value) {
+            addCriterion("assignCurrency >", value, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyGreaterThanOrEqualTo(String value) {
+            addCriterion("assignCurrency >=", value, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyLessThan(String value) {
+            addCriterion("assignCurrency <", value, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyLessThanOrEqualTo(String value) {
+            addCriterion("assignCurrency <=", value, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyLike(String value) {
+            addCriterion("assignCurrency like", value, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyNotLike(String value) {
+            addCriterion("assignCurrency not like", value, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyIn(List<String> values) {
+            addCriterion("assignCurrency in", values, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyNotIn(List<String> values) {
+            addCriterion("assignCurrency not in", values, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyBetween(String value1, String value2) {
+            addCriterion("assignCurrency between", value1, value2, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignCurrencyNotBetween(String value1, String value2) {
+            addCriterion("assignCurrency not between", value1, value2, "assignCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionIsNull() {
+            addCriterion("assignPrecision is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionIsNotNull() {
+            addCriterion("assignPrecision is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionEqualTo(Short value) {
+            addCriterion("assignPrecision =", value, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionNotEqualTo(Short value) {
+            addCriterion("assignPrecision <>", value, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionGreaterThan(Short value) {
+            addCriterion("assignPrecision >", value, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionGreaterThanOrEqualTo(Short value) {
+            addCriterion("assignPrecision >=", value, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionLessThan(Short value) {
+            addCriterion("assignPrecision <", value, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionLessThanOrEqualTo(Short value) {
+            addCriterion("assignPrecision <=", value, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionIn(List<Short> values) {
+            addCriterion("assignPrecision in", values, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionNotIn(List<Short> values) {
+            addCriterion("assignPrecision not in", values, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionBetween(Short value1, Short value2) {
+            addCriterion("assignPrecision between", value1, value2, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignPrecisionNotBetween(Short value1, Short value2) {
+            addCriterion("assignPrecision not between", value1, value2, "assignPrecision");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressIsNull() {
+            addCriterion("assignAddress is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressIsNotNull() {
+            addCriterion("assignAddress is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressEqualTo(String value) {
+            addCriterion("assignAddress =", value, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressNotEqualTo(String value) {
+            addCriterion("assignAddress <>", value, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressGreaterThan(String value) {
+            addCriterion("assignAddress >", value, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("assignAddress >=", value, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressLessThan(String value) {
+            addCriterion("assignAddress <", value, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressLessThanOrEqualTo(String value) {
+            addCriterion("assignAddress <=", value, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressLike(String value) {
+            addCriterion("assignAddress like", value, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressNotLike(String value) {
+            addCriterion("assignAddress not like", value, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressIn(List<String> values) {
+            addCriterion("assignAddress in", values, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressNotIn(List<String> values) {
+            addCriterion("assignAddress not in", values, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressBetween(String value1, String value2) {
+            addCriterion("assignAddress between", value1, value2, "assignAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssignAddressNotBetween(String value1, String value2) {
+            addCriterion("assignAddress not between", value1, value2, "assignAddress");
             return (Criteria) this;
         }
 
@@ -552,136 +1012,6 @@ public class IdoDxProductDDL {
 
         public Criteria andCurrencyTotalNotBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("currencyTotal not between", value1, value2, "currencyTotal");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionIsNull() {
-            addCriterion("tokenPrecision is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionIsNotNull() {
-            addCriterion("tokenPrecision is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionEqualTo(Short value) {
-            addCriterion("tokenPrecision =", value, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionNotEqualTo(Short value) {
-            addCriterion("tokenPrecision <>", value, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionGreaterThan(Short value) {
-            addCriterion("tokenPrecision >", value, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionGreaterThanOrEqualTo(Short value) {
-            addCriterion("tokenPrecision >=", value, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionLessThan(Short value) {
-            addCriterion("tokenPrecision <", value, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionLessThanOrEqualTo(Short value) {
-            addCriterion("tokenPrecision <=", value, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionIn(List<Short> values) {
-            addCriterion("tokenPrecision in", values, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionNotIn(List<Short> values) {
-            addCriterion("tokenPrecision not in", values, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionBetween(Short value1, Short value2) {
-            addCriterion("tokenPrecision between", value1, value2, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andTokenPrecisionNotBetween(Short value1, Short value2) {
-            addCriterion("tokenPrecision not between", value1, value2, "tokenPrecision");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressIsNull() {
-            addCriterion("address is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressIsNotNull() {
-            addCriterion("address is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressEqualTo(String value) {
-            addCriterion("address =", value, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressNotEqualTo(String value) {
-            addCriterion("address <>", value, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressGreaterThan(String value) {
-            addCriterion("address >", value, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressGreaterThanOrEqualTo(String value) {
-            addCriterion("address >=", value, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressLessThan(String value) {
-            addCriterion("address <", value, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressLessThanOrEqualTo(String value) {
-            addCriterion("address <=", value, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressLike(String value) {
-            addCriterion("address like", value, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressNotLike(String value) {
-            addCriterion("address not like", value, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressIn(List<String> values) {
-            addCriterion("address in", values, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressNotIn(List<String> values) {
-            addCriterion("address not in", values, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressBetween(String value1, String value2) {
-            addCriterion("address between", value1, value2, "address");
-            return (Criteria) this;
-        }
-
-        public Criteria andAddressNotBetween(String value1, String value2) {
-            addCriterion("address not between", value1, value2, "address");
             return (Criteria) this;
         }
 

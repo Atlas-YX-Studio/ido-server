@@ -106,12 +106,12 @@
       <include refid="DDL_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
-    insert into ido_dx_user_record (id, prdAddress, userAddress, 
+  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord" useGeneratedKeys="true" keyProperty="id">
+    insert into ido_dx_user_record (prdAddress, userAddress,
       amount, gasCost, tokenAmount, 
       currency, extInfo, tokenVersion, 
       createTime, updateTime)
-    values (#{id,jdbcType=BIGINT}, #{prdAddress,jdbcType=VARCHAR}, #{userAddress,jdbcType=VARCHAR}, 
+    values (#{prdAddress,jdbcType=VARCHAR}, #{userAddress,jdbcType=VARCHAR},
       #{amount,jdbcType=DECIMAL}, #{gasCost,jdbcType=DECIMAL}, #{tokenAmount,jdbcType=DECIMAL}, 
       #{currency,jdbcType=VARCHAR}, #{extInfo,jdbcType=VARCHAR}, #{tokenVersion,jdbcType=SMALLINT}, 
       #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})

@@ -12,7 +12,9 @@ import java.util.List;
  */
 public interface IIdoDxUserRecordService {
 
-    void updateUserRecord(UserRecordReqBo bean);
+    int updateUserRecord(UserRecordReqBo bean);
+
+    int updateUserRecord(IdoDxUserRecord record);
 
     List<IdoDxUserRecord> getUserRecord(IdoDxUserRecord record);
 

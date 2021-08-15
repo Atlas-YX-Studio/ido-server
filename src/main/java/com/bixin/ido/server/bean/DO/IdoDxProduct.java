@@ -1,35 +1,45 @@
 package com.bixin.ido.server.bean.DO;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
+
 @Data
 @SuperBuilder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class IdoDxProduct {
     private Long id;
 
     private String prdName;
 
-    private String currency;
+    private String pledgeCurrency;
 
-    private String baseCurrency;
+    private Short pledgePrecision;
+
+    private String pledgeAddress;
+
+    private String payCurrency;
+
+    private Short payPrecision;
+
+    private String payAddress;
+
+    private String assignCurrency;
+
+    private Short assignPrecision;
+
+    private String assignAddress;
 
     private BigDecimal rate;
 
     private BigDecimal raiseTotal;
 
     private BigDecimal currencyTotal;
-
-    private Short tokenPrecision;
-
-    private String address;
 
     private String icon;
 

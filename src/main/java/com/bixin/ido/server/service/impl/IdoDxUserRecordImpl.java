@@ -32,7 +32,7 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
     IdoDxUserRecordMapper idoDxUserRecordMapper;
 
     @Override
-    public void updateUserRecord(UserRecordReqBo bean) {
+    public int updateUserRecord(UserRecordReqBo bean) {
         IdoDxUserRecordDDL idoDxUserRecordDDL = new IdoDxUserRecordDDL();
         IdoDxUserRecordDDL.Criteria criteria = idoDxUserRecordDDL.createCriteria();
         criteria.andUserAddressEqualTo(bean.getUserAddress());
@@ -59,7 +59,7 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
                     .updateTime(currentTime)
                     .build();
             idoDxUserRecordMapper.insert(idoDxUserRecord);
-            return;
+            return 0;
         }
         idoDxUserRecord = idoDxUserRecords.get(0);
 
@@ -67,8 +67,9 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
         String extInfo = idoDxUserRecord.getExtInfo();
         TreeMap<Integer, BigDecimal> amountMap;
         if (StringUtils.isNoneBlank(extInfo)) {
-            Map<String, TreeMap<Integer, BigDecimal>> extMap = JSON.parseObject(idoDxUserRecord.getExtInfo(), new TypeReference<Map<String, TreeMap<Integer, BigDecimal>>>() {
-            });
+            Map<String, TreeMap<Integer, BigDecimal>> extMap = JSON.parseObject(idoDxUserRecord.getExtInfo(),
+                    new TypeReference<Map<String, TreeMap<Integer, BigDecimal>>>() {
+                    });
             amountMap = extMap.get(IdoDxCommonConstant.USER_RECORD_EXT_KEY);
             amountMap.put(amountMap.size() + 1, userAmount);
         } else {
@@ -80,8 +81,13 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
         idoDxUserRecord.setAmount(updateAmount);
         idoDxUserRecord.setUpdateTime(currentTime);
 
-        idoDxUserRecordMapper.updateByPrimaryKeySelective(idoDxUserRecord);
+        return updateUserRecord(idoDxUserRecord);
 
+    }
+
+    @Override
+    public int updateUserRecord(IdoDxUserRecord record) {
+        return idoDxUserRecordMapper.updateByPrimaryKeySelective(record);
     }
 
 
@@ -93,7 +99,6 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
         if (StringUtils.isNoneEmpty(record.getPrdAddress())) {
             criteria.andPrdAddressEqualTo(record.getPrdAddress());
         }
-
         if (StringUtils.isNoneEmpty(record.getUserAddress())) {
             criteria.andUserAddressEqualTo(record.getUserAddress());
         }

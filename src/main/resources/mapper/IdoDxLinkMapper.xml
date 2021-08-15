@@ -100,11 +100,11 @@
       <include refid="DDL_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxLink">
-    insert into ido_dx_link (id, prdId, name, 
+  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxLink" useGeneratedKeys="true" keyProperty="id">
+    insert into ido_dx_link (prdId, name,
       url, createTime, updateTime
       )
-    values (#{id,jdbcType=BIGINT}, #{prdId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+    values (#{prdId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
       #{url,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
   </insert>

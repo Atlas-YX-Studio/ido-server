@@ -99,10 +99,10 @@
       <include refid="DDL_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxAttribute">
-    insert into ido_dx_attribute (id, prdId, name, 
+  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxAttribute" useGeneratedKeys="true" keyProperty="id">
+    insert into ido_dx_attribute (prdId, name,
       createTime, updateTime)
-    values (#{id,jdbcType=BIGINT}, #{prdId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
+    values (#{prdId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
       #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxAttribute">

@@ -16,6 +16,7 @@ import com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL;
 import com.bixin.ido.server.enums.ProductState;
 import com.bixin.ido.server.service.IIdoDxProductService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -90,6 +91,7 @@ public class IdoDxProductImpl implements IIdoDxProductService {
         labelCriteria.andPrdIdIn(pIds);
         List<IdoDxLabel> idoDxLabels = idoDxLabelMapper.selectByDDL(dxLabelDDL);
 
+        //分组
         Map<Long, List<IdoDxAttribute>> dxAttrMap = Collections.emptyMap();
         Map<Long, List<IdoDxLink>> dxLinkMap = Collections.emptyMap();
         Map<Long, List<IdoDxLabel>> dxLabelMap = Collections.emptyMap();
@@ -103,6 +105,7 @@ public class IdoDxProductImpl implements IIdoDxProductService {
             dxLabelMap = idoDxLabels.stream().collect(Collectors.groupingBy(IdoDxLabel::getPrdId));
         }
 
+        //组合
         ArrayList<HomeProductVO> homeProductVOS = new ArrayList<>();
         for (IdoDxProduct p : idoDxProducts) {
             Long pId = p.getId();
@@ -114,34 +117,8 @@ public class IdoDxProductImpl implements IIdoDxProductService {
                     .attributes(dxAttributeList)
                     .labels(idoDxLabelList)
                     .links(idoDxLinkList)
-                    .address(p.getAddress())
-                    .assignmentEndTime(p.getAssignmentEndTime())
-                    .assignmentStartTime(p.getAssignmentStartTime())
-                    .baseCurrency(p.getBaseCurrency())
-                    .createTime(p.getCreateTime())
-                    .endTime(p.getEndTime())
-                    .currency(p.getCurrency())
-                    .currencyTotal(p.getCurrencyTotal())
-                    .icon(p.getIcon())
-                    .id(p.getId())
-                    .lockStartTime(p.getLockStartTime())
-                    .lockEndTime(p.getLockEndTime())
-                    .payStartTime(p.getPayStartTime())
-                    .payEndTime(p.getPayEndTime())
-                    .pledgeStartTime(p.getPledgeStartTime())
-                    .pledgeEndTime(p.getPledgeEndTime())
-                    .prdDesc(p.getPrdDesc())
-                    .prdName(p.getPrdName())
-                    .prdDescEn(p.getPrdDescEn())
-                    .raiseTotal(p.getRaiseTotal())
-                    .rate(p.getRate())
-                    .tokenPrecision(p.getTokenPrecision())
-                    .ruleDesc(p.getRuleDesc())
-                    .ruleDescEn(p.getRuleDescEn())
-                    .startTime(p.getStartTime())
-                    .updateTime(p.getUpdateTime())
-                    .state(p.getState())
                     .build();
+            BeanUtils.copyProperties(p, homeProductVO);
             homeProductVOS.add(homeProductVO);
         }
         return homeProductVOS;
