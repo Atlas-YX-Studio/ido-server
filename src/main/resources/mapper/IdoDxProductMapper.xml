@@ -16,6 +16,7 @@
     <result column="rate" jdbcType="DECIMAL" property="rate" />
     <result column="raiseTotal" jdbcType="DECIMAL" property="raiseTotal" />
     <result column="currencyTotal" jdbcType="DECIMAL" property="currencyTotal" />
+    <result column="saleTotal" jdbcType="DECIMAL" property="saleTotal" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
     <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="prdDesc" jdbcType="VARCHAR" property="prdDesc" />
@@ -96,8 +97,8 @@
   <sql id="Base_Column_List">
     id, prdName, pledgeCurrency, pledgePrecision, pledgeAddress, payCurrency, payPrecision, 
     payAddress, assignCurrency, assignPrecision, assignAddress, rate, raiseTotal, currencyTotal, 
-    icon, state, prdDesc, prdDescEn, ruleDesc, ruleDescEn, createTime, updateTime, startTime, 
-    endTime, pledgeStartTime, pledgeEndTime, lockStartTime, lockEndTime, payStartTime, 
+    saleTotal, icon, state, prdDesc, prdDescEn, ruleDesc, ruleDescEn, createTime, updateTime, 
+    startTime, endTime, pledgeStartTime, pledgeEndTime, lockStartTime, lockEndTime, payStartTime, 
     payEndTime, assignmentStartTime, assignmentEndTime
   </sql>
   <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL" resultMap="BaseResultMap">
@@ -135,24 +136,26 @@
       pledgePrecision, pledgeAddress, payCurrency, 
       payPrecision, payAddress, assignCurrency, 
       assignPrecision, assignAddress, rate, 
-      raiseTotal, currencyTotal, icon, 
-      state, prdDesc, prdDescEn, 
-      ruleDesc, ruleDescEn, createTime, 
-      updateTime, startTime, endTime, 
-      pledgeStartTime, pledgeEndTime, lockStartTime, 
-      lockEndTime, payStartTime, payEndTime, 
-      assignmentStartTime, assignmentEndTime)
+      raiseTotal, currencyTotal, saleTotal, 
+      icon, state, prdDesc, 
+      prdDescEn, ruleDesc, ruleDescEn, 
+      createTime, updateTime, startTime, 
+      endTime, pledgeStartTime, pledgeEndTime, 
+      lockStartTime, lockEndTime, payStartTime, 
+      payEndTime, assignmentStartTime, assignmentEndTime
+      )
     values (#{prdName,jdbcType=VARCHAR}, #{pledgeCurrency,jdbcType=VARCHAR},
       #{pledgePrecision,jdbcType=SMALLINT}, #{pledgeAddress,jdbcType=VARCHAR}, #{payCurrency,jdbcType=VARCHAR}, 
       #{payPrecision,jdbcType=SMALLINT}, #{payAddress,jdbcType=VARCHAR}, #{assignCurrency,jdbcType=VARCHAR}, 
       #{assignPrecision,jdbcType=SMALLINT}, #{assignAddress,jdbcType=VARCHAR}, #{rate,jdbcType=DECIMAL}, 
-      #{raiseTotal,jdbcType=DECIMAL}, #{currencyTotal,jdbcType=DECIMAL}, #{icon,jdbcType=VARCHAR}, 
-      #{state,jdbcType=VARCHAR}, #{prdDesc,jdbcType=VARCHAR}, #{prdDescEn,jdbcType=VARCHAR}, 
-      #{ruleDesc,jdbcType=VARCHAR}, #{ruleDescEn,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=BIGINT}, #{startTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, 
-      #{pledgeStartTime,jdbcType=BIGINT}, #{pledgeEndTime,jdbcType=BIGINT}, #{lockStartTime,jdbcType=BIGINT}, 
-      #{lockEndTime,jdbcType=BIGINT}, #{payStartTime,jdbcType=BIGINT}, #{payEndTime,jdbcType=BIGINT}, 
-      #{assignmentStartTime,jdbcType=BIGINT}, #{assignmentEndTime,jdbcType=BIGINT})
+      #{raiseTotal,jdbcType=DECIMAL}, #{currencyTotal,jdbcType=DECIMAL}, #{saleTotal,jdbcType=DECIMAL}, 
+      #{icon,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{prdDesc,jdbcType=VARCHAR}, 
+      #{prdDescEn,jdbcType=VARCHAR}, #{ruleDesc,jdbcType=VARCHAR}, #{ruleDescEn,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{startTime,jdbcType=BIGINT}, 
+      #{endTime,jdbcType=BIGINT}, #{pledgeStartTime,jdbcType=BIGINT}, #{pledgeEndTime,jdbcType=BIGINT}, 
+      #{lockStartTime,jdbcType=BIGINT}, #{lockEndTime,jdbcType=BIGINT}, #{payStartTime,jdbcType=BIGINT}, 
+      #{payEndTime,jdbcType=BIGINT}, #{assignmentStartTime,jdbcType=BIGINT}, #{assignmentEndTime,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
     insert into ido_dx_product
@@ -198,6 +201,9 @@
       </if>
       <if test="currencyTotal != null">
         currencyTotal,
+      </if>
+      <if test="saleTotal != null">
+        saleTotal,
       </if>
       <if test="icon != null">
         icon,
@@ -296,6 +302,9 @@
       </if>
       <if test="currencyTotal != null">
         #{currencyTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="saleTotal != null">
+        #{saleTotal,jdbcType=DECIMAL},
       </if>
       <if test="icon != null">
         #{icon,jdbcType=VARCHAR},
@@ -404,6 +413,9 @@
       <if test="record.currencyTotal != null">
         currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
       </if>
+      <if test="record.saleTotal != null">
+        saleTotal = #{record.saleTotal,jdbcType=DECIMAL},
+      </if>
       <if test="record.icon != null">
         icon = #{record.icon,jdbcType=VARCHAR},
       </if>
@@ -479,6 +491,7 @@
       rate = #{record.rate,jdbcType=DECIMAL},
       raiseTotal = #{record.raiseTotal,jdbcType=DECIMAL},
       currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
+      saleTotal = #{record.saleTotal,jdbcType=DECIMAL},
       icon = #{record.icon,jdbcType=VARCHAR},
       state = #{record.state,jdbcType=VARCHAR},
       prdDesc = #{record.prdDesc,jdbcType=VARCHAR},
@@ -542,6 +555,9 @@
       </if>
       <if test="currencyTotal != null">
         currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="saleTotal != null">
+        saleTotal = #{saleTotal,jdbcType=DECIMAL},
       </if>
       <if test="icon != null">
         icon = #{icon,jdbcType=VARCHAR},
@@ -615,6 +631,7 @@
       rate = #{rate,jdbcType=DECIMAL},
       raiseTotal = #{raiseTotal,jdbcType=DECIMAL},
       currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
+      saleTotal = #{saleTotal,jdbcType=DECIMAL},
       icon = #{icon,jdbcType=VARCHAR},
       state = #{state,jdbcType=VARCHAR},
       prdDesc = #{prdDesc,jdbcType=VARCHAR},

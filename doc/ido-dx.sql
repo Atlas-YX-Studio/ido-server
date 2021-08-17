@@ -25,6 +25,7 @@ CREATE TABLE ido_dx_product (
     rate DECIMAL(18,9) DEFAULT 0 COMMENT '兑换率',
     raiseTotal DECIMAL(36,18) DEFAULT 0 COMMENT '筹集总量',
     currencyTotal DECIMAL(36,18) DEFAULT 0 COMMENT '代币预发行总量',
+    saleTotal DECIMAL(36,18) DEFAULT 0 COMMENT '总销售量',
     icon VARCHAR(500) DEFAULT NULL COMMENT '图标',
     state VARCHAR(20) DEFAULT NULL COMMENT '项目状态：init，processing，finish',
     prdDesc VARCHAR(2500) DEFAULT NULL COMMENT '项目描述',

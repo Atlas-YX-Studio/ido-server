@@ -7,11 +7,10 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
-
 @Data
 @SuperBuilder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class IdoDxProduct {
     private Long id;
 
@@ -40,6 +39,8 @@ public class IdoDxProduct {
     private BigDecimal raiseTotal;
 
     private BigDecimal currencyTotal;
+
+    private BigDecimal saleTotal;
 
     private String icon;
 

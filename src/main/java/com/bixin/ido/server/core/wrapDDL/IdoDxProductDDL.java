@@ -1015,6 +1015,66 @@ public class IdoDxProductDDL {
             return (Criteria) this;
         }
 
+        public Criteria andSaleTotalIsNull() {
+            addCriterion("saleTotal is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalIsNotNull() {
+            addCriterion("saleTotal is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalEqualTo(BigDecimal value) {
+            addCriterion("saleTotal =", value, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalNotEqualTo(BigDecimal value) {
+            addCriterion("saleTotal <>", value, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalGreaterThan(BigDecimal value) {
+            addCriterion("saleTotal >", value, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("saleTotal >=", value, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalLessThan(BigDecimal value) {
+            addCriterion("saleTotal <", value, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("saleTotal <=", value, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalIn(List<BigDecimal> values) {
+            addCriterion("saleTotal in", values, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalNotIn(List<BigDecimal> values) {
+            addCriterion("saleTotal not in", values, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("saleTotal between", value1, value2, "saleTotal");
+            return (Criteria) this;
+        }
+
+        public Criteria andSaleTotalNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("saleTotal not between", value1, value2, "saleTotal");
+            return (Criteria) this;
+        }
+
         public Criteria andIconIsNull() {
             addCriterion("icon is null");
             return (Criteria) this;
