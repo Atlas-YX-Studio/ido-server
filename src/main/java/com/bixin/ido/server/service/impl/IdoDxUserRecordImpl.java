@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -90,7 +91,6 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
         return idoDxUserRecordMapper.updateByPrimaryKeySelective(record);
     }
 
-
     @Override
     public List<IdoDxUserRecord> getUserRecord(IdoDxUserRecord record) {
         IdoDxUserRecordDDL dxUserRecordDDL = new IdoDxUserRecordDDL();
@@ -107,6 +107,18 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
         }
 
         return idoDxUserRecordMapper.selectByDDL(dxUserRecordDDL);
+    }
+
+    @Override
+    public List<IdoDxUserRecord> selectALlByPage(IdoDxUserRecord record, long from, long pageSize) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("prdAddress", record.getPrdAddress());
+        paramMap.put("tokenVersion", record.getTokenVersion());
+        paramMap.put("sort", "createTime");
+        paramMap.put("order", "desc");
+        paramMap.put("from", from);
+        paramMap.put("pageSize", pageSize);
+        return idoDxUserRecordMapper.selectALlByPage(paramMap);
     }
 
 }

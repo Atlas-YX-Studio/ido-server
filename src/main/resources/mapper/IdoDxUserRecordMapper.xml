@@ -1,306 +1,372 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bixin.ido.server.core.mapper.IdoDxUserRecordMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="prdAddress" jdbcType="VARCHAR" property="prdAddress" />
-    <result column="userAddress" jdbcType="VARCHAR" property="userAddress" />
-    <result column="amount" jdbcType="DECIMAL" property="amount" />
-    <result column="gasCost" jdbcType="DECIMAL" property="gasCost" />
-    <result column="tokenAmount" jdbcType="DECIMAL" property="tokenAmount" />
-    <result column="currency" jdbcType="VARCHAR" property="currency" />
-    <result column="extInfo" jdbcType="VARCHAR" property="extInfo" />
-    <result column="tokenVersion" jdbcType="SMALLINT" property="tokenVersion" />
-    <result column="createTime" jdbcType="BIGINT" property="createTime" />
-    <result column="updateTime" jdbcType="BIGINT" property="updateTime" />
-  </resultMap>
-  <sql id="DDL_Where_Clause">
-    <where>
-      <foreach collection="oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+    <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="prdAddress" jdbcType="VARCHAR" property="prdAddress"/>
+        <result column="userAddress" jdbcType="VARCHAR" property="userAddress"/>
+        <result column="amount" jdbcType="DECIMAL" property="amount"/>
+        <result column="gasCost" jdbcType="DECIMAL" property="gasCost"/>
+        <result column="tokenAmount" jdbcType="DECIMAL" property="tokenAmount"/>
+        <result column="currency" jdbcType="VARCHAR" property="currency"/>
+        <result column="extInfo" jdbcType="VARCHAR" property="extInfo"/>
+        <result column="tokenVersion" jdbcType="SMALLINT" property="tokenVersion"/>
+        <result column="createTime" jdbcType="BIGINT" property="createTime"/>
+        <result column="updateTime" jdbcType="BIGINT" property="updateTime"/>
+    </resultMap>
+    <sql id="DDL_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_DDL_Where_Clause">
-    <where>
-      <foreach collection="DDL.oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_DDL_Where_Clause">
+        <where>
+            <foreach collection="DDL.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List">
-    id, prdAddress, userAddress, amount, gasCost, tokenAmount, currency, extInfo, tokenVersion, 
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        id
+        , prdAddress, userAddress, amount, gasCost, tokenAmount, currency, extInfo, tokenVersion,
     createTime, updateTime
-  </sql>
-  <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from ido_dx_user_record
-    <if test="_parameter != null">
-      <include refid="DDL_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from ido_dx_user_record
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from ido_dx_user_record
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL">
-    delete from ido_dx_user_record
-    <if test="_parameter != null">
-      <include refid="DDL_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord" useGeneratedKeys="true" keyProperty="id">
-    insert into ido_dx_user_record (prdAddress, userAddress,
-      amount, gasCost, tokenAmount, 
-      currency, extInfo, tokenVersion, 
-      createTime, updateTime)
-    values (#{prdAddress,jdbcType=VARCHAR}, #{userAddress,jdbcType=VARCHAR},
-      #{amount,jdbcType=DECIMAL}, #{gasCost,jdbcType=DECIMAL}, #{tokenAmount,jdbcType=DECIMAL}, 
-      #{currency,jdbcType=VARCHAR}, #{extInfo,jdbcType=VARCHAR}, #{tokenVersion,jdbcType=SMALLINT}, 
-      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
-  </insert>
-  <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
-    insert into ido_dx_user_record
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="prdAddress != null">
-        prdAddress,
-      </if>
-      <if test="userAddress != null">
-        userAddress,
-      </if>
-      <if test="amount != null">
-        amount,
-      </if>
-      <if test="gasCost != null">
-        gasCost,
-      </if>
-      <if test="tokenAmount != null">
-        tokenAmount,
-      </if>
-      <if test="currency != null">
-        currency,
-      </if>
-      <if test="extInfo != null">
-        extInfo,
-      </if>
-      <if test="tokenVersion != null">
-        tokenVersion,
-      </if>
-      <if test="createTime != null">
-        createTime,
-      </if>
-      <if test="updateTime != null">
-        updateTime,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="prdAddress != null">
-        #{prdAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="userAddress != null">
-        #{userAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="amount != null">
-        #{amount,jdbcType=DECIMAL},
-      </if>
-      <if test="gasCost != null">
-        #{gasCost,jdbcType=DECIMAL},
-      </if>
-      <if test="tokenAmount != null">
-        #{tokenAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="currency != null">
-        #{currency,jdbcType=VARCHAR},
-      </if>
-      <if test="extInfo != null">
-        #{extInfo,jdbcType=VARCHAR},
-      </if>
-      <if test="tokenVersion != null">
-        #{tokenVersion,jdbcType=SMALLINT},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=BIGINT},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=BIGINT},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL" resultType="java.lang.Long">
-    select count(*) from ido_dx_user_record
-    <if test="_parameter != null">
-      <include refid="DDL_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByDDLSelective" parameterType="map">
-    update ido_dx_user_record
-    <set>
-      <if test="record.id != null">
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.prdAddress != null">
+    </sql>
+    <sql id="Base_Condition_List">
+        <where>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.prdAddress != null">
+                prdAddress = #{record.prdAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.userAddress != null">
+                userAddress = #{record.userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.amount != null">
+                amount = #{record.amount,jdbcType=DECIMAL},
+            </if>
+            <if test="record.gasCost != null">
+                gasCost = #{record.gasCost,jdbcType=DECIMAL},
+            </if>
+            <if test="record.tokenAmount != null">
+                tokenAmount = #{record.tokenAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="record.currency != null">
+                currency = #{record.currency,jdbcType=VARCHAR},
+            </if>
+            <if test="record.extInfo != null">
+                extInfo = #{record.extInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="record.tokenVersion != null">
+                tokenVersion = #{record.tokenVersion,jdbcType=SMALLINT},
+            </if>
+            <if test="record.createTime != null">
+                createTime = #{record.createTime,jdbcType=BIGINT},
+            </if>
+            <if test="record.updateTime != null">
+                updateTime = #{record.updateTime,jdbcType=BIGINT},
+            </if>
+        </where>
+    </sql>
+    <select id="selectALlByPage" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ido_dx_user_record
+        where 1 = 1
+        <if test="prdAddress != null">
+            and prdAddress = #{prdAddress},
+        </if>
+        <if test="tokenVersion != null">
+            and tokenVersion &lt; #{tokenVersion},
+        </if>
+        order by
+        <if test="sort != null">
+            ${sort}
+        </if>
+        <if test="order != null">
+            ${order}
+        </if>
+        <if test="from !=null and pageSize !=null">
+            limit #{from},#{pageSize}
+        </if>
+    </select>
+    <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL"
+            resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from ido_dx_user_record
+        <if test="_parameter != null">
+            <include refid="DDL_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ido_dx_user_record
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from ido_dx_user_record
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL">
+        delete from ido_dx_user_record
+        <if test="_parameter != null">
+            <include refid="DDL_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into ido_dx_user_record (prdAddress, userAddress,
+                                        amount, gasCost, tokenAmount,
+                                        currency, extInfo, tokenVersion,
+                                        createTime, updateTime)
+        values (#{prdAddress,jdbcType=VARCHAR}, #{userAddress,jdbcType=VARCHAR},
+                #{amount,jdbcType=DECIMAL}, #{gasCost,jdbcType=DECIMAL}, #{tokenAmount,jdbcType=DECIMAL},
+                #{currency,jdbcType=VARCHAR}, #{extInfo,jdbcType=VARCHAR}, #{tokenVersion,jdbcType=SMALLINT},
+                #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
+        insert into ido_dx_user_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="prdAddress != null">
+                prdAddress,
+            </if>
+            <if test="userAddress != null">
+                userAddress,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="gasCost != null">
+                gasCost,
+            </if>
+            <if test="tokenAmount != null">
+                tokenAmount,
+            </if>
+            <if test="currency != null">
+                currency,
+            </if>
+            <if test="extInfo != null">
+                extInfo,
+            </if>
+            <if test="tokenVersion != null">
+                tokenVersion,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="updateTime != null">
+                updateTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="prdAddress != null">
+                #{prdAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="userAddress != null">
+                #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="gasCost != null">
+                #{gasCost,jdbcType=DECIMAL},
+            </if>
+            <if test="tokenAmount != null">
+                #{tokenAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="currency != null">
+                #{currency,jdbcType=VARCHAR},
+            </if>
+            <if test="extInfo != null">
+                #{extInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="tokenVersion != null">
+                #{tokenVersion,jdbcType=SMALLINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL"
+            resultType="java.lang.Long">
+        select count(*) from ido_dx_user_record
+        <if test="_parameter != null">
+            <include refid="DDL_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByDDLSelective" parameterType="map">
+        update ido_dx_user_record
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.prdAddress != null">
+                prdAddress = #{record.prdAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.userAddress != null">
+                userAddress = #{record.userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.amount != null">
+                amount = #{record.amount,jdbcType=DECIMAL},
+            </if>
+            <if test="record.gasCost != null">
+                gasCost = #{record.gasCost,jdbcType=DECIMAL},
+            </if>
+            <if test="record.tokenAmount != null">
+                tokenAmount = #{record.tokenAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="record.currency != null">
+                currency = #{record.currency,jdbcType=VARCHAR},
+            </if>
+            <if test="record.extInfo != null">
+                extInfo = #{record.extInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="record.tokenVersion != null">
+                tokenVersion = #{record.tokenVersion,jdbcType=SMALLINT},
+            </if>
+            <if test="record.createTime != null">
+                createTime = #{record.createTime,jdbcType=BIGINT},
+            </if>
+            <if test="record.updateTime != null">
+                updateTime = #{record.updateTime,jdbcType=BIGINT},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_DDL_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByDDL" parameterType="map">
+        update ido_dx_user_record
+        set id = #{record.id,jdbcType=BIGINT},
         prdAddress = #{record.prdAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="record.userAddress != null">
         userAddress = #{record.userAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="record.amount != null">
         amount = #{record.amount,jdbcType=DECIMAL},
-      </if>
-      <if test="record.gasCost != null">
         gasCost = #{record.gasCost,jdbcType=DECIMAL},
-      </if>
-      <if test="record.tokenAmount != null">
         tokenAmount = #{record.tokenAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="record.currency != null">
         currency = #{record.currency,jdbcType=VARCHAR},
-      </if>
-      <if test="record.extInfo != null">
         extInfo = #{record.extInfo,jdbcType=VARCHAR},
-      </if>
-      <if test="record.tokenVersion != null">
         tokenVersion = #{record.tokenVersion,jdbcType=SMALLINT},
-      </if>
-      <if test="record.createTime != null">
         createTime = #{record.createTime,jdbcType=BIGINT},
-      </if>
-      <if test="record.updateTime != null">
-        updateTime = #{record.updateTime,jdbcType=BIGINT},
-      </if>
-    </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_DDL_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByDDL" parameterType="map">
-    update ido_dx_user_record
-    set id = #{record.id,jdbcType=BIGINT},
-      prdAddress = #{record.prdAddress,jdbcType=VARCHAR},
-      userAddress = #{record.userAddress,jdbcType=VARCHAR},
-      amount = #{record.amount,jdbcType=DECIMAL},
-      gasCost = #{record.gasCost,jdbcType=DECIMAL},
-      tokenAmount = #{record.tokenAmount,jdbcType=DECIMAL},
-      currency = #{record.currency,jdbcType=VARCHAR},
-      extInfo = #{record.extInfo,jdbcType=VARCHAR},
-      tokenVersion = #{record.tokenVersion,jdbcType=SMALLINT},
-      createTime = #{record.createTime,jdbcType=BIGINT},
-      updateTime = #{record.updateTime,jdbcType=BIGINT}
-    <if test="_parameter != null">
-      <include refid="Update_By_DDL_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
-    update ido_dx_user_record
-    <set>
-      <if test="prdAddress != null">
-        prdAddress = #{prdAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="userAddress != null">
-        userAddress = #{userAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="amount != null">
-        amount = #{amount,jdbcType=DECIMAL},
-      </if>
-      <if test="gasCost != null">
-        gasCost = #{gasCost,jdbcType=DECIMAL},
-      </if>
-      <if test="tokenAmount != null">
-        tokenAmount = #{tokenAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="currency != null">
-        currency = #{currency,jdbcType=VARCHAR},
-      </if>
-      <if test="extInfo != null">
-        extInfo = #{extInfo,jdbcType=VARCHAR},
-      </if>
-      <if test="tokenVersion != null">
-        tokenVersion = #{tokenVersion,jdbcType=SMALLINT},
-      </if>
-      <if test="createTime != null">
-        createTime = #{createTime,jdbcType=BIGINT},
-      </if>
-      <if test="updateTime != null">
-        updateTime = #{updateTime,jdbcType=BIGINT},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
-    update ido_dx_user_record
-    set prdAddress = #{prdAddress,jdbcType=VARCHAR},
-      userAddress = #{userAddress,jdbcType=VARCHAR},
-      amount = #{amount,jdbcType=DECIMAL},
-      gasCost = #{gasCost,jdbcType=DECIMAL},
-      tokenAmount = #{tokenAmount,jdbcType=DECIMAL},
-      currency = #{currency,jdbcType=VARCHAR},
-      extInfo = #{extInfo,jdbcType=VARCHAR},
-      tokenVersion = #{tokenVersion,jdbcType=SMALLINT},
-      createTime = #{createTime,jdbcType=BIGINT},
-      updateTime = #{updateTime,jdbcType=BIGINT}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+        updateTime = #{record.updateTime,jdbcType=BIGINT}
+        <if test="_parameter != null">
+            <include refid="Update_By_DDL_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
+        update ido_dx_user_record
+        <set>
+            <if test="prdAddress != null">
+                prdAddress = #{prdAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="userAddress != null">
+                userAddress = #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="amount != null">
+                amount = #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="gasCost != null">
+                gasCost = #{gasCost,jdbcType=DECIMAL},
+            </if>
+            <if test="tokenAmount != null">
+                tokenAmount = #{tokenAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="currency != null">
+                currency = #{currency,jdbcType=VARCHAR},
+            </if>
+            <if test="extInfo != null">
+                extInfo = #{extInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="tokenVersion != null">
+                tokenVersion = #{tokenVersion,jdbcType=SMALLINT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
+        update ido_dx_user_record
+        set prdAddress   = #{prdAddress,jdbcType=VARCHAR},
+            userAddress  = #{userAddress,jdbcType=VARCHAR},
+            amount       = #{amount,jdbcType=DECIMAL},
+            gasCost      = #{gasCost,jdbcType=DECIMAL},
+            tokenAmount  = #{tokenAmount,jdbcType=DECIMAL},
+            currency     = #{currency,jdbcType=VARCHAR},
+            extInfo      = #{extInfo,jdbcType=VARCHAR},
+            tokenVersion = #{tokenVersion,jdbcType=SMALLINT},
+            createTime   = #{createTime,jdbcType=BIGINT},
+            updateTime   = #{updateTime,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

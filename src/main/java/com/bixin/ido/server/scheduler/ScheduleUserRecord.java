@@ -6,6 +6,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.bean.DO.IdoDxUserRecord;
 import com.bixin.ido.server.config.IdoDxStarConfig;
+import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.IIdoDxProductService;
 import com.bixin.ido.server.service.IIdoDxUserRecordService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author zhangcheng
@@ -42,61 +44,102 @@ public class ScheduleUserRecord {
     IdoDxStarConfig idoDxStarConfig;
     @Resource
     RestTemplate restTemplate;
+    @Resource
+    RedisCache redisCache;
 
-    static final long intervalTIme = 24 * 60 * 60 * 1000;
-
+    static final String UPDATE_LOCK_KEY = "updateUserTokenAmountTask";
+    static final Long EXPIRE_TIME = 4 * 60 * 1000L;
+    //定时任务最大执行时间 大约 N 毫秒
+    static final long scheduleMaxInterval = 4 * 60 * 1000;
+    //只查询项目结束最近 N 天的数据 / 毫秒
+    static final long lastIntervalTime = 24 * 60 * 60 * 1000;
+    //大于3次更新的记录不再更新
     static final short maxTokenVersion = 3;
+    //每次查询 N 条 用户记录
+    static final long pageSize = 2000;
 
     //    @Scheduled(cron = "0/5 * * * * ?")
-    @Scheduled(cron = "5 0/10 * * * ?")
-    public void updateProduct4Processing() {
-        //只查询项目结束最近一天的数据
-        List<IdoDxProduct> finishProducts = idoDxProductService.getLastFinishProducts(intervalTIme);
-        if (CollectionUtils.isEmpty(finishProducts)) {
-            log.info("ScheduleUserRecord get last finish products is empty ...");
-        }
-        finishProducts.forEach(p -> {
-            String prdAddress = p.getPledgeAddress();
-            IdoDxUserRecord dxUserRecord = IdoDxUserRecord.builder()
-                    .prdAddress(prdAddress)
-                    .tokenVersion(maxTokenVersion)
-                    .build();
-            //大于3次更新的记录不再更新
-            List<IdoDxUserRecord> userRecords = idoDxUserRecordService.getUserRecord(dxUserRecord);
-            if (CollectionUtils.isEmpty(userRecords)) {
-                log.info("ScheduleUserRecord get user records is empty {}", prdAddress);
-                return;
-            }
-            userRecords.forEach(u -> {
-                ResponseEntity<String> resp = getPostResp(u.getUserAddress(), prdAddress);
-                if (resp.getStatusCode() == HttpStatus.OK) {
-                    Map<String, Object> respMap = JSON.parseObject(resp.getBody(), new TypeReference<>() {
-                    });
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> result = (Map<String, Object>) respMap.get("result");
-                    @SuppressWarnings("unchecked")
-                    List<JSONArray> values = (List<JSONArray>) result.get("value");
-                    values.stream().forEach(rs -> {
-                        Object[] stcResult = rs.toArray();
-                        if ("stc_staking_amount".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
-                            @SuppressWarnings("unchecked")
-                            Map<String, Object> pledgeMap = (Map<String, Object>) stcResult[1];
-                            long tokenAmount = (long) pledgeMap.get("U128");
+    @Scheduled(cron = "20 0/5 * * * ?")
+    public void updateUserTokenAmount() {
 
-                            u.setTokenVersion((short) (u.getTokenVersion() + 1));
-                            u.setTokenAmount(BigDecimal.valueOf(tokenAmount));
-                            u.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+        Long startTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+        String requestId = UUID.randomUUID().toString();
 
-                            idoDxUserRecordService.updateUserRecord(u);
+        redisCache.tryGetDistributedLock(
+                UPDATE_LOCK_KEY,
+                requestId,
+                EXPIRE_TIME,
+                () -> {
+                    List<IdoDxProduct> finishProducts = idoDxProductService.getLastFinishProducts(lastIntervalTime);
+                    if (CollectionUtils.isEmpty(finishProducts)) {
+//                        log.info("ScheduleUserRecord get last finish products is empty ...");
+                        return null;
+                    }
+                    finishProducts.forEach(p -> {
+                        String prdAddress = p.getPledgeAddress();
+                        IdoDxUserRecord dxUserRecord = IdoDxUserRecord.builder()
+                                .prdAddress(prdAddress)
+                                .tokenVersion(maxTokenVersion)
+                                .build();
+                        Long endTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+                        if ((startTime + scheduleMaxInterval) <= endTime) {
+                            return;
                         }
+                        long from = 0;
+                        for (; ; ) {
+                            List<IdoDxUserRecord> userRecords = idoDxUserRecordService.selectALlByPage(dxUserRecord, from, pageSize);
+                            if (CollectionUtils.isEmpty(userRecords)) {
+//                                log.info("ScheduleUserRecord get user records is empty {}", prdAddress);
+                                break;
+                            }
+                            userRecords.forEach(u -> {
+                                try {
+                                    ResponseEntity<String> resp = getPostResp(u.getUserAddress(), prdAddress);
+                                    if (resp.getStatusCode() == HttpStatus.OK) {
+                                        Map<String, Object> respMap = JSON.parseObject(resp.getBody(), new TypeReference<>() {
+                                        });
+                                        @SuppressWarnings("unchecked")
+                                        Map<String, Object> result = (Map<String, Object>) respMap.get("result");
+                                        @SuppressWarnings("unchecked")
+                                        List<JSONArray> values = (List<JSONArray>) result.get("value");
+                                        values.stream().forEach(rs -> {
+                                            Object[] stcResult = rs.toArray();
+                                            if ("stc_staking_amount".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
+                                                @SuppressWarnings("unchecked")
+                                                Map<String, Object> pledgeMap = (Map<String, Object>) stcResult[1];
+                                                long tokenAmount = (long) pledgeMap.get("U128");
+
+                                                u.setTokenVersion((short) (u.getTokenVersion() + 1));
+                                                u.setTokenAmount(BigDecimal.valueOf(tokenAmount));
+                                                u.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+
+                                                idoDxUserRecordService.updateUserRecord(u);
+                                            }
+                                        });
+                                    } else {
+                                        log.error("ScheduleUserRecord get remote result {}, {}, {}",
+                                                prdAddress, u.getUserAddress(), JSON.toJSONString(resp));
+                                    }
+                                } catch (Exception e) {
+                                    log.error("ScheduleUserRecord get remote chain exception {}", u, e);
+                                }
+
+                            });
+
+                            Long userEndTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+                            if (userRecords.size() < pageSize
+                                    || (startTime + scheduleMaxInterval) <= userEndTime) {
+                                break;
+                            }
+                            from = from + pageSize;
+                        }
+
                     });
 
-                } else {
-                    log.error("ScheduleUserRecord get remote resp {}, {}, {}",
-                            prdAddress, u.getUserAddress(), JSON.toJSONString(resp));
+                    return null;
                 }
-            });
-        });
+        );
+
     }
 
 

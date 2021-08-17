@@ -5,6 +5,7 @@ import com.bixin.ido.server.bean.DO.IdoDxUserRecord;
 import com.bixin.ido.server.bean.bo.UserRecordReqBo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhangcheng
@@ -17,5 +18,7 @@ public interface IIdoDxUserRecordService {
     int updateUserRecord(IdoDxUserRecord record);
 
     List<IdoDxUserRecord> getUserRecord(IdoDxUserRecord record);
+
+    List<IdoDxUserRecord> selectALlByPage(IdoDxUserRecord record, long from, long pageSize);
 
 }

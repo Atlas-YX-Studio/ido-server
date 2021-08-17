@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhangcheng
@@ -24,6 +25,8 @@ public interface IdoDxUserRecordMapper {
     int insertSelective(IdoDxUserRecord record);
 
     List<IdoDxUserRecord> selectByDDL(IdoDxUserRecordDDL DDL);
+
+    List<IdoDxUserRecord>  selectALlByPage(Map<String,Object> paramMap);
 
     IdoDxUserRecord selectByPrimaryKey(Long id);
 
