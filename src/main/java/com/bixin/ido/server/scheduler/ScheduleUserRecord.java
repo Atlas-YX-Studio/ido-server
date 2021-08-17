@@ -155,9 +155,8 @@ public class ScheduleUserRecord {
         map.add("params", addressArray);
 
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<Map> mapResponseEntity = restTemplate.postForEntity(idoDxStarConfig.getResourceUrl(), request, Map.class);
-        return restTemplate.postForEntity(idoDxStarConfig.getResourceUrl(), request, String.class);
 
+        return restTemplate.postForEntity(idoDxStarConfig.getResourceUrl(), request, String.class);
     }
 
 }
