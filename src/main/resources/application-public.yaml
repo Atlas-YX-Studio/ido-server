@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+# database HikariCP相关配置
+spring:
+  datasource:
+    url: jdbc:mysql://sandbox-starcoin.cluster-ct4tlgfmee0j.ap-southeast-1.rds.amazonaws.com/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: admin
+    password: OdeWzZNalcTPk2LAo0Lg
+
+---
+## redis config
+spring:
+  redis:
+    # Redis默认情况下有16个分片，这里配置具体使用的分片
+    database: 0
+    host: sandbox-starcoin-redis.xplek9.ng.0001.apse1.cache.amazonaws.com
+    port: 6379
+    password:
+## ------------------------------业务相关配置写到下面-------------------------
+
+ido:
+  dx:
+    star:
+      url: https://barnard-seed.starcoin.org
+      moduleName: 0xd501465255d22d1751aae83651421198::Offering8

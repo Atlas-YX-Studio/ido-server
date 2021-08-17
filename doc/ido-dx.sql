@@ -1,5 +1,13 @@
 
-CREATE DATABASE IF NOT EXISTS 'ido_server' DEFAULT CHARACTER SET utf8mb4 ;
+-- 创建数据库
+CREATE DATABASE IF NOT EXISTS ido_server DEFAULT CHARACTER SET utf8mb4 ;
+
+-- 给用户授权
+grant all privileges on xxl_job.* to 'admin'@'localhost' identified by 'OdeWzZNalcTPk2LAo0Lg';
+grant all privileges on xxl_job.* to 'admin'@'%' identified by 'OdeWzZNalcTPk2LAo0Lg';
+flush privileges;
+
+use ido_server;
 
 DROP TABLE IF EXISTS ido_dx_product;
 CREATE TABLE ido_dx_product (
