@@ -39,17 +39,17 @@ public class ScheduleProduct {
     public void updateProduct4Processing() {
 
         String requestId = UUID.randomUUID().toString();
+        Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
 
         redisCache.tryGetDistributedLock(
                 UPDATE_PROCESSING_LOCK_KEY,
                 requestId,
                 PROCESSING_EXPIRE_TIME,
                 () -> {
-                    List<IdoDxProduct> products = idoDxProductService.getProducts(ProductState.PROCESSING);
+                    List<IdoDxProduct> products = idoDxProductService.getProducts4UpdateState(currentTime, ProductState.PROCESSING);
                     if (CollectionUtils.isEmpty(products)) {
                         return null;
                     }
-                    Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
 
                     products.forEach(p -> {
                         p.setState(ProductState.PROCESSING.getDesc());
@@ -68,17 +68,17 @@ public class ScheduleProduct {
     public void updateProduct4Finish() {
 
         String requestId = UUID.randomUUID().toString();
+        Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
 
         redisCache.tryGetDistributedLock(
                 UPDATE_FINISH_LOCK_KEY,
                 requestId,
                 FINISH_EXPIRE_TIME,
                 () -> {
-                    List<IdoDxProduct> products = idoDxProductService.getProducts(ProductState.FINISH);
+                    List<IdoDxProduct> products = idoDxProductService.getProducts4UpdateState(currentTime, ProductState.FINISH);
                     if (CollectionUtils.isEmpty(products)) {
                         return null;
                     }
-                    Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
 
                     products.forEach(p -> {
                         p.setState(ProductState.FINISH.getDesc());

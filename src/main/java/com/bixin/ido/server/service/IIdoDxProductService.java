@@ -14,7 +14,7 @@ public interface IIdoDxProductService {
 
     List<HomeProductVO> getHomeProducts(ProductState productState);
 
-    List<IdoDxProduct> getProducts(ProductState productState);
+    List<IdoDxProduct> getProducts4UpdateState(long currentTime, ProductState productState);
 
     List<IdoDxProduct> getLastFinishProducts(long intervalTime);
 

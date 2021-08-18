@@ -125,20 +125,18 @@ public class IdoDxProductImpl implements IIdoDxProductService {
     }
 
     @Override
-    public List<IdoDxProduct> getProducts(ProductState productState) {
+    public List<IdoDxProduct> getProducts4UpdateState(long currentTime, ProductState productState) {
 
         IdoDxProductDDL dxProductDDL = new IdoDxProductDDL();
         IdoDxProductDDL.Criteria criteria = dxProductDDL.createCriteria();
 
-        Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
-
-        if (ProductState.INIT == productState) {
-            criteria.andStartTimeGreaterThan(currentTime);
-        } else if (ProductState.PROCESSING == productState) {
+        if (ProductState.PROCESSING == productState) {
             criteria.andStartTimeLessThanOrEqualTo(currentTime)
                     .andEndTimeGreaterThan(currentTime);
+            criteria.andStateEqualTo(ProductState.INIT.getDesc());
         } else if (ProductState.FINISH == productState) {
             criteria.andEndTimeLessThanOrEqualTo(currentTime);
+            criteria.andStateEqualTo(ProductState.PROCESSING.getDesc());
         }
 
         return idoDxProductMapper.selectByDDL(dxProductDDL);
