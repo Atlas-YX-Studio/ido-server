@@ -52,17 +52,10 @@ public class ScheduleProduct {
                     Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
 
                     products.forEach(p -> {
-                        Long startTime = p.getStartTime();
-                        Long endTime = p.getEndTime();
-
-                        //由于是毫秒级别的判断，加上定时任务间隔，可以提前1秒判断
-                        if (currentTime >= (startTime - 1000) && currentTime <= (endTime - 1000)) {
-                            p.setState(ProductState.PROCESSING.getDesc());
-                            p.setUpdateTime(currentTime);
-                            idoDxProductService.updateProduct(p);
-                            log.info("scheduler product to processing {}", p);
-                        }
-
+                        p.setState(ProductState.PROCESSING.getDesc());
+                        p.setUpdateTime(currentTime);
+                        idoDxProductService.updateProduct(p);
+                        log.info("scheduler product to processing {}", p);
                     });
 
                     return null;
@@ -88,16 +81,10 @@ public class ScheduleProduct {
                     Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
 
                     products.forEach(p -> {
-                        Long endTime = p.getEndTime();
-
-                        //由于是毫秒级别的判断，加上定时任务间隔，可以提前1秒判断
-                        if (currentTime >= (endTime - 1000)) {
-                            p.setState(ProductState.FINISH.getDesc());
-                            p.setUpdateTime(currentTime);
-                            idoDxProductService.updateProduct(p);
-                            log.info("scheduler product to finish {}", p);
-                        }
-
+                        p.setState(ProductState.FINISH.getDesc());
+                        p.setUpdateTime(currentTime);
+                        idoDxProductService.updateProduct(p);
+                        log.info("scheduler product to finish {}", p);
                     });
 
                     return null;
