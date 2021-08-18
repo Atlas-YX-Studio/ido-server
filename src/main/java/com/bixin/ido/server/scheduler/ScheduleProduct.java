@@ -45,7 +45,7 @@ public class ScheduleProduct {
                 requestId,
                 PROCESSING_EXPIRE_TIME,
                 () -> {
-                    List<IdoDxProduct> products = idoDxProductService.getProducts(ProductState.INIT);
+                    List<IdoDxProduct> products = idoDxProductService.getProducts(ProductState.PROCESSING);
                     if (CollectionUtils.isEmpty(products)) {
                         return null;
                     }
@@ -81,7 +81,7 @@ public class ScheduleProduct {
                 requestId,
                 FINISH_EXPIRE_TIME,
                 () -> {
-                    List<IdoDxProduct> products = idoDxProductService.getProducts(ProductState.PROCESSING);
+                    List<IdoDxProduct> products = idoDxProductService.getProducts(ProductState.FINISH);
                     if (CollectionUtils.isEmpty(products)) {
                         return null;
                     }
