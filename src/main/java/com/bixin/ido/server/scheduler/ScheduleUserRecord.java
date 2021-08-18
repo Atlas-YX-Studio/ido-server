@@ -54,7 +54,7 @@ public class ScheduleUserRecord {
     //只查询项目结束最近 N 天的数据 / 毫秒
     static final long lastIntervalTime = 24 * 60 * 60 * 1000;
     //大于3次更新的记录不再更新
-    static final short maxTokenVersion = 3;
+    static final short maxTokenVersion = 2;
     //每次查询 N 条 用户记录
     static final long pageSize = 2000;
 
