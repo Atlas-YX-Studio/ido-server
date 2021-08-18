@@ -94,7 +94,7 @@ public class ScheduleUserRecord {
                             }
                             userRecords.forEach(u -> {
                                 try {
-                                    ResponseEntity<String> resp = getPostResp(u.getUserAddress(), prdAddress);
+                                    ResponseEntity<String> resp = getPostResp(u.getUserAddress(), p);
                                     if (resp.getStatusCode() == HttpStatus.OK) {
                                         Map<String, Object> respMap = JSON.parseObject(resp.getBody(), new TypeReference<>() {
                                         });
@@ -143,8 +143,9 @@ public class ScheduleUserRecord {
     }
 
 
-    private ResponseEntity<String> getPostResp(String userAddress, String prdAddress) {
-        List<String> addressArray = Arrays.asList(userAddress, idoDxStarConfig.getModuleName() + "::Staking<" + prdAddress + ">");
+    private ResponseEntity<String> getPostResp(String userAddress, IdoDxProduct product) {
+        List<String> addressArray = Arrays.asList(userAddress, idoDxStarConfig.getModuleName() + "::Staking<" +
+                product.getPledgeAddress() + "," + product.getPayAddress() + "," + product.getAssignAddress() + ">");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
