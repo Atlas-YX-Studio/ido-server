@@ -122,10 +122,10 @@
         from ido_dx_user_record
         where 1 = 1
         <if test="prdAddress != null">
-            and prdAddress = #{prdAddress},
+            and prdAddress = #{prdAddress}
         </if>
         <if test="tokenVersion != null">
-            and tokenVersion &lt; #{tokenVersion},
+            and tokenVersion &lt; #{tokenVersion}
         </if>
         order by
         <if test="sort != null">
