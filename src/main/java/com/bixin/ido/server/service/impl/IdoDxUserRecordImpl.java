@@ -17,10 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author zhangcheng
@@ -103,7 +100,7 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
         if (StringUtils.isNoneEmpty(record.getUserAddress())) {
             criteria.andUserAddressEqualTo(record.getUserAddress());
         }
-        if (record.getTokenVersion() > 1) {
+        if (Objects.nonNull(record.getTokenVersion()) && record.getTokenVersion() > 1) {
             criteria.andTokenVersionLessThan(record.getTokenVersion());
         }
 
