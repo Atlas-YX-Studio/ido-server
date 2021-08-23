@@ -23,5 +23,5 @@ spring:
 ido:
   dx:
     star:
-      url: https://main-seed.starcoin.org
+      resourceUrl: https://main-seed.starcoin.org
       moduleName: 0x89e1db66b5879bf19f5c1cc7d12d901a::Offering

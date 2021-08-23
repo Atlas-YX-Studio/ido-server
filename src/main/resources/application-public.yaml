@@ -22,5 +22,5 @@ spring:
 ido:
   dx:
     star:
-      url: https://barnard-seed.starcoin.org
+      resourceUrl: https://barnard-seed.starcoin.org
       moduleName: 0xd501465255d22d1751aae83651421198::Offering8

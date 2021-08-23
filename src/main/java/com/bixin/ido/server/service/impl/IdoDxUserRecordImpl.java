@@ -55,6 +55,7 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
                     .userAddress(bean.getUserAddress())
                     .amount(userAmount)
                     .currency(bean.getCurrency())
+                    .tokenVersion((short) 0)
                     .extInfo(JSON.toJSONString(Map.of(IdoDxCommonConstant.USER_RECORD_EXT_KEY, amountMap)))
                     .createTime(currentTime)
                     .updateTime(currentTime)
