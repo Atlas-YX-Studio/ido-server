@@ -72,7 +72,7 @@ public class ScheduleUserRecord {
                 () -> {
                     List<IdoDxProduct> finishProducts = idoDxProductService.getLastFinishProducts(lastIntervalTime);
                     if (CollectionUtils.isEmpty(finishProducts)) {
-//                        log.info("ScheduleUserRecord get last finish products is empty ...");
+                        log.info("ScheduleUserRecord get last finish products is empty ...");
                         return null;
                     }
                     finishProducts.forEach(p -> {
@@ -83,13 +83,14 @@ public class ScheduleUserRecord {
                                 .build();
                         Long endTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
                         if ((startTime + scheduleMaxInterval) <= endTime) {
+                            log.info("ScheduleUserRecordeUserRecord is run expired {}", p);
                             return;
                         }
                         long from = 0;
                         for (; ; ) {
                             List<IdoDxUserRecord> userRecords = idoDxUserRecordService.selectALlByPage(dxUserRecord, from, pageSize);
                             if (CollectionUtils.isEmpty(userRecords)) {
-//                                log.info("ScheduleUserRecord get user records is empty {}", prdAddress);
+                                log.info("ScheduleUserRecordeUserRecord get user records is empty {}", prdAddress);
                                 break;
                             }
                             userRecords.forEach(u -> {
@@ -129,6 +130,7 @@ public class ScheduleUserRecord {
                             Long userEndTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
                             if (userRecords.size() < pageSize
                                     || (startTime + scheduleMaxInterval) <= userEndTime) {
+                                log.info("ScheduleUserRecordeUserRecord is run expired or end {}", p);
                                 break;
                             }
                             from = from + pageSize;
