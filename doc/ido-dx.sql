@@ -88,8 +88,8 @@ CREATE TABLE ido_dx_attribute (
 DROP TABLE IF EXISTS ido_dx_user_record;
 CREATE TABLE ido_dx_user_record (
     id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
-    prdAddress VARCHAR(50) NOT NULL COMMENT '项目公链地址、质押币种地址',
-    userAddress VARCHAR(50) NOT NULL COMMENT '用户地址',
+    prdAddress VARCHAR(128) NOT NULL COMMENT '项目公链地址、质押币种地址',
+    userAddress VARCHAR(128) NOT NULL COMMENT '用户地址',
     amount DECIMAL(36,18) NOT NULL COMMENT '该用户质押量',
     tokenAmount DECIMAL(36,18) DEFAULT -1 COMMENT '链上实际质押量',
     gasCost DECIMAL(36,18) DEFAULT -1 COMMENT 'gas费用',
