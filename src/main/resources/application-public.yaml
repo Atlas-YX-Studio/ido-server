@@ -23,4 +23,4 @@ ido:
   dx:
     star:
       resourceUrl: https://barnard-seed.starcoin.org
-      moduleName: 0xd501465255d22d1751aae83651421198::Offering8
+      moduleName: 0x64c66296d98d6ab08579b14487157e05::Offering
