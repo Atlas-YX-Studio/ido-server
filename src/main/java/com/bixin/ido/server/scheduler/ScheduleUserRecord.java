@@ -104,6 +104,11 @@ public class ScheduleUserRecord {
                                     if (resp.getStatusCode() == HttpStatus.OK) {
                                         Map<String, Object> respMap = JSON.parseObject(resp.getBody(), new TypeReference<>() {
                                         });
+                                        if (!respMap.containsKey("result")) {
+                                            log.error("ScheduleUserRecord result is empty {}, {}, {}",
+                                                    JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
+                                            return;
+                                        }
                                         @SuppressWarnings("unchecked")
                                         Map<String, Object> result = (Map<String, Object>) respMap.get("result");
                                         if (!result.containsKey("value")) {
