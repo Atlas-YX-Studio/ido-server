@@ -102,3 +102,40 @@ CREATE TABLE ido_dx_user_record (
     INDEX idx_pid(prdAddress),
     INDEX idx_address(userAddress)
 ) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT '打新用户质押记录';
+
+-- swap
+
+DROP TABLE IF EXISTS ido_swap_user_record;
+CREATE TABLE ido_swap_user_record (
+        id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
+        userAddress VARCHAR(128) NOT NULL COMMENT '用户地址',
+        tokenCodeX VARCHAR(64) NOT NULL COMMENT 'x币种',
+        tokenCodeY VARCHAR(64) NOT NULL COMMENT 'y币种',
+        tokenInX DECIMAL(36,18) DEFAULT 0 COMMENT 'x注入量',
+        tokenInY DECIMAL(36,18) DEFAULT 0 COMMENT 'y注入量',
+        tokenOutX DECIMAL(36,18) DEFAULT 0 COMMENT 'x提取量',
+        tokenOutY DECIMAL(36,18) DEFAULT 0 COMMENT 'y提取量',
+        reserveAmountX DECIMAL(36,18) DEFAULT 0 COMMENT 'x储备量',
+        reserveAmountY DECIMAL(36,18) DEFAULT 0 COMMENT 'y储备量',
+        swapTime BIGINT(20) NOT NULL COMMENT '兑换成功时间',
+        createTime BIGINT(20) NOT NULL COMMENT '创建时间',
+        PRIMARY KEY(id),
+        INDEX idx_address(userAddress)
+) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap兑换成功记录';
+
+DROP TABLE IF EXISTS ido_liquidity_user_record;
+CREATE TABLE ido_liquidity_user_record (
+      id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
+      userAddress VARCHAR(128) NOT NULL COMMENT '用户地址',
+      tokenCodeX VARCHAR(64) NOT NULL COMMENT 'x币种',
+      tokenCodeY VARCHAR(64) NOT NULL COMMENT 'y币种',
+      direction SMALLINT DEFAULT -1 COMMENT '1注入，0提取',
+      amountX DECIMAL(36,18) DEFAULT 0 COMMENT 'x注入/提取量',
+      amountY DECIMAL(36,18) DEFAULT 0 COMMENT 'y注入/提取量',
+      reserveAmountX DECIMAL(36,18) DEFAULT 0 COMMENT 'x储备量',
+      reserveAmountY DECIMAL(36,18) DEFAULT 0 COMMENT 'y储备量',
+      liquidityTime BIGINT(20) NOT NULL COMMENT '注入/提取时间',
+      createTime BIGINT(20) NOT NULL COMMENT '创建时间',
+      PRIMARY KEY(id),
+      INDEX idx_address(userAddress)
+) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap用户注入提取记录';

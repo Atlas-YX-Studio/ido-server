@@ -1,7 +1,7 @@
 package com.bixin.ido.server.controller;
 
 import com.bixin.ido.server.bean.bo.UserRecordReqBo;
-import com.bixin.ido.server.bean.vo.R;
+import com.bixin.ido.server.bean.dto.R;
 import com.bixin.ido.server.constants.IdoDxPathConstant;
 import com.bixin.ido.server.service.IIdoDxUserRecordService;
 import org.apache.commons.lang3.StringUtils;

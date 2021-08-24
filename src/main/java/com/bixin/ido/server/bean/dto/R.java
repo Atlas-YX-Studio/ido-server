@@ -1,4 +1,4 @@
-package com.bixin.ido.server.bean.vo;
+package com.bixin.ido.server.bean.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,7 +38,7 @@ public class R<T> {
 
     public static R failed() {
         return R.builder()
-                //10002
+                //10002Ø
                 .code(10002)
                 //failed
                 .msg("FAILED")
