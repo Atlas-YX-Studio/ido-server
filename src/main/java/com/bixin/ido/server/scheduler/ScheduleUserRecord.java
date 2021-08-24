@@ -115,7 +115,7 @@ public class ScheduleUserRecord {
                                         List<JSONArray> values = (List<JSONArray>) result.get("value");
                                         values.stream().forEach(rs -> {
                                             Object[] stcResult = rs.toArray();
-                                            if ("stc_staking_amount".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
+                                            if ("staking_token_amount".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
                                                 @SuppressWarnings("unchecked")
                                                 Map<String, Object> pledgeMap = (Map<String, Object>) stcResult[1];
                                                 long tokenAmount = (long) pledgeMap.get("U128");
