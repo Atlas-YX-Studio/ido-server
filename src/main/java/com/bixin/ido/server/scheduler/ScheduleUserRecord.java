@@ -54,8 +54,8 @@ public class ScheduleUserRecord {
     //每次查询 N 条 用户记录
     static final long pageSize = 2000;
 
-    @Scheduled(cron = "0/15 * * * * ?")
-//    @Scheduled(cron = "20 0/5 * * * ?")
+//    @Scheduled(cron = "0/15 * * * * ?")
+    @Scheduled(cron = "20 0/5 * * * ?")
     public void updateUserTokenAmount() {
 
         Long startTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
