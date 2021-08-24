@@ -11,6 +11,7 @@ import com.bixin.ido.server.service.IIdoDxProductService;
 import com.bixin.ido.server.service.IIdoDxUserRecordService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -95,12 +96,21 @@ public class ScheduleUserRecord {
                             }
                             userRecords.forEach(u -> {
                                 try {
-                                    ResponseEntity<String> resp = getPostResp(u.getUserAddress(), p);
+                                    MutableTriple<ResponseEntity<String>, String, HttpEntity<MultiValueMap<String, Object>>> triple = getPostResp(u.getUserAddress(), p);
+                                    ResponseEntity<String> resp = triple.getLeft();
+                                    String url = triple.getMiddle();
+                                    HttpEntity<MultiValueMap<String, Object>> httpEntity = triple.getRight();
+
                                     if (resp.getStatusCode() == HttpStatus.OK) {
                                         Map<String, Object> respMap = JSON.parseObject(resp.getBody(), new TypeReference<>() {
                                         });
                                         @SuppressWarnings("unchecked")
                                         Map<String, Object> result = (Map<String, Object>) respMap.get("result");
+                                        if (!result.containsKey("value")) {
+                                            log.error("ScheduleUserRecord result value is empty {}, {}, {}",
+                                                    JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
+                                            return;
+                                        }
                                         @SuppressWarnings("unchecked")
                                         List<JSONArray> values = (List<JSONArray>) result.get("value");
                                         values.stream().forEach(rs -> {
@@ -145,7 +155,7 @@ public class ScheduleUserRecord {
     }
 
 
-    private ResponseEntity<String> getPostResp(String userAddress, IdoDxProduct product) {
+    private MutableTriple<ResponseEntity<String>, String, HttpEntity<MultiValueMap<String, Object>>> getPostResp(String userAddress, IdoDxProduct product) {
         List<String> addressArray = Arrays.asList(userAddress, idoDxStarConfig.getModuleName() + "::Staking<" +
                 product.getPledgeAddress() + "," + product.getPayAddress() + "," + product.getAssignAddress() + ">");
 
@@ -159,7 +169,9 @@ public class ScheduleUserRecord {
 
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers);
 
-        return restTemplate.postForEntity(idoDxStarConfig.getResourceUrl(), request, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(idoDxStarConfig.getResourceUrl(), request, String.class);
+
+        return new MutableTriple<>(response, idoDxStarConfig.getResourceUrl(), request);
     }
 
 }
