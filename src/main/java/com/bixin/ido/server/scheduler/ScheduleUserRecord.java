@@ -72,7 +72,7 @@ public class ScheduleUserRecord {
                         return null;
                     }
                     finishProducts.forEach(p -> {
-                        String prdAddress = p.getPledgeAddress();
+                        String prdAddress = p.getAssignAddress();
                         IdoDxUserRecord dxUserRecord = IdoDxUserRecord.builder()
                                 .prdAddress(prdAddress)
                                 .tokenVersion(maxTokenVersion)
