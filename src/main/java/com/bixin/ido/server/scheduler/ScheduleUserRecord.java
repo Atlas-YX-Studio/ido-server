@@ -118,10 +118,10 @@ public class ScheduleUserRecord {
                                             if ("staking_token_amount".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
                                                 @SuppressWarnings("unchecked")
                                                 Map<String, Object> pledgeMap = (Map<String, Object>) stcResult[1];
-                                                long tokenAmount = (long) pledgeMap.get("U128");
+                                                String tokenAmount = (String) pledgeMap.get("U128");
 
                                                 u.setTokenVersion((short) (u.getTokenVersion() + 1));
-                                                u.setTokenAmount(BigDecimal.valueOf(tokenAmount));
+                                                u.setTokenAmount(new BigDecimal(tokenAmount));
                                                 u.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
 
                                                 idoDxUserRecordService.updateUserRecord(u);
