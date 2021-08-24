@@ -16,17 +16,12 @@ import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author zhangcheng
@@ -59,8 +54,8 @@ public class ScheduleUserRecord {
     //每次查询 N 条 用户记录
     static final long pageSize = 2000;
 
-    //    @Scheduled(cron = "0/5 * * * * ?")
-    @Scheduled(cron = "20 0/5 * * * ?")
+    @Scheduled(cron = "0/15 * * * * ?")
+//    @Scheduled(cron = "20 0/5 * * * ?")
     public void updateUserTokenAmount() {
 
         Long startTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
@@ -96,10 +91,10 @@ public class ScheduleUserRecord {
                             }
                             userRecords.forEach(u -> {
                                 try {
-                                    MutableTriple<ResponseEntity<String>, String, HttpEntity<MultiValueMap<String, Object>>> triple = getPostResp(u.getUserAddress(), p);
+                                    MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = getPostResp(u.getUserAddress(), p);
                                     ResponseEntity<String> resp = triple.getLeft();
                                     String url = triple.getMiddle();
-                                    HttpEntity<MultiValueMap<String, Object>> httpEntity = triple.getRight();
+                                    HttpEntity<Map<String, Object>> httpEntity = triple.getRight();
 
                                     if (resp.getStatusCode() == HttpStatus.OK) {
                                         Map<String, Object> respMap = JSON.parseObject(resp.getBody(), new TypeReference<>() {
@@ -160,19 +155,21 @@ public class ScheduleUserRecord {
     }
 
 
-    private MutableTriple<ResponseEntity<String>, String, HttpEntity<MultiValueMap<String, Object>>> getPostResp(String userAddress, IdoDxProduct product) {
+    private MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getPostResp(String userAddress, IdoDxProduct product) {
         List<String> addressArray = Arrays.asList(userAddress, idoDxStarConfig.getModuleName() + "::Staking<" +
                 product.getPledgeAddress() + "," + product.getPayAddress() + "," + product.getAssignAddress() + ">");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        map.add("id", "101");
-        map.add("jsonrpc", "2.0");
-        map.add("method", "contract.get_resource");
-        map.add("params", addressArray);
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", "101");
+        map.put("jsonrpc", "2.0");
+        map.put("method", "contract.get_resource");
+        map.put("params", addressArray);
+//        map.put("params", Arrays.asList("0xdc35f49d71d697d01ebc63bf4dea3f04","0x64c66296d98d6ab08579b14487157e05::Offering::Staking<0x1::STC::STC,0x99a287696c35e978c19249400c616c6a::DummyToken1::USDT,0x99a287696c35e978c19249400c616c6a::DummyToken1::GEM>"));
+//        map.put("params", new String[]{"0xdc35f49d71d697d01ebc63bf4dea3f04", "0x64c66296d98d6ab08579b14487157e05::Offering::Staking<0x1::STC::STC,0x99a287696c35e978c19249400c616c6a::DummyToken1::USDT,0x99a287696c35e978c19249400c616c6a::DummyToken1::GEM>"});
 
-        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(map, headers);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(map, headers);
 
         ResponseEntity<String> response = restTemplate.postForEntity(idoDxStarConfig.getResourceUrl(), request, String.class);
 
