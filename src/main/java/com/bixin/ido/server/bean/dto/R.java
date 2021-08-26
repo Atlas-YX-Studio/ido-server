@@ -38,25 +38,11 @@ public class R<T> {
     }
 
     public static R failed() {
-        return R.builder()
-                //10002Ø
-                .code(10002)
-                //failed
-                .msg("FAILED")
-                .timeStamp(System.currentTimeMillis())
-                .data(null)
-                .build();
+        return failed(10002, "FAILED");
     }
 
     public static R failed(String errorMsg) {
-        return R.builder()
-                //10002
-                .code(10002)
-                //failed
-                .msg(errorMsg)
-                .timeStamp(System.currentTimeMillis())
-                .data(null)
-                .build();
+        return failed(10002, errorMsg);
     }
 
     public static R failed(int errorCode, String errorMsg) {

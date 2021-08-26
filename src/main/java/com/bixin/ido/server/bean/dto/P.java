@@ -23,6 +23,10 @@ public class P<T> {
     private boolean hasNext;
     private T data;
 
+    public static P success() {
+        return success(true);
+    }
+
     public static P success(boolean hasNext) {
         return success(null, hasNext);
     }
@@ -40,27 +44,11 @@ public class P<T> {
     }
 
     public static P failed() {
-        return P.builder()
-                //10002Ø
-                .code(10002)
-                //failed
-                .msg("FAILED")
-                .timeStamp(System.currentTimeMillis())
-                .data(null)
-                .hasNext(false)
-                .build();
+        return failed(10002, "FAILED");
     }
 
     public static P failed(String errorMsg) {
-        return P.builder()
-                //10002
-                .code(10002)
-                //failed
-                .msg(errorMsg)
-                .timeStamp(System.currentTimeMillis())
-                .data(null)
-                .hasNext(false)
-                .build();
+        return failed(10002, errorMsg);
     }
 
     public static P failed(int errorCode, String errorMsg) {
