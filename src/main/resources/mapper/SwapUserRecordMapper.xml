@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.core.mapper.SwapUserRecordMapper">
+    <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.SwapUserRecord">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="userAddress" jdbcType="VARCHAR" property="userAddress"/>
+        <result column="tokenCodeX" jdbcType="VARCHAR" property="tokenCodeX"/>
+        <result column="tokenCodeY" jdbcType="VARCHAR" property="tokenCodeY"/>
+        <result column="tokenInX" jdbcType="DECIMAL" property="tokenInX"/>
+        <result column="tokenInY" jdbcType="DECIMAL" property="tokenInY"/>
+        <result column="tokenOutX" jdbcType="DECIMAL" property="tokenOutX"/>
+        <result column="tokenOutY" jdbcType="DECIMAL" property="tokenOutY"/>
+        <result column="reserveAmountX" jdbcType="DECIMAL" property="reserveAmountX"/>
+        <result column="reserveAmountY" jdbcType="DECIMAL" property="reserveAmountY"/>
+        <result column="swapTime" jdbcType="BIGINT" property="swapTime"/>
+        <result column="createTime" jdbcType="BIGINT" property="createTime"/>
+    </resultMap>
+    <sql id="DDL_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_DDL_Where_Clause">
+        <where>
+            <foreach collection="DDL.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        id
+        , userAddress, tokenCodeX, tokenCodeY, tokenInX, tokenInY, tokenOutX, tokenOutY,
+    reserveAmountX, reserveAmountY, swapTime, createTime
+    </sql>
+    <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.SwapUserRecordDDL"
+            resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from swap_user_record
+        <if test="_parameter != null">
+            <include refid="DDL_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from swap_user_record
+        <if test="nextId != null">
+            where id &lt; #{nextId}
+        </if>
+        order by
+        <if test="sort != null">
+            ${sort}
+        </if>
+        <if test="order != null">
+            ${order}
+        </if>
+        <if test="pageSize !=null">
+            limit #{pageSize}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from swap_user_record
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from swap_user_record
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.SwapUserRecordDDL">
+        delete from swap_user_record
+        <if test="_parameter != null">
+            <include refid="DDL_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.SwapUserRecord" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into swap_user_record (userAddress, tokenCodeX,
+                                      tokenCodeY, tokenInX, tokenInY,
+                                      tokenOutX, tokenOutY, reserveAmountX,
+                                      reserveAmountY, swapTime, createTime)
+        values (#{userAddress,jdbcType=VARCHAR}, #{tokenCodeX,jdbcType=VARCHAR},
+                #{tokenCodeY,jdbcType=VARCHAR}, #{tokenInX,jdbcType=DECIMAL}, #{tokenInY,jdbcType=DECIMAL},
+                #{tokenOutX,jdbcType=DECIMAL}, #{tokenOutY,jdbcType=DECIMAL}, #{reserveAmountX,jdbcType=DECIMAL},
+                #{reserveAmountY,jdbcType=DECIMAL}, #{swapTime,jdbcType=BIGINT}, #{createTime,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.SwapUserRecord">
+        insert into swap_user_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userAddress != null">
+                userAddress,
+            </if>
+            <if test="tokenCodeX != null">
+                tokenCodeX,
+            </if>
+            <if test="tokenCodeY != null">
+                tokenCodeY,
+            </if>
+            <if test="tokenInX != null">
+                tokenInX,
+            </if>
+            <if test="tokenInY != null">
+                tokenInY,
+            </if>
+            <if test="tokenOutX != null">
+                tokenOutX,
+            </if>
+            <if test="tokenOutY != null">
+                tokenOutY,
+            </if>
+            <if test="reserveAmountX != null">
+                reserveAmountX,
+            </if>
+            <if test="reserveAmountY != null">
+                reserveAmountY,
+            </if>
+            <if test="swapTime != null">
+                swapTime,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userAddress != null">
+                #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="tokenCodeX != null">
+                #{tokenCodeX,jdbcType=VARCHAR},
+            </if>
+            <if test="tokenCodeY != null">
+                #{tokenCodeY,jdbcType=VARCHAR},
+            </if>
+            <if test="tokenInX != null">
+                #{tokenInX,jdbcType=DECIMAL},
+            </if>
+            <if test="tokenInY != null">
+                #{tokenInY,jdbcType=DECIMAL},
+            </if>
+            <if test="tokenOutX != null">
+                #{tokenOutX,jdbcType=DECIMAL},
+            </if>
+            <if test="tokenOutY != null">
+                #{tokenOutY,jdbcType=DECIMAL},
+            </if>
+            <if test="reserveAmountX != null">
+                #{reserveAmountX,jdbcType=DECIMAL},
+            </if>
+            <if test="reserveAmountY != null">
+                #{reserveAmountY,jdbcType=DECIMAL},
+            </if>
+            <if test="swapTime != null">
+                #{swapTime,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.SwapUserRecordDDL"
+            resultType="java.lang.Long">
+        select count(*) from swap_user_record
+        <if test="_parameter != null">
+            <include refid="DDL_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByDDLSelective" parameterType="map">
+        update swap_user_record
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.userAddress != null">
+                userAddress = #{record.userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="record.tokenCodeX != null">
+                tokenCodeX = #{record.tokenCodeX,jdbcType=VARCHAR},
+            </if>
+            <if test="record.tokenCodeY != null">
+                tokenCodeY = #{record.tokenCodeY,jdbcType=VARCHAR},
+            </if>
+            <if test="record.tokenInX != null">
+                tokenInX = #{record.tokenInX,jdbcType=DECIMAL},
+            </if>
+            <if test="record.tokenInY != null">
+                tokenInY = #{record.tokenInY,jdbcType=DECIMAL},
+            </if>
+            <if test="record.tokenOutX != null">
+                tokenOutX = #{record.tokenOutX,jdbcType=DECIMAL},
+            </if>
+            <if test="record.tokenOutY != null">
+                tokenOutY = #{record.tokenOutY,jdbcType=DECIMAL},
+            </if>
+            <if test="record.reserveAmountX != null">
+                reserveAmountX = #{record.reserveAmountX,jdbcType=DECIMAL},
+            </if>
+            <if test="record.reserveAmountY != null">
+                reserveAmountY = #{record.reserveAmountY,jdbcType=DECIMAL},
+            </if>
+            <if test="record.swapTime != null">
+                swapTime = #{record.swapTime,jdbcType=BIGINT},
+            </if>
+            <if test="record.createTime != null">
+                createTime = #{record.createTime,jdbcType=BIGINT},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_DDL_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByDDL" parameterType="map">
+        update swap_user_record
+        set id = #{record.id,jdbcType=BIGINT},
+        userAddress = #{record.userAddress,jdbcType=VARCHAR},
+        tokenCodeX = #{record.tokenCodeX,jdbcType=VARCHAR},
+        tokenCodeY = #{record.tokenCodeY,jdbcType=VARCHAR},
+        tokenInX = #{record.tokenInX,jdbcType=DECIMAL},
+        tokenInY = #{record.tokenInY,jdbcType=DECIMAL},
+        tokenOutX = #{record.tokenOutX,jdbcType=DECIMAL},
+        tokenOutY = #{record.tokenOutY,jdbcType=DECIMAL},
+        reserveAmountX = #{record.reserveAmountX,jdbcType=DECIMAL},
+        reserveAmountY = #{record.reserveAmountY,jdbcType=DECIMAL},
+        swapTime = #{record.swapTime,jdbcType=BIGINT},
+        createTime = #{record.createTime,jdbcType=BIGINT}
+        <if test="_parameter != null">
+            <include refid="Update_By_DDL_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.SwapUserRecord">
+        update swap_user_record
+        <set>
+            <if test="userAddress != null">
+                userAddress = #{userAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="tokenCodeX != null">
+                tokenCodeX = #{tokenCodeX,jdbcType=VARCHAR},
+            </if>
+            <if test="tokenCodeY != null">
+                tokenCodeY = #{tokenCodeY,jdbcType=VARCHAR},
+            </if>
+            <if test="tokenInX != null">
+                tokenInX = #{tokenInX,jdbcType=DECIMAL},
+            </if>
+            <if test="tokenInY != null">
+                tokenInY = #{tokenInY,jdbcType=DECIMAL},
+            </if>
+            <if test="tokenOutX != null">
+                tokenOutX = #{tokenOutX,jdbcType=DECIMAL},
+            </if>
+            <if test="tokenOutY != null">
+                tokenOutY = #{tokenOutY,jdbcType=DECIMAL},
+            </if>
+            <if test="reserveAmountX != null">
+                reserveAmountX = #{reserveAmountX,jdbcType=DECIMAL},
+            </if>
+            <if test="reserveAmountY != null">
+                reserveAmountY = #{reserveAmountY,jdbcType=DECIMAL},
+            </if>
+            <if test="swapTime != null">
+                swapTime = #{swapTime,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.SwapUserRecord">
+        update swap_user_record
+        set userAddress    = #{userAddress,jdbcType=VARCHAR},
+            tokenCodeX     = #{tokenCodeX,jdbcType=VARCHAR},
+            tokenCodeY     = #{tokenCodeY,jdbcType=VARCHAR},
+            tokenInX       = #{tokenInX,jdbcType=DECIMAL},
+            tokenInY       = #{tokenInY,jdbcType=DECIMAL},
+            tokenOutX      = #{tokenOutX,jdbcType=DECIMAL},
+            tokenOutY      = #{tokenOutY,jdbcType=DECIMAL},
+            reserveAmountX = #{reserveAmountX,jdbcType=DECIMAL},
+            reserveAmountY = #{reserveAmountY,jdbcType=DECIMAL},
+            swapTime       = #{swapTime,jdbcType=BIGINT},
+            createTime     = #{createTime,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

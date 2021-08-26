@@ -21,7 +21,11 @@ spring:
 ## ------------------------------业务相关配置写到下面-------------------------
 
 ido:
-  dx:
-    star:
+  star:
+    dx:
       resourceUrl: https://barnard-seed.starcoin.org
       moduleName: 0x64c66296d98d6ab08579b14487157e05::Offering
+    swap:
+      websocket-host: 60.205.3.84
+      websocket-port: 8970
+      websocket-contract-address: 64c66296d98d6ab08579b14487157e05

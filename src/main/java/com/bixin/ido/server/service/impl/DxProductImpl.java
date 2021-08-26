@@ -14,7 +14,7 @@ import com.bixin.ido.server.core.wrapDDL.IdoDxLabelDDL;
 import com.bixin.ido.server.core.wrapDDL.IdoDxLinkDDL;
 import com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL;
 import com.bixin.ido.server.enums.ProductState;
-import com.bixin.ido.server.service.IIdoDxProductService;
+import com.bixin.ido.server.service.IDxProductService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * create 2021-08-06 5:00 下午
  */
 @Service
-public class IdoDxProductImpl implements IIdoDxProductService {
+public class DxProductImpl implements IDxProductService {
 
     @Resource
     IdoDxProductMapper idoDxProductMapper;

@@ -3,7 +3,7 @@ package com.bixin.ido.server.scheduler;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.enums.ProductState;
-import com.bixin.ido.server.service.IIdoDxProductService;
+import com.bixin.ido.server.service.IDxProductService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ScheduleProduct {
 
     @Resource
-    IIdoDxProductService idoDxProductService;
+    IDxProductService idoDxProductService;
     @Resource
     RedisCache redisCache;
 

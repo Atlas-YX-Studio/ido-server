@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.core.mapper.SwapCoinsMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoSwapCoins">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="shortName" jdbcType="VARCHAR" property="shortName" />
+    <result column="fullName" jdbcType="VARCHAR" property="fullName" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="exchangePrecision" jdbcType="SMALLINT" property="exchangePrecision" />
+    <result column="displayPrecision" jdbcType="SMALLINT" property="displayPrecision" />
+    <result column="createTime" jdbcType="BIGINT" property="createTime" />
+    <result column="updateTime" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="DDL_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_DDL_Where_Clause">
+    <where>
+      <foreach collection="DDL.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, shortName, fullName, icon, address, weight, exchangePrecision, displayPrecision, 
+    createTime, updateTime
+  </sql>
+  <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.SwapCoinsDDL" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from swap_coins
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from swap_coins
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from swap_coins
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.SwapCoinsDDL">
+    delete from swap_coins
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoSwapCoins" useGeneratedKeys="true" keyProperty="id">
+    insert into swap_coins (shortName, fullName,
+      icon, address, weight, 
+      exchangePrecision, displayPrecision, 
+      createTime, updateTime)
+    values (#{shortName,jdbcType=VARCHAR}, #{fullName,jdbcType=VARCHAR},
+      #{icon,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, 
+      #{exchangePrecision,jdbcType=SMALLINT}, #{displayPrecision,jdbcType=SMALLINT}, 
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoSwapCoins">
+    insert into swap_coins
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="shortName != null">
+        shortName,
+      </if>
+      <if test="fullName != null">
+        fullName,
+      </if>
+      <if test="icon != null">
+        icon,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="exchangePrecision != null">
+        exchangePrecision,
+      </if>
+      <if test="displayPrecision != null">
+        displayPrecision,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="shortName != null">
+        #{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="fullName != null">
+        #{fullName,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="exchangePrecision != null">
+        #{exchangePrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="displayPrecision != null">
+        #{displayPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.SwapCoinsDDL" resultType="java.lang.Long">
+    select count(*) from swap_coins
+    <if test="_parameter != null">
+      <include refid="DDL_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByDDLSelective" parameterType="map">
+    update swap_coins
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.shortName != null">
+        shortName = #{record.shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fullName != null">
+        fullName = #{record.fullName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.icon != null">
+        icon = #{record.icon,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.weight != null">
+        weight = #{record.weight,jdbcType=INTEGER},
+      </if>
+      <if test="record.exchangePrecision != null">
+        exchangePrecision = #{record.exchangePrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="record.displayPrecision != null">
+        displayPrecision = #{record.displayPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="record.createTime != null">
+        createTime = #{record.createTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null">
+        updateTime = #{record.updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_DDL_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByDDL" parameterType="map">
+    update swap_coins
+    set id = #{record.id,jdbcType=BIGINT},
+      shortName = #{record.shortName,jdbcType=VARCHAR},
+      fullName = #{record.fullName,jdbcType=VARCHAR},
+      icon = #{record.icon,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      weight = #{record.weight,jdbcType=INTEGER},
+      exchangePrecision = #{record.exchangePrecision,jdbcType=SMALLINT},
+      displayPrecision = #{record.displayPrecision,jdbcType=SMALLINT},
+      createTime = #{record.createTime,jdbcType=BIGINT},
+      updateTime = #{record.updateTime,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_DDL_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoSwapCoins">
+    update swap_coins
+    <set>
+      <if test="shortName != null">
+        shortName = #{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="fullName != null">
+        fullName = #{fullName,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="exchangePrecision != null">
+        exchangePrecision = #{exchangePrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="displayPrecision != null">
+        displayPrecision = #{displayPrecision,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoSwapCoins">
+    update swap_coins
+    set shortName = #{shortName,jdbcType=VARCHAR},
+      fullName = #{fullName,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      exchangePrecision = #{exchangePrecision,jdbcType=SMALLINT},
+      displayPrecision = #{displayPrecision,jdbcType=SMALLINT},
+      createTime = #{createTime,jdbcType=BIGINT},
+      updateTime = #{updateTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
