@@ -27,6 +27,9 @@ public class LiquidityUserRecordController {
     public P getALlByPage(@RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                           @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
 
+        if (nextId < 0) {
+            return P.failed("parameter is invalid");
+        }
         List<LiquidityUserRecord> records = liquidityUserRecordService.getALlByPage(pageSize + 1, nextId);
 
         boolean hasNext = false;

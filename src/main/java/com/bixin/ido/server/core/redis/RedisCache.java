@@ -1,5 +1,6 @@
 package com.bixin.ido.server.core.redis;
 
+import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -7,7 +8,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Supplier;
 
 /**
@@ -18,13 +22,12 @@ import java.util.function.Supplier;
 @Component
 public class RedisCache {
 
-
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
 
-    static final String LOCK_SUCCESS = "OK";
     static final Long RELEASE_SUCCESS = 1L;
+    static final int parkMilliSeconds = 10;
 
     /**
      * 尝试获取分布式锁
@@ -45,20 +48,41 @@ public class RedisCache {
      * @param lockKey
      * @param requestId
      * @param expireTime
+     * @param lockNextExpireTime 如果未获取到锁，则持续等待【lockNextExpireTime】时间ms后不在尝试获取
      * @param supplier
      * @return
      */
-    public <T> T tryGetDistributedLock(String lockKey, String requestId, Long expireTime, Supplier<T> supplier) {
+    public <T> T tryGetDistributedLock(String lockKey, String requestId, Long expireTime, long lockNextExpireTime, Supplier<T> supplier) {
+        Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+        T t = null;
         try {
-            if (tryGetDistributedLock(lockKey, requestId, expireTime)) {
-                return supplier.get();
+            for (; ; ) {
+                boolean lock = tryGetDistributedLock(lockKey, requestId, expireTime);
+                if (lock) {
+                    t = supplier.get();
+                    break;
+                } else {
+                    Long nextTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+                    if ((currentTime + lockNextExpireTime) <= nextTime) {
+//                        log.info("try to get distributed lock next time {}, {}, {}", Thread.currentThread().getName(), lockKey, requestId);
+                        break;
+                    }
+                }
+                LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(parkMilliSeconds));
             }
         } catch (Exception e) {
-            log.error("tryGetDistributedLock exception", e);
+            log.error("try to get distributed lock exception", e);
+            throw new RuntimeException(e);
         } finally {
-            releaseDistributedLock(lockKey, requestId);
+            boolean hasInitiative = releaseDistributedLock(lockKey, requestId);
+            //被动释放锁时打印日志
+            if (!hasInitiative) {
+                log.warn("try to get distributed lock passive release {}, {}, {}",
+                        Thread.currentThread().getName(), lockKey, requestId);
+            }
         }
-        return null;
+
+        return t;
     }
 
     /**

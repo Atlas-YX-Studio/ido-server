@@ -33,6 +33,8 @@ public class ScheduleProduct {
 
     static final Long PROCESSING_EXPIRE_TIME = 30 * 1000L;
     static final Long FINISH_EXPIRE_TIME = 30 * 1000L;
+    //如果未获取到锁，则持续等待【xx】时间ms后不在尝试获取
+    static final Long LOCK_EXPIRE_TIME = 0L;
 
 
     @Scheduled(cron = "5 0/1 * * * ?")
@@ -45,6 +47,7 @@ public class ScheduleProduct {
                 UPDATE_PROCESSING_LOCK_KEY,
                 requestId,
                 PROCESSING_EXPIRE_TIME,
+                LOCK_EXPIRE_TIME,
                 () -> {
                     List<IdoDxProduct> products = idoDxProductService.getProducts4UpdateState(currentTime, ProductState.PROCESSING);
                     if (CollectionUtils.isEmpty(products)) {
@@ -74,6 +77,7 @@ public class ScheduleProduct {
                 UPDATE_FINISH_LOCK_KEY,
                 requestId,
                 FINISH_EXPIRE_TIME,
+                LOCK_EXPIRE_TIME,
                 () -> {
                     List<IdoDxProduct> products = idoDxProductService.getProducts4UpdateState(currentTime, ProductState.FINISH);
                     if (CollectionUtils.isEmpty(products)) {

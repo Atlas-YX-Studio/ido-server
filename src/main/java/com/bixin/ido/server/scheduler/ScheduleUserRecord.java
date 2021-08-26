@@ -45,6 +45,8 @@ public class ScheduleUserRecord {
 
     static final String UPDATE_LOCK_KEY = "updateUserTokenAmountTask";
     static final Long EXPIRE_TIME = 4 * 60 * 1000L;
+    //如果未获取到锁，则持续等待【xx】时间ms后不在尝试获取
+    static final Long LOCK_EXPIRE_TIME = 0L;
     //定时任务最大执行时间 大约 N 毫秒
     static final long scheduleMaxInterval = 4 * 60 * 1000;
     //只查询项目结束最近 N 天的数据 / 毫秒
@@ -65,6 +67,7 @@ public class ScheduleUserRecord {
                 UPDATE_LOCK_KEY,
                 requestId,
                 EXPIRE_TIME,
+                LOCK_EXPIRE_TIME,
                 () -> {
                     List<IdoDxProduct> finishProducts = idoDxProductService.getLastFinishProducts(lastIntervalTime);
                     if (CollectionUtils.isEmpty(finishProducts)) {
