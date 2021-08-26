@@ -105,8 +105,8 @@ CREATE TABLE ido_dx_user_record (
 
 -- swap
 
-DROP TABLE IF EXISTS ido_swap_user_record;
-CREATE TABLE ido_swap_user_record (
+DROP TABLE IF EXISTS swap_user_record;
+CREATE TABLE swap_user_record (
         id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
         userAddress VARCHAR(128) NOT NULL COMMENT '用户地址',
         tokenCodeX VARCHAR(64) NOT NULL COMMENT 'x币种',
@@ -123,8 +123,8 @@ CREATE TABLE ido_swap_user_record (
         INDEX idx_address(userAddress)
 ) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap兑换成功记录';
 
-DROP TABLE IF EXISTS ido_liquidity_user_record;
-CREATE TABLE ido_liquidity_user_record (
+DROP TABLE IF EXISTS liquidity_user_record;
+CREATE TABLE liquidity_record (
       id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
       userAddress VARCHAR(128) NOT NULL COMMENT '用户地址',
       tokenCodeX VARCHAR(64) NOT NULL COMMENT 'x币种',
@@ -139,3 +139,23 @@ CREATE TABLE ido_liquidity_user_record (
       PRIMARY KEY(id),
       INDEX idx_address(userAddress)
 ) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap用户注入提取记录';
+
+DROP TABLE IF EXISTS swap_coins;
+CREATE TABLE swap_coins (
+       id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
+       shortName VARCHAR(100) NOT NULL COMMENT '币种简称',
+       fullName VARCHAR(100) NOT NULL COMMENT '币种全程',
+       icon VARCHAR(512) NOT NULL COMMENT '币种图标',
+       address VARCHAR(512) NOT NULL COMMENT '币种地址',
+       weight INT(9) DEFAULT 0 COMMENT '权重，用于排序，默认0，则根据id进行排序',
+       exchangePrecision SMALLINT DEFAULT 9 COMMENT '交易精度',
+       displayPrecision SMALLINT DEFAULT 9 COMMENT '展示精度',
+       createTime BIGINT(20) NOT NULL COMMENT '创建时间',
+       updateTime BIGINT(20) NOT NULL COMMENT '更新时间',
+       PRIMARY KEY(id),
+       INDEX idx_sname(shortName),
+       INDEX idx_address(address)
+) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap币种列表';
+
+
+

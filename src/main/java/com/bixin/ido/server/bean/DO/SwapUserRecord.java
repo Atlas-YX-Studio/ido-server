@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdoSwapUserRecord {
+public class SwapUserRecord {
     private Long id;
 
     private String userAddress;

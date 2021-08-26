@@ -4,11 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.bixin.ido.server.bean.DO.IdoDxUserRecord;
 import com.bixin.ido.server.bean.bo.UserRecordReqBo;
-import com.bixin.ido.server.constants.IdoDxCommonConstant;
+import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.core.mapper.IdoDxUserRecordMapper;
 import com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL;
 import com.bixin.ido.server.enums.UserPledgeType;
-import com.bixin.ido.server.service.IIdoDxUserRecordService;
+import com.bixin.ido.server.service.IDxUserRecordService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.*;
  * create          2021-08-12 11:08 上午
  */
 @Service
-public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
+public class DxUserRecordImpl implements IDxUserRecordService {
 
     @Resource
     IdoDxUserRecordMapper idoDxUserRecordMapper;
@@ -53,7 +53,7 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
                     .amount(userAmount)
                     .currency(bean.getCurrency())
                     .tokenVersion((short) 0)
-                    .extInfo(JSON.toJSONString(Map.of(IdoDxCommonConstant.USER_RECORD_EXT_KEY, amountMap)))
+                    .extInfo(JSON.toJSONString(Map.of(CommonConstant.USER_RECORD_EXT_KEY, amountMap)))
                     .createTime(currentTime)
                     .updateTime(currentTime)
                     .build();
@@ -69,14 +69,14 @@ public class IdoDxUserRecordImpl implements IIdoDxUserRecordService {
             Map<String, TreeMap<Integer, BigDecimal>> extMap = JSON.parseObject(idoDxUserRecord.getExtInfo(),
                     new TypeReference<Map<String, TreeMap<Integer, BigDecimal>>>() {
                     });
-            amountMap = extMap.get(IdoDxCommonConstant.USER_RECORD_EXT_KEY);
+            amountMap = extMap.get(CommonConstant.USER_RECORD_EXT_KEY);
             amountMap.put(amountMap.size() + 1, userAmount);
         } else {
             amountMap = new TreeMap<>();
             amountMap.put(1, userAmount);
         }
 
-        idoDxUserRecord.setExtInfo(JSON.toJSONString(Map.of(IdoDxCommonConstant.USER_RECORD_EXT_KEY, amountMap)));
+        idoDxUserRecord.setExtInfo(JSON.toJSONString(Map.of(CommonConstant.USER_RECORD_EXT_KEY, amountMap)));
         idoDxUserRecord.setAmount(updateAmount);
         idoDxUserRecord.setUpdateTime(currentTime);
 

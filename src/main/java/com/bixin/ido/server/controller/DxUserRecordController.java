@@ -2,8 +2,8 @@ package com.bixin.ido.server.controller;
 
 import com.bixin.ido.server.bean.bo.UserRecordReqBo;
 import com.bixin.ido.server.bean.dto.R;
-import com.bixin.ido.server.constants.IdoDxPathConstant;
-import com.bixin.ido.server.service.IIdoDxUserRecordService;
+import com.bixin.ido.server.constants.PathConstant;
+import com.bixin.ido.server.service.IDxUserRecordService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +18,11 @@ import java.math.BigDecimal;
  * create 2021-08-11 8:17 下午
  */
 @RestController
-@RequestMapping(IdoDxPathConstant.REQUEST_PATH_PREFIX + "/user")
-public class IdoDxUserRecordController {
+@RequestMapping(PathConstant.DX_REQUEST_PATH_PREFIX + "/user")
+public class DxUserRecordController {
 
     @Resource
-    IIdoDxUserRecordService idoDxUserRecordService;
+    IDxUserRecordService idoDxUserRecordService;
 
     @PostMapping("/updateUserRecord")
     public R updateUserRecord(@RequestBody UserRecordReqBo bean) {

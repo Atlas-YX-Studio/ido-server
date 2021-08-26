@@ -4,14 +4,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdoLiquidityUserRecordDDL {
+public class LiquidityUserRecordDDL {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public IdoLiquidityUserRecordDDL() {
+    public LiquidityUserRecordDDL() {
         oredCriteria = new ArrayList<>();
     }
 

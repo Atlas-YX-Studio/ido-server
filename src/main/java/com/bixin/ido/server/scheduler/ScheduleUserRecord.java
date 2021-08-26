@@ -5,10 +5,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.bean.DO.IdoDxUserRecord;
-import com.bixin.ido.server.config.IdoDxStarConfig;
+import com.bixin.ido.server.config.IdoStarConfig;
 import com.bixin.ido.server.core.redis.RedisCache;
-import com.bixin.ido.server.service.IIdoDxProductService;
-import com.bixin.ido.server.service.IIdoDxUserRecordService;
+import com.bixin.ido.server.service.IDxProductService;
+import com.bixin.ido.server.service.IDxUserRecordService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
@@ -33,11 +33,11 @@ public class ScheduleUserRecord {
 
 
     @Resource
-    IIdoDxProductService idoDxProductService;
+    IDxProductService idoDxProductService;
     @Resource
-    IIdoDxUserRecordService idoDxUserRecordService;
+    IDxUserRecordService idoDxUserRecordService;
     @Resource
-    IdoDxStarConfig idoDxStarConfig;
+    IdoStarConfig idoStarConfig;
     @Resource
     RestTemplate restTemplate;
     @Resource
@@ -156,7 +156,7 @@ public class ScheduleUserRecord {
 
 
     private MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getPostResp(String userAddress, IdoDxProduct product) {
-        List<String> addressArray = Arrays.asList(userAddress, idoDxStarConfig.getModuleName() + "::Staking<" +
+        List<String> addressArray = Arrays.asList(userAddress, idoStarConfig.getDx().getModuleName() + "::Staking<" +
                 product.getPledgeAddress() + "," + product.getPayAddress() + "," + product.getAssignAddress() + ">");
 
         HttpHeaders headers = new HttpHeaders();
@@ -171,9 +171,9 @@ public class ScheduleUserRecord {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(map, headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(idoDxStarConfig.getResourceUrl(), request, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(idoStarConfig.getDx().getResourceUrl(), request, String.class);
 
-        return new MutableTriple<>(response, idoDxStarConfig.getResourceUrl(), request);
+        return new MutableTriple<>(response, idoStarConfig.getDx().getResourceUrl(), request);
     }
 
 }

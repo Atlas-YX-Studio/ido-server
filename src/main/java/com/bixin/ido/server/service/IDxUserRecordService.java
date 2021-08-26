@@ -11,7 +11,7 @@ import java.util.Map;
  * @author zhangcheng
  * create          2021-08-12 11:06 上午
  */
-public interface IIdoDxUserRecordService {
+public interface IDxUserRecordService {
 
     int updateUserRecord(UserRecordReqBo bean);
 

@@ -3,9 +3,9 @@ package com.bixin.ido.server.controller;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.bean.vo.HomeProductVO;
 import com.bixin.ido.server.bean.dto.R;
-import com.bixin.ido.server.constants.IdoDxPathConstant;
+import com.bixin.ido.server.constants.PathConstant;
 import com.bixin.ido.server.enums.ProductState;
-import com.bixin.ido.server.service.IIdoDxProductService;
+import com.bixin.ido.server.service.IDxProductService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,11 +20,11 @@ import java.util.Map;
  * create 2021-08-06 5:34 下午
  */
 @RestController
-@RequestMapping(IdoDxPathConstant.REQUEST_PATH_PREFIX +"/product")
-public class IdoDxProductController {
+@RequestMapping(PathConstant.DX_REQUEST_PATH_PREFIX +"/product")
+public class DxProductController {
 
     @Resource
-    IIdoDxProductService idoDxProductService;
+    IDxProductService idoDxProductService;
 
     @GetMapping("/getAll")
     public R getAll() {

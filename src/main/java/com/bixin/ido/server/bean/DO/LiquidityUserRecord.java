@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdoLiquidityUserRecord {
+public class LiquidityUserRecord {
     private Long id;
 
     private String userAddress;
