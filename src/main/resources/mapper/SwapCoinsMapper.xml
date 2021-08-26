@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bixin.ido.server.core.mapper.SwapCoinsMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoSwapCoins">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.SwapCoins">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="shortName" jdbcType="VARCHAR" property="shortName" />
     <result column="fullName" jdbcType="VARCHAR" property="fullName" />
@@ -105,7 +105,7 @@
       <include refid="DDL_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoSwapCoins" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.SwapCoins" useGeneratedKeys="true" keyProperty="id">
     insert into swap_coins (shortName, fullName,
       icon, address, weight, 
       exchangePrecision, displayPrecision, 
@@ -115,7 +115,7 @@
       #{exchangePrecision,jdbcType=SMALLINT}, #{displayPrecision,jdbcType=SMALLINT}, 
       #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoSwapCoins">
+  <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.SwapCoins">
     insert into swap_coins
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -242,7 +242,7 @@
       <include refid="Update_By_DDL_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoSwapCoins">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.SwapCoins">
     update swap_coins
     <set>
       <if test="shortName != null">
@@ -275,7 +275,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoSwapCoins">
+  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.SwapCoins">
     update swap_coins
     set shortName = #{shortName,jdbcType=VARCHAR},
       fullName = #{fullName,jdbcType=VARCHAR},

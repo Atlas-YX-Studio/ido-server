@@ -1,6 +1,6 @@
 package com.bixin.ido.server.core.mapper;
 
-import com.bixin.ido.server.bean.DO.IdoSwapCoins;
+import com.bixin.ido.server.bean.DO.SwapCoins;
 import com.bixin.ido.server.core.wrapDDL.SwapCoinsDDL;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,19 +15,19 @@ public interface SwapCoinsMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    int insert(IdoSwapCoins record);
+    int insert(SwapCoins record);
 
-    int insertSelective(IdoSwapCoins record);
+    int insertSelective(SwapCoins record);
 
-    List<IdoSwapCoins> selectByDDL(SwapCoinsDDL DDL);
+    List<SwapCoins> selectByDDL(SwapCoinsDDL DDL);
 
-    IdoSwapCoins selectByPrimaryKey(Long id);
+    SwapCoins selectByPrimaryKey(Long id);
 
-    int updateByDDLSelective(@Param("record") IdoSwapCoins record, @Param("DDL") SwapCoinsDDL DDL);
+    int updateByDDLSelective(@Param("record") SwapCoins record, @Param("DDL") SwapCoinsDDL DDL);
 
-    int updateByDDL(@Param("record") IdoSwapCoins record, @Param("DDL") SwapCoinsDDL DDL);
+    int updateByDDL(@Param("record") SwapCoins record, @Param("DDL") SwapCoinsDDL DDL);
 
-    int updateByPrimaryKeySelective(IdoSwapCoins record);
+    int updateByPrimaryKeySelective(SwapCoins record);
 
-    int updateByPrimaryKey(IdoSwapCoins record);
+    int updateByPrimaryKey(SwapCoins record);
 }

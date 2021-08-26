@@ -1,12 +1,15 @@
 package com.bixin.ido.server.runner;
 
-import com.bixin.ido.server.bean.DO.LiquidityUserRecord;
+import com.alibaba.fastjson.JSON;
+import com.bixin.ido.server.bean.DO.BaseDO;
 import com.bixin.ido.server.bean.DO.SwapUserRecord;
-import com.bixin.ido.server.config.IdoStarConfig;
+import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.core.factory.NamedThreadFactory;
+import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
 import com.bixin.ido.server.enums.StarSwapEventType;
-import com.bixin.ido.server.provider.StarSwapDispatcher;
 import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.DefaultApplicationArguments;
@@ -17,11 +20,14 @@ import org.starcoin.bean.EventNotification;
 import org.starcoin.bean.EventNotificationResult;
 import org.web3j.protocol.websocket.WebSocketService;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.Supplier;
 
 /**
  * @author zhangcheng
@@ -29,20 +35,47 @@ import java.util.function.Supplier;
  */
 @Slf4j
 @Component
-public class IdoSwapEventRunner implements ApplicationRunner {
+public class SwapEventSubscriberRunner implements ApplicationRunner {
 
     @Resource
-    IdoStarConfig idoStarConfig;
-    @Resource
-    StarSwapDispatcher starSwapDispatcher;
+    StarConfig idoStarConfig;
 
     AtomicLong atomicSum = new AtomicLong(0);
     static final long initTime = 2000L;
     static final long initIntervalTime = 5000L;
     static final long maxIntervalTime = 60 * 1000L;
 
+    static final String separator = "::";
+
+    ThreadPoolExecutor poolExecutor;
+
+    @PostConstruct
+    public void init() {
+        poolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(), new NamedThreadFactory("SwapEventSubscriber-", true));
+    }
+
+    @PreDestroy
+    public void destroy() {
+        try {
+            if (Objects.isNull(poolExecutor)) {
+                return;
+            }
+            poolExecutor.shutdown();
+            poolExecutor.awaitTermination(1, TimeUnit.SECONDS);
+            log.info("SwapEventSubscriberRunner ThreadPoolExecutor stopped");
+        } catch (InterruptedException ex) {
+            log.error("SwapEventSubscriberRunner InterruptedException: ", ex);
+            Thread.currentThread().interrupt();
+        }
+    }
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        poolExecutor.execute(() -> process(args));
+    }
+
+    public void process(ApplicationArguments args) {
         String[] sourceArgs = 0 == args.getSourceArgs().length ? new String[]{""} : args.getSourceArgs();
         log.info("IdoSwapEventRunner start running [{}]", sourceArgs);
         try {
@@ -52,17 +85,21 @@ public class IdoSwapEventRunner implements ApplicationRunner {
             EventFilter eventFilter = new EventFilter(0, idoStarConfig.getSwap().getWebsocketContractAddress());
             Flowable<EventNotification> flowableTxns = subscriber.newTxnSendRecvEventNotifications(eventFilter);
 
+            Map<StarSwapEventType, LinkedBlockingQueue<BaseDO>> queueMap = SwapEventBlockingQueue.queueMap;
+
             flowableTxns.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
-                StarSwapEventType eventType = StarSwapEventType.of(eventResult.getTypeTag());
-                //分发事件
-                consumerEventElse(
-                        () -> StarSwapEventType.SWAP_EVENT == eventType,
-                        SwapUserRecord.builder().id(11L).build()
-                ).consumerEventElse(
-                        () -> StarSwapEventType.LIQUIDITY_EVENT == eventType,
-                        LiquidityUserRecord.builder().id(22L).build()
-                );
+                StarSwapEventType eventType = StarSwapEventType.of(getEventName(eventResult.getTypeTag()));
+                String data = eventResult.getData();
+                log.info("SwapEventSubscriberRunner infos: {}", JSON.toJSONString(eventResult));
+
+                if (Objects.isNull(eventType) || StringUtils.isEmpty(data)) {
+                    return;
+                }
+
+                // FIXME: 2021/8/26  待解析
+                boolean offer = queueMap.get(eventType).offer(SwapUserRecord.builder().id(11L).build());
+
             });
 
         } catch (Throwable e) {
@@ -71,17 +108,12 @@ public class IdoSwapEventRunner implements ApplicationRunner {
             log.error("IdoSwapEventRunner run exception sum{}, next retry {}", atomicSum.get(), duration, e);
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(duration));
             DefaultApplicationArguments applicationArguments = new DefaultApplicationArguments("retry " + atomicSum.get());
-            this.run(applicationArguments);
+            this.process(applicationArguments);
         }
-
     }
 
-    private <T> IdoSwapEventRunner consumerEventElse(Supplier<Boolean> supplier, T t) {
-        if (supplier.get()) {
-            starSwapDispatcher.dispatch(t);
-        }
-        return this;
+    private String getEventName(String typeTag) {
+        return typeTag.split(separator)[2];
     }
-
 
 }

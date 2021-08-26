@@ -1,6 +1,6 @@
 package com.bixin.ido.server.service;
 
-import com.bixin.ido.server.bean.DO.IdoSwapCoins;
+import com.bixin.ido.server.bean.DO.SwapCoins;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public interface ISwapCoinsService {
 
 
-    List<IdoSwapCoins> selectByDDL(IdoSwapCoins coins);
+    List<SwapCoins> selectByDDL(SwapCoins coins);
 
 
 }

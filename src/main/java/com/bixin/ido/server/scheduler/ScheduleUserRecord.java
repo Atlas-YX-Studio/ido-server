@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.bean.DO.IdoDxUserRecord;
-import com.bixin.ido.server.config.IdoStarConfig;
+import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.IDxProductService;
 import com.bixin.ido.server.service.IDxUserRecordService;
@@ -37,7 +37,7 @@ public class ScheduleUserRecord {
     @Resource
     IDxUserRecordService idoDxUserRecordService;
     @Resource
-    IdoStarConfig idoStarConfig;
+    StarConfig idoStarConfig;
     @Resource
     RestTemplate restTemplate;
     @Resource

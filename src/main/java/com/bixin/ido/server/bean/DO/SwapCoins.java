@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdoSwapCoins {
+public class SwapCoins {
     private Long id;
 
     private String shortName;

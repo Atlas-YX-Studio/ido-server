@@ -57,8 +57,7 @@ public class RedisCache {
         T t = null;
         try {
             for (; ; ) {
-                boolean lock = tryGetDistributedLock(lockKey, requestId, expireTime);
-                if (lock) {
+                if (tryGetDistributedLock(lockKey, requestId, expireTime)) {
                     t = supplier.get();
                     break;
                 } else {
@@ -74,12 +73,13 @@ public class RedisCache {
             log.error("try to get distributed lock exception", e);
             throw new RuntimeException(e);
         } finally {
-            boolean hasInitiative = releaseDistributedLock(lockKey, requestId);
-            //被动释放锁时打印日志
-            if (!hasInitiative) {
-                log.warn("try to get distributed lock passive release {}, {}, {}",
-                        Thread.currentThread().getName(), lockKey, requestId);
-            }
+            releaseDistributedLock(lockKey, requestId);
+//            boolean hasInitiative = releaseDistributedLock(lockKey, requestId);
+            //被动释放锁、或者未获取到锁，打印日志
+//            if (!hasInitiative) {
+//                log.info("try to get distributed lock passive release {}, {}, {}",
+//                        Thread.currentThread().getName(), lockKey, requestId);
+//            }
         }
 
         return t;

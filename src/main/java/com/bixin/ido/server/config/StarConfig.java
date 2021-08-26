@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
  * create          2021-08-12 4:20 下午
  */
 @Getter
-@Setter
 @Component
 @ConfigurationProperties(prefix = "ido.star")
-public class IdoStarConfig {
+public class StarConfig {
 
     private StarDx dx = new StarDx();
     private starSwap swap = new starSwap();
+    private Runner runner = new Runner();
 
     @Getter
     @Setter
@@ -41,6 +41,23 @@ public class IdoStarConfig {
         private String websocketPort;
         private String websocketContractAddress;
 
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Runner {
+        private SwapConsumer swapConsumer;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SwapConsumer {
+        private int coreThreads;
+        private int maxThreads;
     }
 
 }

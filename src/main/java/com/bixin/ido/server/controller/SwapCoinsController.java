@@ -1,6 +1,6 @@
 package com.bixin.ido.server.controller;
 
-import com.bixin.ido.server.bean.DO.IdoSwapCoins;
+import com.bixin.ido.server.bean.DO.SwapCoins;
 import com.bixin.ido.server.bean.dto.R;
 import com.bixin.ido.server.constants.PathConstant;
 import com.bixin.ido.server.service.ISwapCoinsService;
@@ -25,7 +25,7 @@ public class SwapCoinsController {
     @GetMapping("/getAll")
     public R getAll(){
 
-        List<IdoSwapCoins> idoSwapCoins = swapCoinsService.selectByDDL(IdoSwapCoins.builder().build());
+        List<SwapCoins> idoSwapCoins = swapCoinsService.selectByDDL(SwapCoins.builder().build());
 
         return R.success(idoSwapCoins);
     }

@@ -1,6 +1,6 @@
 package com.bixin.ido.server.service.impl;
 
-import com.bixin.ido.server.bean.DO.IdoSwapCoins;
+import com.bixin.ido.server.bean.DO.SwapCoins;
 import com.bixin.ido.server.core.mapper.SwapCoinsMapper;
 import com.bixin.ido.server.core.wrapDDL.SwapCoinsDDL;
 import com.bixin.ido.server.service.ISwapCoinsService;
@@ -21,7 +21,7 @@ public class SwapCoinImpl implements ISwapCoinsService {
     SwapCoinsMapper swapCoinsMapper;
 
     @Override
-    public List<IdoSwapCoins> selectByDDL(IdoSwapCoins coins) {
+    public List<SwapCoins> selectByDDL(SwapCoins coins) {
         SwapCoinsDDL coinsDDL = new SwapCoinsDDL();
         SwapCoinsDDL.Criteria criteria = coinsDDL.createCriteria();
 
