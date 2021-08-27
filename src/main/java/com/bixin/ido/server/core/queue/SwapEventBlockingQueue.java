@@ -23,6 +23,7 @@ public class SwapEventBlockingQueue {
     public static Map<StarSwapEventType, LinkedBlockingQueue<BaseDO>> queueMap = new HashMap<>(){{
         put(StarSwapEventType.SWAP_EVENT, new LinkedBlockingQueue<>(20000));
         put(StarSwapEventType.LIQUIDITY_EVENT, new LinkedBlockingQueue<>(20000));
+        put(StarSwapEventType.CREATE_PAIR_EVENT, new LinkedBlockingQueue<>(20000));
     }};
 
 }

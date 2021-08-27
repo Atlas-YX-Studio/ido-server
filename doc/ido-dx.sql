@@ -124,7 +124,7 @@ CREATE TABLE swap_user_record (
 ) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap兑换成功记录';
 
 DROP TABLE IF EXISTS liquidity_user_record;
-CREATE TABLE liquidity_record (
+CREATE TABLE liquidity_user_record (
       id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
       userAddress VARCHAR(128) NOT NULL COMMENT '用户地址',
       tokenCodeX VARCHAR(64) NOT NULL COMMENT 'x币种',
