@@ -20,7 +20,6 @@ public class LiquidityUserRecordProviderImpl implements IStarSwapProvider<Liquid
     @Override
     public void dispatcher(LiquidityUserRecord liquidityUserRecord) {
         liquidityUserRecordService.insert(liquidityUserRecord);
-        
     }
 
 }
