@@ -19,7 +19,7 @@ public class LiquidityPoolProviderImpl implements IStarSwapProvider<LiquidityPoo
 
     @Override
     public void dispatcher(LiquidityPool liquidityPool) {
-
+        liquidityPoolService.insert(liquidityPool);
     }
 
 }
