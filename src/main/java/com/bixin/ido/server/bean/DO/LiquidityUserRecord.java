@@ -1,16 +1,17 @@
 package com.bixin.ido.server.bean.DO;
 
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LiquidityUserRecord extends BaseDO{
+public class LiquidityUserRecord {
     private Long id;
 
     private String userAddress;

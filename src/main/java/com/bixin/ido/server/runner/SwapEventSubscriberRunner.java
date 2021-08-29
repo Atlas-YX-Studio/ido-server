@@ -1,15 +1,13 @@
 package com.bixin.ido.server.runner;
 
 import com.alibaba.fastjson.JSON;
-import com.bixin.ido.server.bean.DO.BaseDO;
-import com.bixin.ido.server.bean.DO.SwapUserRecord;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
 import com.bixin.ido.server.enums.StarSwapEventType;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.DefaultApplicationArguments;
@@ -85,21 +83,19 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
             EventFilter eventFilter = new EventFilter(0, idoStarConfig.getSwap().getWebsocketContractAddress());
             Flowable<EventNotification> flowableTxns = subscriber.newTxnSendRecvEventNotifications(eventFilter);
 
-            Map<StarSwapEventType, LinkedBlockingQueue<BaseDO>> queueMap = SwapEventBlockingQueue.queueMap;
+            Map<StarSwapEventType, LinkedBlockingQueue<JsonNode>> queueMap = SwapEventBlockingQueue.queueMap;
 
             flowableTxns.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
                 StarSwapEventType eventType = StarSwapEventType.of(getEventName(eventResult.getTypeTag()));
-                String data = eventResult.getData();
+                JsonNode data = eventResult.getData();
+
                 log.info("SwapEventSubscriberRunner infos: {}", JSON.toJSONString(eventResult));
 
-                if (Objects.isNull(eventType) || StringUtils.isEmpty(data)) {
+                if (Objects.isNull(eventType) || Objects.isNull(data)) {
                     return;
                 }
-
-                // FIXME: 2021/8/26  待解析
-                boolean offer = queueMap.get(eventType).offer(SwapUserRecord.builder().id(11L).build());
-
+                queueMap.get(eventType).offer(data);
             });
 
         } catch (Throwable e) {

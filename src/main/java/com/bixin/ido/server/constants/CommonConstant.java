@@ -8,4 +8,6 @@ public interface CommonConstant {
 
     String USER_RECORD_EXT_KEY = "userRecordExt";
 
+    int SWAP_EVENT_QUEUE_SIZE = 20000;
+
 }

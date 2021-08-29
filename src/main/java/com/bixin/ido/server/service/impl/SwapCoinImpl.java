@@ -27,7 +27,7 @@ public class SwapCoinImpl implements ISwapCoinsService {
 
         CaseUtil.buildNoneValue(coins.getShortName(), name -> criteria.andShortNameEqualTo(coins.getShortName()));
 
-        coinsDDL.setOrderByClause("weight, id desc");
+        coinsDDL.setOrderByClause("weight desc, id desc");
 
         return swapCoinsMapper.selectByDDL(coinsDDL);
     }
