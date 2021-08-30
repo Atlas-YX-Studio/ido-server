@@ -1,8 +1,18 @@
 package com.bixin.ido.server.runner;
 
+import com.bixin.ido.server.bean.DO.LiquidityPool;
+import com.bixin.ido.server.bean.DO.LiquidityUserRecord;
+import com.bixin.ido.server.bean.DO.SwapUserRecord;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
+import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
+import com.bixin.ido.server.enums.StarSwapEventType;
+import com.bixin.ido.server.provider.StarSwapDispatcher;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.similarity.JaccardSimilarity;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -10,6 +20,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -25,8 +36,12 @@ public class SwapEventConsumerRunner implements ApplicationRunner {
 
     @Resource
     StarConfig starConfig;
+    @Resource
+    StarSwapDispatcher swapDispatcher;
 
     ThreadPoolExecutor poolExecutor;
+
+    ObjectMapper mapper = new ObjectMapper();
 
     @PostConstruct
     public void init() {
@@ -59,7 +74,28 @@ public class SwapEventConsumerRunner implements ApplicationRunner {
     }
 
     public void process(ApplicationArguments args) {
+        Map<StarSwapEventType, LinkedBlockingQueue<JsonNode>> queueMap = SwapEventBlockingQueue.queueMap;
+        queueMap.entrySet().forEach(entry -> {
+            StarSwapEventType type = entry.getKey();
+            LinkedBlockingQueue<JsonNode> jsonNodes = entry.getValue();
+            JsonNode node = jsonNodes.poll();
+            if (Objects.nonNull(node)) {
+                swapDispatcher(type, node);
+            }
+        });
+    }
 
+    private void swapDispatcher(StarSwapEventType type, JsonNode node) {
+        if (StarSwapEventType.CREATE_PAIR_EVENT == type) {
+            LiquidityPool liquidityPool = mapper.convertValue(node, LiquidityPool.class);
+            swapDispatcher.dispatch(liquidityPool);
+        } else if (StarSwapEventType.SWAP_EVENT == type) {
+            SwapUserRecord swapUserRecord = mapper.convertValue(node, SwapUserRecord.class);
+            swapDispatcher.dispatch(swapUserRecord);
+        } else if (StarSwapEventType.LIQUIDITY_EVENT == type) {
+            LiquidityUserRecord liquidityUserRecord = mapper.convertValue(node, LiquidityUserRecord.class);
+            swapDispatcher.dispatch(liquidityUserRecord);
+        }
     }
 
 }

@@ -101,7 +101,7 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
         } catch (Throwable e) {
             long duration = initTime + (atomicSum.incrementAndGet() - 1) * initIntervalTime;
             duration = Math.min(duration, maxIntervalTime);
-            log.error("IdoSwapEventRunner run exception sum{}, next retry {}", atomicSum.get(), duration, e);
+            log.error("IdoSwapEventRunner run exception count {}, next retry {}", atomicSum.get(), duration, e);
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(duration));
             DefaultApplicationArguments applicationArguments = new DefaultApplicationArguments("retry " + atomicSum.get());
             this.process(applicationArguments);
