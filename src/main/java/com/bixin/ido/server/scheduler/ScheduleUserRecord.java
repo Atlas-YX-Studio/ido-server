@@ -95,7 +95,7 @@ public class ScheduleUserRecord {
                             }
                             userRecords.forEach(u -> {
                                 try {
-                                    MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getPostResp(u.getUserAddress(), p);
+                                    MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getStakingResp(u.getUserAddress(), p);
                                     ResponseEntity<String> resp = triple.getLeft();
                                     String url = triple.getMiddle();
                                     HttpEntity<Map<String, Object>> httpEntity = triple.getRight();

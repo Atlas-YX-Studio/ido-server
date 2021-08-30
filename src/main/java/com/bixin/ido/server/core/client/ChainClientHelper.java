@@ -31,13 +31,10 @@ public class ChainClientHelper {
     /**
      * 获取链上交易信息
      *
-     * @param userAddress
-     * @param product
+     * @param addressArray
      * @return
      */
-    public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getPostResp(String userAddress, IdoDxProduct product) {
-        List<String> addressArray = Arrays.asList(userAddress, idoStarConfig.getDx().getModuleName() + "::Staking<" +
-                product.getPledgeAddress() + "," + product.getPayAddress() + "," + product.getAssignAddress() + ">");
+    public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getPostResp(List<String> addressArray) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -56,5 +53,15 @@ public class ChainClientHelper {
         return new MutableTriple<>(response, idoStarConfig.getDx().getResourceUrl(), request);
     }
 
+    public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getStakingResp(String userAddress, IdoDxProduct product) {
+        List<String> addressArray = Arrays.asList(userAddress, idoStarConfig.getDx().getModuleName() + "::Staking<" +
+                product.getPledgeAddress() + "," + product.getPayAddress() + "," + product.getAssignAddress() + ">");
+        return getPostResp(addressArray);
+    }
 
+    public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getLPResp(String userAddress, IdoDxProduct product) {
+        List<String> addressArray = Arrays.asList(userAddress, idoStarConfig.getDx().getModuleName() + "::Staking<" +
+                product.getPledgeAddress() + "," + product.getPayAddress() + "," + product.getAssignAddress() + ">");
+        return getPostResp(addressArray);
+    }
 }
