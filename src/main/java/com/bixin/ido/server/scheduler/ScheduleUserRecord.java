@@ -5,23 +5,26 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.bean.DO.IdoDxUserRecord;
-import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.core.client.ChainClientHelper;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.IDxProductService;
 import com.bixin.ido.server.service.IDxUserRecordService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author zhangcheng
@@ -37,9 +40,7 @@ public class ScheduleUserRecord {
     @Resource
     IDxUserRecordService idoDxUserRecordService;
     @Resource
-    StarConfig idoStarConfig;
-    @Resource
-    RestTemplate restTemplate;
+    ChainClientHelper chainClientHelper;
     @Resource
     RedisCache redisCache;
 
@@ -94,7 +95,7 @@ public class ScheduleUserRecord {
                             }
                             userRecords.forEach(u -> {
                                 try {
-                                    MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = getPostResp(u.getUserAddress(), p);
+                                    MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getPostResp(u.getUserAddress(), p);
                                     ResponseEntity<String> resp = triple.getLeft();
                                     String url = triple.getMiddle();
                                     HttpEntity<Map<String, Object>> httpEntity = triple.getRight();
@@ -157,26 +158,5 @@ public class ScheduleUserRecord {
 
     }
 
-
-    private MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getPostResp(String userAddress, IdoDxProduct product) {
-        List<String> addressArray = Arrays.asList(userAddress, idoStarConfig.getDx().getModuleName() + "::Staking<" +
-                product.getPledgeAddress() + "," + product.getPayAddress() + "," + product.getAssignAddress() + ">");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", "101");
-        map.put("jsonrpc", "2.0");
-        map.put("method", "contract.get_resource");
-        map.put("params", addressArray);
-//        map.put("params", Arrays.asList("0xdc35f49d71d697d01ebc63bf4dea3f04","0x64c66296d98d6ab08579b14487157e05::Offering::Staking<0x1::STC::STC,0x99a287696c35e978c19249400c616c6a::DummyToken1::USDT,0x99a287696c35e978c19249400c616c6a::DummyToken1::GEM>"));
-//        map.put("params", new String[]{"0xdc35f49d71d697d01ebc63bf4dea3f04", "0x64c66296d98d6ab08579b14487157e05::Offering::Staking<0x1::STC::STC,0x99a287696c35e978c19249400c616c6a::DummyToken1::USDT,0x99a287696c35e978c19249400c616c6a::DummyToken1::GEM>"});
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(map, headers);
-
-        ResponseEntity<String> response = restTemplate.postForEntity(idoStarConfig.getDx().getResourceUrl(), request, String.class);
-
-        return new MutableTriple<>(response, idoStarConfig.getDx().getResourceUrl(), request);
-    }
 
 }
