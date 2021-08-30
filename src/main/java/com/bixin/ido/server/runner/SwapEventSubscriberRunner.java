@@ -5,7 +5,9 @@ import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
 import com.bixin.ido.server.enums.StarSwapEventType;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -44,6 +46,7 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
     static final long maxIntervalTime = 60 * 1000L;
 
     static final String separator = "::";
+    ObjectMapper mapper = new ObjectMapper();
 
     ThreadPoolExecutor poolExecutor;
 
@@ -90,7 +93,12 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
                 StarSwapEventType eventType = StarSwapEventType.of(getEventName(eventResult.getTypeTag()));
                 JsonNode data = eventResult.getData();
 
-                log.info("SwapEventSubscriberRunner infos: {}", JSON.toJSONString(eventResult));
+                // FIXME: 2021/8/30 debug
+                try {
+                    log.info("SwapEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
 
                 if (Objects.isNull(eventType) || Objects.isNull(data)) {
                     return;

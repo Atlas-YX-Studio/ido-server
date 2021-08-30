@@ -8,11 +8,9 @@ import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
 import com.bixin.ido.server.enums.StarSwapEventType;
 import com.bixin.ido.server.provider.StarSwapDispatcher;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.text.similarity.JaccardSimilarity;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -20,11 +18,14 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
+import java.util.function.Consumer;
 
 /**
  * @author zhangcheng
@@ -40,8 +41,10 @@ public class SwapEventConsumerRunner implements ApplicationRunner {
     StarSwapDispatcher swapDispatcher;
 
     ThreadPoolExecutor poolExecutor;
-
     ObjectMapper mapper = new ObjectMapper();
+    static int parkMilliSeconds = 2000;
+
+    Map<StarSwapEventType, Consumer> dispatcherMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -75,14 +78,17 @@ public class SwapEventConsumerRunner implements ApplicationRunner {
 
     public void process(ApplicationArguments args) {
         Map<StarSwapEventType, LinkedBlockingQueue<JsonNode>> queueMap = SwapEventBlockingQueue.queueMap;
-        queueMap.entrySet().forEach(entry -> {
-            StarSwapEventType type = entry.getKey();
-            LinkedBlockingQueue<JsonNode> jsonNodes = entry.getValue();
-            JsonNode node = jsonNodes.poll();
-            if (Objects.nonNull(node)) {
-                swapDispatcher(type, node);
-            }
-        });
+        for (; ; ) {
+            queueMap.entrySet().forEach(entry -> {
+                StarSwapEventType type = entry.getKey();
+                LinkedBlockingQueue<JsonNode> jsonNodes = entry.getValue();
+                JsonNode node = jsonNodes.poll();
+                if (Objects.nonNull(node)) {
+                    swapDispatcher(type, node);
+                }
+            });
+            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(parkMilliSeconds));
+        }
     }
 
     private void swapDispatcher(StarSwapEventType type, JsonNode node) {
