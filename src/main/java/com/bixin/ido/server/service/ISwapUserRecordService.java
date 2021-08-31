@@ -12,7 +12,7 @@ public interface ISwapUserRecordService {
 
     int insert(SwapUserRecord record);
 
-    List<SwapUserRecord> getALlByPage(long pageSize, long nextId);
+    List<SwapUserRecord> getALlByPage(String userAddress, long pageSize, long nextId);
 
 
 }

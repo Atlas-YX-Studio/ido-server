@@ -27,8 +27,9 @@ public class SwapUserRecordImpl implements ISwapUserRecordService {
     }
 
     @Override
-    public List<SwapUserRecord> getALlByPage(long pageSize, long nextId) {
+    public List<SwapUserRecord> getALlByPage(String userAddress, long pageSize, long nextId) {
         Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userAddress", userAddress);
         paramMap.put("pageSize", pageSize);
         paramMap.put("sort", "liquidityTime");
         paramMap.put("order", "desc");

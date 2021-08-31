@@ -12,6 +12,6 @@ public interface ILiquidityUserRecordService {
 
     int insert(LiquidityUserRecord record);
 
-    List<LiquidityUserRecord> getALlByPage(long pageSize, long nextId);
+    List<LiquidityUserRecord> getALlByPage(String userAddress, long pageSize, long nextId);
 
 }

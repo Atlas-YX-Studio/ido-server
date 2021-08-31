@@ -27,8 +27,9 @@ public class LiquidityUserRecordImpl implements ILiquidityUserRecordService {
     }
 
     @Override
-    public List<LiquidityUserRecord> getALlByPage(long pageSize, long nextId) {
+    public List<LiquidityUserRecord> getALlByPage(String userAddress,long pageSize, long nextId) {
         Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userAddress", userAddress);
         paramMap.put("pageSize", pageSize);
         paramMap.put("sort", "liquidityTime");
         paramMap.put("order", "desc");

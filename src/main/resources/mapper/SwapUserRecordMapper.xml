@@ -99,8 +99,9 @@
         select
         <include refid="Base_Column_List"/>
         from swap_user_record
+        where userAddress=#{userAddress}
         <if test="nextId != null">
-            where id &lt; #{nextId}
+            and id &lt; #{nextId}
         </if>
         order by
         <if test="sort != null">
