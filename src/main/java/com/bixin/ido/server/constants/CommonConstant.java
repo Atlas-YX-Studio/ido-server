@@ -10,4 +10,9 @@ public interface CommonConstant {
 
     int SWAP_EVENT_QUEUE_SIZE = 20000;
 
+
+    long MAX_PAGE_SIZE = 1000;
+    long DEFAULT_PAGE_SIZE = 20;
+
+
 }

@@ -3,6 +3,7 @@ package com.bixin.ido.server.controller;
 import com.bixin.ido.server.bean.DO.LiquidityUserRecord;
 import com.bixin.ido.server.bean.DO.SwapUserRecord;
 import com.bixin.ido.server.bean.dto.P;
+import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.constants.PathConstant;
 import com.bixin.ido.server.service.ISwapUserRecordService;
 import org.apache.commons.lang3.StringUtils;
@@ -31,9 +32,11 @@ public class SwapUserRecordController {
                           @RequestParam(value = "userAddress", defaultValue = "") String userAddress,
                           @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
 
-        if (nextId < 0 || StringUtils.isEmpty(userAddress)) {
+        if (nextId < 0 || pageSize <= 0 || StringUtils.isEmpty(userAddress)) {
             return P.failed("parameter is invalid");
         }
+        pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
+
         List<SwapUserRecord> records = swapUserRecordService.getALlByPage(userAddress, pageSize + 1, nextId);
 
         boolean hasNext = false;

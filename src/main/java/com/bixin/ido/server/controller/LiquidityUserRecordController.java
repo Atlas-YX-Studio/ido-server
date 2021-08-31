@@ -2,6 +2,7 @@ package com.bixin.ido.server.controller;
 
 import com.bixin.ido.server.bean.DO.LiquidityUserRecord;
 import com.bixin.ido.server.bean.dto.P;
+import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.constants.PathConstant;
 import com.bixin.ido.server.service.ILiquidityUserRecordService;
 import org.apache.commons.lang3.StringUtils;
@@ -24,14 +25,17 @@ public class LiquidityUserRecordController {
     @Resource
     ILiquidityUserRecordService liquidityUserRecordService;
 
+
     @GetMapping("/getAllByPage")
     public P getALlByPage(@RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                           @RequestParam(value = "userAddress", defaultValue = "") String userAddress,
                           @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
 
-        if (nextId < 0 || StringUtils.isEmpty(userAddress)) {
+        if (nextId < 0 || pageSize <= 0 || StringUtils.isEmpty(userAddress)) {
             return P.failed("parameter is invalid");
         }
+        pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
+
         List<LiquidityUserRecord> records = liquidityUserRecordService.getALlByPage(userAddress, pageSize + 1, nextId);
 
         boolean hasNext = false;
