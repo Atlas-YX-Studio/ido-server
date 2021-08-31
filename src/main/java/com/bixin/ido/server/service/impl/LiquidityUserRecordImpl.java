@@ -31,7 +31,7 @@ public class LiquidityUserRecordImpl implements ILiquidityUserRecordService {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("userAddress", userAddress);
         paramMap.put("pageSize", pageSize);
-        paramMap.put("sort", "liquidityTime");
+        paramMap.put("sort", "id");
         paramMap.put("order", "desc");
 
         CaseUtil.buildNoneValue(nextId, id -> paramMap.put("nextId", id));
