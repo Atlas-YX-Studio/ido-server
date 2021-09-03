@@ -36,9 +36,14 @@ public class GrfAllEdge {
 		return path;
 	}
 
+	public List<String> getNodes() {
+		return nodes;
+	}
 
+	public void setNodes(List<String> nodes) {
+		this.nodes = nodes;
+	}
 
- 
 	/**
 	 * 寻找起点到终点的所有路径
 	 * 

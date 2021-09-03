@@ -1,12 +1,23 @@
 package com.bixin.ido.server.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.TypeReference;
+import com.beust.jcommander.internal.Lists;
 import com.bixin.ido.server.bean.DO.LiquidityPool;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
+import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.core.client.ChainClientHelper;
 import com.bixin.ido.server.core.mapper.LiquidityPoolMapper;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.utils.GrfAllEdge;
+import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.MutableTriple;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +25,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,9 +50,16 @@ public class SwapPathServiceImpl implements ISwapPathService {
     @Resource
     private LiquidityPoolImpl liquidityPool;
 
+    @Resource
+    private ChainClientHelper chainClientHelper;
+
+    @Resource
+    StarConfig idoStarConfig;
+
     @PostConstruct
     public void init() {
-        this.fillTestData();
+//        this.fillTestData();
+        this.refreshPools();
     }
 
     @Override
@@ -215,48 +235,128 @@ public class SwapPathServiceImpl implements ISwapPathService {
             return tokenA + "_" + tokenB;
     }
 
-    public void refreshPool() {
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void refreshPools() {
         // 获取区块高度
 
         // 有新块产生，更新数据
-
-
-        liquidityPoolMap.forEach((key, value) -> {
-            // 获取数据
-            Pool poll = getChainPool();
-            value.tokenAmountA = poll.tokenAmountA;
-            value.tokenAmountB = poll.tokenAmountB;
-        });
-    }
-
-    public void refreshPools() {
-        List<LiquidityPool> allPools = liquidityPool.getAllPools();
-        if (allPools.size() == liquidityPoolMap.size()) {
-            return;
-        }
-
-        allPools.forEach(x -> {
-            String pair = toPair(x.getTokenCodeX(), x.getTokenCodeY());
-            if (liquidityPoolMap.containsKey(pair)) {
-                return;
-            }
-            // fixme 获取链上池子
-            Pool poll = getChainPool();
-            liquidityPoolMap.put(pair, new Pool(x.getTokenCodeX(), x.getTokenCodeY(), poll.tokenAmountA, poll.tokenAmountB));
-        });
-
+        List<Pool> allChainPools = getAllChainPools();
+        liquidityPoolMap = allChainPools.stream().filter(x -> x.tokenAmountA.compareTo(BigDecimal.ZERO) > 0 || x.tokenAmountB.compareTo(BigDecimal.ZERO) > 0).collect(Collectors.toMap(x -> toPair(x.tokenA, x.tokenB), y -> y));
         Set<String> nodes = new HashSet<>();
         liquidityPoolMap.values().forEach(x -> {
             nodes.add(x.tokenA);
             nodes.add(x.tokenB);
         });
+        if (this.grf.getNodes().containsAll(nodes)) {
+            return;
+        }
         GrfAllEdge tempGrf = new GrfAllEdge(nodes.size(), new ArrayList<>(nodes));
         liquidityPoolMap.values().forEach(x -> tempGrf.addPath(x.tokenA, x.tokenB));
         this.grf = tempGrf;
     }
 
-    private Pool getChainPool() {
-        return new Pool("BTC", "USDT", new BigDecimal(100), new BigDecimal(1000000));
+    private List<Pool> getAllChainPools() {
+        List<Pool> pools = Lists.newArrayList();
+        try {
+            MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getAllLPResp();
+            ResponseEntity<String> resp = triple.getLeft();
+            String url = triple.getMiddle();
+            HttpEntity<Map<String, Object>> httpEntity = triple.getRight();
+
+            if (resp.getStatusCode() == HttpStatus.OK) {
+                Map<String, Object> respMap = JSON.parseObject(resp.getBody(), new TypeReference<>() {
+                });
+                if (!respMap.containsKey("result")) {
+                    log.error("getChainPool result is empty {}, {}, {}",
+                            JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
+                    return pools;
+                }
+                @SuppressWarnings("unchecked")
+                Map<String, Object> result = (Map<String, Object>) respMap.get("result");
+                if (!result.containsKey("resources")) {
+                    log.error("getChainPool result value is empty {}, {}, {}",
+                            JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
+                    return pools;
+                }
+                @SuppressWarnings("unchecked")
+                Map<String, Object> resourceMap = (Map<String, Object>) result.get("resources");
+                resourceMap.forEach((key, rs) -> {
+                    if (!key.startsWith(idoStarConfig.getSwap().getLpPoolResourceName())) {
+                        return;
+                    }
+                    String[] tokenArr = key.substring(key.indexOf("<")+1, key.length()-1).split(",");
+                    Pool pool = new Pool(tokenArr[0].trim(), tokenArr[1].trim(), BigDecimal.ZERO, BigDecimal.ZERO);
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> rsMap = (Map<String, Object>) ((Map<String, Object>) rs).get("json");
+
+                    rsMap.forEach((x,y) -> {
+                        if ("reserve_x".equalsIgnoreCase(x)) {
+                            pool.tokenAmountA = new BigDecimal(y.toString());
+                        } else if ("reserve_y".equalsIgnoreCase(x)) {
+                            pool.tokenAmountB = new BigDecimal(y.toString());
+                        }
+                    });
+                    pools.add(pool);
+                });
+            } else {
+                log.error("getChainPool get remote result {}", JSON.toJSONString(resp));
+            }
+        } catch (Exception e) {
+            log.error("getChainPool get remote chain exception", e);
+        }
+
+        return pools;
+    }
+
+    private Pool getChainPool(String tokenA, String tokenB) {
+        Pool resPool = new Pool(tokenA, tokenB, BigDecimal.ZERO, BigDecimal.ZERO);
+        try {
+            MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getLPResp(tokenA, tokenB);
+            ResponseEntity<String> resp = triple.getLeft();
+            String url = triple.getMiddle();
+            HttpEntity<Map<String, Object>> httpEntity = triple.getRight();
+
+            if (resp.getStatusCode() == HttpStatus.OK) {
+                Map<String, Object> respMap = JSON.parseObject(resp.getBody(), new TypeReference<>() {
+                });
+                if (!respMap.containsKey("result")) {
+                    log.error("getChainPool result is empty {}, {}, {}",
+                            JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
+                    return resPool;
+                }
+                @SuppressWarnings("unchecked")
+                Map<String, Object> result = (Map<String, Object>) respMap.get("result");
+                if (!result.containsKey("value")) {
+                    log.error("getChainPool result value is empty {}, {}, {}",
+                            JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
+                    return resPool;
+                }
+                @SuppressWarnings("unchecked")
+                List<JSONArray> values = (List<JSONArray>) result.get("value");
+                values.forEach(rs -> {
+                    Object[] stcResult = rs.toArray();
+                    if ("reserve_x".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> pledgeMap = (Map<String, Object>) stcResult[1];
+                        String tokenAmount = (String) pledgeMap.get("U128");
+
+                        resPool.tokenAmountA = new BigDecimal(tokenAmount);
+                    } else if ("reserve_y".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> pledgeMap = (Map<String, Object>) stcResult[1];
+                        String tokenAmount = (String) pledgeMap.get("U128");
+
+                        resPool.tokenAmountB = new BigDecimal(tokenAmount);
+                    }
+                });
+            } else {
+                log.error("getChainPool get remote result {}", JSON.toJSONString(resp));
+            }
+        } catch (Exception e) {
+            log.error("getChainPool get remote chain exception {}, {}", tokenA, tokenB, e);
+        }
+
+        return resPool;
     }
 
     @Scheduled(cron = "0 0 0/1 * * ?")
@@ -325,8 +425,6 @@ public class SwapPathServiceImpl implements ISwapPathService {
         SwapPathServiceImpl swapPathService = new SwapPathServiceImpl();
         swapPathService.init();
 
-        swapPathService.allAssets();
-        System.out.println(swapPathService.totalAssets());
 //        swapPathService.exchangeIn("STC", "USDT", new BigDecimal("1"), new BigDecimal("0.01"));
 //        swapPathService.exchangeOut("USDT", "STC", new BigDecimal("1000"), new BigDecimal("0.01"));
 //        swapPathService.exchangeOut("BTC", "STC", new BigDecimal("1000"), new BigDecimal("0.01"));

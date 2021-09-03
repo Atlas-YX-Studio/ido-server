@@ -40,6 +40,8 @@ public class StarConfig {
         private String websocketHost;
         private String websocketPort;
         private String websocketContractAddress;
+        private String contractAddress;
+        private String lpPoolResourceName;
 
     }
 
