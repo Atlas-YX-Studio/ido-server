@@ -296,12 +296,12 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     private void fillTestData() {
         liquidityPoolMap = new HashMap<>();
-        Pool pool1 = new Pool("0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::BTC", "0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::USDT", new BigDecimal(100), new BigDecimal(1000000));
-        Pool pool2 = new Pool("0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::ETH", "0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::USDT", new BigDecimal(100), new BigDecimal(200000));
-        Pool pool3 = new Pool("0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::EOS", "0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::USDT", new BigDecimal(10000), new BigDecimal(100000));
-        Pool pool4 = new Pool("0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::STC", "0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::USDT", new BigDecimal(100000000), new BigDecimal(20000000));
-        Pool pool5 = new Pool("0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::BTC", "0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::ETH", new BigDecimal(100), new BigDecimal(500));
-        Pool pool6 = new Pool("0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::BTC", "0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::STC", new BigDecimal(2000), new BigDecimal(100000000));
+        Pool pool1 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::BTC", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::USDT", new BigDecimal(100), new BigDecimal(1000000));
+        Pool pool2 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::ETH", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::USDT", new BigDecimal(100), new BigDecimal(200000));
+        Pool pool3 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::EOS", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::USDT", new BigDecimal(10000), new BigDecimal(100000));
+        Pool pool4 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::STC", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::USDT", new BigDecimal(100000000), new BigDecimal(20000000));
+        Pool pool5 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::BTC", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::ETH", new BigDecimal(100), new BigDecimal(500));
+        Pool pool6 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::BTC", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::STC", new BigDecimal(2000), new BigDecimal(100000000));
         liquidityPoolMap.put(toPair(pool1.tokenA, pool1.tokenB), pool1);
         liquidityPoolMap.put(toPair(pool2.tokenA, pool2.tokenB), pool2);
         liquidityPoolMap.put(toPair(pool3.tokenA, pool3.tokenB), pool3);
