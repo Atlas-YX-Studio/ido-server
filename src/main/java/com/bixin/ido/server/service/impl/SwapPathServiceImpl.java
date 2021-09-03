@@ -247,7 +247,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
             nodes.add(x.tokenA);
             nodes.add(x.tokenB);
         });
-        if (this.grf.getNodes().containsAll(nodes)) {
+        if (Objects.nonNull(this.grf.getNodes()) && this.grf.getNodes().containsAll(nodes)) {
             return;
         }
         GrfAllEdge tempGrf = new GrfAllEdge(nodes.size(), new ArrayList<>(nodes));
