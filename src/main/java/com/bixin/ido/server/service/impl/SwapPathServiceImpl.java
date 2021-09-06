@@ -298,9 +298,9 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
                     rsMap.forEach((x,y) -> {
                         if ("reserve_x".equalsIgnoreCase(x)) {
-                            pool.tokenAmountA = new BigDecimal(y.toString()).movePointRight(coinMap.get(pool.tokenA));
+                            pool.tokenAmountA = new BigDecimal(y.toString()).movePointLeft(coinMap.get(pool.tokenA));
                         } else if ("reserve_y".equalsIgnoreCase(x)) {
-                            pool.tokenAmountB = new BigDecimal(y.toString()).movePointRight(coinMap.get(pool.tokenB));
+                            pool.tokenAmountB = new BigDecimal(y.toString()).movePointLeft(coinMap.get(pool.tokenB));
                         }
                     });
                     pools.add(pool);
