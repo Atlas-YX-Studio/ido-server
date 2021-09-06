@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.beust.jcommander.internal.Lists;
 import com.bixin.ido.server.bean.DO.LiquidityPool;
+import com.bixin.ido.server.bean.DO.SwapCoins;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.client.ChainClientHelper;
 import com.bixin.ido.server.core.mapper.LiquidityPoolMapper;
+import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.utils.GrfAllEdge;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
@@ -55,6 +57,9 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     @Resource
     StarConfig idoStarConfig;
+
+    @Resource
+    ISwapCoinsService swapCoinsService;
 
     @PostConstruct
     public void init() {
@@ -256,6 +261,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
     }
 
     private List<Pool> getAllChainPools() {
+        List<SwapCoins> swapCoins = swapCoinsService.selectByDDL(SwapCoins.builder().build());
+        Map<String, Short> coinMap = swapCoins.stream().collect(Collectors.toMap(SwapCoins::getAddress, SwapCoins::getExchangePrecision));
         List<Pool> pools = Lists.newArrayList();
         try {
             MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getAllLPResp();
@@ -291,9 +298,9 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
                     rsMap.forEach((x,y) -> {
                         if ("reserve_x".equalsIgnoreCase(x)) {
-                            pool.tokenAmountA = new BigDecimal(y.toString());
+                            pool.tokenAmountA = new BigDecimal(y.toString()).movePointRight(coinMap.get(pool.tokenA));
                         } else if ("reserve_y".equalsIgnoreCase(x)) {
-                            pool.tokenAmountB = new BigDecimal(y.toString());
+                            pool.tokenAmountB = new BigDecimal(y.toString()).movePointRight(coinMap.get(pool.tokenB));
                         }
                     });
                     pools.add(pool);
