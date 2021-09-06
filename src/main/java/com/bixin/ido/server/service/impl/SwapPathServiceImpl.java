@@ -41,7 +41,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     private static final BigDecimal REMAIN_RATE = BigDecimal.ONE.subtract(FEE_RATE);
 
-    private static final String USDT_CODE = "0x44366bba9bc9ed51bc8f564ecb18b12a::DummyToken::USDT";
+    private static final String USDT_CODE = "0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::USDT";
 
     private Map<String, Pool> liquidityPoolMap;
 

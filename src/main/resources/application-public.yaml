@@ -22,14 +22,14 @@ spring:
 ido:
   star:
     dx:
-      resourceUrl: https://barnard-seed.starcoin.org
+      resourceUrl: https://main-seed.starcoin.org
       moduleName: 0x64c66296d98d6ab08579b14487157e05::Offering
     swap:
-      websocket-host: 60.205.3.84
-      websocket-port: 8970
-      websocket-contract-address: 0xc9cf2dd64e30c9b587c4f818adcc0eef
-      contract-address: c9cf2dd64e30c9b587c4f818adcc0eef
-      lp-pool-resource-name: 0xc9cf2dd64e30c9b587c4f818adcc0eef::SwapPair::SwapPair
+      websocket-host: 10.13.22.40
+      websocket-port: 9870
+      websocket-contract-address: 0x3cf910d97c98947277be21d6b7625cfe
+      contract-address: 3cf910d97c98947277be21d6b7625cfe
+      lp-pool-resource-name: 0x3cf910d97c98947277be21d6b7625cfe::SwapPair::SwapPair
     runner:
       swap-consumer:
         core-threads: 1
