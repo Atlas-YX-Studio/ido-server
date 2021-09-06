@@ -37,7 +37,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     private static final int DEFAULT_SCALE = 18;
 
-    private static final BigDecimal FEE_RATE = new BigDecimal("0.001");
+    private static final BigDecimal FEE_RATE = new BigDecimal("0.003");
 
     private static final BigDecimal REMAIN_RATE = BigDecimal.ONE.subtract(FEE_RATE);
 
