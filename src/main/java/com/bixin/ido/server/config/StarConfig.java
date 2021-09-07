@@ -1,9 +1,8 @@
 package com.bixin.ido.server.config;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @author zhangcheng
  * create          2021-08-12 4:20 下午
  */
-@Getter
+@Data
 @Component
 @ConfigurationProperties(prefix = "ido.star")
 public class StarConfig {
@@ -20,8 +19,8 @@ public class StarConfig {
     private starSwap swap = new starSwap();
     private Runner runner = new Runner();
 
-    @Getter
-    @Setter
+
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class StarDx {
@@ -31,8 +30,8 @@ public class StarConfig {
 
     }
 
-    @Getter
-    @Setter
+
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class starSwap {
@@ -45,16 +44,15 @@ public class StarConfig {
 
     }
 
-    @Getter
-    @Setter
+
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Runner {
         private SwapConsumer swapConsumer;
     }
 
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SwapConsumer {
