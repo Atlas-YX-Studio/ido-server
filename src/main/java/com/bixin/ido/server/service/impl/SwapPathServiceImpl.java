@@ -65,6 +65,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
     public void init() {
 //        this.fillTestData();
         this.refreshPools();
+        this.allAssets();
     }
 
     @Override
