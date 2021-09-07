@@ -45,9 +45,9 @@ public class StarConfig {
         //starCoin-sdk 需要去掉合约地址的前缀 "0x"
         public String getWebsocketContractAddress() {
             if (this.websocketContractAddress.startsWith("0x")) {
-                websocketContractAddress = websocketContractAddress.replaceAll(websocketContractAddress, "0x");
+                this.websocketContractAddress = websocketContractAddress.replaceAll(websocketContractAddress, "0x");
             }
-            return websocketContractAddress;
+            return this.websocketContractAddress;
         }
 
     }
