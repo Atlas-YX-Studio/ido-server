@@ -1,9 +1,9 @@
 package com.bixin.ido.server.runner;
 
-import com.alibaba.fastjson.JSON;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
+import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.enums.StarSwapEventType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,7 +25,9 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 
@@ -39,11 +41,15 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
 
     @Resource
     StarConfig idoStarConfig;
+    @Resource
+    RedisCache redisCache;
 
     AtomicLong atomicSum = new AtomicLong(0);
     static final long initTime = 2000L;
     static final long initIntervalTime = 5000L;
     static final long maxIntervalTime = 60 * 1000L;
+    //滤重过期时间 默认20分钟
+    static final long duplicateExpiredTime = 20 * 60 * 1000;
 
     static final String separator = "::";
     ObjectMapper mapper = new ObjectMapper();
@@ -103,6 +109,10 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
                 if (Objects.isNull(eventType) || Objects.isNull(data)) {
                     return;
                 }
+                if (!duplicateEvent(eventResult)) {
+                    log.info("SwapEventSubscriberRunner duplicate event data {}", eventResult);
+                    return;
+                }
                 queueMap.get(eventType).offer(data);
             });
 
@@ -118,6 +128,19 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
 
     private String getEventName(String typeTag) {
         return typeTag.split(separator)[2];
+    }
+
+    /**
+     * true 不存在
+     * false 已存在
+     *
+     * @param eventResult
+     * @return
+     */
+    public boolean duplicateEvent(EventNotificationResult eventResult) {
+        String typeTag = eventResult.getTypeTag();
+        String seqNumber = eventResult.getEventSeqNumber();
+        return redisCache.tryGetDistributedLock(typeTag, seqNumber, duplicateExpiredTime);
     }
 
 }
