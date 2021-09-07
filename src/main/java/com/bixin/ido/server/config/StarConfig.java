@@ -42,6 +42,14 @@ public class StarConfig {
         private String contractAddress;
         private String lpPoolResourceName;
 
+        //starCoin-sdk 需要去掉合约地址的前缀 "0x"
+        public String getWebsocketContractAddress() {
+            if (this.websocketContractAddress.startsWith("0x")) {
+                websocketContractAddress = websocketContractAddress.replaceAll(websocketContractAddress, "0x");
+            }
+            return websocketContractAddress;
+        }
+
     }
 
 
