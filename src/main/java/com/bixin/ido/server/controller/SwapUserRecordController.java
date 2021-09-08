@@ -1,8 +1,7 @@
 package com.bixin.ido.server.controller;
 
-import com.bixin.ido.server.bean.DO.LiquidityUserRecord;
 import com.bixin.ido.server.bean.DO.SwapUserRecord;
-import com.bixin.ido.server.bean.dto.P;
+import com.bixin.ido.server.bean.vo.wrap.P;
 import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.constants.PathConstant;
 import com.bixin.ido.server.service.ISwapUserRecordService;

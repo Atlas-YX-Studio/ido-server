@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LiquidityUserRecord {
+
     private Long id;
 
     private String userAddress;

@@ -2,7 +2,7 @@ package com.bixin.ido.server.controller;
 
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.bean.vo.HomeProductVO;
-import com.bixin.ido.server.bean.dto.R;
+import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.constants.PathConstant;
 import com.bixin.ido.server.enums.ProductState;
 import com.bixin.ido.server.service.IDxProductService;

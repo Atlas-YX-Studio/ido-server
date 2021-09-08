@@ -1,4 +1,4 @@
-package com.bixin.ido.server.bean.dto;
+package com.bixin.ido.server.bean.vo.wrap;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

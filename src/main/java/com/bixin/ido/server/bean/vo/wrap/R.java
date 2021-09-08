@@ -1,10 +1,9 @@
-package com.bixin.ido.server.bean.dto;
+package com.bixin.ido.server.bean.vo.wrap;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 
 /**

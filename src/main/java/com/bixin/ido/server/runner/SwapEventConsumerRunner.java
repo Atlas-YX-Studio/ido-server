@@ -1,8 +1,8 @@
 package com.bixin.ido.server.runner;
 
-import com.bixin.ido.server.bean.DO.LiquidityPool;
-import com.bixin.ido.server.bean.DO.LiquidityUserRecord;
-import com.bixin.ido.server.bean.DO.SwapUserRecord;
+import com.bixin.ido.server.bean.dto.LiquidityEventDto;
+import com.bixin.ido.server.bean.dto.LiquidityPoolEventDto;
+import com.bixin.ido.server.bean.dto.SwapEventDto;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
@@ -93,14 +93,14 @@ public class SwapEventConsumerRunner implements ApplicationRunner {
 
     private void swapDispatcher(StarSwapEventType type, JsonNode node) {
         if (StarSwapEventType.CREATE_PAIR_EVENT == type) {
-            LiquidityPool liquidityPool = mapper.convertValue(node, LiquidityPool.class);
-            swapDispatcher.dispatch(liquidityPool);
+            LiquidityPoolEventDto liquidityPoolEventDto = mapper.convertValue(node, LiquidityPoolEventDto.class);
+            swapDispatcher.dispatch(LiquidityPoolEventDto.of(liquidityPoolEventDto));
         } else if (StarSwapEventType.SWAP_EVENT == type) {
-            SwapUserRecord swapUserRecord = mapper.convertValue(node, SwapUserRecord.class);
-            swapDispatcher.dispatch(swapUserRecord);
+            SwapEventDto swapEventDto = mapper.convertValue(node, SwapEventDto.class);
+            swapDispatcher.dispatch(SwapEventDto.of(swapEventDto));
         } else if (StarSwapEventType.LIQUIDITY_EVENT == type) {
-            LiquidityUserRecord liquidityUserRecord = mapper.convertValue(node, LiquidityUserRecord.class);
-            swapDispatcher.dispatch(liquidityUserRecord);
+            LiquidityEventDto liquidityEventDto = mapper.convertValue(node, LiquidityEventDto.class);
+            swapDispatcher.dispatch(LiquidityEventDto.of(liquidityEventDto));
         }
     }
 

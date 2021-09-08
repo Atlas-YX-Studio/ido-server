@@ -70,7 +70,7 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
             }
             poolExecutor.shutdown();
             poolExecutor.awaitTermination(1, TimeUnit.SECONDS);
-            log.info("SwapEventSubscriberRunner ThreadPoolExecutor stopped");
+            log.info("SwapEventSubscriberRunner poolExecutor stopped");
         } catch (InterruptedException ex) {
             log.error("SwapEventSubscriberRunner InterruptedException: ", ex);
             Thread.currentThread().interrupt();

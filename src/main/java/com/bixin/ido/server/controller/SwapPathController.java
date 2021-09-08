@@ -1,7 +1,7 @@
 package com.bixin.ido.server.controller;
 
 import com.bixin.ido.server.bean.bo.SwapBo;
-import com.bixin.ido.server.bean.dto.R;
+import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
 import com.bixin.ido.server.constants.PathConstant;
