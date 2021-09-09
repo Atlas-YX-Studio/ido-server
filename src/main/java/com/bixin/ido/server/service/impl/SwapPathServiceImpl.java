@@ -124,6 +124,9 @@ public class SwapPathServiceImpl implements ISwapPathService {
             List<BigDecimal> tempAmounts = getAmountsIn(tempPath, tokenAmount);
             // 当前路径需要的数量小于选中的路径需要的数量
             if(Objects.isNull(amounts) || amounts.get(0).compareTo(tempAmounts.get(0)) > 0) {
+                if (tempAmounts.get(0).compareTo(BigDecimal.ZERO) < 0){
+                    continue;
+                }
                 path = tempPath;
                 amounts = tempAmounts;
             }
@@ -294,6 +297,9 @@ public class SwapPathServiceImpl implements ISwapPathService {
                     }
                     String[] tokenArr = key.substring(key.indexOf("<")+1, key.length()-1).split(",");
                     Pool pool = new Pool(tokenArr[0].trim(), tokenArr[1].trim(), BigDecimal.ZERO, BigDecimal.ZERO);
+                    if (!coinMap.containsKey(pool.tokenA) || !coinMap.containsKey(pool.tokenB)) {
+                        return;
+                    }
                     @SuppressWarnings("unchecked")
                     Map<String, Object> rsMap = (Map<String, Object>) ((Map<String, Object>) rs).get("json");
 
