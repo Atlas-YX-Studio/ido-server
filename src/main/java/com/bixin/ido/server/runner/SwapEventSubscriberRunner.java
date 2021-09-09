@@ -152,7 +152,7 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
         try {
             String key = URLEncoder.encode(typeTag, "utf8") + underline + seqNumber;
             Long now = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
-            log.info("IdoSwapEventRunner duplicate event redis key {}", key);
+//            log.info("IdoSwapEventRunner duplicate event redis key {}", key);
 
             if (Objects.nonNull(redisCache.getValue(key))) {
                 return true;
