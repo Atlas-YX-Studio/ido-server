@@ -23,6 +23,7 @@ import org.web3j.protocol.websocket.WebSocketService;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -89,12 +90,12 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
             WebSocketService service = new WebSocketService("ws://" + idoStarConfig.getSwap().getWebsocketHost() + ":" + idoStarConfig.getSwap().getWebsocketPort(), true);
             service.connect();
             StarcoinSubscriber subscriber = new StarcoinSubscriber(service);
-            EventFilter eventFilter = new EventFilter(0, idoStarConfig.getSwap().getWebsocketContractAddress());
-            Flowable<EventNotification> flowableTxns = subscriber.newTxnSendRecvEventNotifications(eventFilter);
+            EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getSwap().getWebsocketContractAddress()));
+            Flowable<EventNotification> notificationFlowable = subscriber.newTxnSendRecvEventNotifications(eventFilter);
 
             Map<StarSwapEventType, LinkedBlockingQueue<JsonNode>> queueMap = SwapEventBlockingQueue.queueMap;
 
-            flowableTxns.blockingIterable().forEach(b -> {
+            notificationFlowable.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
                 StarSwapEventType eventType = StarSwapEventType.of(getEventName(eventResult.getTypeTag()));
                 JsonNode data = eventResult.getData();
