@@ -215,7 +215,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
     // a = XY/Y-b - X = bX / (Y-b)
     private BigDecimal getAmountIn(BigDecimal tokenAmount, BigDecimal tokenAmountA, BigDecimal tokenAmountB) {
         if (tokenAmount.compareTo(BigDecimal.ZERO) <= 0 || tokenAmountA.compareTo(BigDecimal.ZERO) <= 0 || tokenAmountB.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("兑换参数异常");
+            return BigDecimal.ONE.negate();
         }
         return tokenAmount.multiply(tokenAmountA).divide(tokenAmountB.subtract(tokenAmount).multiply(REMAIN_RATE), DEFAULT_SCALE, RoundingMode.DOWN);
     }
@@ -230,7 +230,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
                 finalPriceA = finalPriceA.multiply(pool.tokenAmountB.subtract(amounts.get(i+1)).divide(pool.tokenAmountA.add(amounts.get(i)), DEFAULT_SCALE, RoundingMode.DOWN));
             } else {
                 priceA = priceA.multiply(pool.tokenAmountA.divide(pool.tokenAmountB, DEFAULT_SCALE, RoundingMode.DOWN));
-                finalPriceA = priceA.multiply(pool.tokenAmountA.subtract(amounts.get(i+1)).divide(pool.tokenAmountB.add(amounts.get(i)), DEFAULT_SCALE, RoundingMode.DOWN));
+                finalPriceA = finalPriceA.multiply(pool.tokenAmountA.subtract(amounts.get(i+1)).divide(pool.tokenAmountB.add(amounts.get(i)), DEFAULT_SCALE, RoundingMode.DOWN));
             }
         }
         return priceA.subtract(finalPriceA).divide(priceA, DEFAULT_SCALE, RoundingMode.DOWN);
