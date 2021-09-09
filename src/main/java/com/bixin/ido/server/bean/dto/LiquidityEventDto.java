@@ -63,7 +63,7 @@ public class LiquidityEventDto {
 
     public static LiquidityUserRecord of(LiquidityEventDto dto) {
         LiquidityUserRecord.LiquidityUserRecordBuilder builder = LiquidityUserRecord.builder()
-                .userAddress(dto.getX_token_code().getAddr())
+                .userAddress(dto.getSigner())
 //                .tokenCodeX("")
 //                .tokenCodeY("")
                 .amountX(dto.getAmount_x())
@@ -81,9 +81,6 @@ public class LiquidityEventDto {
         }
         if(StringUtils.isNoneEmpty(tokenY)){
             builder.tokenCodeY(HexStringUtil.toStringHex(tokenY.replaceAll("0x","")));
-        }
-        if(StringUtils.isEmpty(dto.getX_token_code().getAddr())){
-            builder.userAddress(dto.getY_token_code().getAddr());
         }
 
         return builder.build();

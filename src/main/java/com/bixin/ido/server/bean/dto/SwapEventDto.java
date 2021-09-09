@@ -63,7 +63,7 @@ public class SwapEventDto {
 
     public static SwapUserRecord of(SwapEventDto dto) {
         SwapUserRecord.SwapUserRecordBuilder builder = SwapUserRecord.builder()
-                .userAddress(dto.getX_token_code().getAddr())
+                .userAddress(dto.getSigner())
 //                .tokenCodeX("")
 //                .tokenCodeY("")
                 .tokenInX(dto.getAmount_x_in())
@@ -82,9 +82,6 @@ public class SwapEventDto {
         }
         if(StringUtils.isNoneEmpty(tokenY)){
             builder.tokenCodeY(HexStringUtil.toStringHex(tokenY.replaceAll("0x","")));
-        }
-        if(StringUtils.isEmpty(dto.getX_token_code().getAddr())){
-            builder.userAddress(dto.getY_token_code().getAddr());
         }
 
         return builder.build();
