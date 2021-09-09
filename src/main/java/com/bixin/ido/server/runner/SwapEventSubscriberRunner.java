@@ -142,10 +142,11 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
     public boolean duplicateEvent(EventNotificationResult eventResult) {
         String typeTag = eventResult.getTypeTag();
         String seqNumber = eventResult.getEventSeqNumber();
-        if (Objects.nonNull(redisCache.getValue(typeTag))) {
+        String key = typeTag.replaceAll(separator, "_");
+        if (Objects.nonNull(redisCache.getValue(key))) {
             return true;
         }
-        redisCache.setValue(typeTag, seqNumber, duplicateExpiredTime);
+        redisCache.setValue(key, seqNumber, duplicateExpiredTime);
 
         return false;
     }
