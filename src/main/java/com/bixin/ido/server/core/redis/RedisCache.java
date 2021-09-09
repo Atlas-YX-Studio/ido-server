@@ -34,8 +34,8 @@ public class RedisCache {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public void setValue(String key, String value, long expiredTime) {
-        redisTemplate.opsForValue().set(key, value, expiredTime);
+    public void setValue(String key, Object value, long expiredTime, TimeUnit unit) {
+        redisTemplate.opsForValue().set(key, value, expiredTime,unit);
     }
 
     /**
