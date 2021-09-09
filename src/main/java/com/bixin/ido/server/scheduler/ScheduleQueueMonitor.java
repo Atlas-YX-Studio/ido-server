@@ -53,7 +53,7 @@ public class ScheduleQueueMonitor {
             /**
              * 优先判断是否小于队列容量的【万分之一、千分之一】，再判断是否大于队列容量的【90%，80%，70%】
              **/
-            CaseFun caseFun = CaseFun.builder().hasContinue(false).build();
+            CaseFun caseFun = CaseFun.builder().hasContinue(true).build();
             if (!smaller(caseFun, eventType, jsonNodes.size()).isHasContinue()) {
                 greater(caseFun, eventType, jsonNodes.size());
             }

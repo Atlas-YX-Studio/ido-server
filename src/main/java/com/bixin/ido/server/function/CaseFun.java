@@ -2,8 +2,6 @@ package com.bixin.ido.server.function;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -19,8 +17,8 @@ public class CaseFun {
     private boolean hasContinue;
 
     public <T> CaseFun elseCase(T t, Predicate<T> predicate, Consumer<T> consumer) {
-        if (!hasContinue && predicate.test(t)) {
-            hasContinue = true;
+        if (hasContinue && predicate.test(t)) {
+            hasContinue = false;
             consumer.accept(t);
         }
         return this;

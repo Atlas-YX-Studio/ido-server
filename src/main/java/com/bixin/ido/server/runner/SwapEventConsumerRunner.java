@@ -7,6 +7,7 @@ import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
 import com.bixin.ido.server.enums.StarSwapEventType;
+import com.bixin.ido.server.function.CaseFun;
 import com.bixin.ido.server.provider.StarSwapDispatcher;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -92,16 +93,19 @@ public class SwapEventConsumerRunner implements ApplicationRunner {
     }
 
     private void swapDispatcher(StarSwapEventType type, JsonNode node) {
-        if (StarSwapEventType.CREATE_PAIR_EVENT == type) {
-            LiquidityPoolEventDto liquidityPoolEventDto = mapper.convertValue(node, LiquidityPoolEventDto.class);
-            swapDispatcher.dispatch(LiquidityPoolEventDto.of(liquidityPoolEventDto));
-        } else if (StarSwapEventType.SWAP_EVENT == type) {
-            SwapEventDto swapEventDto = mapper.convertValue(node, SwapEventDto.class);
-            swapDispatcher.dispatch(SwapEventDto.of(swapEventDto));
-        } else if (StarSwapEventType.LIQUIDITY_EVENT == type) {
-            LiquidityEventDto liquidityEventDto = mapper.convertValue(node, LiquidityEventDto.class);
-            swapDispatcher.dispatch(LiquidityEventDto.of(liquidityEventDto));
-        }
+        CaseFun.builder().hasContinue(true).build()
+                .elseCase(type, value -> StarSwapEventType.CREATE_PAIR_EVENT == value, value -> {
+                    LiquidityPoolEventDto liquidityPoolEventDto = mapper.convertValue(node, LiquidityPoolEventDto.class);
+                    swapDispatcher.dispatch(LiquidityPoolEventDto.of(liquidityPoolEventDto));
+                })
+                .elseCase(type, value -> StarSwapEventType.SWAP_EVENT == value, value -> {
+                    SwapEventDto swapEventDto = mapper.convertValue(node, SwapEventDto.class);
+                    swapDispatcher.dispatch(SwapEventDto.of(swapEventDto));
+                })
+                .elseCase(type, value -> StarSwapEventType.LIQUIDITY_EVENT == value, value -> {
+                    LiquidityEventDto liquidityEventDto = mapper.convertValue(node, LiquidityEventDto.class);
+                    swapDispatcher.dispatch(LiquidityEventDto.of(liquidityEventDto));
+                });
     }
 
 }
