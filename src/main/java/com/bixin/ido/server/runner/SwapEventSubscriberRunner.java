@@ -5,6 +5,7 @@ import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.enums.StarSwapEventType;
+import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,7 @@ import org.web3j.protocol.websocket.WebSocketService;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -142,11 +144,15 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
     public boolean duplicateEvent(EventNotificationResult eventResult) {
         String typeTag = eventResult.getTypeTag();
         String seqNumber = eventResult.getEventSeqNumber();
-        String key = typeTag.replaceAll(separator, "_");
+
+        String key = typeTag.replaceAll("[\\\\x00-\\\\x09\\\\x11\\\\x12\\\\x14-\\\\x1F\\\\x7F|::]", "_") + "_" + seqNumber;
+        Long now = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+
+        log.info("IdoSwapEventRunner  redis key {}", key);
         if (Objects.nonNull(redisCache.getValue(key))) {
             return true;
         }
-        redisCache.setValue(key, seqNumber, duplicateExpiredTime);
+        redisCache.setValue(key, String.valueOf(now), duplicateExpiredTime);
 
         return false;
     }
