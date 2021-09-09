@@ -54,7 +54,7 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
     static final long initIntervalTime = 5000L;
     static final long maxIntervalTime = 60 * 1000L;
     //滤重过期时间 默认20分钟
-    static final long duplicateExpiredTime = 20 * 60 * 1000;
+    static final long duplicateExpiredTime = 20 * 60;
 
     static final String separator = "::";
     static final String underline = "_";
@@ -150,16 +150,16 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
         String seqNumber = eventResult.getEventSeqNumber();
 
         try {
-            String key = URLEncoder.encode(typeTag, "utf8") + underline + seqNumber;
+            String key = URLEncoder.encode(typeTag, "utf8") + seqNumber;
             Long now = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
-//            log.info("IdoSwapEventRunner duplicate event redis key {}", key);
+            log.info("IdoSwapEventRunner duplicate event redis key {}", key);
 
             if (Objects.nonNull(redisCache.getValue(key))) {
                 return true;
             }
-            redisCache.setValue(key, now, duplicateExpiredTime, TimeUnit.MILLISECONDS);
+            redisCache.setValue(key, now, duplicateExpiredTime, TimeUnit.SECONDS);
 
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             log.error("IdoSwapEventRunner duplicate event exception {}, {}", typeTag, seqNumber, e);
         }
 
