@@ -24,6 +24,8 @@ import org.web3j.protocol.websocket.WebSocketService;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
@@ -55,6 +57,7 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
     static final long duplicateExpiredTime = 30 * 60 * 1000;
 
     static final String separator = "::";
+    static final String underline = "_";
     ObjectMapper mapper = new ObjectMapper();
 
     ThreadPoolExecutor poolExecutor;
@@ -116,10 +119,11 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
                     log.info("SwapEventSubscriberRunner duplicate event data {}", eventResult);
                     return;
                 }
+
                 queueMap.get(eventType).offer(data);
             });
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             long duration = initTime + (atomicSum.incrementAndGet() - 1) * initIntervalTime;
             duration = Math.min(duration, maxIntervalTime);
             log.error("IdoSwapEventRunner run exception count {}, next retry {}, params {}",
@@ -145,14 +149,19 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
         String typeTag = eventResult.getTypeTag();
         String seqNumber = eventResult.getEventSeqNumber();
 
-        String key = typeTag.replaceAll("[\\\\x00-\\\\x09\\\\x11\\\\x12\\\\x14-\\\\x1F\\\\x7F|::]", "_") + "_" + seqNumber;
-        Long now = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+        try {
+            String key = URLEncoder.encode(typeTag, "utf8") + underline + seqNumber;
+            Long now = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+            log.info("IdoSwapEventRunner duplicate event redis key {}", key);
 
-        log.info("IdoSwapEventRunner  redis key {}", key);
-        if (Objects.nonNull(redisCache.getValue(key))) {
-            return true;
+            if (Objects.nonNull(redisCache.getValue(key))) {
+                return true;
+            }
+            redisCache.setValue(key, String.valueOf(now), duplicateExpiredTime);
+
+        } catch (UnsupportedEncodingException e) {
+            log.error("IdoSwapEventRunner duplicate event exception {}, {}", typeTag, seqNumber, e);
         }
-        redisCache.setValue(key, String.valueOf(now), duplicateExpiredTime);
 
         return false;
     }
