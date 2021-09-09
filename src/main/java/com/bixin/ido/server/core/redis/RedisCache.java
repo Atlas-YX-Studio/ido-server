@@ -29,6 +29,15 @@ public class RedisCache {
     static final Long RELEASE_SUCCESS = 1L;
     static final int parkMilliSeconds = 10;
 
+
+    public Object getValue(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
+
+    public void setValue(String key, String value, long expiredTime) {
+        redisTemplate.opsForValue().set(key, value, expiredTime);
+    }
+
     /**
      * 尝试获取分布式锁
      *

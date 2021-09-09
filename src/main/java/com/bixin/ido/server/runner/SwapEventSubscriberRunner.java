@@ -110,7 +110,7 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
                 if (Objects.isNull(eventType) || Objects.isNull(data)) {
                     return;
                 }
-                if (!duplicateEvent(eventResult)) {
+                if (duplicateEvent(eventResult)) {
                     log.info("SwapEventSubscriberRunner duplicate event data {}", eventResult);
                     return;
                 }
@@ -133,8 +133,8 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
     }
 
     /**
-     * true 不存在
-     * false 已存在
+     * false 不存在
+     * true 已存在
      *
      * @param eventResult
      * @return
@@ -142,7 +142,12 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
     public boolean duplicateEvent(EventNotificationResult eventResult) {
         String typeTag = eventResult.getTypeTag();
         String seqNumber = eventResult.getEventSeqNumber();
-        return redisCache.tryGetDistributedLock(typeTag, seqNumber, duplicateExpiredTime);
+        if (Objects.nonNull(redisCache.getValue(typeTag))) {
+            return true;
+        }
+        redisCache.setValue(typeTag, seqNumber, duplicateExpiredTime);
+
+        return false;
     }
 
 }
