@@ -159,8 +159,17 @@ public class SwapPathServiceImpl implements ISwapPathService {
         return this.totalAssets;
     }
 
-    private List<List<String>> getPaths(String tokenA, String tokenB) {
-        return grf.getAllPath(tokenA, tokenB);
+    private List<List<String>> getPaths(String tokenA, String tokenB, boolean multiMode) {
+        if (multiMode) {
+            return grf.getAllPath(tokenA, tokenB);
+        } else  {
+            List<List<String>> paths = Lists.newArrayList();
+            if (Objects.nonNull(getPool(tokenA, tokenB))) {
+                paths.add(Lists.newArrayList(tokenA, tokenB));
+            }
+            return paths;
+        }
+
     }
 
     private List<BigDecimal> getAmountsOut(List<String> path, BigDecimal tokenAmount) {
