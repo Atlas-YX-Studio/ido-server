@@ -247,7 +247,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
         return tokenA + "_" + tokenB;
     }
 
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void refreshPools() {
         // 获取区块高度
 
