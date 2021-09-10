@@ -11,7 +11,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum StarSwapEventType {
 
-    CREATE_PAIR_EVENT("CreatePairEvent"),
     SWAP_EVENT("SwapEvent"),
     LIQUIDITY_EVENT("LiquidityEvent");
 
@@ -19,8 +18,6 @@ public enum StarSwapEventType {
 
     public static StarSwapEventType of(String desc) {
         switch (desc) {
-            case "CreatePairEvent":
-                return CREATE_PAIR_EVENT;
             case "SwapEvent":
                 return SWAP_EVENT;
             case "LiquidityEvent":

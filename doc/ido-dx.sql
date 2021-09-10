@@ -157,15 +157,4 @@ CREATE TABLE swap_coins (
        INDEX idx_address(address)
 ) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap币种列表';
 
-DROP TABLE IF EXISTS liquidity_pool;
-CREATE TABLE liquidity_pool (
-       id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键id',
-       userAddress VARCHAR(128) NOT NULL COMMENT '用户地址',
-       tokenCodeX VARCHAR(64) NOT NULL COMMENT 'x币种',
-       tokenCodeY VARCHAR(64) NOT NULL COMMENT 'y币种',
-       createTime BIGINT(20) NOT NULL COMMENT '创建时间',
-       PRIMARY KEY(id)
-) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap流动池列表';
-
-
 

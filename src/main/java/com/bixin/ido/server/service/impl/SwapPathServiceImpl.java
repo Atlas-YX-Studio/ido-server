@@ -4,17 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.beust.jcommander.internal.Lists;
-import com.bixin.ido.server.bean.DO.LiquidityPool;
 import com.bixin.ido.server.bean.DO.SwapCoins;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.client.ChainClientHelper;
-import com.bixin.ido.server.core.mapper.LiquidityPoolMapper;
 import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.utils.GrfAllEdge;
-import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.http.HttpEntity;
@@ -27,7 +24,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,9 +44,6 @@ public class SwapPathServiceImpl implements ISwapPathService {
     private GrfAllEdge grf;
 
     private BigDecimal totalAssets;
-
-    @Resource
-    private LiquidityPoolImpl liquidityPool;
 
     @Resource
     private ChainClientHelper chainClientHelper;
@@ -79,7 +72,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
         for (List<String> tempPath : paths) {
             List<BigDecimal> tempAmounts = getAmountsOut(tempPath, tokenAmount);
             // 当前路径兑换到的数量大于选中的路径兑换到的数量
-            if(Objects.isNull(amounts) || amounts.get(amounts.size()-1).compareTo(tempAmounts.get(tempAmounts.size()-1)) < 0) {
+            if (Objects.isNull(amounts) || amounts.get(amounts.size() - 1).compareTo(tempAmounts.get(tempAmounts.size() - 1)) < 0) {
                 path = tempPath;
                 amounts = tempAmounts;
             }
@@ -90,7 +83,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
         }
 
         // 兑换数量
-        BigDecimal exchangeAmount = amounts.get(amounts.size()-1);
+        BigDecimal exchangeAmount = amounts.get(amounts.size() - 1);
 
         // 按照A计算成交均价
         BigDecimal avgPriceA = exchangeAmount.divide(tokenAmount, DEFAULT_SCALE, RoundingMode.DOWN);
@@ -105,10 +98,10 @@ public class SwapPathServiceImpl implements ISwapPathService {
         BigDecimal priceImpact = getPriceImpact(path, amounts);
 
         // 手续费
-        BigDecimal feeAmount = tokenAmount.subtract(tokenAmount.multiply(REMAIN_RATE.pow(path.size()-1)));
+        BigDecimal feeAmount = tokenAmount.subtract(tokenAmount.multiply(REMAIN_RATE.pow(path.size() - 1)));
         // 路径
 
-        log.info("兑换数量: {}, 按照A计算成交均价: {}, 按照B计算成交均价: {}, 最小接收量: {}, 价格影响: {}, 手续费: {}, 路径: {}", exchangeAmount, avgPriceA, avgPriceB, minReceived, priceImpact, feeAmount, path );
+        log.info("兑换数量: {}, 按照A计算成交均价: {}, 按照B计算成交均价: {}, 最小接收量: {}, 价格影响: {}, 手续费: {}, 路径: {}", exchangeAmount, avgPriceA, avgPriceB, minReceived, priceImpact, feeAmount, path);
         return SwapPathInVO.convertToVO(exchangeAmount, avgPriceA, avgPriceB, minReceived, priceImpact, feeAmount, path);
     }
 
@@ -123,8 +116,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
         for (List<String> tempPath : paths) {
             List<BigDecimal> tempAmounts = getAmountsIn(tempPath, tokenAmount);
             // 当前路径需要的数量小于选中的路径需要的数量
-            if(Objects.isNull(amounts) || amounts.get(0).compareTo(tempAmounts.get(0)) > 0) {
-                if (tempAmounts.get(0).compareTo(BigDecimal.ZERO) < 0){
+            if (Objects.isNull(amounts) || amounts.get(0).compareTo(tempAmounts.get(0)) > 0) {
+                if (tempAmounts.get(0).compareTo(BigDecimal.ZERO) < 0) {
                     continue;
                 }
                 path = tempPath;
@@ -140,7 +133,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
         BigDecimal payAmount = amounts.get(0);
 
         // 按照A计算成交均价
-        BigDecimal avgPriceA = tokenAmount.divide(payAmount, DEFAULT_SCALE, RoundingMode.DOWN);;
+        BigDecimal avgPriceA = tokenAmount.divide(payAmount, DEFAULT_SCALE, RoundingMode.DOWN);
+        ;
 
         // 按照B计算成交均价
         BigDecimal avgPriceB = payAmount.divide(tokenAmount, DEFAULT_SCALE, RoundingMode.DOWN);
@@ -152,11 +146,11 @@ public class SwapPathServiceImpl implements ISwapPathService {
         BigDecimal priceImpact = getPriceImpact(path, amounts);
 
         // 手续费
-        BigDecimal feeAmount = payAmount.subtract(payAmount.multiply(REMAIN_RATE.pow(path.size()-1)));
+        BigDecimal feeAmount = payAmount.subtract(payAmount.multiply(REMAIN_RATE.pow(path.size() - 1)));
 
         // 路径
 
-        log.info("支付数量: {}, 按照A计算成交均价: {}, 按照B计算成交均价: {}, 最大发送量: {}, 价格影响: {}, 手续费: {}, 路径: {}", payAmount, avgPriceA, avgPriceB, maxSold, priceImpact, feeAmount, path );
+        log.info("支付数量: {}, 按照A计算成交均价: {}, 按照B计算成交均价: {}, 最大发送量: {}, 价格影响: {}, 手续费: {}, 路径: {}", payAmount, avgPriceA, avgPriceB, maxSold, priceImpact, feeAmount, path);
         return SwapPathOutVO.convertToVO(payAmount, avgPriceA, avgPriceB, maxSold, priceImpact, feeAmount, path);
     }
 
@@ -176,11 +170,11 @@ public class SwapPathServiceImpl implements ISwapPathService {
         BigDecimal[] amounts = new BigDecimal[path.size()];
         amounts[0] = tokenAmount;
         for (int i = 0; i < path.size() - 1; i++) {
-            Pool pool = getPool(path.get(i), path.get(i+1));
+            Pool pool = getPool(path.get(i), path.get(i + 1));
             if (path.get(i).equals(pool.tokenA)) {
-                amounts[i+1] = getAmountOut(amounts[i], pool.tokenAmountA, pool.tokenAmountB);
+                amounts[i + 1] = getAmountOut(amounts[i], pool.tokenAmountA, pool.tokenAmountB);
             } else {
-                amounts[i+1] = getAmountOut(amounts[i], pool.tokenAmountB, pool.tokenAmountA);
+                amounts[i + 1] = getAmountOut(amounts[i], pool.tokenAmountB, pool.tokenAmountA);
             }
         }
         return Arrays.asList(amounts);
@@ -200,13 +194,13 @@ public class SwapPathServiceImpl implements ISwapPathService {
             throw new RuntimeException("币种无法转换");
         }
         BigDecimal[] amounts = new BigDecimal[path.size()];
-        amounts[path.size()-1] = tokenAmount;
+        amounts[path.size() - 1] = tokenAmount;
         for (int i = path.size() - 1; i > 0; i--) {
-            Pool pool = getPool(path.get(i-1), path.get(i));
-            if (path.get(i-1).equals(pool.tokenA)) {
-                amounts[i-1] = getAmountIn(amounts[i], pool.tokenAmountA, pool.tokenAmountB);
+            Pool pool = getPool(path.get(i - 1), path.get(i));
+            if (path.get(i - 1).equals(pool.tokenA)) {
+                amounts[i - 1] = getAmountIn(amounts[i], pool.tokenAmountA, pool.tokenAmountB);
             } else {
-                amounts[i-1] = getAmountIn(amounts[i], pool.tokenAmountB, pool.tokenAmountA);
+                amounts[i - 1] = getAmountIn(amounts[i], pool.tokenAmountB, pool.tokenAmountA);
             }
         }
         return Arrays.asList(amounts);
@@ -224,13 +218,13 @@ public class SwapPathServiceImpl implements ISwapPathService {
         BigDecimal priceA = BigDecimal.ONE;
         BigDecimal finalPriceA = BigDecimal.ONE;
         for (int i = 0; i < path.size() - 1; i++) {
-            Pool pool = getPool(path.get(i), path.get(i+1));
+            Pool pool = getPool(path.get(i), path.get(i + 1));
             if (path.get(i).equals(pool.tokenA)) {
                 priceA = priceA.multiply(pool.tokenAmountB.divide(pool.tokenAmountA, DEFAULT_SCALE, RoundingMode.DOWN));
-                finalPriceA = finalPriceA.multiply(pool.tokenAmountB.subtract(amounts.get(i+1)).divide(pool.tokenAmountA.add(amounts.get(i)), DEFAULT_SCALE, RoundingMode.DOWN));
+                finalPriceA = finalPriceA.multiply(pool.tokenAmountB.subtract(amounts.get(i + 1)).divide(pool.tokenAmountA.add(amounts.get(i)), DEFAULT_SCALE, RoundingMode.DOWN));
             } else {
                 priceA = priceA.multiply(pool.tokenAmountA.divide(pool.tokenAmountB, DEFAULT_SCALE, RoundingMode.DOWN));
-                finalPriceA = finalPriceA.multiply(pool.tokenAmountA.subtract(amounts.get(i+1)).divide(pool.tokenAmountB.add(amounts.get(i)), DEFAULT_SCALE, RoundingMode.DOWN));
+                finalPriceA = finalPriceA.multiply(pool.tokenAmountA.subtract(amounts.get(i + 1)).divide(pool.tokenAmountB.add(amounts.get(i)), DEFAULT_SCALE, RoundingMode.DOWN));
             }
         }
         return priceA.subtract(finalPriceA).divide(priceA, DEFAULT_SCALE, RoundingMode.DOWN);
@@ -240,8 +234,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
         return liquidityPoolMap.containsKey(toPair(tokenA, tokenB)) ? liquidityPoolMap.get(toPair(tokenA, tokenB)) : liquidityPoolMap.get(toPair(tokenB, tokenA));
     }
 
-    private String toPair(String tokenA, String tokenB){
-            return tokenA + "_" + tokenB;
+    private String toPair(String tokenA, String tokenB) {
+        return tokenA + "_" + tokenB;
     }
 
     @Scheduled(cron = "0 0/10 * * * ?")
@@ -295,7 +289,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
                     if (!key.startsWith(idoStarConfig.getSwap().getLpPoolResourceName())) {
                         return;
                     }
-                    String[] tokenArr = key.substring(key.indexOf("<")+1, key.length()-1).split(",");
+                    String[] tokenArr = key.substring(key.indexOf("<") + 1, key.length() - 1).split(",");
                     Pool pool = new Pool(tokenArr[0].trim(), tokenArr[1].trim(), BigDecimal.ZERO, BigDecimal.ZERO);
                     if (!coinMap.containsKey(pool.tokenA) || !coinMap.containsKey(pool.tokenB)) {
                         return;
@@ -303,7 +297,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> rsMap = (Map<String, Object>) ((Map<String, Object>) rs).get("json");
 
-                    rsMap.forEach((x,y) -> {
+                    rsMap.forEach((x, y) -> {
                         if ("reserve_x".equalsIgnoreCase(x)) {
                             pool.tokenAmountA = new BigDecimal(y.toString()).movePointLeft(coinMap.get(pool.tokenA));
                         } else if ("reserve_y".equalsIgnoreCase(x)) {
@@ -376,14 +370,14 @@ public class SwapPathServiceImpl implements ISwapPathService {
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void allAssets() {
         Map<String, BigDecimal> tempPrice = new HashMap<>();
-        liquidityPoolMap.forEach((x, y)-> {
+        liquidityPoolMap.forEach((x, y) -> {
             if (Objects.equals(y.tokenA, USDT_CODE)) {
                 tempPrice.put(toPair(y.tokenB, y.tokenA), y.tokenAmountA.divide(y.tokenAmountB, DEFAULT_SCALE, RoundingMode.DOWN));
             } else if (Objects.equals(y.tokenB, USDT_CODE)) {
                 tempPrice.put(toPair(y.tokenA, y.tokenB), y.tokenAmountB.divide(y.tokenAmountA, DEFAULT_SCALE, RoundingMode.DOWN));
             }
         });
-        totalAssets = liquidityPoolMap.values().stream().map(x->{
+        totalAssets = liquidityPoolMap.values().stream().map(x -> {
             if (Objects.equals(x.tokenA, USDT_CODE)) {
                 return x.tokenAmountA.multiply(new BigDecimal(2));
             } else if (Objects.equals(x.tokenB, USDT_CODE)) {
@@ -432,7 +426,6 @@ public class SwapPathServiceImpl implements ISwapPathService {
         liquidityPoolMap.values().forEach(x -> grf.addPath(x.tokenA, x.tokenB));
         this.allAssets();
     }
-
 
 
     public static void main(String[] args) {

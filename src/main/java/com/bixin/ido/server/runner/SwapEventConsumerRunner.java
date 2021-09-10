@@ -1,7 +1,6 @@
 package com.bixin.ido.server.runner;
 
 import com.bixin.ido.server.bean.dto.LiquidityEventDto;
-import com.bixin.ido.server.bean.dto.LiquidityPoolEventDto;
 import com.bixin.ido.server.bean.dto.SwapEventDto;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
@@ -94,10 +93,6 @@ public class SwapEventConsumerRunner implements ApplicationRunner {
 
     private void swapDispatcher(StarSwapEventType type, JsonNode node) {
         CaseFun.builder().hasContinue(true).build()
-                .elseCase(type, value -> StarSwapEventType.CREATE_PAIR_EVENT == value, value -> {
-                    LiquidityPoolEventDto liquidityPoolEventDto = mapper.convertValue(node, LiquidityPoolEventDto.class);
-                    swapDispatcher.dispatch(LiquidityPoolEventDto.of(liquidityPoolEventDto));
-                })
                 .elseCase(type, value -> StarSwapEventType.SWAP_EVENT == value, value -> {
                     SwapEventDto swapEventDto = mapper.convertValue(node, SwapEventDto.class);
                     swapDispatcher.dispatch(SwapEventDto.of(swapEventDto));

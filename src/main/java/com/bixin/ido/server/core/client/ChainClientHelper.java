@@ -2,7 +2,6 @@ package com.bixin.ido.server.core.client;
 
 import com.beust.jcommander.internal.Maps;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
-import com.bixin.ido.server.bean.DO.LiquidityPool;
 import com.bixin.ido.server.config.StarConfig;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.http.HttpEntity;

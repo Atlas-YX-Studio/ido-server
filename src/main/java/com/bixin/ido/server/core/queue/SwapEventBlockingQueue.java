@@ -22,7 +22,6 @@ public class SwapEventBlockingQueue {
     public static Map<StarSwapEventType, LinkedBlockingQueue<JsonNode>> queueMap = new HashMap<>() {{
         put(StarSwapEventType.SWAP_EVENT, new LinkedBlockingQueue<>(CommonConstant.SWAP_EVENT_QUEUE_SIZE));
         put(StarSwapEventType.LIQUIDITY_EVENT, new LinkedBlockingQueue<>(CommonConstant.SWAP_EVENT_QUEUE_SIZE));
-        put(StarSwapEventType.CREATE_PAIR_EVENT, new LinkedBlockingQueue<>(CommonConstant.SWAP_EVENT_QUEUE_SIZE));
     }};
 
 }
