@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<!--
+use:
+java -jar E:\work\mybatis-generator-core-1.3.2\lib\mybatis-generator-core-1.3.2.jar -configfile E:\work\work-project-20140303\floo-apps\trunk\floo-services\order-service\floo-order-api-server\src\main\resources\generatorConfiguration\generatorConfig.xml -overwrite
+-->
+<generatorConfiguration>
+    <classPathEntry
+            location="/Users/bixin/.m2/repository/mysql/mysql-connector-java/5.1.47/mysql-connector-java-5.1.47.jar"/>
+    <context id="taxi" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <!-- no comments set value true-->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://101.201.46.114:3306/ido_server?characterEncoding=utf8&amp;useSSL=false"
+                        userId="crypto_rw"
+                        password="crypto_rw_password">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="com.bixin.ido.server.DO"
+                            targetProject="/Users/bixin/Documents/mybatis-generator">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.bixin.ido.server.DO"
+                         targetProject="/Users/bixin/Documents/mybatis-generator">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.bixin.ido.server.DO"
+                             targetProject="/Users/bixin/Documents/mybatis-generator">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <table tableName="ido_swap_coins">
+            <!-- if ColumnName is java format set true,else false-->
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+<!--        <table tableName="ido_liquidity_user_record">-->
+<!--            &lt;!&ndash; if ColumnName is java format set true,else false&ndash;&gt;-->
+<!--            <property name="useActualColumnNames" value="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="ido_dx_event_logs">-->
+<!--            &lt;!&ndash; if ColumnName is java format set true,else false&ndash;&gt;-->
+<!--            <property name="useActualColumnNames" value="true"/>-->
+<!--        </table>-->
+
+    </context>
+</generatorConfiguration>
