@@ -27,9 +27,9 @@ ido:
     swap:
       websocket-host: 10.13.22.40
       websocket-port: 9870
-      websocket-contract-address: 3cf910d97c98947277be21d6b7625cfe
-      contract-address: 3cf910d97c98947277be21d6b7625cfe
-      lp-pool-resource-name: 0x3cf910d97c98947277be21d6b7625cfe::SwapPair::SwapPair
+      websocket-contract-address: c9097c917625f3b01d59b375e0630b07
+      contract-address: c9097c917625f3b01d59b375e0630b07
+      lp-pool-resource-name: 0xc9097c917625f3b01d59b375e0630b07::SwapPair::SwapPair
     runner:
       swap-consumer:
         core-threads: 1
