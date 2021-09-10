@@ -62,8 +62,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
     }
 
     @Override
-    public SwapPathInVO exchangeIn(String tokenA, String tokenB, BigDecimal tokenAmount, BigDecimal slippageTolerance) {
-        List<List<String>> paths = getPaths(tokenA, tokenB);
+    public SwapPathInVO exchangeIn(String tokenA, String tokenB, BigDecimal tokenAmount, BigDecimal slippageTolerance, boolean multiMode) {
+        List<List<String>> paths = getPaths(tokenA, tokenB, multiMode);
         log.info("paths: {}", paths);
         // 选中的路径
         List<String> path = null;
@@ -106,8 +106,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
     }
 
     @Override
-    public SwapPathOutVO exchangeOut(String tokenA, String tokenB, BigDecimal tokenAmount, BigDecimal slippageTolerance) {
-        List<List<String>> paths = getPaths(tokenA, tokenB);
+    public SwapPathOutVO exchangeOut(String tokenA, String tokenB, BigDecimal tokenAmount, BigDecimal slippageTolerance, boolean multiMode) {
+        List<List<String>> paths = getPaths(tokenA, tokenB, multiMode);
         log.info("paths: {}", paths);
         // 选中的路径
         List<String> path = null;

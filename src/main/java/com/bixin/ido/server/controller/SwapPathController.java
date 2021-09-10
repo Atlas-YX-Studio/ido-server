@@ -19,14 +19,14 @@ public class SwapPathController {
 
     @PostMapping("/in")
     public R exchangeIn(@RequestBody SwapBo req) {
-        SwapPathInVO vo = iSwapPathService.exchangeIn(req.getTokenA(), req.getTokenB(), req.getTokenAmount(), req.getSlippageTolerance());
+        SwapPathInVO vo = iSwapPathService.exchangeIn(req.getTokenA(), req.getTokenB(), req.getTokenAmount(), req.getSlippageTolerance(), req.isMultiMode());
         return R.success(vo);
 
     }
 
     @PostMapping("/out")
     public R exchangeOut(@RequestBody SwapBo req) {
-        SwapPathOutVO vo = iSwapPathService.exchangeOut(req.getTokenA(), req.getTokenB(), req.getTokenAmount(), req.getSlippageTolerance());
+        SwapPathOutVO vo = iSwapPathService.exchangeOut(req.getTokenA(), req.getTokenB(), req.getTokenAmount(), req.getSlippageTolerance(), req.isMultiMode());
         return R.success(vo);
     }
 

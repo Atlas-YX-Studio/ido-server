@@ -18,4 +18,6 @@ public class SwapBo {
     private BigDecimal tokenAmount;
     // 滑点容差
     private BigDecimal slippageTolerance;
+    // 多跳模式
+    private boolean multiMode;
 }
