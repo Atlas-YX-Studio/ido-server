@@ -259,9 +259,6 @@ public class SwapPathServiceImpl implements ISwapPathService {
             nodes.add(x.tokenA);
             nodes.add(x.tokenB);
         });
-        if (Objects.nonNull(this.grf) && this.grf.getNodes().containsAll(nodes)) {
-            return;
-        }
         GrfAllEdge tempGrf = new GrfAllEdge(nodes.size(), new ArrayList<>(nodes));
         liquidityPoolMap.values().forEach(x -> tempGrf.addPath(x.tokenA, x.tokenB));
         this.grf = tempGrf;
