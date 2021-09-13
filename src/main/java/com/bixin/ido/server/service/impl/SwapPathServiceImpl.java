@@ -373,7 +373,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
         return resPool;
     }
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void allAssets() {
         Map<String, BigDecimal> tempPrice = new HashMap<>();
         liquidityPoolMap.forEach((x, y) -> {
