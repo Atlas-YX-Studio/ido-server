@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.nft.core.mapper.NftGroupMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.nft.bean.DO.NftGroupDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="series" jdbcType="VARCHAR" property="series" />
+    <result column="series_name" jdbcType="VARCHAR" property="series_name" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="series_quantity" jdbcType="INTEGER" property="series_quantity" />
+    <result column="box_token" jdbcType="VARCHAR" property="box_token" />
+    <result column="box_token_precision" jdbcType="INTEGER" property="box_token_precision" />
+    <result column="box_token_logo" jdbcType="VARCHAR" property="box_token_logo" />
+    <result column="pay_token" jdbcType="VARCHAR" property="pay_token" />
+    <result column="pay_token_precision" jdbcType="INTEGER" property="pay_token_precision" />
+    <result column="nft_meta" jdbcType="VARCHAR" property="nft_meta" />
+    <result column="nft_body" jdbcType="VARCHAR" property="nft_body" />
+    <result column="nft_type_info" jdbcType="VARCHAR" property="nft_type_info" />
+    <result column="selling_price" jdbcType="INTEGER" property="selling_price" />
+    <result column="selling_time" jdbcType="BIGINT" property="selling_time" />
+    <result column="enabled" jdbcType="BIT" property="enabled" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_time" jdbcType="BIGINT" property="create_time" />
+    <result column="update_time" jdbcType="BIGINT" property="update_time" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.bixin.nft.bean.DO.NftGroupDo">
+    <result column="cn_description" jdbcType="LONGVARCHAR" property="cn_description" />
+    <result column="en_description" jdbcType="LONGVARCHAR" property="en_description" />
+    <result column="cn_rule_desc" jdbcType="LONGVARCHAR" property="cn_rule_desc" />
+    <result column="en_rule_desc" jdbcType="LONGVARCHAR" property="en_rule_desc" />
+    <result column="cn_creator_desc" jdbcType="LONGVARCHAR" property="cn_creator_desc" />
+    <result column="en_creator_desc" jdbcType="LONGVARCHAR" property="en_creator_desc" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, series, series_name, name, quantity, series_quantity, box_token, box_token_precision, 
+    box_token_logo, pay_token, pay_token_precision, nft_meta, nft_body, nft_type_info, 
+    selling_price, selling_time, enabled, status, create_time, update_time
+  </sql>
+  <sql id="Blob_Column_List">
+    cn_description, en_description, cn_rule_desc, en_rule_desc, cn_creator_desc, en_creator_desc
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from nft_group
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nft_group
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftGroupDo" useGeneratedKeys="true">
+    insert into nft_group (id, series, series_name, 
+      name, quantity, series_quantity, 
+      box_token, box_token_precision, box_token_logo, 
+      pay_token, pay_token_precision, nft_meta, 
+      nft_body, nft_type_info, selling_price, 
+      selling_time, enabled, status, 
+      create_time, update_time, cn_description, 
+      en_description, cn_rule_desc, en_rule_desc, 
+      cn_creator_desc, en_creator_desc
+      )
+    values (#{id,jdbcType=BIGINT}, #{series,jdbcType=VARCHAR}, #{series_name,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{series_quantity,jdbcType=INTEGER}, 
+      #{box_token,jdbcType=VARCHAR}, #{box_token_precision,jdbcType=INTEGER}, #{box_token_logo,jdbcType=VARCHAR}, 
+      #{pay_token,jdbcType=VARCHAR}, #{pay_token_precision,jdbcType=INTEGER}, #{nft_meta,jdbcType=VARCHAR}, 
+      #{nft_body,jdbcType=VARCHAR}, #{nft_type_info,jdbcType=VARCHAR}, #{selling_price,jdbcType=INTEGER}, 
+      #{selling_time,jdbcType=BIGINT}, #{enabled,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, 
+      #{create_time,jdbcType=BIGINT}, #{update_time,jdbcType=BIGINT}, #{cn_description,jdbcType=LONGVARCHAR}, 
+      #{en_description,jdbcType=LONGVARCHAR}, #{cn_rule_desc,jdbcType=LONGVARCHAR}, #{en_rule_desc,jdbcType=LONGVARCHAR}, 
+      #{cn_creator_desc,jdbcType=LONGVARCHAR}, #{en_creator_desc,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftGroupDo">
+    update nft_group
+    <set>
+      <if test="series != null">
+        series = #{series,jdbcType=VARCHAR},
+      </if>
+      <if test="series_name != null">
+        series_name = #{series_name,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null">
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="series_quantity != null">
+        series_quantity = #{series_quantity,jdbcType=INTEGER},
+      </if>
+      <if test="box_token != null">
+        box_token = #{box_token,jdbcType=VARCHAR},
+      </if>
+      <if test="box_token_precision != null">
+        box_token_precision = #{box_token_precision,jdbcType=INTEGER},
+      </if>
+      <if test="box_token_logo != null">
+        box_token_logo = #{box_token_logo,jdbcType=VARCHAR},
+      </if>
+      <if test="pay_token != null">
+        pay_token = #{pay_token,jdbcType=VARCHAR},
+      </if>
+      <if test="pay_token_precision != null">
+        pay_token_precision = #{pay_token_precision,jdbcType=INTEGER},
+      </if>
+      <if test="nft_meta != null">
+        nft_meta = #{nft_meta,jdbcType=VARCHAR},
+      </if>
+      <if test="nft_body != null">
+        nft_body = #{nft_body,jdbcType=VARCHAR},
+      </if>
+      <if test="nft_type_info != null">
+        nft_type_info = #{nft_type_info,jdbcType=VARCHAR},
+      </if>
+      <if test="selling_price != null">
+        selling_price = #{selling_price,jdbcType=INTEGER},
+      </if>
+      <if test="selling_time != null">
+        selling_time = #{selling_time,jdbcType=BIGINT},
+      </if>
+      <if test="enabled != null">
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="create_time != null">
+        create_time = #{create_time,jdbcType=BIGINT},
+      </if>
+      <if test="update_time != null">
+        update_time = #{update_time,jdbcType=BIGINT},
+      </if>
+      <if test="cn_description != null">
+        cn_description = #{cn_description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="en_description != null">
+        en_description = #{en_description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cn_rule_desc != null">
+        cn_rule_desc = #{cn_rule_desc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="en_rule_desc != null">
+        en_rule_desc = #{en_rule_desc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cn_creator_desc != null">
+        cn_creator_desc = #{cn_creator_desc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="en_creator_desc != null">
+        en_creator_desc = #{en_creator_desc,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.bixin.nft.bean.DO.NftGroupDo">
+    update nft_group
+    set series = #{series,jdbcType=VARCHAR},
+      series_name = #{series_name,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      quantity = #{quantity,jdbcType=INTEGER},
+      series_quantity = #{series_quantity,jdbcType=INTEGER},
+      box_token = #{box_token,jdbcType=VARCHAR},
+      box_token_precision = #{box_token_precision,jdbcType=INTEGER},
+      box_token_logo = #{box_token_logo,jdbcType=VARCHAR},
+      pay_token = #{pay_token,jdbcType=VARCHAR},
+      pay_token_precision = #{pay_token_precision,jdbcType=INTEGER},
+      nft_meta = #{nft_meta,jdbcType=VARCHAR},
+      nft_body = #{nft_body,jdbcType=VARCHAR},
+      nft_type_info = #{nft_type_info,jdbcType=VARCHAR},
+      selling_price = #{selling_price,jdbcType=INTEGER},
+      selling_time = #{selling_time,jdbcType=BIGINT},
+      enabled = #{enabled,jdbcType=BIT},
+      status = #{status,jdbcType=VARCHAR},
+      create_time = #{create_time,jdbcType=BIGINT},
+      update_time = #{update_time,jdbcType=BIGINT},
+      cn_description = #{cn_description,jdbcType=LONGVARCHAR},
+      en_description = #{en_description,jdbcType=LONGVARCHAR},
+      cn_rule_desc = #{cn_rule_desc,jdbcType=LONGVARCHAR},
+      en_rule_desc = #{en_rule_desc,jdbcType=LONGVARCHAR},
+      cn_creator_desc = #{cn_creator_desc,jdbcType=LONGVARCHAR},
+      en_creator_desc = #{en_creator_desc,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != series">
+         and series = #{series,jdbcType=VARCHAR}
+      </if>
+      <if test="null != series_name">
+         and series_name = #{series_name,jdbcType=VARCHAR}
+      </if>
+      <if test="null != name">
+         and name = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="null != quantity">
+         and quantity = #{quantity,jdbcType=INTEGER}
+      </if>
+      <if test="null != series_quantity">
+         and series_quantity = #{series_quantity,jdbcType=INTEGER}
+      </if>
+      <if test="null != box_token">
+         and box_token = #{box_token,jdbcType=VARCHAR}
+      </if>
+      <if test="null != box_token_precision">
+         and box_token_precision = #{box_token_precision,jdbcType=INTEGER}
+      </if>
+      <if test="null != box_token_logo">
+         and box_token_logo = #{box_token_logo,jdbcType=VARCHAR}
+      </if>
+      <if test="null != pay_token">
+         and pay_token = #{pay_token,jdbcType=VARCHAR}
+      </if>
+      <if test="null != pay_token_precision">
+         and pay_token_precision = #{pay_token_precision,jdbcType=INTEGER}
+      </if>
+      <if test="null != nft_meta">
+         and nft_meta = #{nft_meta,jdbcType=VARCHAR}
+      </if>
+      <if test="null != nft_body">
+         and nft_body = #{nft_body,jdbcType=VARCHAR}
+      </if>
+      <if test="null != nft_type_info">
+         and nft_type_info = #{nft_type_info,jdbcType=VARCHAR}
+      </if>
+      <if test="null != selling_price">
+         and selling_price = #{selling_price,jdbcType=INTEGER}
+      </if>
+      <if test="null != selling_time">
+         and selling_time = #{selling_time,jdbcType=BIGINT}
+      </if>
+      <if test="null != enabled">
+         and enabled = #{enabled,jdbcType=BIT}
+      </if>
+      <if test="null != status">
+         and status = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="null != create_time">
+         and create_time = #{create_time,jdbcType=BIGINT}
+      </if>
+      <if test="null != update_time">
+         and update_time = #{update_time,jdbcType=BIGINT}
+      </if>
+      <if test="null != cn_description">
+         and cn_description = #{cn_description,jdbcType=LONGVARCHAR}
+      </if>
+      <if test="null != en_description">
+         and en_description = #{en_description,jdbcType=LONGVARCHAR}
+      </if>
+      <if test="null != cn_rule_desc">
+         and cn_rule_desc = #{cn_rule_desc,jdbcType=LONGVARCHAR}
+      </if>
+      <if test="null != en_rule_desc">
+         and en_rule_desc = #{en_rule_desc,jdbcType=LONGVARCHAR}
+      </if>
+      <if test="null != cn_creator_desc">
+         and cn_creator_desc = #{cn_creator_desc,jdbcType=LONGVARCHAR}
+      </if>
+      <if test="null != en_creator_desc">
+         and en_creator_desc = #{en_creator_desc,jdbcType=LONGVARCHAR}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftGroupDo" resultMap="BaseResultMap">
+    select  * from nft_group
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.NftGroupDo" resultMap="BaseResultMap">
+    select  * from nft_group
+    <include refid="baseQuery" />
+  </select>
+</mapper>
