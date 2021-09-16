@@ -25,7 +25,7 @@ public class NftGroupDo implements Serializable {
     /**
      * 系列名
      */
-    private String series_name;
+    private String seriesName;
 
     /**
      * 组名
@@ -40,57 +40,57 @@ public class NftGroupDo implements Serializable {
     /**
      * 系列总发售数量
      */
-    private Integer series_quantity;
+    private Integer seriesQuantity;
 
     /**
      * 盲盒币种
      */
-    private String box_token;
+    private String boxToken;
 
     /**
      * 盲盒币种精度
      */
-    private Integer box_token_precision;
+    private Integer boxTokenPrecision;
 
     /**
      * 盲盒图片
      */
-    private String box_token_logo;
+    private String boxTokenLogo;
 
     /**
      * 支付币种
      */
-    private String pay_token;
+    private String payToken;
 
     /**
      * 支付币种精度
      */
-    private Integer pay_token_precision;
+    private Integer payTokenPrecision;
 
     /**
      * nft_meta地址
      */
-    private String nft_meta;
+    private String nftMeta;
 
     /**
      * nft_body地址
      */
-    private String nft_body;
+    private String nftBody;
 
     /**
      * nft_type_info地址
      */
-    private String nft_type_info;
+    private String nftTypeInfo;
 
     /**
      * 发售价格
      */
-    private Integer selling_price;
+    private Integer sellingPrice;
 
     /**
      * 开售时间
      */
-    private Long selling_time;
+    private Long sellingTime;
 
     /**
      * 是否激活
@@ -105,42 +105,42 @@ public class NftGroupDo implements Serializable {
     /**
      * 创建时间
      */
-    private Long create_time;
+    private Long createTime;
 
     /**
      * 更新时间
      */
-    private Long update_time;
+    private Long updateTime;
 
     /**
      * 中文描述
      */
-    private String cn_description;
+    private String cnDescription;
 
     /**
      * 英文描述
      */
-    private String en_description;
+    private String enDescription;
 
     /**
      * 中文规则
      */
-    private String cn_rule_desc;
+    private String cnRuleDesc;
 
     /**
      * 英文规则
      */
-    private String en_rule_desc;
+    private String enRuleDesc;
 
     /**
      * 创作者中文描述
      */
-    private String cn_creator_desc;
+    private String cnCreatorDesc;
 
     /**
      * 创作者英文描述
      */
-    private String en_creator_desc;
+    private String enCreatorDesc;
 
     private static final long serialVersionUID = 1L;
 }

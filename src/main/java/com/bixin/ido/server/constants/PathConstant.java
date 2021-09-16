@@ -6,10 +6,10 @@ package com.bixin.ido.server.constants;
  */
 public interface PathConstant {
 
-
     String DX_REQUEST_PATH_PREFIX = "/v1/ido/dx";
 
     String SWAP_REQUEST_PATH_PREFIX = "/v1/swap";
 
+    String NFT_REQUEST_PATH_PREFIX = "/v1/nft";
 
 }

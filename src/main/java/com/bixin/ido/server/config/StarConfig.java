@@ -15,10 +15,21 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "ido.star")
 public class StarConfig {
 
+    private StarClient client = new StarClient();
     private StarDx dx = new StarDx();
     private starSwap swap = new starSwap();
     private Runner runner = new Runner();
 
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class StarClient {
+
+        private String url;
+        private Integer chainId;
+
+    }
 
     @Data
     @NoArgsConstructor

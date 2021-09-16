@@ -10,6 +10,11 @@ java -jar E:\work\mybatis-generator-core-1.3.2\lib\mybatis-generator-core-1.3.2.
     <classPathEntry
             location="/Users/bixin/.m2/repository/mysql/mysql-connector-java/5.1.47/mysql-connector-java-5.1.47.jar"/>
     <context id="taxi" targetRuntime="MyBatis3">
+        <plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+            <property name="searchString" value="Example$"/>
+            <!-- 替换后 -->
+            <property name="replaceString" value="DDL"/>
+        </plugin>
         <commentGenerator>
             <!-- no comments set value true-->
             <property name="suppressAllComments" value="true"/>
@@ -24,25 +29,38 @@ java -jar E:\work\mybatis-generator-core-1.3.2\lib\mybatis-generator-core-1.3.2.
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="com.bixin.ido.server.DO"
-                            targetProject="/Users/bixin/Documents/mybatis-generator">
+        <javaModelGenerator targetPackage="com.bixin.ido.server.core.wrapDDL"
+                            targetProject="mybatis-generator">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="com.bixin.ido.server.DO"
-                         targetProject="/Users/bixin/Documents/mybatis-generator">
+        <sqlMapGenerator targetPackage="resources.mapper"
+                         targetProject="mybatis-generator">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.bixin.ido.server.DO"
-                             targetProject="/Users/bixin/Documents/mybatis-generator">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.bixin.ido.server.core.mapper"
+                             targetProject="mybatis-generator">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
-        <table tableName="ido_swap_coins">
+
+<!--        <table tableName="ido_swap_coins">-->
+<!--            &lt;!&ndash; if ColumnName is java format set true,else false&ndash;&gt;-->
+<!--            <property name="useActualColumnNames" value="true"/>-->
+<!--        </table>-->
+        <table tableName="nft_group">
             <!-- if ColumnName is java format set true,else false-->
-            <property name="useActualColumnNames" value="true"/>
+            <property name="useActualColumnNames" value="false"/>
+        </table>
+        <table tableName="nft_info">
+            <!-- if ColumnName is java format set true,else false-->
+            <property name="useActualColumnNames" value="false"/>
+        </table>
+        <table tableName="nft_kiko_cat">
+            <!-- if ColumnName is java format set true,else false-->
+            <property name="useActualColumnNames" value="false"/>
         </table>
 <!--        <table tableName="ido_liquidity_user_record">-->
 <!--            &lt;!&ndash; if ColumnName is java format set true,else false&ndash;&gt;-->

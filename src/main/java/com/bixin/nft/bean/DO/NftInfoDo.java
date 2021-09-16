@@ -20,12 +20,12 @@ public class NftInfoDo implements Serializable {
     /**
      * NFT id
      */
-    private Long nft_id;
+    private Long nftId;
 
     /**
      * 所属分组
      */
-    private Long group_id;
+    private Long groupId;
 
     /**
      * 名称
@@ -35,7 +35,7 @@ public class NftInfoDo implements Serializable {
     /**
      * 图片链接
      */
-    private String image_link;
+    private String imageLink;
 
     /**
      * 创作者
@@ -55,17 +55,17 @@ public class NftInfoDo implements Serializable {
     /**
      * 创建时间
      */
-    private Long create_time;
+    private Long createTime;
 
     /**
      * 更新时间
      */
-    private Long update_time;
+    private Long updateTime;
 
     /**
      * 图片数据
      */
-    private String image_data;
+    private String imageData;
 
     private static final long serialVersionUID = 1L;
 }

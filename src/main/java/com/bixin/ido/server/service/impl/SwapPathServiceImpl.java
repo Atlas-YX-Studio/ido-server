@@ -54,7 +54,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
     @Resource
     ISwapCoinsService swapCoinsService;
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
 //        this.fillTestData();
         this.refreshPools();

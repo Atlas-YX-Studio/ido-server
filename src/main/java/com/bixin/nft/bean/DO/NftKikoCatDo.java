@@ -20,7 +20,7 @@ public class NftKikoCatDo implements Serializable {
     /**
      * nft_Info id
      */
-    private Long info_id;
+    private Long infoId;
 
     /**
      * 背景
@@ -30,7 +30,7 @@ public class NftKikoCatDo implements Serializable {
     /**
      * 背景分
      */
-    private Integer background_score;
+    private Integer backgroundScore;
 
     /**
      * 品种
@@ -40,7 +40,7 @@ public class NftKikoCatDo implements Serializable {
     /**
      * 品种分
      */
-    private Integer breed_score;
+    private Integer breedScore;
 
     /**
      * 装饰
@@ -50,7 +50,7 @@ public class NftKikoCatDo implements Serializable {
     /**
      * 装饰分
      */
-    private Integer decorate_score;
+    private Integer decorateScore;
 
     /**
      * 分数
@@ -65,12 +65,12 @@ public class NftKikoCatDo implements Serializable {
     /**
      * 创建时间
      */
-    private Long create_time;
+    private Long createTime;
 
     /**
      * 更新时间
      */
-    private Long update_time;
+    private Long updateTime;
 
     private static final long serialVersionUID = 1L;
 }

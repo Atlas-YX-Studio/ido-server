@@ -38,6 +38,11 @@ public enum IdoErrorCode implements ErrorCode {
      */
     DATA_VALIDATION_FAILURE(100005, "data validation failure"),
 
+    /**
+     * 文件不存在
+     */
+    FILE_NOT_EXIST(100006, "file not exist"),
+
     ;
 
     private final int code;

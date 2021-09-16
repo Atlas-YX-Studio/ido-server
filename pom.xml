@@ -13,7 +13,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <start-class>com.bixin.ido.server.IdoServerApplication</start-class>
+        <start-class>com.bixin.IdoServerApplication</start-class>
     </properties>
 
     <dependencies>
@@ -69,14 +69,35 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.7</version>
         </dependency>
-
         <dependency>
             <groupId>org.starcoin</groupId>
             <artifactId>sdk</artifactId>
-            <version>1.1.16</version>
+            <version>1.1.18</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.rholder</groupId>
+            <artifactId>guava-retrying</artifactId>
+            <version>2.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -120,6 +141,7 @@
         </profile>
     </profiles>
 
+
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
         <resources>
@@ -153,6 +175,11 @@
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>1.4.0</version>
+                <configuration>
+                    <configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
+                    <verbose>true</verbose>
+                    <overwrite>true</overwrite>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
