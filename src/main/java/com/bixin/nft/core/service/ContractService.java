@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.bixin.ido.server.common.errorcode.IdoErrorCode;
 import com.bixin.ido.server.common.exception.IdoException;
 import com.bixin.ido.server.config.StarConfig;
-import com.bixin.ido.server.utils.RetryingUtils;
+import com.bixin.ido.server.utils.RetryingUtil;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.novi.serde.Bytes;
@@ -18,7 +18,6 @@ import org.starcoin.types.*;
 import org.starcoin.types.Module;
 import org.starcoin.types.Package;
 import org.starcoin.utils.AccountAddressUtils;
-import org.starcoin.utils.ChainInfo;
 import org.starcoin.utils.SignatureUtils;
 import org.starcoin.utils.StarcoinClient;
 
@@ -42,7 +41,7 @@ public class ContractService {
     private Map<String, String> keyMap = new HashMap<>(){
         {
             put("0x290c7b35320a4dd26f651fd184373fe7", "0x98e6ded54f698a49365a0a4217d2d5d3cfc516b03c6198b81e47ce0067035c34");
-            put("0xf8af03dd08de49d81e4efd9e24c039cc", "0x7899f7cac425b5ce7239eb313db06ac2a93c731ea4512b857f975c0447176b25");
+            put("0xd30b4de81d71c1793aa4db4763211e63", "0x908fd8db21674a5bfdb617c2fd588fdd66fbcaf5198007951f24e72ba793f1a6");
         }
     };
 
@@ -77,10 +76,10 @@ public class ContractService {
         TransactionPayload payload = builder.build();
         // 获取private key
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
-        String rst = starcoinClient.submitTransaction(sender, privateKey, payload);
+        String result = starcoinClient.submitTransaction(sender, privateKey, payload);
 
-        log.info("合约部署 result: {}", rst);
-        JSONObject jsonObject = JSON.parseObject(rst);
+        log.info("合约部署 result: {}", result);
+        JSONObject jsonObject = JSON.parseObject(result);
         String txn = jsonObject.getString("result");
         return checkTxt(txn);
     }
@@ -100,9 +99,9 @@ public class ContractService {
                 .resourceName(resourceName)
                 .build();
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
-        String rst = starcoinClient.getResource(sender, resourceObj);
-        log.info("rst:{}", rst);
-        return rst;
+        String result = starcoinClient.getResource(sender, resourceObj);
+        log.info("result:{}", result);
+        return result;
     }
 
     /**
@@ -116,9 +115,9 @@ public class ContractService {
         log.info("合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
-        String rst = starcoinClient.callScriptFunction(sender, privateKey, scriptFunctionObj);
-        log.info("合约请求 result: {}", rst);
-        JSONObject jsonObject = JSON.parseObject(rst);
+        String result = starcoinClient.callScriptFunction(sender, privateKey, scriptFunctionObj);
+        log.info("合约请求 result: {}", result);
+        JSONObject jsonObject = JSON.parseObject(result);
         String txn = jsonObject.getString("result");
         return checkTxt(txn);
     }
@@ -131,13 +130,13 @@ public class ContractService {
     public boolean checkTxt(String txn) {
         log.info("交易hash:{}", txn);
         try {
-            return RetryingUtils.retry(
+            return RetryingUtil.retry(
                     () -> {
                         String rst = starcoinClient.getTransactionInfo(txn);
                         JSONObject jsonObject = JSON.parseObject(rst);
                         JSONObject result = jsonObject.getJSONObject("result");
                         if (result == null) {
-                            throw new RuntimeException("交易未找到，重试中...");
+                            throw new RuntimeException("交易执行中...");
                         } else {
                             if ("Executed".equalsIgnoreCase(result.getString("status"))) {
                                 log.info("交易执行成功，result: {}", result);
