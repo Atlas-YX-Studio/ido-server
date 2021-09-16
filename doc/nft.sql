@@ -63,3 +63,22 @@ CREATE TABLE `nft_kiko_cat`
     PRIMARY KEY (`id`),
     KEY                `idx_nft_id` (`nft_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='NFT Kiko猫信息表';
+
+
+DROP TABLE IF EXISTS nft_market;
+CREATE TABLE nft_market
+(
+    id               bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+    nft_box_id       bigint(20) NOT NULL COMMENT 'NFT/box id',
+    type             varchar(64) DEFAULT NULL COMMENT '类型：nft/box',
+    name             varchar(128) DEFAULT NULL COMMENT 'ndf/box 全称',
+    address          varchar(128) DEFAULT NULL COMMENT '合约地址',
+    sell_price       DECIMAL(36,18) DEFAULT 0 COMMENT '售价',
+    offer_price      DECIMAL(36,18) DEFAULT 0 COMMENT '报价，0暂无报价，大于0为当前最高出价',
+    icon             varchar(256) DEFAULT NULL COMMENT '图片地址',
+    create_time      bigint(20) NOT NULL COMMENT '创建时间',
+    update_time      bigint(20) NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    INDEX idx_nb_id(nft_box_id),
+    INDEX idx_address_type(address, type)
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='NFT/box市场销售列表';
