@@ -86,3 +86,5 @@ CREATE TABLE nft_market
     INDEX idx_nb_id(nft_box_id),
     INDEX idx_address_type(address, type)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='NFT/box市场销售列表';
+
+

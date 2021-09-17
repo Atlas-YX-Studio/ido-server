@@ -62,6 +62,25 @@ public class NftInfoController {
         return R.success(list);
     }
 
+
+//    /**
+//     * 获取系列列表
+//     * @return
+//     */
+//    @GetMapping("/series/list")
+//    public R seriesList() {
+//        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
+//        List<SeriesListVo> list = new ArrayList<>();
+//        for (NftGroupDo nftGroupDo : nftGroupDoList) {
+//            SeriesListVo seriesListVo = new SeriesListVo();
+//            seriesListVo.setGroupId(nftGroupDo.getId());
+//            seriesListVo.setGroupName(nftGroupDo.getName());
+//            seriesListVo.setSeriesName(nftGroupDo.getSeriesName());
+//            list.add(seriesListVo);
+//        }
+//        return R.success(list);
+//    }
+
     /**
      * 获取待发售盲盒
      *
