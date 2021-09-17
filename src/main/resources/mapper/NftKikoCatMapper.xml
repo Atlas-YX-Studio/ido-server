@@ -5,19 +5,26 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="info_id" jdbcType="BIGINT" property="infoId" />
     <result column="background" jdbcType="VARCHAR" property="background" />
-    <result column="background_score" jdbcType="INTEGER" property="backgroundScore" />
-    <result column="breed" jdbcType="VARCHAR" property="breed" />
-    <result column="breed_score" jdbcType="INTEGER" property="breedScore" />
-    <result column="decorate" jdbcType="VARCHAR" property="decorate" />
-    <result column="decorate_score" jdbcType="INTEGER" property="decorateScore" />
-    <result column="score" jdbcType="INTEGER" property="score" />
-    <result column="order" jdbcType="INTEGER" property="order" />
+    <result column="background_score" jdbcType="DECIMAL" property="backgroundScore" />
+    <result column="fur" jdbcType="VARCHAR" property="fur" />
+    <result column="fur_score" jdbcType="DECIMAL" property="furScore" />
+    <result column="clothes" jdbcType="VARCHAR" property="clothes" />
+    <result column="clothes_score" jdbcType="DECIMAL" property="clothesScore" />
+    <result column="facial_expression" jdbcType="VARCHAR" property="facialExpression" />
+    <result column="facial_expression_score" jdbcType="DECIMAL" property="facialExpressionScore" />
+    <result column="head" jdbcType="VARCHAR" property="head" />
+    <result column="head_score" jdbcType="DECIMAL" property="headScore" />
+    <result column="accessories" jdbcType="VARCHAR" property="accessories" />
+    <result column="accessories_score" jdbcType="DECIMAL" property="accessoriesScore" />
+    <result column="eyes" jdbcType="VARCHAR" property="eyes" />
+    <result column="eyes_score" jdbcType="DECIMAL" property="eyesScore" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, info_id, background, background_score, breed, breed_score, decorate, decorate_score, 
-    score, order, create_time, update_time
+    id, info_id, background, background_score, fur, fur_score, clothes, clothes_score, 
+    facial_expression, facial_expression_score, head, head_score, accessories, accessories_score, 
+    eyes, eyes_score, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -31,14 +38,18 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftKikoCatDo" useGeneratedKeys="true">
     insert into nft_kiko_cat (id, info_id, background, 
-      background_score, breed, breed_score, 
-      decorate, decorate_score, score, 
-      order, create_time, update_time
+      background_score, fur, fur_score, 
+      clothes, clothes_score, facial_expression, 
+      facial_expression_score, head, head_score, 
+      accessories, accessories_score, eyes, 
+      eyes_score, create_time, update_time
       )
     values (#{id,jdbcType=BIGINT}, #{infoId,jdbcType=BIGINT}, #{background,jdbcType=VARCHAR}, 
-      #{backgroundScore,jdbcType=INTEGER}, #{breed,jdbcType=VARCHAR}, #{breedScore,jdbcType=INTEGER}, 
-      #{decorate,jdbcType=VARCHAR}, #{decorateScore,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, 
-      #{order,jdbcType=INTEGER}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
+      #{backgroundScore,jdbcType=DECIMAL}, #{fur,jdbcType=VARCHAR}, #{furScore,jdbcType=DECIMAL}, 
+      #{clothes,jdbcType=VARCHAR}, #{clothesScore,jdbcType=DECIMAL}, #{facialExpression,jdbcType=VARCHAR}, 
+      #{facialExpressionScore,jdbcType=DECIMAL}, #{head,jdbcType=VARCHAR}, #{headScore,jdbcType=DECIMAL}, 
+      #{accessories,jdbcType=VARCHAR}, #{accessoriesScore,jdbcType=DECIMAL}, #{eyes,jdbcType=VARCHAR}, 
+      #{eyesScore,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftKikoCatDo">
@@ -51,25 +62,43 @@
         background = #{background,jdbcType=VARCHAR},
       </if>
       <if test="backgroundScore != null">
-        background_score = #{backgroundScore,jdbcType=INTEGER},
+        background_score = #{backgroundScore,jdbcType=DECIMAL},
       </if>
-      <if test="breed != null">
-        breed = #{breed,jdbcType=VARCHAR},
+      <if test="fur != null">
+        fur = #{fur,jdbcType=VARCHAR},
       </if>
-      <if test="breedScore != null">
-        breed_score = #{breedScore,jdbcType=INTEGER},
+      <if test="furScore != null">
+        fur_score = #{furScore,jdbcType=DECIMAL},
       </if>
-      <if test="decorate != null">
-        decorate = #{decorate,jdbcType=VARCHAR},
+      <if test="clothes != null">
+        clothes = #{clothes,jdbcType=VARCHAR},
       </if>
-      <if test="decorateScore != null">
-        decorate_score = #{decorateScore,jdbcType=INTEGER},
+      <if test="clothesScore != null">
+        clothes_score = #{clothesScore,jdbcType=DECIMAL},
       </if>
-      <if test="score != null">
-        score = #{score,jdbcType=INTEGER},
+      <if test="facialExpression != null">
+        facial_expression = #{facialExpression,jdbcType=VARCHAR},
       </if>
-      <if test="order != null">
-        order = #{order,jdbcType=INTEGER},
+      <if test="facialExpressionScore != null">
+        facial_expression_score = #{facialExpressionScore,jdbcType=DECIMAL},
+      </if>
+      <if test="head != null">
+        head = #{head,jdbcType=VARCHAR},
+      </if>
+      <if test="headScore != null">
+        head_score = #{headScore,jdbcType=DECIMAL},
+      </if>
+      <if test="accessories != null">
+        accessories = #{accessories,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesScore != null">
+        accessories_score = #{accessoriesScore,jdbcType=DECIMAL},
+      </if>
+      <if test="eyes != null">
+        eyes = #{eyes,jdbcType=VARCHAR},
+      </if>
+      <if test="eyesScore != null">
+        eyes_score = #{eyesScore,jdbcType=DECIMAL},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -92,25 +121,43 @@
          and background = #{background,jdbcType=VARCHAR}
       </if>
       <if test="null != backgroundScore">
-         and background_score = #{backgroundScore,jdbcType=INTEGER}
+         and background_score = #{backgroundScore,jdbcType=DECIMAL}
       </if>
-      <if test="null != breed">
-         and breed = #{breed,jdbcType=VARCHAR}
+      <if test="null != fur">
+         and fur = #{fur,jdbcType=VARCHAR}
       </if>
-      <if test="null != breedScore">
-         and breed_score = #{breedScore,jdbcType=INTEGER}
+      <if test="null != furScore">
+         and fur_score = #{furScore,jdbcType=DECIMAL}
       </if>
-      <if test="null != decorate">
-         and decorate = #{decorate,jdbcType=VARCHAR}
+      <if test="null != clothes">
+         and clothes = #{clothes,jdbcType=VARCHAR}
       </if>
-      <if test="null != decorateScore">
-         and decorate_score = #{decorateScore,jdbcType=INTEGER}
+      <if test="null != clothesScore">
+         and clothes_score = #{clothesScore,jdbcType=DECIMAL}
       </if>
-      <if test="null != score">
-         and score = #{score,jdbcType=INTEGER}
+      <if test="null != facialExpression">
+         and facial_expression = #{facialExpression,jdbcType=VARCHAR}
       </if>
-      <if test="null != order">
-         and order = #{order,jdbcType=INTEGER}
+      <if test="null != facialExpressionScore">
+         and facial_expression_score = #{facialExpressionScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != head">
+         and head = #{head,jdbcType=VARCHAR}
+      </if>
+      <if test="null != headScore">
+         and head_score = #{headScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != accessories">
+         and accessories = #{accessories,jdbcType=VARCHAR}
+      </if>
+      <if test="null != accessoriesScore">
+         and accessories_score = #{accessoriesScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != eyes">
+         and eyes = #{eyes,jdbcType=VARCHAR}
+      </if>
+      <if test="null != eyesScore">
+         and eyes_score = #{eyesScore,jdbcType=DECIMAL}
       </if>
       <if test="null != createTime">
          and create_time = #{createTime,jdbcType=BIGINT}

@@ -3,12 +3,13 @@ package com.bixin.nft.bean.DO;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
 * @Class: NftInfoDo
 * @Description: NFT信息记录表
 * @author: 系统
-* @created: 2021-09-15
+* @created: 2021-09-17
 */
 @Data
 public class NftInfoDo implements Serializable {
@@ -38,14 +39,19 @@ public class NftInfoDo implements Serializable {
     private String imageLink;
 
     /**
-     * 创作者
-     */
-    private String creator;
-
-    /**
      * 所属者
      */
     private String owner;
+
+    /**
+     * 分数
+     */
+    private BigDecimal score;
+
+    /**
+     * 排名
+     */
+    private Integer rank;
 
     /**
      * 已创建

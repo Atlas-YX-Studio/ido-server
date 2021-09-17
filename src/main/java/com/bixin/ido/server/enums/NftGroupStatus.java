@@ -12,5 +12,9 @@ public enum NftGroupStatus {
     /**
      * 创建完成
      */
-    CREATED;
+    CREATED,
+    /**
+     * 发售中
+     */
+    OFFERING;
 }

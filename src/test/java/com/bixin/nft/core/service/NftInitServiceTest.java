@@ -18,12 +18,12 @@ class NftInitServiceTest {
 
 
     @Test
-    void deployNftMarket() {
+    void initNFTMarket() {
         nftInitService.initNFTMarket(new BigInteger("10"), new BigInteger("10"));
     }
 
     @Test
-    void initNFT() {
+    void createNFT() {
         nftInitService.createNFT();
     }
 

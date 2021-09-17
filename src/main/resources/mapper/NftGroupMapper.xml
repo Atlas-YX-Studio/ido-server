@@ -16,6 +16,7 @@
     <result column="nft_meta" jdbcType="VARCHAR" property="nftMeta" />
     <result column="nft_body" jdbcType="VARCHAR" property="nftBody" />
     <result column="nft_type_info" jdbcType="VARCHAR" property="nftTypeInfo" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="selling_price" jdbcType="INTEGER" property="sellingPrice" />
     <result column="selling_time" jdbcType="BIGINT" property="sellingTime" />
     <result column="enabled" jdbcType="BIT" property="enabled" />
@@ -34,7 +35,7 @@
   <sql id="Base_Column_List">
     id, series, series_name, name, quantity, series_quantity, box_token, box_token_precision, 
     box_token_logo, pay_token, pay_token_precision, nft_meta, nft_body, nft_type_info, 
-    selling_price, selling_time, enabled, status, create_time, update_time
+    creator, selling_price, selling_time, enabled, status, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
     cn_description, en_description, cn_rule_desc, en_rule_desc, cn_creator_desc, en_creator_desc
@@ -56,20 +57,22 @@
       name, quantity, series_quantity, 
       box_token, box_token_precision, box_token_logo, 
       pay_token, pay_token_precision, nft_meta, 
-      nft_body, nft_type_info, selling_price, 
-      selling_time, enabled, status, 
-      create_time, update_time, cn_description, 
-      en_description, cn_rule_desc, en_rule_desc, 
-      cn_creator_desc, en_creator_desc)
+      nft_body, nft_type_info, creator, 
+      selling_price, selling_time, enabled, 
+      status, create_time, update_time, 
+      cn_description, en_description, cn_rule_desc, 
+      en_rule_desc, cn_creator_desc, en_creator_desc
+      )
     values (#{id,jdbcType=BIGINT}, #{series,jdbcType=VARCHAR}, #{seriesName,jdbcType=VARCHAR}, 
       #{name,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{seriesQuantity,jdbcType=INTEGER}, 
       #{boxToken,jdbcType=VARCHAR}, #{boxTokenPrecision,jdbcType=INTEGER}, #{boxTokenLogo,jdbcType=VARCHAR}, 
       #{payToken,jdbcType=VARCHAR}, #{payTokenPrecision,jdbcType=INTEGER}, #{nftMeta,jdbcType=VARCHAR}, 
-      #{nftBody,jdbcType=VARCHAR}, #{nftTypeInfo,jdbcType=VARCHAR}, #{sellingPrice,jdbcType=INTEGER}, 
-      #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{cnDescription,jdbcType=LONGVARCHAR}, 
-      #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR}, #{enRuleDesc,jdbcType=LONGVARCHAR}, 
-      #{cnCreatorDesc,jdbcType=LONGVARCHAR}, #{enCreatorDesc,jdbcType=LONGVARCHAR})
+      #{nftBody,jdbcType=VARCHAR}, #{nftTypeInfo,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT}, 
+      #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, 
+      #{cnDescription,jdbcType=LONGVARCHAR}, #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR}, 
+      #{enRuleDesc,jdbcType=LONGVARCHAR}, #{cnCreatorDesc,jdbcType=LONGVARCHAR}, #{enCreatorDesc,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftGroupDo">
     update nft_group
@@ -112,6 +115,9 @@
       </if>
       <if test="nftTypeInfo != null">
         nft_type_info = #{nftTypeInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
       </if>
       <if test="sellingPrice != null">
         selling_price = #{sellingPrice,jdbcType=INTEGER},
@@ -167,6 +173,7 @@
       nft_meta = #{nftMeta,jdbcType=VARCHAR},
       nft_body = #{nftBody,jdbcType=VARCHAR},
       nft_type_info = #{nftTypeInfo,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
       selling_price = #{sellingPrice,jdbcType=INTEGER},
       selling_time = #{sellingTime,jdbcType=BIGINT},
       enabled = #{enabled,jdbcType=BIT},
@@ -224,6 +231,9 @@
       </if>
       <if test="null != nftTypeInfo">
          and nft_type_info = #{nftTypeInfo,jdbcType=VARCHAR}
+      </if>
+      <if test="null != creator">
+         and creator = #{creator,jdbcType=VARCHAR}
       </if>
       <if test="null != sellingPrice">
          and selling_price = #{sellingPrice,jdbcType=INTEGER}

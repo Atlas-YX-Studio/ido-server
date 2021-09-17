@@ -17,6 +17,8 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.starcoin.bean.ScriptFunctionObj;
+import org.starcoin.bean.TypeObj;
+import org.starcoin.utils.AccountAddressUtils;
 import org.starcoin.utils.BcsSerializeHelper;
 
 import javax.annotation.Resource;
@@ -86,7 +88,7 @@ public class NftInitService {
         List<NftGroupDo> nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (nftGroupDos != null) {
             nftGroupDos.forEach(nftGroupDo -> {
-                if (deployNFTContract(nftGroupDo)) {
+                if (!deployNFTContract(nftGroupDo)) {
                     log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
                 }
@@ -95,42 +97,56 @@ public class NftInitService {
                 nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
             });
         }
-        // mint nft
+        // mint nft + 盲盒
         selectNftGroupDo.setStatus(NftGroupStatus.INITIALIZED.name());
         nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
-        if (nftGroupDos == null) {
-            return;
+        if (nftGroupDos != null) {
+            nftGroupDos.forEach(nftGroupDo -> {
+                NftInfoDo selectNftInfoDo = new NftInfoDo();
+                selectNftInfoDo.setGroupId(nftGroupDo.getId());
+                selectNftInfoDo.setCreated(false);
+                // 取出该组下所有待铸造NFT
+                List<NftInfoDo> nftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
+                if (nftInfoDos == null) {
+                    return;
+                }
+                MutableInt nftId = new MutableInt(1);
+                nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
+                    if (!mintKikoCatNFT(nftGroupDo, nftInfoDo)) {
+                        log.error("NFT {} mint失败", nftInfoDo.getName());
+                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                    }
+                    log.info("NFT {} mint成功", nftInfoDo.getName());
+                    nftInfoDo.setNftId(nftId.longValue());
+                    nftInfoDo.setCreated(true);
+                    nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+                    nftId.add(1);
+                });
+                // 全部铸造完成，修改
+                nftGroupDo.setStatus(NftGroupStatus.CREATED.name());
+                nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+            });
         }
-        nftGroupDos.forEach(nftGroupDo -> {
-            NftInfoDo selectNftInfoDo = new NftInfoDo();
-            selectNftInfoDo.setGroupId(nftGroupDo.getId());
-            selectNftInfoDo.setCreated(false);
-            // 取出该组下所有待铸造NFT
-            List<NftInfoDo> nftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
-            if (nftInfoDos == null) {
-                return;
-            }
-            MutableInt nftId = new MutableInt(1);
-            nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
-                if (!mintKikoCatNFT(nftGroupDo, nftInfoDo)) {
-                    log.error("NFT {} mint失败", nftInfoDo.getName());
+
+        // 盲盒发售
+        selectNftGroupDo.setStatus(NftGroupStatus.CREATED.name());
+        nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
+        if (nftGroupDos != null) {
+            nftGroupDos.forEach(nftGroupDo -> {
+                if (!transferBox(nftGroupDo)) {
+                    log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                 }
-                log.info("NFT {} mint成功", nftInfoDo.getName());
-                nftInfoDo.setNftId(nftId.longValue());
-                nftInfoDo.setCreated(true);
-                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                nftId.add(1);
+                if (!initBoxOffering(nftGroupDo)) {
+                    log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
+                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                }
+                // 发售成功
+                log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
+                nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
+                nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
             });
-            // 全部铸造完成，修改
-            nftGroupDo.setStatus(NftGroupStatus.CREATED.name());
-            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
-            // 创建盲盒发售
-            if (!initBoxOffering(nftGroupDo)) {
-                log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
-                throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-            }
-        });
+        }
     }
 
     /**
@@ -139,17 +155,16 @@ public class NftInitService {
      * @return
      */
     private boolean deployNFTContract(NftGroupDo nftGroupDo) {
-        String address = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleAddress();
         String path = "contract/nft/KikoCat01.mv";
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
-                .moduleAddress(address)
+                .moduleAddress(nftGroupDo.getCreator())
                 .moduleName("KikoCat01")
                 .functionName("init")
                 .tyArgs(Lists.newArrayList())
                 .args(Lists.newArrayList())
                 .build();
-        return contractService.deployContract(address, path, scriptFunctionObj);
+        return contractService.deployContract(nftGroupDo.getCreator(), path, scriptFunctionObj);
     }
 
     /**
@@ -164,18 +179,34 @@ public class NftInitService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(address)
-                .moduleName("NFTScripts")
-                .functionName("init_config")
+                .moduleName("KikoCat01")
+                .functionName("mint")
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getImageData())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getBackground())),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getBreed())),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getDecorate()))
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getFur())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getClothes())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getFacialExpression())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getHead())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getAccessories())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getEyes()))
                 ))
                 .build();
         return contractService.callFunction(address, scriptFunctionObj);
+    }
+
+    /**
+     * 将盲盒转至market
+     *
+     * @param nftGroupDo
+     * @return
+     */
+    private boolean transferBox(NftGroupDo nftGroupDo) {
+        double boxTokenDecimal = Math.pow(10, nftGroupDo.getBoxTokenPrecision());
+        TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken());
+        return contractService.transfer(nftGroupDo.getCreator(), market, typeObj, BigInteger.valueOf((long)boxTokenDecimal));
     }
 
     /**
@@ -185,17 +216,17 @@ public class NftInitService {
         double boxTokenDecimal = Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         double payTokenDecimal = Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         BigInteger boxAmount = BigInteger.valueOf(nftGroupDo.getQuantity() * (long) boxTokenDecimal);
-        BigInteger sellingPrice = BigInteger.valueOf(nftGroupDo.getQuantity() * (long) payTokenDecimal);
+        BigInteger sellingPrice = BigInteger.valueOf(nftGroupDo.getSellingPrice() * (long) payTokenDecimal);
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
-                .moduleAddress(market)
+                .moduleAddress(scripts)
                 .moduleName("NFTScripts")
                 .functionName("box_initial_offering")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU128ToBytes(boxAmount),
                         BcsSerializeHelper.serializeU128ToBytes(sellingPrice),
                         BcsSerializeHelper.serializeU64ToBytes(nftGroupDo.getSellingTime()),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString("creator"))
+                        BcsSerializeHelper.serializeAddressToBytes(AccountAddressUtils.create(nftGroupDo.getCreator()))
                 ))
                 .tyArgs(Lists.newArrayList(
                         TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()),
@@ -204,7 +235,7 @@ public class NftInitService {
                         TypeArgsUtil.parseTypeObj(nftGroupDo.getPayToken())
                 ))
                 .build();
-        return contractService.callFunction(market, scriptFunctionObj);
+        return contractService.callFunction(scripts, scriptFunctionObj);
     }
 
 }
