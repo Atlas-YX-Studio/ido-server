@@ -3,12 +3,13 @@ package com.bixin.nft.bean.DO;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
 * @Class: NftKikoCatDo
 * @Description: NFT Kiko猫信息表
 * @author: 系统
-* @created: 2021-09-15
+* @created: 2021-09-17
 */
 @Data
 public class NftKikoCatDo implements Serializable {
@@ -30,37 +31,67 @@ public class NftKikoCatDo implements Serializable {
     /**
      * 背景分
      */
-    private Integer backgroundScore;
+    private BigDecimal backgroundScore;
 
     /**
-     * 品种
+     * 皮毛
      */
-    private String breed;
+    private String fur;
 
     /**
-     * 品种分
+     * 皮毛分
      */
-    private Integer breedScore;
+    private BigDecimal furScore;
 
     /**
-     * 装饰
+     * 衣服
      */
-    private String decorate;
+    private String clothes;
 
     /**
-     * 装饰分
+     * 衣服分
      */
-    private Integer decorateScore;
+    private BigDecimal clothesScore;
 
     /**
-     * 分数
+     * 表情
      */
-    private Integer score;
+    private String facialExpression;
 
     /**
-     * 排名
+     * 表情分
      */
-    private Integer order;
+    private BigDecimal facialExpressionScore;
+
+    /**
+     * 头部
+     */
+    private String head;
+
+    /**
+     * 头部分
+     */
+    private BigDecimal headScore;
+
+    /**
+     * 配饰
+     */
+    private String accessories;
+
+    /**
+     * 配饰分
+     */
+    private BigDecimal accessoriesScore;
+
+    /**
+     * 眼部
+     */
+    private String eyes;
+
+    /**
+     * 眼部分
+     */
+    private BigDecimal eyesScore;
 
     /**
      * 创建时间

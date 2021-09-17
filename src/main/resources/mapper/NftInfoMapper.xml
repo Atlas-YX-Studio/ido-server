@@ -7,8 +7,9 @@
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="image_link" jdbcType="VARCHAR" property="imageLink" />
-    <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="score" jdbcType="DECIMAL" property="score" />
+    <result column="rank" jdbcType="INTEGER" property="rank" />
     <result column="created" jdbcType="BIT" property="created" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
@@ -17,7 +18,8 @@
     <result column="image_data" jdbcType="LONGVARCHAR" property="imageData" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, nft_id, group_id, name, image_link, creator, owner, created, create_time, update_time
+    id, nft_id, group_id, name, image_link, owner, score, rank, created, create_time, 
+    update_time
   </sql>
   <sql id="Blob_Column_List">
     image_data
@@ -36,12 +38,12 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftInfoDo" useGeneratedKeys="true">
     insert into nft_info (id, nft_id, group_id, 
-      name, image_link, creator, 
-      owner, created, create_time, 
+      name, image_link, owner, 
+      score, rank, created, create_time, 
       update_time, image_data)
     values (#{id,jdbcType=BIGINT}, #{nftId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, 
-      #{name,jdbcType=VARCHAR}, #{imageLink,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
-      #{owner,jdbcType=VARCHAR}, #{created,jdbcType=BIT}, #{createTime,jdbcType=BIGINT}, 
+      #{name,jdbcType=VARCHAR}, #{imageLink,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, 
+      #{score,jdbcType=DECIMAL}, #{rank,jdbcType=INTEGER}, #{created,jdbcType=BIT}, #{createTime,jdbcType=BIGINT}, 
       #{updateTime,jdbcType=BIGINT}, #{imageData,jdbcType=LONGVARCHAR})
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftInfoDo">
@@ -59,11 +61,14 @@
       <if test="imageLink != null">
         image_link = #{imageLink,jdbcType=VARCHAR},
       </if>
-      <if test="creator != null">
-        creator = #{creator,jdbcType=VARCHAR},
-      </if>
       <if test="owner != null">
         owner = #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=DECIMAL},
+      </if>
+      <if test="rank != null">
+        rank = #{rank,jdbcType=INTEGER},
       </if>
       <if test="created != null">
         created = #{created,jdbcType=BIT},
@@ -86,8 +91,9 @@
       group_id = #{groupId,jdbcType=BIGINT},
       name = #{name,jdbcType=VARCHAR},
       image_link = #{imageLink,jdbcType=VARCHAR},
-      creator = #{creator,jdbcType=VARCHAR},
       owner = #{owner,jdbcType=VARCHAR},
+      score = #{score,jdbcType=DECIMAL},
+      rank = #{rank,jdbcType=INTEGER},
       created = #{created,jdbcType=BIT},
       create_time = #{createTime,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=BIGINT},
@@ -111,11 +117,14 @@
       <if test="null != imageLink">
          and image_link = #{imageLink,jdbcType=VARCHAR}
       </if>
-      <if test="null != creator">
-         and creator = #{creator,jdbcType=VARCHAR}
-      </if>
       <if test="null != owner">
          and owner = #{owner,jdbcType=VARCHAR}
+      </if>
+      <if test="null != score">
+         and score = #{score,jdbcType=DECIMAL}
+      </if>
+      <if test="null != rank">
+         and rank = #{rank,jdbcType=INTEGER}
       </if>
       <if test="null != created">
          and created = #{created,jdbcType=BIT}

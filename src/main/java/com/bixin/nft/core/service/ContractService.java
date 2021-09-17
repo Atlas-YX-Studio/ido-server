@@ -10,10 +10,12 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.novi.serde.Bytes;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.starcoin.bean.ResourceObj;
 import org.starcoin.bean.ScriptFunctionObj;
+import org.starcoin.bean.TypeObj;
 import org.starcoin.types.*;
 import org.starcoin.types.Module;
 import org.starcoin.types.Package;
@@ -24,6 +26,7 @@ import org.starcoin.utils.StarcoinClient;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -48,6 +51,26 @@ public class ContractService {
     @PostConstruct
     public void init() {
         starcoinClient = new StarcoinClient(starConfig.getClient().getUrl(), starConfig.getClient().getChainId());
+    }
+
+    /**
+     * 获取Resource
+     * @param senderAddress
+     * @param moduleName
+     * @param resourceName
+     * @return
+     */
+    public String getResource(String senderAddress, String moduleName, String resourceName) {
+        ResourceObj resourceObj = ResourceObj
+                .builder()
+                .moduleAddress(senderAddress)
+                .moduleName(moduleName)
+                .resourceName(resourceName)
+                .build();
+        AccountAddress sender = AccountAddressUtils.create(senderAddress);
+        String result = starcoinClient.getResource(sender, resourceObj);
+        log.info("result:{}", result);
+        return result;
     }
 
     /**
@@ -79,29 +102,12 @@ public class ContractService {
         String result = starcoinClient.submitTransaction(sender, privateKey, payload);
 
         log.info("合约部署 result: {}", result);
-        JSONObject jsonObject = JSON.parseObject(result);
-        String txn = jsonObject.getString("result");
+        String txn = JSON.parseObject(result).getString("result");
+        if (StringUtils.isBlank(txn)) {
+            log.info("合约部署失败");
+            return false;
+        }
         return checkTxt(txn);
-    }
-
-    /**
-     * 获取Resource
-     * @param senderAddress
-     * @param moduleName
-     * @param resourceName
-     * @return
-     */
-    public String getResource(String senderAddress, String moduleName, String resourceName) {
-        ResourceObj resourceObj = ResourceObj
-                .builder()
-                .moduleAddress(senderAddress)
-                .moduleName(moduleName)
-                .resourceName(resourceName)
-                .build();
-        AccountAddress sender = AccountAddressUtils.create(senderAddress);
-        String result = starcoinClient.getResource(sender, resourceObj);
-        log.info("result:{}", result);
-        return result;
     }
 
     /**
@@ -117,8 +123,35 @@ public class ContractService {
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
         String result = starcoinClient.callScriptFunction(sender, privateKey, scriptFunctionObj);
         log.info("合约请求 result: {}", result);
-        JSONObject jsonObject = JSON.parseObject(result);
-        String txn = jsonObject.getString("result");
+        String txn = JSON.parseObject(result).getString("result");
+        if (StringUtils.isBlank(txn)) {
+            log.info("合约请求失败");
+            return false;
+        }
+        return checkTxt(txn);
+    }
+
+    /**
+     * 转账请求
+     *
+     * @param senderAddress
+     * @param toAddress
+     * @param typeObj
+     * @param amount
+     * @return
+     */
+    public boolean transfer(String senderAddress, String toAddress, TypeObj typeObj, BigInteger amount) {
+        log.info("转账请求 sender:{}, to:{}, token:{}, amount:{}", senderAddress, toAddress, typeObj.toRPCString(), amount);
+        AccountAddress sender = AccountAddressUtils.create(senderAddress);
+        Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
+        String result = starcoinClient.transfer(sender, privateKey, AccountAddressUtils.create(toAddress),
+                typeObj, amount);
+        log.info("转账请求 result: {}", result);
+        String txn = JSON.parseObject(result).getString("result");
+        if (StringUtils.isBlank(txn)) {
+            log.info("转账请求失败");
+            return false;
+        }
         return checkTxt(txn);
     }
 
@@ -147,8 +180,8 @@ public class ContractService {
                             }
                         }
                     },
-                    10,
-                    2000
+                    20,
+                    5000
             );
         } catch (Exception e) {
             log.info("交易执行失败，txn：{}", txn);
