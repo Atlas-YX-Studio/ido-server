@@ -42,4 +42,9 @@ public interface NftGroupMapper {
      * @param record
      */
     List<NftGroupDo> selectByPrimaryKeySelectiveList(NftGroupDo record);
+
+    /**
+     * 待发售盲盒
+     */
+    NftGroupDo offering(Boolean enabled);
 }

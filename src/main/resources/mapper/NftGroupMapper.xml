@@ -271,4 +271,7 @@
     select  * from nft_group
     <include refid="baseQuery" />
   </select>
+  <select id="offering" parameterType="java.lang.Boolean" resultMap="BaseResultMap">
+    select  * from nft_group where enabled = #{enabled} limit 1
+  </select>
 </mapper>

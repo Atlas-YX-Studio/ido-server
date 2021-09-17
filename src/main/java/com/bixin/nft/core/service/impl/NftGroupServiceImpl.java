@@ -85,4 +85,12 @@ public class NftGroupServiceImpl implements NftGroupService {
         return nftGroupMapper.selectByPrimaryKeySelectiveList(model);
     }
 
+    /**
+     * @explain: 待发售盲盒
+     */
+    @Override
+    public NftGroupDo offering(Boolean enabled) {
+        return nftGroupMapper.offering(enabled);
+    }
+
 }

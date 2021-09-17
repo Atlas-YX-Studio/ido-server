@@ -82,4 +82,5 @@ public class NftInfoServiceImpl implements NftInfoService {
         return nftInfoMapper.selectByPrimaryKeySelectiveList(model);
     }
 
+
 }

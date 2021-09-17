@@ -54,4 +54,10 @@ public interface NftGroupService {
      */
     List<NftGroupDo> listByObject(NftGroupDo model);
 
+    /**
+     * 待发售盲盒
+     * @return
+     */
+    NftGroupDo offering(Boolean enabled);
+
 }
