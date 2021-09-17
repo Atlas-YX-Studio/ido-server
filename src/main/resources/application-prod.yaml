@@ -33,3 +33,9 @@ ido:
       swap-consumer:
         core-threads: 1
         max-threads: 1
+    client:
+      url: https://main-seed.starcoin.org
+      chain-id: 1
+    nft:
+      market: ""
+      scripts: ""
