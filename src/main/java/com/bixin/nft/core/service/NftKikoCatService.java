@@ -42,6 +42,13 @@ public interface NftKikoCatService {
 
     /**
      * @explain: 查询NftKikoCatDo对象
+     * @param:   nftId
+     * @return:  NftKikoCatDo
+     */
+    NftKikoCatDo selectByNftId(Long nftId);
+
+    /**
+     * @explain: 查询NftKikoCatDo对象
      * @param:   model  对象参数
      * @return:  NftKikoCatDo 对象
      */

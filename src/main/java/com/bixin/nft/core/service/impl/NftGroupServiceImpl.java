@@ -89,8 +89,13 @@ public class NftGroupServiceImpl implements NftGroupService {
      * @explain: 待发售盲盒
      */
     @Override
-    public NftGroupDo offering(Boolean enabled) {
-        return nftGroupMapper.offering(enabled);
+    public NftGroupDo offering(Boolean offering) {
+        return nftGroupMapper.offering(offering);
+    }
+
+    @Override
+    public List<NftGroupDo> getListByEnabled(Boolean enabled) {
+        return nftGroupMapper.getListByEnabled(enabled);
     }
 
 }

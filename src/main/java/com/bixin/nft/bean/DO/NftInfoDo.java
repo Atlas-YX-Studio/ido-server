@@ -19,7 +19,7 @@ public class NftInfoDo implements Serializable {
     private Long id;
 
     /**
-     * NFT id
+     * NFT id (链上)
      */
     private Long nftId;
 

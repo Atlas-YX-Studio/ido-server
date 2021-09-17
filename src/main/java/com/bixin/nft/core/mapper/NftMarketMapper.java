@@ -1,10 +1,10 @@
 package com.bixin.nft.core.mapper;
 
-import com.bixin.nft.bean.DO.NftKikoCatDo;
+import com.bixin.nft.bean.DO.NftMarketDo;
 
 import java.util.List;
 
-public interface NftKikoCatMapper {
+public interface NftMarketMapper {
     /**
      * 根据主键删除数据
      * @param id
@@ -15,35 +15,29 @@ public interface NftKikoCatMapper {
      * 插入数据
      * @param record
      */
-    int insert(NftKikoCatDo record);
+    int insert(NftMarketDo record);
 
     /**
      * 根据主键id查询
      * @param id
      */
-    NftKikoCatDo selectByPrimaryKey(Long id);
-
-    /**
-     * 根据nftId查询
-     * @param infoId
-     */
-    NftKikoCatDo selectByNftId(Long infoId);
+    NftMarketDo selectByPrimaryKey(Long id);
 
     /**
      * 修改数据
      * @param record
      */
-    int updateByPrimaryKeySelective(NftKikoCatDo record);
+    int updateByPrimaryKeySelective(NftMarketDo record);
 
     /**
      * 根据条件查询对象
      * @param record
      */
-    NftKikoCatDo selectByPrimaryKeySelective(NftKikoCatDo record);
+    NftMarketDo selectByPrimaryKeySelective(NftMarketDo record);
 
     /**
      * 根据条件查询列表
      * @param record
      */
-    List<NftKikoCatDo> selectByPrimaryKeySelectiveList(NftKikoCatDo record);
+    List<NftMarketDo> selectByPrimaryKeySelectiveList(NftMarketDo record);
 }

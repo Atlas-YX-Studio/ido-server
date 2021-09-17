@@ -1,6 +1,9 @@
 package com.bixin.nft.bean.vo;
 
+import com.bixin.nft.bean.DO.NftKikoCatDo;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 /**
  * @class: NftInfoVO
@@ -12,25 +15,42 @@ import lombok.Data;
 public class NftInfoVo {
 
     /**
-     * NFT id
+     * NFT id (链上)
      */
     private Long nftId;
+    /**
+     * 所属分组
+     */
+    private Long groupId;
+    /**
+     * 图片链接
+     */
+    private String imageLink;
+    /**
+     * 所属者
+     */
+    private String owner;
+    /**
+     * 分数
+     */
+    private BigDecimal score;
+    /**
+     * 排名
+     */
+    private Integer rank;
 
     /**
      * 系列名
      */
     private String seriesName;
-
     /**
      * 组名
      */
     private String groupName;
-
     /**
      * 发售数量
      */
     private Integer quantity;
-
     /**
      * 系列总发售数量
      */
@@ -45,52 +65,38 @@ public class NftInfoVo {
      * nft_body地址
      */
     private String nftBody;
-
     /**
      * 中文描述
      */
     private String cnDescription;
-
     /**
      * 英文描述
      */
     private String enDescription;
-
     /**
      * 创作者
      */
     private String creator;
-
-    /**
-     * 所属者
-     */
-    private String owner;
-
     /**
      * 中文规则
      */
     private String cnRuleDesc;
-
     /**
      * 英文规则
      */
     private String enRuleDesc;
-
     /**
      * 创作者中文描述
      */
     private String cnCreatorDesc;
-
     /**
      * 创作者英文描述
      */
     private String enCreatorDesc;
-
     /**
      * 支付币种
      */
     private String payToken;
-
     /**
      * 支付币种精度
      */
@@ -101,28 +107,19 @@ public class NftInfoVo {
      */
     private Integer sellingPrice;
 
-//    topBidPrice	string	最高出价
-//    onSell	boolean	是否出售中
+    /**
+     * 是否 售卖
+     */
+    private Boolean onSell;
 
-     // todo info 表
-//    score	number	总分
-//    rank	number	排名
+    /**
+     * 最高出价
+     */
+    private BigDecimal topBidPrice;
 
-    // // TODO:  cat 表中
-//    properties	list	nft属性
-//    properties.background	string	背景
-//    properties.backgroundScore	string	背景分
-//    properties.fur	string	皮肤
-//    properties.furScore	string	皮肤分
-//    properties.clothes	string	衣服
-//    properties.clothesScore	string	衣服分
-//    properties.facialExpression	string	表情
-//    properties.facialExpressionScore	string	表情分
-//    properties.head	string	头部
-//    properties.headScore	string	头部分
-//    properties.accessories	string	配饰
-//    properties.accessoriesScore	string	配饰分
-//    properties.eyes	string	眼部
-//    properties.eyesScore	string	眼部分
+    /**
+     * 配置属性
+     */
+    private NftKikoCatDo properties;
 
 }

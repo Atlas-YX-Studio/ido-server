@@ -20,6 +20,7 @@
     <result column="selling_price" jdbcType="INTEGER" property="sellingPrice" />
     <result column="selling_time" jdbcType="BIGINT" property="sellingTime" />
     <result column="enabled" jdbcType="BIT" property="enabled" />
+    <result column="offering" jdbcType="BIT" property="offering" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
@@ -35,7 +36,7 @@
   <sql id="Base_Column_List">
     id, series, series_name, name, quantity, series_quantity, box_token, box_token_precision, 
     box_token_logo, pay_token, pay_token_precision, nft_meta, nft_body, nft_type_info, 
-    creator, selling_price, selling_time, enabled, status, create_time, update_time
+    creator, selling_price, selling_time, enabled, offering, status, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
     cn_description, en_description, cn_rule_desc, en_rule_desc, cn_creator_desc, en_creator_desc
@@ -58,7 +59,7 @@
       box_token, box_token_precision, box_token_logo, 
       pay_token, pay_token_precision, nft_meta, 
       nft_body, nft_type_info, creator, 
-      selling_price, selling_time, enabled, 
+      selling_price, selling_time, enabled, offering,
       status, create_time, update_time, 
       cn_description, en_description, cn_rule_desc, 
       en_rule_desc, cn_creator_desc, en_creator_desc
@@ -68,7 +69,7 @@
       #{boxToken,jdbcType=VARCHAR}, #{boxTokenPrecision,jdbcType=INTEGER}, #{boxTokenLogo,jdbcType=VARCHAR}, 
       #{payToken,jdbcType=VARCHAR}, #{payTokenPrecision,jdbcType=INTEGER}, #{nftMeta,jdbcType=VARCHAR}, 
       #{nftBody,jdbcType=VARCHAR}, #{nftTypeInfo,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
-      #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT}, 
+      #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT},  #{offering,jdbcType=BIT},
       #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, 
       #{cnDescription,jdbcType=LONGVARCHAR}, #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR}, 
       #{enRuleDesc,jdbcType=LONGVARCHAR}, #{cnCreatorDesc,jdbcType=LONGVARCHAR}, #{enCreatorDesc,jdbcType=LONGVARCHAR}
@@ -128,6 +129,9 @@
       <if test="enabled != null">
         enabled = #{enabled,jdbcType=BIT},
       </if>
+      <if test="offering != null">
+        offering = #{offering,jdbcType=BIT},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=VARCHAR},
       </if>
@@ -177,6 +181,7 @@
       selling_price = #{sellingPrice,jdbcType=INTEGER},
       selling_time = #{sellingTime,jdbcType=BIGINT},
       enabled = #{enabled,jdbcType=BIT},
+      offering = #{offering,jdbcType=BIT},
       status = #{status,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=BIGINT},
@@ -244,6 +249,9 @@
       <if test="null != enabled">
          and enabled = #{enabled,jdbcType=BIT}
       </if>
+      <if test="null != offering">
+         and offering = #{offering,jdbcType=BIT}
+      </if>
       <if test="null != status">
          and status = #{status,jdbcType=VARCHAR}
       </if>
@@ -273,15 +281,22 @@
       </if>
     </trim>
   </sql>
+
   <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftGroupDo" resultMap="BaseResultMap">
     select  * from nft_group
     <include refid="baseQuery" />
   </select>
+
   <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.NftGroupDo" resultMap="BaseResultMap">
     select  * from nft_group
     <include refid="baseQuery" />
   </select>
+
   <select id="offering" parameterType="java.lang.Boolean" resultMap="BaseResultMap">
-    select  * from nft_group where enabled = #{enabled} limit 1
+    select  * from nft_group where offering = #{offering} limit 1
+  </select>
+
+  <select id="getListByEnabled" parameterType="java.lang.Boolean" resultMap="BaseResultMap">
+    select  * from nft_group where enabled = #{enabled}
   </select>
 </mapper>

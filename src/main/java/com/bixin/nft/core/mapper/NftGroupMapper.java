@@ -46,5 +46,7 @@ public interface NftGroupMapper {
     /**
      * 待发售盲盒
      */
-    NftGroupDo offering(Boolean enabled);
+    NftGroupDo offering(Boolean offering);
+
+    List<NftGroupDo> getListByEnabled(Boolean enabled);
 }

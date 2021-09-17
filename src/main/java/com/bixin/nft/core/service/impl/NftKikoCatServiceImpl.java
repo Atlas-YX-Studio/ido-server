@@ -64,6 +64,16 @@ public class NftKikoCatServiceImpl implements NftKikoCatService {
 
     /**
      * @explain: 查询NftKikoCatDo对象
+     * @param:   nftId
+     * @return:  NftKikoCatDo
+     */
+    @Override
+    public NftKikoCatDo selectByNftId(Long nftId) {
+        return nftKikoCatMapper.selectByNftId(nftId);
+    }
+
+    /**
+     * @explain: 查询NftKikoCatDo对象
      * @param:   model 对象参数
      * @return:  NftKikoCatDo 对象
      */

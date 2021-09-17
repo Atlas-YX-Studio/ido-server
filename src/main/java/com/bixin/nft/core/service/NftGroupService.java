@@ -58,6 +58,8 @@ public interface NftGroupService {
      * 待发售盲盒
      * @return
      */
-    NftGroupDo offering(Boolean enabled);
+    NftGroupDo offering(Boolean offering);
+
+    List<NftGroupDo> getListByEnabled(Boolean enabled);
 
 }

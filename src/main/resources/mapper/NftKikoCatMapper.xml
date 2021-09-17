@@ -26,12 +26,20 @@
     facial_expression, facial_expression_score, head, head_score, accessories, accessories_score, 
     eyes, eyes_score, create_time, update_time
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from nft_kiko_cat
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByNftId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nft_kiko_cat
+    where info_id = #{infoId,jdbcType=BIGINT}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from nft_kiko_cat
     where id = #{id,jdbcType=BIGINT}

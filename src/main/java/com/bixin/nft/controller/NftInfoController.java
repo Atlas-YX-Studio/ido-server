@@ -5,19 +5,26 @@ import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.bean.DO.NftKikoCatDo;
+import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.bean.vo.NftInfoVo;
+import com.bixin.nft.bean.vo.SeriesListVo;
 import com.bixin.nft.core.service.NftGroupService;
 import com.bixin.nft.core.service.NftInfoService;
+import com.bixin.nft.core.service.NftKikoCatService;
+import com.bixin.nft.core.service.NftMarketService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @class: NftInfoController
- * @Description:  NFT信息记录表 Controller
+ * @Description: NFT信息记录表 Controller
  * @author: 系统
  * @created: 2021-09-15
  */
@@ -31,9 +38,33 @@ public class NftInfoController {
     @Autowired
     public NftGroupService groupService;
 
+    @Autowired
+    public NftKikoCatService nftKikoCatService;
+
+    @Autowired
+    public NftMarketService nftMarketService;
+
+    /**
+     * 获取系列列表
+     * @return
+     */
+    @GetMapping("/series/list")
+    public R seriesList() {
+        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
+        List<SeriesListVo> list = new ArrayList<>();
+        for (NftGroupDo nftGroupDo : nftGroupDoList) {
+            SeriesListVo seriesListVo = new SeriesListVo();
+            seriesListVo.setGroupId(nftGroupDo.getId());
+            seriesListVo.setGroupName(nftGroupDo.getName());
+            seriesListVo.setSeriesName(nftGroupDo.getSeriesName());
+            list.add(seriesListVo);
+        }
+        return R.success(list);
+    }
+
     /**
      * 获取待发售盲盒
-     * 获取
+     *
      * @return
      */
     @GetMapping("/box/offering")
@@ -44,6 +75,7 @@ public class NftInfoController {
 
     /**
      * 获取盲盒详情
+     *
      * @param groupId
      * @return
      */
@@ -55,25 +87,47 @@ public class NftInfoController {
 
     /**
      * 获取NFT详情
+     *
      * @return
      */
     @GetMapping("/nft/info/{id}")
     public R nftInfo(@PathVariable(value = "id") Long id) {
+        NftInfoVo nftInfoVo = new NftInfoVo();
         NftInfoDo nftInfoDo = nftInfoService.selectById(id);
-        if(ObjectUtils.isEmpty(nftInfoDo)){
-            R.failed("nftInfoDo不存在，id = "+id);
+        if (ObjectUtils.isEmpty(nftInfoDo)) {
+            R.failed("nftInfoDo不存在，id = " + id);
         }
         NftGroupDo nftGroupDo = groupService.selectById(nftInfoDo.getGroupId());
-        if(ObjectUtils.isEmpty(nftGroupDo)){
-            R.failed("nftGroupDo不存在，groupId = "+nftInfoDo.getGroupId());
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
         }
-        NftInfoVo nftInfoVo = null;
+        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByNftId(nftInfoDo.getNftId());
+        if (ObjectUtils.isEmpty(nftKikoCatDo)) {
+            R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+        }
+        NftMarketDo nftMarketParm = new NftMarketDo();
+        nftMarketParm.setNftBoxId(nftInfoDo.getNftId());
+        nftMarketParm.setGroupId(nftInfoDo.getGroupId());
+        NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParm);
+        if (ObjectUtils.isEmpty(nftMarketDo)) {
+            nftInfoVo.setOnSell(false);
+        } else {
+            nftInfoVo.setOnSell(true);
+            nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
+        }
+        nftInfoVo.setNftId(nftInfoDo.getNftId());
+        nftInfoVo.setGroupId(nftInfoDo.getGroupId());
+        nftInfoVo.setImageLink(nftInfoDo.getImageLink());
+        nftInfoVo.setOwner(nftInfoDo.getOwner());
+        nftInfoVo.setScore(nftInfoDo.getScore());
+        nftInfoVo.setRank(nftInfoDo.getRank());
+        BeanUtils.copyProperties(nftInfoVo, nftGroupDo);
+        nftInfoVo.setGroupName(nftGroupDo.getName());
+        nftInfoVo.setProperties(nftKikoCatDo);
         return R.success(nftInfoVo);
     }
 
-
     /**
-     *
      * @param series
      * @param pageSize
      * @param nextId
@@ -94,7 +148,7 @@ public class NftInfoController {
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
 
         //List<LiquidityUserRecord> records = liquidityUserRecordService.getALlByPage(userAddress, pageSize + 1, nextId);
-        List<NftInfoDo>  records = null;
+        List<NftInfoDo> records = null;
         boolean hasNext = false;
         if (records.size() > pageSize) {
             records = records.subList(0, records.size() - 1);

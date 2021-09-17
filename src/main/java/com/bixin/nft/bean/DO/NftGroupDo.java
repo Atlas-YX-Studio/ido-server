@@ -98,9 +98,14 @@ public class NftGroupDo implements Serializable {
     private Long sellingTime;
 
     /**
-     * 是否激活
+     * 是否展示
      */
     private Boolean enabled;
+
+    /**
+     * 是否激活
+     */
+    private Boolean offering;
 
     /**
      * 状态：APPENDING/INITIALIZED/CREATED
