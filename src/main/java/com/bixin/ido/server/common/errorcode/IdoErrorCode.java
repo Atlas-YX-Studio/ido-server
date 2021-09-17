@@ -43,6 +43,18 @@ public enum IdoErrorCode implements ErrorCode {
      */
     FILE_NOT_EXIST(100006, "file not exist"),
 
+    /**
+     * 合约部署失败
+     */
+    CONTRACT_DEPLOY_FAILURE(100007, "contract deploy failure"),
+
+    /**
+     * 合约请求失败
+     */
+    CONTRACT_CALL_FAILURE(100008, "contract call failure"),
+
+
+
     ;
 
     private final int code;

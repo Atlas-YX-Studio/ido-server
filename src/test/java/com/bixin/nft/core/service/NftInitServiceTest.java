@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 
 @ActiveProfiles("local")
 @SpringBootTest(classes = IdoServerApplication.class)
@@ -15,18 +16,15 @@ class NftInitServiceTest {
     @Resource
     private ContractService contractService;
 
+
     @Test
-    void createNft() {
-        nftInitService.initNft();
+    void deployNftMarket() {
+        nftInitService.initNFTMarket(new BigInteger("10"), new BigInteger("10"));
     }
 
     @Test
-    void checkTxt() {
-        contractService.checkTxt("0xfa55d887d5769f065d7f21049a16845c6f1712e773cc9375db0aaf9f7b36ccc5");
+    void initNFT() {
+        nftInitService.createNFT();
     }
 
-    @Test
-    void callFunction() {
-//        contractService.getResource();
-    }
 }
