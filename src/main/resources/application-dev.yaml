@@ -38,3 +38,6 @@ ido:
     client:
       url: https://barnard-seed.starcoin.org
       chain-id: 251
+    nft:
+      market: "0x290c7b35320a4dd26f651fd184373fe7"
+      scripts: "0x290c7b35320a4dd26f651fd184373fe7"

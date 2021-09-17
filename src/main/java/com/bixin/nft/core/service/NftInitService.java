@@ -204,7 +204,7 @@ public class NftInitService {
      * @return
      */
     private boolean transferBox(NftGroupDo nftGroupDo) {
-        double boxTokenDecimal = Math.pow(10, nftGroupDo.getBoxTokenPrecision());
+        double boxTokenDecimal = nftGroupDo.getQuantity() * Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken());
         return contractService.transfer(nftGroupDo.getCreator(), market, typeObj, BigInteger.valueOf((long)boxTokenDecimal));
     }
