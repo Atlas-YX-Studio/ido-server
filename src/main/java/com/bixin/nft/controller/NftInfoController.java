@@ -3,6 +3,7 @@ package com.bixin.nft.controller;
 import com.bixin.ido.server.bean.vo.wrap.P;
 import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.constants.CommonConstant;
+import com.bixin.ido.server.utils.BeanCopyUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
@@ -17,8 +18,10 @@ import com.bixin.nft.core.service.NftMarketService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -124,6 +127,50 @@ public class NftInfoController {
         return R.success(nftGroupDo);
     }
 
+    @GetMapping("/nft/info")
+    public R nftInfo(@RequestParam("meta") String meta, @RequestParam("body") String body, @RequestParam("nftId") Long nftId) {
+        // 获取groupId
+        NftGroupDo selectNftGroupDo = new NftGroupDo();
+        selectNftGroupDo.setNftMeta(meta);
+        selectNftGroupDo.setNftBody(body);
+        List<NftGroupDo> nftGroupDos = groupService.listByObject(selectNftGroupDo);
+        if (CollectionUtils.isEmpty(nftGroupDos)) {
+            return R.failed("nftGroupDo不存在，meta = " + meta + "，body = " + body);
+        }
+        // 获取infoId
+        NftGroupDo nftGroupDo = nftGroupDos.get(0);
+        NftInfoDo selectNftInfoDo = new NftInfoDo();
+        selectNftInfoDo.setGroupId(nftGroupDo.getId());
+        selectNftInfoDo.setNftId(nftId);
+        List<NftInfoDo> nftInfoDos = nftInfoService.listByObject(selectNftInfoDo);
+        if (CollectionUtils.isEmpty(nftInfoDos)) {
+            return R.failed("nftInfoDo不存在，meta = " + meta + "，body = " + body + "，nftId = " + nftId);
+        }
+        NftInfoDo nftInfoDo = nftInfoDos.get(0);
+        // 获取cat
+        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByNftId(nftInfoDo.getNftId());
+        if (ObjectUtils.isEmpty(nftKikoCatDo)) {
+            return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+        }
+        NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftGroupDo, () -> BeanCopyUtil.copyProperties(nftInfoDo, NftInfoVo::new));
+        // 是否出售中
+        NftMarketDo nftMarketParm = new NftMarketDo();
+        nftMarketParm.setNftBoxId(nftInfoDo.getNftId());
+        nftMarketParm.setNftBoxId(nftInfoDo.getGroupId());
+        NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParm);
+        if (ObjectUtils.isEmpty(nftMarketDo)) {
+            nftInfoVo.setOnSell(false);
+            nftInfoVo.setOwner("");
+        } else {
+            nftInfoVo.setOnSell(true);
+            nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
+            nftInfoVo.setOwner(nftMarketDo.getOwner());
+        }
+        nftInfoVo.setProperties(nftKikoCatDo);
+        return R.success(nftInfoVo);
+    }
+
+
     /**
      * 获取NFT详情
      *
@@ -134,15 +181,15 @@ public class NftInfoController {
         NftInfoVo nftInfoVo = new NftInfoVo();
         NftInfoDo nftInfoDo = nftInfoService.selectById(id);
         if (ObjectUtils.isEmpty(nftInfoDo)) {
-            R.failed("nftInfoDo不存在，id = " + id);
+            return R.failed("nftInfoDo不存在，id = " + id);
         }
         NftGroupDo nftGroupDo = groupService.selectById(nftInfoDo.getGroupId());
         if (ObjectUtils.isEmpty(nftGroupDo)) {
-            R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
+            return R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
         }
         NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByNftId(nftInfoDo.getNftId());
         if (ObjectUtils.isEmpty(nftKikoCatDo)) {
-            R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+            return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
         }
         NftMarketDo nftMarketParm = new NftMarketDo();
         nftMarketParm.setNftBoxId(nftInfoDo.getNftId());
