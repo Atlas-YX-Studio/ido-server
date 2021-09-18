@@ -273,7 +273,7 @@ public class NftInitService {
                 .moduleName("NFTScripts")
                 .functionName("nft_buy_back")
                 .args(Lists.newArrayList(
-                        BcsSerializeHelper.serializeU64ToBytes(4L),
+                        BcsSerializeHelper.serializeU64ToBytes(5L),
                         BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(100000000))
                 ))
                 .tyArgs(Lists.newArrayList(

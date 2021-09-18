@@ -181,7 +181,9 @@ public class NftInfoController {
             return R.failed("nftInfoDo不存在，meta = " + meta + "，body = " + body + "，nftId = " + nftId);
         }
         // 获取cat
-        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByNftId(nftInfoDo.getNftId());
+        NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
+        selectNftKikoCatDo.setInfoId(nftInfoDo.getId());
+        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByObject(selectNftKikoCatDo);
         if (ObjectUtils.isEmpty(nftKikoCatDo)) {
             return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
         }
