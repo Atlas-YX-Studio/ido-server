@@ -61,11 +61,11 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         nftInfoMap = nftInfoDos.stream().collect(Collectors.toMap(x->toInfoKey(x.getGroupId(), x.getNftId()), y->y));
     }
 
-    @Scheduled(cron = "0/5 * * * * ?")
     private String toInfoKey(Long groupId, Long nftId) {
         return String.format("%s_%s", groupId, nftId);
     }
 
+    @Scheduled(cron = "0/5 * * * * ?")
     public void refreshOrders() {
         Map<Long, Map<String, List<BuyBackOrder>>> tempOrderMap = Maps.newHashMap();
 
