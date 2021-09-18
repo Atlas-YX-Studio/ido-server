@@ -240,7 +240,7 @@ public class NftInfoController {
         nftInfoVo.setImageLink(nftInfoDo.getImageLink());
         nftInfoVo.setScore(nftInfoDo.getScore());
         nftInfoVo.setRank(nftInfoDo.getRank());
-        BeanUtils.copyProperties(nftInfoVo, nftGroupDo);
+        BeanUtils.copyProperties(nftGroupDo, nftInfoVo);
         nftInfoVo.setGroupName(nftGroupDo.getName());
         nftInfoVo.setProperties(nftKikoCatDo);
         return R.success(nftInfoVo);

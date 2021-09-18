@@ -84,6 +84,8 @@ public class StarConfig {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Nft{
+        private String websocketHost;
+        private String websocketPort;
         private String market;
         private String scripts;
 
