@@ -93,6 +93,11 @@ public class NftGroupDo implements Serializable {
     private String creator;
 
     /**
+     * 所有者
+     */
+    private String owner;
+
+    /**
      * 发售价格
      */
     private Integer sellingPrice;
