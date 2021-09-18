@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.starcoin.bean.ScriptFunctionObj;
 import org.starcoin.bean.TypeObj;
 import org.starcoin.utils.AccountAddressUtils;
@@ -111,6 +112,15 @@ public class NftInitService {
                     return;
                 }
                 MutableInt nftId = new MutableInt(1);
+                // 获取该组最后一个id
+                selectNftInfoDo = new NftInfoDo();
+                selectNftInfoDo.setGroupId(nftGroupDo.getId());
+                selectNftInfoDo.setCreated(true);
+                List<NftInfoDo> createdNftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
+                if (!CollectionUtils.isEmpty(createdNftInfoDos)) {
+                    createdNftInfoDos.sort(Comparator.comparingLong(NftInfoDo::getNftId).reversed());
+                    nftId.setValue(createdNftInfoDos.get(0).getNftId());
+                }
                 nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
                     if (!mintKikoCatNFT(nftGroupDo, nftInfoDo)) {
                         log.error("NFT {} mint失败", nftInfoDo.getName());
@@ -155,11 +165,12 @@ public class NftInitService {
      * @return
      */
     private boolean deployNFTContract(NftGroupDo nftGroupDo) {
-        String path = "contract/nft/KikoCat01.mv";
+        String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
+        String path = "contract/nft/" + moduleName + ".mv";
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(nftGroupDo.getCreator())
-                .moduleName("KikoCat01")
+                .moduleName(moduleName)
                 .functionName("init")
                 .tyArgs(Lists.newArrayList())
                 .args(Lists.newArrayList())
@@ -171,7 +182,8 @@ public class NftInitService {
      * mint NFT
      */
     private boolean mintKikoCatNFT(NftGroupDo nftGroupDo, NftInfoDo nftInfoDo) {
-        String address = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleAddress();
+        TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta());
+        String address = typeObj.getModuleAddress();
         NftKikoCatDo nftKikoCatDo = new NftKikoCatDo();
         nftKikoCatDo.setInfoId(nftInfoDo.getId());
         nftKikoCatDo = nftKikoCatMapper.selectByPrimaryKeySelective(nftKikoCatDo);
@@ -179,7 +191,7 @@ public class NftInitService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(address)
-                .moduleName("KikoCat01")
+                .moduleName(typeObj.getModuleName())
                 .functionName("mint")
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
@@ -204,7 +216,7 @@ public class NftInitService {
      * @return
      */
     private boolean transferBox(NftGroupDo nftGroupDo) {
-        double boxTokenDecimal = nftGroupDo.getQuantity() * Math.pow(10, nftGroupDo.getBoxTokenPrecision());
+        double boxTokenDecimal = nftGroupDo.getOfferingQuantity() * Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken());
         return contractService.transfer(nftGroupDo.getCreator(), market, typeObj, BigInteger.valueOf((long)boxTokenDecimal));
     }
@@ -214,8 +226,8 @@ public class NftInitService {
      */
     private boolean initBoxOffering(NftGroupDo nftGroupDo) {
         double boxTokenDecimal = Math.pow(10, nftGroupDo.getBoxTokenPrecision());
-        double payTokenDecimal = Math.pow(10, nftGroupDo.getBoxTokenPrecision());
-        BigInteger boxAmount = BigInteger.valueOf(nftGroupDo.getQuantity() * (long) boxTokenDecimal);
+        double payTokenDecimal = Math.pow(10, nftGroupDo.getPayTokenPrecision());
+        BigInteger boxAmount = BigInteger.valueOf(nftGroupDo.getOfferingQuantity() * (long) boxTokenDecimal);
         BigInteger sellingPrice = BigInteger.valueOf(nftGroupDo.getSellingPrice() * (long) payTokenDecimal);
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
@@ -237,5 +249,42 @@ public class NftInitService {
                 .build();
         return contractService.callFunction(scripts, scriptFunctionObj);
     }
+
+    public boolean initBuyBackNFT() {
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(scripts)
+                .moduleName("NFTScripts")
+                .functionName("init_buy_back_list")
+                .args(Lists.newArrayList())
+                .tyArgs(Lists.newArrayList(
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat03::KikoCatMeta"),
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat03::KikoCatBody"),
+                        TypeArgsUtil.parseTypeObj("0x1::STC::STC")
+                ))
+                .build();
+        return contractService.callFunction(market, scriptFunctionObj);
+    }
+
+    public boolean buyBackNFT() {
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(scripts)
+                .moduleName("NFTScripts")
+                .functionName("nft_buy_back")
+                .args(Lists.newArrayList(
+                        BcsSerializeHelper.serializeU64ToBytes(4L),
+                        BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(100000000))
+                ))
+                .tyArgs(Lists.newArrayList(
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat03::KikoCatMeta"),
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat03::KikoCatBody"),
+                        TypeArgsUtil.parseTypeObj("0x1::STC::STC")
+                ))
+                .build();
+        return contractService.callFunction(market, scriptFunctionObj);
+    }
+
+
 
 }
