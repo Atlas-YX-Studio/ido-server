@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -149,21 +150,24 @@ public class SwapEventSubscriberRunner implements ApplicationRunner {
         String typeTag = eventResult.getTypeTag();
         String seqNumber = eventResult.getEventSeqNumber();
 
+        String key = null;
         try {
-            String key = URLEncoder.encode(typeTag, "utf8") + seqNumber;
-            Long now = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
-            log.info("IdoSwapEventRunner duplicate event redis key {}", key);
+            key = URLEncoder.encode(typeTag, "utf8") + seqNumber;
+        } catch (UnsupportedEncodingException e) {
+            log.error("IdoSwapEventRunner exception ", e);
+        }
+        log.info("IdoSwapEventRunner duplicate event redis key {}", key);
 
-            if (Objects.nonNull(redisCache.getValue(key))) {
-                return true;
-            }
-            redisCache.setValue(key, now, duplicateExpiredTime, TimeUnit.SECONDS);
-
-        } catch (Exception e) {
-            log.error("IdoSwapEventRunner duplicate event exception {}, {}", typeTag, seqNumber, e);
+        if (Objects.isNull(key)) {
+            return true;
         }
 
-        return false;
+        Long now = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+        return !redisCache.tryGetDistributedLock(
+                key,
+                UUID.randomUUID().toString().replaceAll("-", "") + now,
+                duplicateExpiredTime
+        );
     }
 
 }
