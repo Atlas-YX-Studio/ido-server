@@ -69,11 +69,10 @@ DROP TABLE IF EXISTS nft_market;
 CREATE TABLE nft_market
 (
     id               bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-    nft_box_id       bigint(20) NOT NULL COMMENT 'NFT/box id',
+    chain_id         bigint(20) NOT NULL COMMENT '链上 id',
+    nft_box_id       bigint(20) NOT NULL COMMENT 'NFT为nft_info表的id/box 为nft_group表的id',
     type             varchar(64) DEFAULT NULL COMMENT '类型：nft/box',
     name             varchar(128) DEFAULT NULL COMMENT 'ndf/box 全称',
-    group_id         bigint(20)  DEFAULT 0 COMMENT '所属分组 id',
-    creator          varchar(128) DEFAULT NULL COMMENT '创建者',
     owner            varchar(128) DEFAULT NULL COMMENT '当前持有者',
     address          varchar(128) DEFAULT NULL COMMENT '合约地址',
     sell_price       DECIMAL(36,18) DEFAULT 0 COMMENT '售价',
