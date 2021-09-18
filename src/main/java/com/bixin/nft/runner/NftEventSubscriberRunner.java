@@ -98,9 +98,6 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             StarcoinSubscriber subscriber = new StarcoinSubscriber(service);
             EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getSwap().getWebsocketContractAddress()));
             Flowable<EventNotification> notificationFlowable = subscriber.newTxnSendRecvEventNotifications(eventFilter);
-
-            Map<StarSwapEventType, LinkedBlockingQueue<JsonNode>> queueMap = SwapEventBlockingQueue.queueMap;
-
             notificationFlowable.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
                 JsonNode data = eventResult.getData();
