@@ -129,11 +129,31 @@ public class NftInfoController {
     @GetMapping("/box/info/{groupId}")
     public R boxInfo(@PathVariable(value = "groupId") Long groupId) {
         NftGroupDo nftGroupDo = groupService.selectById(groupId);
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            return R.failed("boxToken不存在");
+        }
+        return R.success(nftGroupDo);
+    }
+
+    /**
+     * 获取盲盒详情
+     *
+     * @param boxToken
+     * @return
+     */
+    @GetMapping("/box/info")
+    public R boxInfo(@RequestParam("boxToken") String boxToken) {
+        NftGroupDo selectNftGroupDo = new NftGroupDo();
+        selectNftGroupDo.setBoxToken(boxToken);
+        NftGroupDo nftGroupDo = groupService.selectByObject(selectNftGroupDo);
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            return R.failed("boxToken不存在");
+        }
         return R.success(nftGroupDo);
     }
 
     @GetMapping("/nft/info")
-    public R nftInfo(@RequestParam("meta") String meta, @RequestParam("body") String body, @RequestParam("nftId") Long nftId) {
+    public R nftInfo(@RequestParam("nftMeta") String meta, @RequestParam("nftBody") String body, @RequestParam("nftId") Long nftId) {
         // 获取groupId
         NftGroupDo selectNftGroupDo = new NftGroupDo();
         selectNftGroupDo.setNftMeta(meta);
