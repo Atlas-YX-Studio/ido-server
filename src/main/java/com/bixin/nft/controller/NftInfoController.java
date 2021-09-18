@@ -134,18 +134,17 @@ public class NftInfoController {
         NftInfoVo nftInfoVo = new NftInfoVo();
         NftInfoDo nftInfoDo = nftInfoService.selectById(id);
         if (ObjectUtils.isEmpty(nftInfoDo)) {
-            R.failed("nftInfoDo不存在，id = " + id);
+            return R.failed("nftInfoDo不存在，id = " + id);
         }
         NftGroupDo nftGroupDo = groupService.selectById(nftInfoDo.getGroupId());
         if (ObjectUtils.isEmpty(nftGroupDo)) {
-            R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
+            return R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
         }
         NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByNftId(nftInfoDo.getNftId());
         if (ObjectUtils.isEmpty(nftKikoCatDo)) {
-            R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+            return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
         }
         NftMarketDo nftMarketParm = new NftMarketDo();
-        nftMarketParm.setNftBoxId(nftInfoDo.getNftId());
         nftMarketParm.setNftBoxId(nftInfoDo.getGroupId());
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParm);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
