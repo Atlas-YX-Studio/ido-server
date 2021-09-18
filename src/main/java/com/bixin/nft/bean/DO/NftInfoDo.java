@@ -39,11 +39,6 @@ public class NftInfoDo implements Serializable {
     private String imageLink;
 
     /**
-     * 所属者
-     */
-    private String owner;
-
-    /**
      * 分数
      */
     private BigDecimal score;

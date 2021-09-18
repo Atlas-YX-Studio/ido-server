@@ -39,7 +39,6 @@ CREATE TABLE `nft_info`
     `image_link`  varchar(256) NOT NULL COMMENT '图片链接',
     `image_data`  text COMMENT '图片数据',
     `creator`     varchar(64)  NOT NULL COMMENT '创作者',
-    `owner`       varchar(64)  NOT NULL COMMENT '所属者',
     `created`     tinyint(1) NOT NULL COMMENT '已创建',
     `create_time` bigint(20) NOT NULL COMMENT '创建时间',
     `update_time` bigint(20) NOT NULL COMMENT '更新时间',
