@@ -38,5 +38,7 @@ ido:
       url: https://main-seed.starcoin.org
       chain-id: 1
     nft:
+      websocket-host: 60.205.3.84
+      websocket-port: 9870
       market: ""
       scripts: ""
