@@ -1,6 +1,9 @@
 package com.bixin.nft.bean.DO;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -11,6 +14,9 @@ import java.io.Serializable;
 * @created: 2021-09-18
 */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NftGroupDo implements Serializable {
     /**
      * 主键id

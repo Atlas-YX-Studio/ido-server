@@ -189,7 +189,9 @@ public class NftInfoController {
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
         }
-        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByNftId(nftInfoDo.getNftId());
+        NftKikoCatDo parm = new NftKikoCatDo();
+        parm.setInfoId(nftInfoDo.getId());
+        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByObject(parm);
         if (ObjectUtils.isEmpty(nftKikoCatDo)) {
             return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
         }

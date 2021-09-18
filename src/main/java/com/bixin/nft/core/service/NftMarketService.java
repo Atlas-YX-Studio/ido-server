@@ -54,4 +54,7 @@ public interface NftMarketService {
      */
     List<NftMarketDo> listByObject(NftMarketDo model);
 
+
+    void deleteAll();
+
 }

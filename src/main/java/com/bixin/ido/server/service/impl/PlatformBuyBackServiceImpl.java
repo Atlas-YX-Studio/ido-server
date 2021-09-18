@@ -58,7 +58,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
     public void refreshNftInfo() {
 
         List<NftInfoDo> nftInfoDos = nftInfoService.listByObject(new NftInfoDo());
-        nftInfoMap = nftInfoDos.stream().collect(Collectors.toMap(x->toInfoKey(x.getGroupId(), x.getNftId()), y->y));
+        nftInfoMap = nftInfoDos.stream().filter(x->!x.getNftId().equals(0L)).collect(Collectors.toMap(x->toInfoKey(x.getGroupId(), x.getNftId()), y->y));
     }
 
     private String toInfoKey(Long groupId, Long nftId) {
