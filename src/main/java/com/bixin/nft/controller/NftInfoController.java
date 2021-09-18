@@ -15,12 +15,16 @@ import com.bixin.nft.core.service.NftInfoService;
 import com.bixin.nft.core.service.NftKikoCatService;
 import com.bixin.nft.core.service.NftMarketService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,6 +51,7 @@ public class NftInfoController {
 
     /**
      * 获取系列列表
+     *
      * @return
      */
     @GetMapping("/series/list")
@@ -66,11 +71,21 @@ public class NftInfoController {
 
     /**
      * 操作记录
+     *
      * @return
      */
     @GetMapping("/operation/record")
-    public R operationRecord(@RequestParam(value = "tab") String tab) {
-        List<OperationRecordVo> list = new ArrayList<>();
+    public P operationRecord(@RequestParam(value = "tab") String tab,
+                             @RequestParam(value = "sort") String sort,
+                             @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
+                             @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
+
+        if (nextId < 0 || pageSize <= 0 || StringUtils.isEmpty(tab)) {
+            return P.failed("parameter is invalid");
+        }
+        pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
+
+        List<OperationRecordVo> records = new ArrayList<>();
 
         OperationRecordVo operationRecordVo = new OperationRecordVo();
         //todo
@@ -78,9 +93,15 @@ public class NftInfoController {
         operationRecordVo.setPrice(new BigDecimal(12));
         operationRecordVo.setCurrencyName("STC");
         operationRecordVo.setStatus("aaa");
+        operationRecordVo.setCreated(new Date().getTime());
+        records.add(operationRecordVo);
 
-        list.add(operationRecordVo);
-        return R.success(list);
+        boolean hasNext = false;
+        if (records.size() > pageSize) {
+            records = records.subList(0, records.size() - 1);
+            hasNext = true;
+        }
+        return P.success(records, hasNext);
     }
 
     /**
