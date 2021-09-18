@@ -55,8 +55,14 @@ public class NftInfoController {
      * @return
      */
     @GetMapping("/series/list")
-    public R seriesList() {
-        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
+    public R seriesList(@RequestParam(value = "all", required = false) Boolean all) {
+        List<NftGroupDo> nftGroupDoList;
+        if (all) {
+            NftGroupDo nftGroupDo = new NftGroupDo();
+            nftGroupDoList = groupService.listByObject(nftGroupDo);
+        } else {
+            nftGroupDoList = groupService.getListByEnabled(true);
+        }
         List<SeriesListVo> list = new ArrayList<>();
         for (NftGroupDo nftGroupDo : nftGroupDoList) {
             SeriesListVo seriesListVo = new SeriesListVo();
