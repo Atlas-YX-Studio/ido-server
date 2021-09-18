@@ -153,6 +153,7 @@ public class ScheduleNftMarket {
                     NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
                     NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
                     NftMarketDo nft = NftMarketDo.builder()
+                            .chainId(so.getId())
                             .nftBoxId(nftInfo.getId())
                             .type(NftBoxType.NFT.getDesc())
                             .name(nftInfo.getName())
@@ -180,6 +181,7 @@ public class ScheduleNftMarket {
                     NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
                     NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
                     NftMarketDo box = NftMarketDo.builder()
+                            .chainId(so.getId())
                             .nftBoxId(nftInfo.getGroupId())
                             .type(NftBoxType.NFT.getDesc())
                             .name(nftInfo.getName())
