@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
+
 /**
  * @class: NftMarketController
  * @Description: NFT/box市场销售列表 Controller
@@ -22,7 +24,7 @@ import java.util.List;
  * @created: 2021-09-17
  */
 @RestController
-@RequestMapping("/v1/nft/market")
+@RequestMapping(NFT_REQUEST_PATH_PREFIX+"/market")
 public class NftMarketController {
 
     @Resource
