@@ -54,9 +54,8 @@ public class ScheduleNftMarket {
     static final String boxSuffix = separator + "NFTMarket" + separator + "BoxSelling";
     static final String nftSuffix = separator + "NFTMarket" + separator + "NFTSelling";
 
-
-    //    @Scheduled(cron = "20 0/5 * * * ?")
-    @Scheduled(cron = "0/10 * * * * ?")
+    //    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "5 0/1 * * * ?")
     public void getNftMarketList() {
         String resource = contractService.getResource(starConfig.getNft().getMarket());
         ChainResourceDto chainResourceDto = JacksonUtil.readValue(resource, new TypeReference<ChainResourceDto>() {
@@ -148,7 +147,7 @@ public class ScheduleNftMarket {
             NftGroupDo groupDo = entry.getKey();
             List<NFTBoxDto> nftList = entry.getValue();
             NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
-            if(Objects.isNull(nftGroupDo)){
+            if (Objects.isNull(nftGroupDo)) {
                 log.error("ScheduleNftMarket buildNft and nftGroupDo is null");
                 return;
             }
@@ -156,7 +155,7 @@ public class ScheduleNftMarket {
                 p.getItems().forEach(so -> {
                     NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
                     NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
-                    if(Objects.isNull(nftInfo)){
+                    if (Objects.isNull(nftInfo)) {
                         log.error("ScheduleNftMarket buildNft and nftInfo is null");
                         return;
                     }
@@ -185,7 +184,7 @@ public class ScheduleNftMarket {
             NftGroupDo groupDo = entry.getKey();
             List<NFTBoxDto> boxList = entry.getValue();
             NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
-            if(Objects.isNull(nftGroupDo)){
+            if (Objects.isNull(nftGroupDo)) {
                 log.error("ScheduleNftMarket buildBox and nftGroupDo is null");
                 return;
             }
@@ -193,7 +192,7 @@ public class ScheduleNftMarket {
                 p.getItems().forEach(so -> {
                     NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
                     NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
-                    if(Objects.isNull(nftInfo)){
+                    if (Objects.isNull(nftInfo)) {
                         log.error("ScheduleNftMarket buildBox and nftInfo is null");
                         return;
                     }
