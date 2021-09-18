@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.starcoin.bean.ListResourceOption;
 import org.starcoin.bean.ResourceObj;
 import org.starcoin.bean.ScriptFunctionObj;
 import org.starcoin.bean.TypeObj;
@@ -56,19 +57,13 @@ public class ContractService {
     /**
      * 获取Resource
      * @param senderAddress
-     * @param moduleName
-     * @param resourceName
      * @return
      */
-    public String getResource(String senderAddress, String moduleName, String resourceName) {
-        ResourceObj resourceObj = ResourceObj
-                .builder()
-                .moduleAddress(senderAddress)
-                .moduleName(moduleName)
-                .resourceName(resourceName)
-                .build();
+    public String getResource(String senderAddress) {
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
-        String result = starcoinClient.getResource(sender, resourceObj);
+        ListResourceOption listResourceOption = new ListResourceOption();
+        listResourceOption.setDecode(true);
+        String result = starcoinClient.call("state.list_resource", Lists.newArrayList(new Object[]{AccountAddressUtils.hex(sender), listResourceOption}));
         log.info("result:{}", result);
         return result;
     }

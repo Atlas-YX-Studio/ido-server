@@ -19,6 +19,7 @@ public class StarConfig {
     private StarDx dx = new StarDx();
     private starSwap swap = new starSwap();
     private Runner runner = new Runner();
+    private Nft nft = new Nft();
 
 
     @Data
@@ -77,6 +78,15 @@ public class StarConfig {
     public static class SwapConsumer {
         private int coreThreads;
         private int maxThreads;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Nft{
+        private String market;
+        private String scripts;
+
     }
 
 }
