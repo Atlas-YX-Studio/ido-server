@@ -163,6 +163,7 @@ public class ScheduleNftMarket {
                     NftMarketDo nft = NftMarketDo.builder()
                             .chainId(so.getId())
                             .nftBoxId(nftInfo.getId())
+                            .groupId(nftGroupDo.getId())
                             .type(NftBoxType.NFT.getDesc())
                             .name(nftInfo.getName())
                             .owner(so.getSeller())
@@ -184,13 +185,22 @@ public class ScheduleNftMarket {
             NftGroupDo groupDo = entry.getKey();
             List<NFTBoxDto> boxList = entry.getValue();
             NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
+            if(Objects.isNull(nftGroupDo)){
+                log.error("ScheduleNftMarket buildBox and nftGroupDo is null");
+                return;
+            }
             boxList.forEach(p -> {
                 p.getItems().forEach(so -> {
                     NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
                     NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
+                    if(Objects.isNull(nftInfo)){
+                        log.error("ScheduleNftMarket buildBox and nftInfo is null");
+                        return;
+                    }
                     NftMarketDo box = NftMarketDo.builder()
                             .chainId(so.getId())
                             .nftBoxId(nftInfo.getGroupId())
+                            .groupId(nftGroupDo.getId())
                             .type(NftBoxType.NFT.getDesc())
                             .name(nftInfo.getName())
                             .owner(so.getSeller())

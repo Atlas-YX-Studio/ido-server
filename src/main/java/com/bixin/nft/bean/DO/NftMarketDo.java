@@ -30,9 +30,11 @@ public class NftMarketDo implements Serializable {
     private Long chainId;
 
     /**
-     * NFT为nft_info表的id/box 为nft_group表的id
+     * nft_info表的id
      */
     private Long nftBoxId;
+
+    private Long groupId;
 
     /**
      * 类型：nft/box

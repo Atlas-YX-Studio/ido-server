@@ -1,17 +1,24 @@
 package com.bixin.nft.core.service.impl;
 
+import com.bixin.ido.server.utils.CaseUtil;
+import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
+import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftMarketMapper;
 import com.bixin.nft.core.service.NftMarketService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @class: NftMarketServiceImpl
- * @Description:  NFT/box市场销售列表 接口实现
+ * @Description: NFT/box市场销售列表 接口实现
  * @author: 系统
  * @created: 2021-09-17
  */
@@ -20,13 +27,15 @@ import java.util.List;
 public class NftMarketServiceImpl implements NftMarketService {
 
 
-    @Autowired
+    @Resource
     private NftMarketMapper nftMarketMapper;
+    @Resource
+    private NftGroupMapper nftGroupMapper;
 
     /**
      * @explain: 添加NftMarketDo对象
-     * @param:   model 对象参数
-     * @return:  int
+     * @param: model 对象参数
+     * @return: int
      */
     @Override
     public int insert(NftMarketDo model) {
@@ -35,8 +44,8 @@ public class NftMarketServiceImpl implements NftMarketService {
 
     /**
      * @explain: 删除NftMarketDo对象
-     * @param:   id
-     * @return:  int
+     * @param: id
+     * @return: int
      */
     @Override
     public int deleteById(Long id) {
@@ -45,8 +54,8 @@ public class NftMarketServiceImpl implements NftMarketService {
 
     /**
      * @explain: 修改NftMarketDo对象
-     * @param:   model 对象参数
-     * @return:  int
+     * @param: model 对象参数
+     * @return: int
      */
     @Override
     public int update(NftMarketDo model) {
@@ -55,8 +64,8 @@ public class NftMarketServiceImpl implements NftMarketService {
 
     /**
      * @explain: 查询NftMarketDo对象
-     * @param:   id
-     * @return:  NftMarketDo
+     * @param: id
+     * @return: NftMarketDo
      */
     @Override
     public NftMarketDo selectById(Long id) {
@@ -65,17 +74,18 @@ public class NftMarketServiceImpl implements NftMarketService {
 
     /**
      * @explain: 查询NftMarketDo对象
-     * @param:   model 对象参数
-     * @return:  NftMarketDo 对象
+     * @param: model 对象参数
+     * @return: NftMarketDo 对象
      */
     @Override
     public NftMarketDo selectByObject(NftMarketDo model) {
         return nftMarketMapper.selectByPrimaryKeySelective(model);
     }
 
+
     /**
      * @explain: 查询列表
-     * @param:  model  对象参数
+     * @param: model  对象参数
      * @return: list
      */
     @Override
@@ -87,6 +97,35 @@ public class NftMarketServiceImpl implements NftMarketService {
     @Override
     public void deleteAll() {
         nftMarketMapper.deleteAll();
+    }
+
+
+    @Override
+    public List<NftMarketDo> selectByPage(long pageSize, long pageNum, int sort, String series, String currency, String open) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("sort", "sell_price");
+        paramMap.put("pageSize", pageSize);
+        paramMap.put("pageFrom", (pageNum - 1) * pageSize);
+        if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(series)) {
+            paramMap.put("type", open);
+        }
+        if (sort > 0) {
+            paramMap.put("order", sort == 2 ? "asc" : "desc");
+        }
+
+        NftGroupDo.NftGroupDoBuilder groupDoBuilder = NftGroupDo.builder();
+        if (StringUtils.isNoneEmpty(series) && !"all".equalsIgnoreCase(series)) {
+            groupDoBuilder.seriesName(series);
+        }
+        if (StringUtils.isNoneEmpty(currency) && !"all".equalsIgnoreCase(currency)) {
+            groupDoBuilder.payToken(currency);
+        }
+        NftGroupDo groupParam = groupDoBuilder.build();
+        if (StringUtils.isNoneEmpty(groupParam.getSeriesName()) || StringUtils.isNoneEmpty(groupParam.getPayToken())) {
+            NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKeySelective(groupParam);
+            paramMap.put("groupId", nftGroupDo.getId());
+        }
+        return nftMarketMapper.selectByPage(paramMap);
     }
 
 }
