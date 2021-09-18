@@ -128,18 +128,19 @@ public class NftInfoController {
         }
         NftMarketDo nftMarketParm = new NftMarketDo();
         nftMarketParm.setNftBoxId(nftInfoDo.getNftId());
-        nftMarketParm.setGroupId(nftInfoDo.getGroupId());
+        nftMarketParm.setNftBoxId(nftInfoDo.getGroupId());
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParm);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftInfoVo.setOnSell(false);
+            nftInfoVo.setOwner("");
         } else {
             nftInfoVo.setOnSell(true);
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
+            nftInfoVo.setOwner(nftMarketDo.getOwner());
         }
         nftInfoVo.setNftId(nftInfoDo.getNftId());
         nftInfoVo.setGroupId(nftInfoDo.getGroupId());
         nftInfoVo.setImageLink(nftInfoDo.getImageLink());
-        nftInfoVo.setOwner(nftInfoDo.getOwner());
         nftInfoVo.setScore(nftInfoDo.getScore());
         nftInfoVo.setRank(nftInfoDo.getRank());
         BeanUtils.copyProperties(nftInfoVo, nftGroupDo);

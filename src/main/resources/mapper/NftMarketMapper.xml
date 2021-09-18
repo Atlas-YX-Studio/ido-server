@@ -3,11 +3,10 @@
 <mapper namespace="com.bixin.nft.core.mapper.NftMarketMapper">
   <resultMap id="BaseResultMap" type="com.bixin.nft.bean.DO.NftMarketDo">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="chain_id" jdbcType="BIGINT" property="chainId" />
     <result column="nft_box_id" jdbcType="BIGINT" property="nftBoxId" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="group_id" jdbcType="BIGINT" property="groupId" />
-    <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="sell_price" jdbcType="DECIMAL" property="sellPrice" />
@@ -17,8 +16,8 @@
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, nft_box_id, type, name, group_id, creator, owner, address, sell_price, offer_price, 
-    icon, create_time, update_time
+    id, chain_id, nft_box_id, type, name, owner, address, sell_price, offer_price, icon, 
+    create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -31,20 +30,23 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftMarketDo" useGeneratedKeys="true">
-    insert into nft_market (id, nft_box_id, type, 
-      name, group_id, creator, 
-      owner, address, sell_price, 
-      offer_price, icon, create_time, 
-      update_time)
-    values (#{id,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{groupId,jdbcType=BIGINT}, #{creator,jdbcType=VARCHAR}, 
-      #{owner,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{sellPrice,jdbcType=DECIMAL}, 
-      #{offerPrice,jdbcType=DECIMAL}, #{icon,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=BIGINT})
+    insert into nft_market (id, chain_id, nft_box_id, 
+      type, name, owner, 
+      address, sell_price, offer_price, 
+      icon, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{chainId,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT}, 
+      #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{sellPrice,jdbcType=DECIMAL}, #{offerPrice,jdbcType=DECIMAL}, 
+      #{icon,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
+      )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftMarketDo">
     update nft_market
     <set>
+      <if test="chainId != null">
+        chain_id = #{chainId,jdbcType=BIGINT},
+      </if>
       <if test="nftBoxId != null">
         nft_box_id = #{nftBoxId,jdbcType=BIGINT},
       </if>
@@ -53,12 +55,6 @@
       </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="groupId != null">
-        group_id = #{groupId,jdbcType=BIGINT},
-      </if>
-      <if test="creator != null">
-        creator = #{creator,jdbcType=VARCHAR},
       </if>
       <if test="owner != null">
         owner = #{owner,jdbcType=VARCHAR},
@@ -89,6 +85,9 @@
       <if test="null != id">
          and id = #{id,jdbcType=BIGINT}
       </if>
+      <if test="null != chainId">
+         and chain_id = #{chainId,jdbcType=BIGINT}
+      </if>
       <if test="null != nftBoxId">
          and nft_box_id = #{nftBoxId,jdbcType=BIGINT}
       </if>
@@ -97,12 +96,6 @@
       </if>
       <if test="null != name">
          and name = #{name,jdbcType=VARCHAR}
-      </if>
-      <if test="null != groupId">
-         and group_id = #{groupId,jdbcType=BIGINT}
-      </if>
-      <if test="null != creator">
-         and creator = #{creator,jdbcType=VARCHAR}
       </if>
       <if test="null != owner">
          and owner = #{owner,jdbcType=VARCHAR}

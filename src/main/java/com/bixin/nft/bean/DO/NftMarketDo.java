@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 * @Class: NftMarketDo
 * @Description: NFT/box市场销售列表
 * @author: 系统
-* @created: 2021-09-17
+* @created: 2021-09-18
 */
 @Data
 public class NftMarketDo implements Serializable {
@@ -19,7 +19,12 @@ public class NftMarketDo implements Serializable {
     private Long id;
 
     /**
-     * NFT/box id
+     * 链上 id
+     */
+    private Long chainId;
+
+    /**
+     * NFT为nft_info表的id/box 为nft_group表的id
      */
     private Long nftBoxId;
 
@@ -32,16 +37,6 @@ public class NftMarketDo implements Serializable {
      * ndf/box 全称
      */
     private String name;
-
-    /**
-     * 所属分组 id
-     */
-    private Long groupId;
-
-    /**
-     * 创建者
-     */
-    private String creator;
 
     /**
      * 当前持有者
