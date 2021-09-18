@@ -8,6 +8,7 @@ import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.bean.vo.NftInfoVo;
+import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
 import com.bixin.nft.core.service.NftGroupService;
 import com.bixin.nft.core.service.NftInfoService;
@@ -18,8 +19,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,6 +48,7 @@ public class NftInfoController {
 
     /**
      * 获取系列列表
+     *
      * @return
      */
     @GetMapping("/series/list")
@@ -63,23 +66,40 @@ public class NftInfoController {
     }
 
 
-//    /**
-//     * 获取系列列表
-//     * @return
-//     */
-//    @GetMapping("/series/list")
-//    public R seriesList() {
-//        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
-//        List<SeriesListVo> list = new ArrayList<>();
-//        for (NftGroupDo nftGroupDo : nftGroupDoList) {
-//            SeriesListVo seriesListVo = new SeriesListVo();
-//            seriesListVo.setGroupId(nftGroupDo.getId());
-//            seriesListVo.setGroupName(nftGroupDo.getName());
-//            seriesListVo.setSeriesName(nftGroupDo.getSeriesName());
-//            list.add(seriesListVo);
-//        }
-//        return R.success(list);
-//    }
+    /**
+     * 操作记录
+     *
+     * @return
+     */
+    @GetMapping("/operation/record")
+    public P operationRecord(@RequestParam(value = "type") String type,
+                             @RequestParam(value = "id") Long id,
+                             @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
+                             @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
+
+        if (nextId < 0 || pageSize <= 0 || StringUtils.isEmpty(type)) {
+            return P.failed("parameter is invalid");
+        }
+        pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
+
+        List<OperationRecordVo> records = new ArrayList<>();
+
+        OperationRecordVo operationRecordVo = new OperationRecordVo();
+        //todo
+        operationRecordVo.setAddress("aaaaa");
+        operationRecordVo.setPrice(new BigDecimal(12));
+        operationRecordVo.setCurrencyName("STC");
+        operationRecordVo.setStatus("aaa");
+        operationRecordVo.setCreated(new Date().getTime());
+        records.add(operationRecordVo);
+
+        boolean hasNext = false;
+        if (records.size() > pageSize) {
+            records = records.subList(0, records.size() - 1);
+            hasNext = true;
+        }
+        return P.success(records, hasNext);
+    }
 
     /**
      * 获取待发售盲盒
@@ -114,30 +134,30 @@ public class NftInfoController {
         NftInfoVo nftInfoVo = new NftInfoVo();
         NftInfoDo nftInfoDo = nftInfoService.selectById(id);
         if (ObjectUtils.isEmpty(nftInfoDo)) {
-            R.failed("nftInfoDo不存在，id = " + id);
+            return R.failed("nftInfoDo不存在，id = " + id);
         }
         NftGroupDo nftGroupDo = groupService.selectById(nftInfoDo.getGroupId());
         if (ObjectUtils.isEmpty(nftGroupDo)) {
-            R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
+            return R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
         }
         NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByNftId(nftInfoDo.getNftId());
         if (ObjectUtils.isEmpty(nftKikoCatDo)) {
-            R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+            return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
         }
         NftMarketDo nftMarketParm = new NftMarketDo();
-        nftMarketParm.setNftBoxId(nftInfoDo.getNftId());
-        nftMarketParm.setGroupId(nftInfoDo.getGroupId());
+        nftMarketParm.setNftBoxId(nftInfoDo.getGroupId());
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParm);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftInfoVo.setOnSell(false);
+            nftInfoVo.setOwner("");
         } else {
             nftInfoVo.setOnSell(true);
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
+            nftInfoVo.setOwner(nftMarketDo.getOwner());
         }
         nftInfoVo.setNftId(nftInfoDo.getNftId());
         nftInfoVo.setGroupId(nftInfoDo.getGroupId());
         nftInfoVo.setImageLink(nftInfoDo.getImageLink());
-        nftInfoVo.setOwner(nftInfoDo.getOwner());
         nftInfoVo.setScore(nftInfoDo.getScore());
         nftInfoVo.setRank(nftInfoDo.getRank());
         BeanUtils.copyProperties(nftInfoVo, nftGroupDo);

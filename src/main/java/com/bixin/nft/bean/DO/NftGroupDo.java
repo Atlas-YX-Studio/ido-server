@@ -11,7 +11,7 @@ import java.io.Serializable;
 * @Class: NftGroupDo
 * @Description: NFT分组表
 * @author: 系统
-* @created: 2021-09-17
+* @created: 2021-09-18
 */
 @Data
 @Builder
@@ -39,14 +39,19 @@ public class NftGroupDo implements Serializable {
     private String name;
 
     /**
+     * 系列总发售数量
+     */
+    private Integer seriesQuantity;
+
+    /**
      * 发售数量
      */
     private Integer quantity;
 
     /**
-     * 系列总发售数量
+     * 发售数量
      */
-    private Integer seriesQuantity;
+    private Integer offeringQuantity;
 
     /**
      * 盲盒币种
@@ -104,12 +109,12 @@ public class NftGroupDo implements Serializable {
     private Long sellingTime;
 
     /**
-     * 是否展示
+     * 是否激活
      */
     private Boolean enabled;
 
     /**
-     * 是否激活
+     * 是否展示
      */
     private Boolean offering;
 

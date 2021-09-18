@@ -36,8 +36,8 @@ ido:
         core-threads: 1
         max-threads: 1
     client:
-      url: https://barnard-seed.starcoin.org
-      chain-id: 251
+      url: https://main-seed.starcoin.org
+      chain-id: 1
     nft:
       market: "0x290c7b35320a4dd26f651fd184373fe7"
       scripts: "0x290c7b35320a4dd26f651fd184373fe7"

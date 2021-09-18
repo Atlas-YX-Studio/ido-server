@@ -6,8 +6,9 @@
     <result column="series" jdbcType="VARCHAR" property="series" />
     <result column="series_name" jdbcType="VARCHAR" property="seriesName" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="quantity" jdbcType="INTEGER" property="quantity" />
     <result column="series_quantity" jdbcType="INTEGER" property="seriesQuantity" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="offering_quantity" jdbcType="INTEGER" property="offeringQuantity" />
     <result column="box_token" jdbcType="VARCHAR" property="boxToken" />
     <result column="box_token_precision" jdbcType="INTEGER" property="boxTokenPrecision" />
     <result column="box_token_logo" jdbcType="VARCHAR" property="boxTokenLogo" />
@@ -34,9 +35,10 @@
     <result column="en_creator_desc" jdbcType="LONGVARCHAR" property="enCreatorDesc" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, series, series_name, name, quantity, series_quantity, box_token, box_token_precision, 
-    box_token_logo, pay_token, pay_token_precision, nft_meta, nft_body, nft_type_info, 
-    creator, selling_price, selling_time, enabled, offering, status, create_time, update_time
+    id, series, series_name, name, series_quantity, quantity, offering_quantity, box_token, 
+    box_token_precision, box_token_logo, pay_token, pay_token_precision, nft_meta, nft_body, 
+    nft_type_info, creator, selling_price, selling_time, enabled, offering, status, create_time, 
+    update_time
   </sql>
   <sql id="Blob_Column_List">
     cn_description, en_description, cn_rule_desc, en_rule_desc, cn_creator_desc, en_creator_desc
@@ -55,25 +57,25 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftGroupDo" useGeneratedKeys="true">
     insert into nft_group (id, series, series_name, 
-      name, quantity, series_quantity, 
-      box_token, box_token_precision, box_token_logo, 
-      pay_token, pay_token_precision, nft_meta, 
-      nft_body, nft_type_info, creator, 
-      selling_price, selling_time, enabled, offering,
-      status, create_time, update_time, 
-      cn_description, en_description, cn_rule_desc, 
-      en_rule_desc, cn_creator_desc, en_creator_desc
-      )
+      name, series_quantity, quantity, 
+      offering_quantity, box_token, box_token_precision, 
+      box_token_logo, pay_token, pay_token_precision, 
+      nft_meta, nft_body, nft_type_info, 
+      creator, selling_price, selling_time, 
+      enabled, offering, status, 
+      create_time, update_time, cn_description, 
+      en_description, cn_rule_desc, en_rule_desc, 
+      cn_creator_desc, en_creator_desc)
     values (#{id,jdbcType=BIGINT}, #{series,jdbcType=VARCHAR}, #{seriesName,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{seriesQuantity,jdbcType=INTEGER}, 
-      #{boxToken,jdbcType=VARCHAR}, #{boxTokenPrecision,jdbcType=INTEGER}, #{boxTokenLogo,jdbcType=VARCHAR}, 
-      #{payToken,jdbcType=VARCHAR}, #{payTokenPrecision,jdbcType=INTEGER}, #{nftMeta,jdbcType=VARCHAR}, 
-      #{nftBody,jdbcType=VARCHAR}, #{nftTypeInfo,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
-      #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT},  #{offering,jdbcType=BIT},
-      #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, 
-      #{cnDescription,jdbcType=LONGVARCHAR}, #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR}, 
-      #{enRuleDesc,jdbcType=LONGVARCHAR}, #{cnCreatorDesc,jdbcType=LONGVARCHAR}, #{enCreatorDesc,jdbcType=LONGVARCHAR}
-      )
+      #{name,jdbcType=VARCHAR}, #{seriesQuantity,jdbcType=INTEGER}, #{quantity,jdbcType=INTEGER}, 
+      #{offeringQuantity,jdbcType=INTEGER}, #{boxToken,jdbcType=VARCHAR}, #{boxTokenPrecision,jdbcType=INTEGER}, 
+      #{boxTokenLogo,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR}, #{payTokenPrecision,jdbcType=INTEGER}, 
+      #{nftMeta,jdbcType=VARCHAR}, #{nftBody,jdbcType=VARCHAR}, #{nftTypeInfo,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, 
+      #{enabled,jdbcType=BIT}, #{offering,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{cnDescription,jdbcType=LONGVARCHAR}, 
+      #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR}, #{enRuleDesc,jdbcType=LONGVARCHAR}, 
+      #{cnCreatorDesc,jdbcType=LONGVARCHAR}, #{enCreatorDesc,jdbcType=LONGVARCHAR})
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftGroupDo">
     update nft_group
@@ -87,11 +89,14 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="seriesQuantity != null">
+        series_quantity = #{seriesQuantity,jdbcType=INTEGER},
+      </if>
       <if test="quantity != null">
         quantity = #{quantity,jdbcType=INTEGER},
       </if>
-      <if test="seriesQuantity != null">
-        series_quantity = #{seriesQuantity,jdbcType=INTEGER},
+      <if test="offeringQuantity != null">
+        offering_quantity = #{offeringQuantity,jdbcType=INTEGER},
       </if>
       <if test="boxToken != null">
         box_token = #{boxToken,jdbcType=VARCHAR},
@@ -167,8 +172,9 @@
     set series = #{series,jdbcType=VARCHAR},
       series_name = #{seriesName,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
-      quantity = #{quantity,jdbcType=INTEGER},
       series_quantity = #{seriesQuantity,jdbcType=INTEGER},
+      quantity = #{quantity,jdbcType=INTEGER},
+      offering_quantity = #{offeringQuantity,jdbcType=INTEGER},
       box_token = #{boxToken,jdbcType=VARCHAR},
       box_token_precision = #{boxTokenPrecision,jdbcType=INTEGER},
       box_token_logo = #{boxTokenLogo,jdbcType=VARCHAR},
@@ -207,11 +213,14 @@
       <if test="null != name">
          and name = #{name,jdbcType=VARCHAR}
       </if>
+      <if test="null != seriesQuantity">
+         and series_quantity = #{seriesQuantity,jdbcType=INTEGER}
+      </if>
       <if test="null != quantity">
          and quantity = #{quantity,jdbcType=INTEGER}
       </if>
-      <if test="null != seriesQuantity">
-         and series_quantity = #{seriesQuantity,jdbcType=INTEGER}
+      <if test="null != offeringQuantity">
+         and offering_quantity = #{offeringQuantity,jdbcType=INTEGER}
       </if>
       <if test="null != boxToken">
          and box_token = #{boxToken,jdbcType=VARCHAR}
@@ -281,17 +290,14 @@
       </if>
     </trim>
   </sql>
-
   <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftGroupDo" resultMap="BaseResultMap">
     select  * from nft_group
     <include refid="baseQuery" />
   </select>
-
   <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.NftGroupDo" resultMap="BaseResultMap">
     select  * from nft_group
     <include refid="baseQuery" />
   </select>
-
   <select id="offering" parameterType="java.lang.Boolean" resultMap="BaseResultMap">
     select  * from nft_group where offering = #{offering} limit 1
   </select>

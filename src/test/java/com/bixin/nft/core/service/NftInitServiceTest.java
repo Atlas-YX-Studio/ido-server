@@ -27,4 +27,14 @@ class NftInitServiceTest {
         nftInitService.createNFT();
     }
 
+    @Test
+    void initBuyBackNFT() {
+        assert nftInitService.initBuyBackNFT();
+    }
+
+    @Test
+    void buyBackNFT() {
+        assert nftInitService.buyBackNFT();
+    }
+
 }

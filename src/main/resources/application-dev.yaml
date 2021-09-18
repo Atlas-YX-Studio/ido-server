@@ -23,7 +23,7 @@ spring:
 ido:
   star:
     dx:
-      resourceUrl: https://barnard-seed.starcoin.org
+      resourceUrl: https://main-seed.starcoin.org
       moduleName: 0x64c66296d98d6ab08579b14487157e05::Offering
     swap:
       websocket-host: 60.205.3.84
