@@ -40,4 +40,6 @@ public interface NftMarketMapper {
      * @param record
      */
     List<NftMarketDo> selectByPrimaryKeySelectiveList(NftMarketDo record);
+
+    void deleteAll();
 }

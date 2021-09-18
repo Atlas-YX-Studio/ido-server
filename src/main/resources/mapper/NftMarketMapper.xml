@@ -30,6 +30,9 @@
     delete from nft_market
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  <delete id="deleteAll" >
+    delete from nft_market
+  </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftMarketDo" useGeneratedKeys="true">
     insert into nft_market (id, nft_box_id, type, 
       name, group_id, creator, 

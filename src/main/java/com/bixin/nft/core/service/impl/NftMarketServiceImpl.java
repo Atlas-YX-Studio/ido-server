@@ -19,6 +19,7 @@ import java.util.List;
 @Service
 public class NftMarketServiceImpl implements NftMarketService {
 
+
     @Autowired
     private NftMarketMapper nftMarketMapper;
 
@@ -80,6 +81,12 @@ public class NftMarketServiceImpl implements NftMarketService {
     @Override
     public List<NftMarketDo> listByObject(NftMarketDo model) {
         return nftMarketMapper.selectByPrimaryKeySelectiveList(model);
+    }
+
+
+    @Override
+    public void deleteAll() {
+        nftMarketMapper.deleteAll();
     }
 
 }

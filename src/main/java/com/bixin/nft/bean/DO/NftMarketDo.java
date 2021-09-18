@@ -1,6 +1,9 @@
 package com.bixin.nft.bean.DO;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,6 +15,9 @@ import java.math.BigDecimal;
 * @created: 2021-09-17
 */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NftMarketDo implements Serializable {
     /**
      * 主键id
