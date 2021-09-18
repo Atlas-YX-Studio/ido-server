@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @class: NftMarketServiceImpl
@@ -123,7 +124,9 @@ public class NftMarketServiceImpl implements NftMarketService {
         NftGroupDo groupParam = groupDoBuilder.build();
         if (StringUtils.isNoneEmpty(groupParam.getSeriesName()) || StringUtils.isNoneEmpty(groupParam.getPayToken())) {
             NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKeySelective(groupParam);
-            paramMap.put("groupId", nftGroupDo.getId());
+            if(Objects.nonNull(nftGroupDo)){
+                paramMap.put("groupId", nftGroupDo.getId());
+            }
         }
         return nftMarketMapper.selectByPage(paramMap);
     }
