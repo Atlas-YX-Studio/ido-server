@@ -55,14 +55,8 @@ public class NftInfoController {
      * @return
      */
     @GetMapping("/series/list")
-    public R seriesList(@RequestParam(value = "all", required = false) Boolean all) {
-        List<NftGroupDo> nftGroupDoList;
-        if (all) {
-            NftGroupDo nftGroupDo = new NftGroupDo();
-            nftGroupDoList = groupService.listByObject(nftGroupDo);
-        } else {
-            nftGroupDoList = groupService.getListByEnabled(true);
-        }
+    public R seriesList() {
+        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
         List<SeriesListVo> list = new ArrayList<>();
         for (NftGroupDo nftGroupDo : nftGroupDoList) {
             SeriesListVo seriesListVo = new SeriesListVo();
@@ -72,6 +66,21 @@ public class NftInfoController {
             list.add(seriesListVo);
         }
         return R.success(list);
+    }
+
+    /**
+     * 获取group列表
+     *
+     * @return
+     */
+    @GetMapping("/group/list")
+    public R groupList() {
+        NftGroupDo nftGroupDo = new NftGroupDo();
+        List<NftGroupDo> nftGroupDoList = groupService.listByObject(nftGroupDo);
+        if (CollectionUtils.isEmpty(nftGroupDoList)) {
+            return R.failed("group不存在");
+        }
+        return R.success(nftGroupDoList);
     }
 
 
@@ -130,43 +139,60 @@ public class NftInfoController {
     @GetMapping("/box/info/{groupId}")
     public R boxInfo(@PathVariable(value = "groupId") Long groupId) {
         NftGroupDo nftGroupDo = groupService.selectById(groupId);
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            return R.failed("boxToken不存在");
+        }
+        return R.success(nftGroupDo);
+    }
+
+    /**
+     * 获取盲盒详情
+     *
+     * @param boxToken
+     * @return
+     */
+    @GetMapping("/box/info")
+    public R boxInfo(@RequestParam("boxToken") String boxToken) {
+        NftGroupDo selectNftGroupDo = new NftGroupDo();
+        selectNftGroupDo.setBoxToken(boxToken);
+        NftGroupDo nftGroupDo = groupService.selectByObject(selectNftGroupDo);
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            return R.failed("boxToken不存在");
+        }
         return R.success(nftGroupDo);
     }
 
     @GetMapping("/nft/info")
-    public R nftInfo(@RequestParam("meta") String meta, @RequestParam("body") String body, @RequestParam("nftId") Long nftId) {
+    public R nftInfo(@RequestParam("nftMeta") String meta, @RequestParam("nftBody") String body, @RequestParam("nftId") Long nftId) {
         // 获取groupId
         NftGroupDo selectNftGroupDo = new NftGroupDo();
         selectNftGroupDo.setNftMeta(meta);
         selectNftGroupDo.setNftBody(body);
-        List<NftGroupDo> nftGroupDos = groupService.listByObject(selectNftGroupDo);
-        if (CollectionUtils.isEmpty(nftGroupDos)) {
+        NftGroupDo nftGroupDo = groupService.selectByObject(selectNftGroupDo);
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("nftGroupDo不存在，meta = " + meta + "，body = " + body);
         }
         // 获取infoId
-        NftGroupDo nftGroupDo = nftGroupDos.get(0);
         NftInfoDo selectNftInfoDo = new NftInfoDo();
         selectNftInfoDo.setGroupId(nftGroupDo.getId());
         selectNftInfoDo.setNftId(nftId);
-        List<NftInfoDo> nftInfoDos = nftInfoService.listByObject(selectNftInfoDo);
-        if (CollectionUtils.isEmpty(nftInfoDos)) {
+        NftInfoDo nftInfoDo = nftInfoService.selectByObject(selectNftInfoDo);
+        if (ObjectUtils.isEmpty(nftInfoDo)) {
             return R.failed("nftInfoDo不存在，meta = " + meta + "，body = " + body + "，nftId = " + nftId);
         }
-        NftInfoDo nftInfoDo = nftInfoDos.get(0);
         // 获取cat
         NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByNftId(nftInfoDo.getNftId());
         if (ObjectUtils.isEmpty(nftKikoCatDo)) {
             return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
         }
-        NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftGroupDo, () -> BeanCopyUtil.copyProperties(nftInfoDo, NftInfoVo::new));
+        NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftInfoDo, () -> BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new));
         // 是否出售中
-        NftMarketDo nftMarketParm = new NftMarketDo();
-        nftMarketParm.setNftBoxId(nftInfoDo.getNftId());
-        nftMarketParm.setNftBoxId(nftInfoDo.getGroupId());
-        NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParm);
+        NftMarketDo nftMarketParam = new NftMarketDo();
+        nftMarketParam.setNftBoxId(nftInfoDo.getNftId());
+        nftMarketParam.setNftBoxId(nftInfoDo.getGroupId());
+        NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParam);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftInfoVo.setOnSell(false);
-            nftInfoVo.setOwner("");
         } else {
             nftInfoVo.setOnSell(true);
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
@@ -204,7 +230,6 @@ public class NftInfoController {
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParm);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftInfoVo.setOnSell(false);
-            nftInfoVo.setOwner("");
         } else {
             nftInfoVo.setOnSell(true);
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());

@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="chain_id" jdbcType="BIGINT" property="chainId" />
     <result column="nft_box_id" jdbcType="BIGINT" property="nftBoxId" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="owner" jdbcType="VARCHAR" property="owner" />
@@ -16,7 +17,7 @@
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, chain_id, nft_box_id, type, name, owner, address, sell_price, offer_price, icon, 
+    id, chain_id, nft_box_id, group_id, type, name, owner, address, sell_price, offer_price, icon,
     create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -24,6 +25,28 @@
     <include refid="Base_Column_List" />
     from nft_market
     where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from nft_market
+    where 1=1
+    <if test="groupId != null">
+       and group_id = #{groupId}
+    </if>
+    <if test="type != null">
+      and type = #{type}
+    </if>
+    order by
+    <if test="sort != null">
+      ${sort}
+    </if>
+    <if test="order != null">
+      ${order}
+    </if>
+    <if test="pageFrom != null and pageSize !=null">
+      limit #{pageFrom},#{pageSize}
+    </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from nft_market
@@ -33,13 +56,13 @@
     delete from nft_market
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftMarketDo" useGeneratedKeys="true">
-    insert into nft_market (id, chain_id, nft_box_id, 
+    insert into nft_market (id, chain_id, nft_box_id, group_id,
       type, name, owner, 
       address, sell_price, offer_price, 
       icon, create_time, update_time
       )
-    values (#{id,jdbcType=BIGINT}, #{chainId,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT}, 
-      #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{chainId,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
+            #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR},
       #{address,jdbcType=VARCHAR}, #{sellPrice,jdbcType=DECIMAL}, #{offerPrice,jdbcType=DECIMAL}, 
       #{icon,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
@@ -52,6 +75,9 @@
       </if>
       <if test="nftBoxId != null">
         nft_box_id = #{nftBoxId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=VARCHAR},
@@ -93,6 +119,9 @@
       </if>
       <if test="null != nftBoxId">
          and nft_box_id = #{nftBoxId,jdbcType=BIGINT}
+      </if>
+      <if test="groupId != null">
+         and group_id = #{groupId,jdbcType=BIGINT}
       </if>
       <if test="null != type">
          and type = #{type,jdbcType=VARCHAR}

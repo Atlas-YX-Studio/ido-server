@@ -15,6 +15,10 @@ import java.math.BigDecimal;
 public class NftInfoVo {
 
     /**
+     * NFT info id (中心化)
+     */
+    private Long id;
+    /**
      * NFT id (链上)
      */
     private Long nftId;

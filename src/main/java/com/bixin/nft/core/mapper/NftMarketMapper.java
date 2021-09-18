@@ -1,8 +1,10 @@
 package com.bixin.nft.core.mapper;
 
+import com.bixin.ido.server.bean.DO.SwapUserRecord;
 import com.bixin.nft.bean.DO.NftMarketDo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NftMarketMapper {
     /**
@@ -42,4 +44,7 @@ public interface NftMarketMapper {
     List<NftMarketDo> selectByPrimaryKeySelectiveList(NftMarketDo record);
 
     void deleteAll();
+
+    List<NftMarketDo> selectByPage(Map<String, Object> paramMap);
+
 }
