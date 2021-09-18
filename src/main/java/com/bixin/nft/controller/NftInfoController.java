@@ -8,6 +8,7 @@ import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.bean.vo.NftInfoVo;
+import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
 import com.bixin.nft.core.service.NftGroupService;
 import com.bixin.nft.core.service.NftInfoService;
@@ -18,7 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,23 +64,24 @@ public class NftInfoController {
     }
 
 
-//    /**
-//     * 获取系列列表
-//     * @return
-//     */
-//    @GetMapping("/series/list")
-//    public R seriesList() {
-//        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
-//        List<SeriesListVo> list = new ArrayList<>();
-//        for (NftGroupDo nftGroupDo : nftGroupDoList) {
-//            SeriesListVo seriesListVo = new SeriesListVo();
-//            seriesListVo.setGroupId(nftGroupDo.getId());
-//            seriesListVo.setGroupName(nftGroupDo.getName());
-//            seriesListVo.setSeriesName(nftGroupDo.getSeriesName());
-//            list.add(seriesListVo);
-//        }
-//        return R.success(list);
-//    }
+    /**
+     * 操作记录
+     * @return
+     */
+    @GetMapping("/operation/record")
+    public R operationRecord(@RequestParam(value = "tab") String tab) {
+        List<OperationRecordVo> list = new ArrayList<>();
+
+        OperationRecordVo operationRecordVo = new OperationRecordVo();
+        //todo
+        operationRecordVo.setAddress("aaaaa");
+        operationRecordVo.setPrice(new BigDecimal(12));
+        operationRecordVo.setCurrencyName("STC");
+        operationRecordVo.setStatus("aaa");
+
+        list.add(operationRecordVo);
+        return R.success(list);
+    }
 
     /**
      * 获取待发售盲盒
