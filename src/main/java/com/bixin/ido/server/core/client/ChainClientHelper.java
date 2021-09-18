@@ -88,4 +88,9 @@ public class ChainClientHelper {
         List<Object> addressArray = Arrays.asList(idoStarConfig.getSwap().getContractAddress(), Maps.newHashMap("decode", true));
         return getPostListResp(addressArray);
     }
+
+    public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getBuyBackListResp(String meta, String body, String payToken) {
+        List<String> addressArray = Arrays.asList("0x290c7b35320a4dd26f651fd184373fe7", "0x290c7b35320a4dd26f651fd184373fe7::NFTMarket::NFTBuyBack<" + meta + ", " + body + ", " + payToken + ">");
+        return getPostResp(addressArray);
+    }
 }

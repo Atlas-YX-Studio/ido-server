@@ -1,0 +1,174 @@
+package com.bixin.ido.server.service.impl;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.beust.jcommander.internal.Lists;
+import com.beust.jcommander.internal.Maps;
+import com.bixin.ido.server.core.client.ChainClientHelper;
+import com.bixin.ido.server.service.IPlatformBuyBackService;
+import com.bixin.ido.server.utils.StarCoinJsonUtil;
+import com.bixin.nft.bean.DO.NftGroupDo;
+import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.core.service.NftGroupService;
+import com.bixin.nft.core.service.NftInfoService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.MutableTriple;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
+
+    @Resource
+    private ChainClientHelper chainClientHelper;
+
+    @Resource
+    private NftGroupService nftGroupService;
+
+    @Resource
+    private NftInfoService nftInfoService;
+
+    private Map<String, NftInfoDo> nftInfoMap;
+
+    // Map<groupId, Map<currency, List<BuyBackOrder>>>
+    private Map<Long, Map<String, List<BuyBackOrder>>> orderMap;
+
+    @PostConstruct
+    public void init() {
+
+        this.refreshNftInfo();
+        this.refreshOrders();
+
+    }
+
+    @Scheduled(cron = "* 0/10 * * * ?")
+    public void refreshNftInfo() {
+
+        List<NftInfoDo> nftInfoDos = nftInfoService.listByObject(new NftInfoDo());
+        nftInfoMap = nftInfoDos.stream().collect(Collectors.toMap(x->toInfoKey(x.getGroupId(), x.getNftId()), y->y));
+    }
+
+    @Scheduled(cron = "0/5 * * * * ?")
+    private String toInfoKey(Long groupId, Long nftId) {
+        return String.format("%s_%s", groupId, nftId);
+    }
+
+    public void refreshOrders() {
+        Map<Long, Map<String, List<BuyBackOrder>>> tempOrderMap = Maps.newHashMap();
+
+        List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
+
+        nftGroups.forEach(group -> {
+            List<BuyBackOrder> chainBuyBackList = getChainBuyBackList(group);
+            if (tempOrderMap.containsKey(group.getId())) {
+                tempOrderMap.get(group.getId()).put(group.getPayToken(), chainBuyBackList);
+            } else {
+                tempOrderMap.put(group.getId(), Map.of(group.getPayToken(), chainBuyBackList));
+            }
+        });
+        this.orderMap = tempOrderMap;
+    }
+
+    private List<BuyBackOrder> getChainBuyBackList(NftGroupDo groupDo) {
+        List<BuyBackOrder> orders = Lists.newArrayList();
+        try {
+            MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getBuyBackListResp(groupDo.getNftMeta(), groupDo.getNftBody(), groupDo.getPayToken());
+            ResponseEntity<String> resp = triple.getLeft();
+            String url = triple.getMiddle();
+            HttpEntity<Map<String, Object>> httpEntity = triple.getRight();
+
+            if (resp.getStatusCode() == HttpStatus.OK) {
+                List<JSONArray> values = StarCoinJsonUtil.parseRpcResult(resp);
+                if (CollectionUtils.isEmpty(values)) {
+                    log.error("getChainPool result is empty {}, {}, {}",
+                            JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
+                }
+                values.forEach(rs -> {
+                    Object[] stcResult = rs.toArray();
+                    if ("items".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
+                        List<JSONObject> vector = StarCoinJsonUtil.parseVectorObj(stcResult[1]);
+                        vector.forEach(el -> {
+                            BuyBackOrder order = new BuyBackOrder();
+                            List<JSONArray> structValue = StarCoinJsonUtil.parseStructObj(el);
+                            structValue.forEach(v -> {
+                                Object[] buyBackInfo = v.toArray();
+                                if ("id".equalsIgnoreCase(String.valueOf(buyBackInfo[0]))) {
+                                    @SuppressWarnings("unchecked")
+                                    Map<String, Object> valueMap = (Map<String, Object>) buyBackInfo[1];
+                                    order.nftId = Long.valueOf((String) valueMap.get("U64"));
+                                } else if ("pay_tokens".equalsIgnoreCase(String.valueOf(buyBackInfo[0]))) {
+                                    List<JSONArray> payTokenValue = StarCoinJsonUtil.parseStructObj(buyBackInfo[1]);
+                                    payTokenValue.forEach(payToken -> {
+                                        Object[] payTokenInfo = payToken.toArray();
+                                        if ("value".equalsIgnoreCase(String.valueOf(payTokenInfo[0]))) {
+                                            @SuppressWarnings("unchecked")
+                                            Map<String, Object> payTokenMap = (Map<String, Object>) payTokenInfo[1];
+                                            order.buyPrice = new BigDecimal((String) payTokenMap.get("U128")).movePointLeft(9);
+                                        }
+                                    });
+                                }
+                            });
+                            NftInfoDo nftInfo = nftInfoMap.get(toInfoKey(groupDo.getId(), order.nftId));
+                            if (Objects.nonNull(nftInfo)) {
+                                order.id = nftInfo.getId();
+                                order.groupId = nftInfo.getGroupId();
+                                order.address = groupDo.getCreator();
+                                order.name = nftInfo.getName();
+                                order.fullCurrency = groupDo.getPayToken();
+                                order.icon = nftInfo.getImageLink();
+                            }
+                            orders.add(order);
+                        });
+                    }
+                });
+            } else {
+                log.error("getChainPool get remote result {}", JSON.toJSONString(resp));
+            }
+        } catch (Exception e) {
+//            log.error("getChainPool get remote chain exception {}, {}", tokenA, tokenB, e);
+        }
+
+        return orders;
+    }
+
+    @Override
+    public List<BuyBackOrder> getOrders(Long groupId, String currency, int sort, long pageSize, long nextId) {
+        if (Objects.equals(0L, groupId) && StringUtils.equalsIgnoreCase("all", currency)) {
+            return orderMap.values().stream().flatMap(x->x.values().stream().flatMap(Collection::stream)).collect(Collectors.toList());
+        } else if (Objects.equals(0L, groupId)) {
+            return orderMap.values().stream().flatMap(x->x.getOrDefault(currency, List.of()).stream()).sorted(Comparator.comparing(o -> o.buyPrice)).collect(Collectors.toList());
+        } else if (StringUtils.equalsIgnoreCase("all", currency)) {
+            return orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream).sorted(Comparator.comparing(o -> o.buyPrice)).collect(Collectors.toList());
+        } else {
+            return orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().sorted(Comparator.comparing(o -> o.buyPrice)).collect(Collectors.toList());
+        }
+    }
+
+    public static class BuyBackOrder {
+        public Long id;
+        public Long nftId;
+        public Long groupId;
+        public String address;
+        public String name;
+        public BigDecimal buyPrice;
+        public String fullCurrency;
+        public String icon;
+        public String getCurrency() {
+            return fullCurrency.split("::")[2];
+        }
+    }
+
+}
