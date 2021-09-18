@@ -18,6 +18,7 @@ import com.bixin.nft.core.service.NftMarketService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,14 +55,8 @@ public class NftInfoController {
      * @return
      */
     @GetMapping("/series/list")
-    public R seriesList(@RequestParam(value = "all", required = false) Boolean all) {
-        List<NftGroupDo> nftGroupDoList;
-        if (all) {
-            NftGroupDo nftGroupDo = new NftGroupDo();
-            nftGroupDoList = groupService.listByObject(nftGroupDo);
-        } else {
-            nftGroupDoList = groupService.getListByEnabled(true);
-        }
+    public R seriesList() {
+        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
         List<SeriesListVo> list = new ArrayList<>();
         for (NftGroupDo nftGroupDo : nftGroupDoList) {
             SeriesListVo seriesListVo = new SeriesListVo();
@@ -71,6 +66,21 @@ public class NftInfoController {
             list.add(seriesListVo);
         }
         return R.success(list);
+    }
+
+    /**
+     * 获取group列表
+     *
+     * @return
+     */
+    @GetMapping("/group/list")
+    public R groupList() {
+        NftGroupDo nftGroupDo = new NftGroupDo();
+        List<NftGroupDo> nftGroupDoList = groupService.listByObject(nftGroupDo);
+        if (CollectionUtils.isEmpty(nftGroupDoList)) {
+            return R.failed("group不存在");
+        }
+        return R.success(nftGroupDoList);
     }
 
 
