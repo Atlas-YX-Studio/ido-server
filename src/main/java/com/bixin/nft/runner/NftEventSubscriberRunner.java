@@ -7,6 +7,8 @@ import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.enums.StarSwapEventType;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.nft.bean.dto.NftBuyEventDto;
+import com.bixin.nft.enums.NftEventType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,7 +65,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
     @PostConstruct
     public void init() {
         poolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(), new NamedThreadFactory("SwapEventSubscriber-", true));
+                new LinkedBlockingQueue<>(), new NamedThreadFactory("NftEventSubscriberRunner-", true));
     }
 
     @PreDestroy
@@ -74,9 +76,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             }
             poolExecutor.shutdown();
             poolExecutor.awaitTermination(1, TimeUnit.SECONDS);
-            log.info("SwapEventSubscriberRunner poolExecutor stopped");
+            log.info("NftEventSubscriberRunner poolExecutor stopped");
         } catch (InterruptedException ex) {
-            log.error("SwapEventSubscriberRunner InterruptedException: ", ex);
+            log.error("NftEventSubscriberRunner InterruptedException: ", ex);
             Thread.currentThread().interrupt();
         }
     }
@@ -88,7 +90,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     public void process(ApplicationArguments args) {
         String[] sourceArgs = 0 == args.getSourceArgs().length ? new String[]{""} : args.getSourceArgs();
-        log.info("IdoSwapEventRunner start running [{}]", sourceArgs);
+        log.info("NftEventSubscriberRunner start running [{}]", sourceArgs);
         try {
 
             WebSocketService service = new WebSocketService("ws://" + idoStarConfig.getNft().getWebsocketHost() + ":" + idoStarConfig.getNft().getWebsocketPort(), true);
@@ -101,8 +103,6 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
             notificationFlowable.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
-
-                StarSwapEventType eventType = StarSwapEventType.of(getEventName(eventResult.getTypeTag()));
                 JsonNode data = eventResult.getData();
 
                 // FIXME: 2021/8/30 debug
@@ -111,16 +111,18 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-
+                //判断哪一种 event
+                NftEventType eventType = NftEventType.of(getEventName(eventResult.getTypeTag()));
                 if (Objects.isNull(eventType) || Objects.isNull(data)) {
                     return;
                 }
+                //去重
                 if (duplicateEvent(eventResult)) {
                     log.info("NftEventSubscriberRunner duplicate event data {}", eventResult);
                     return;
                 }
                 //todo
-                SwapEventDto swapEventDto = mapper.convertValue(data, SwapEventDto.class);
+                NftBuyEventDto swapEventDto = mapper.convertValue(data, NftBuyEventDto.class);
 
                 //todo 入库
 
