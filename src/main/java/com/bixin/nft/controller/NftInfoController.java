@@ -72,12 +72,12 @@ public class NftInfoController {
      * @return
      */
     @GetMapping("/operation/record")
-    public P operationRecord(@RequestParam(value = "tab") String tab,
-                             @RequestParam(value = "sort") String sort,
+    public P operationRecord(@RequestParam(value = "type") String type,
+                             @RequestParam(value = "id") Long id,
                              @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                              @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
 
-        if (nextId < 0 || pageSize <= 0 || StringUtils.isEmpty(tab)) {
+        if (nextId < 0 || pageSize <= 0 || StringUtils.isEmpty(type)) {
             return P.failed("parameter is invalid");
         }
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
