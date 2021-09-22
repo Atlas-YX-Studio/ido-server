@@ -24,25 +24,25 @@ import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFI
  * @created: 2021-09-17
  */
 @RestController
-@RequestMapping(NFT_REQUEST_PATH_PREFIX+"/market")
+@RequestMapping(NFT_REQUEST_PATH_PREFIX + "/market")
 public class NftMarketController {
 
     @Resource
     public NftMarketService nftMarketService;
 
     @GetMapping("/getALL")
-    public P getALlByPage(@RequestParam(value = "series", defaultValue = "all") String series,
+    public P getALlByPage(@RequestParam(value = "groupId", defaultValue = "0") long groupId,
                           @RequestParam(value = "currency", defaultValue = "all") String currency,
                           @RequestParam(value = "open", defaultValue = "all") String open,
                           @RequestParam(value = "sort", defaultValue = "0") int sort,
                           @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "0") long pageNum) {
 
-        if (pageNum < 0 || pageSize <= 0 || StringUtils.isEmpty(series)
+        if (pageNum < 0 || pageSize <= 0 || groupId < 0
                 || StringUtils.isEmpty(open) || StringUtils.isEmpty(currency)) {
             return P.failed("parameter is invalid");
         }
-        List<NftMarketDo> nftMarketDos = nftMarketService.selectByPage(pageSize + 1, pageNum, sort, series, currency, open);
+        List<NftMarketDo> nftMarketDos = nftMarketService.selectByPage(pageSize + 1, pageNum, sort, groupId, currency, open);
 
         boolean hasNext = false;
         if (nftMarketDos.size() > pageSize) {
