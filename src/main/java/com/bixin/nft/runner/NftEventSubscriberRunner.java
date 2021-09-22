@@ -125,7 +125,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
                 //todo 入库
                 NftEventDo nftEventDo = NftBidEventtDto.of(nftBidEventtDto);
-                nftEventService.insert(nftEventDo);
+                //nftEventService.insert(nftEventDo);
 
             });
 
