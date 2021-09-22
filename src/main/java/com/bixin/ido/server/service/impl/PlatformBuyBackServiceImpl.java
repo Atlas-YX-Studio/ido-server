@@ -145,16 +145,29 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
     }
 
     @Override
-    public List<BuyBackOrder> getOrders(Long groupId, String currency, int sort, long pageSize, long nextId) {
-        if (Objects.equals(0L, groupId) && StringUtils.equalsIgnoreCase("all", currency)) {
-            return orderMap.values().stream().flatMap(x->x.values().stream().flatMap(Collection::stream)).collect(Collectors.toList());
-        } else if (Objects.equals(0L, groupId)) {
-            return orderMap.values().stream().flatMap(x->x.getOrDefault(currency, List.of()).stream()).sorted(Comparator.comparing(o -> o.buyPrice)).collect(Collectors.toList());
-        } else if (StringUtils.equalsIgnoreCase("all", currency)) {
-            return orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream).sorted(Comparator.comparing(o -> o.buyPrice)).collect(Collectors.toList());
-        } else {
-            return orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().sorted(Comparator.comparing(o -> o.buyPrice)).collect(Collectors.toList());
+    public List<BuyBackOrder> getOrders(Long groupId, String currency, int sort, int pageNum, int pageSize) {
+        Comparator<BuyBackOrder> comparator = Comparator.comparing(o -> o.buyPrice);
+        if (sort == 1) {
+            comparator = comparator.reversed();
         }
+
+        List<BuyBackOrder> list;
+        if (Objects.equals(0L, groupId) && StringUtils.equalsIgnoreCase("all", currency)) {
+            list =  orderMap.values().stream().flatMap(x->x.values().stream().flatMap(Collection::stream)).sorted(comparator).collect(Collectors.toList());
+        } else if (Objects.equals(0L, groupId)) {
+            list =  orderMap.values().stream().flatMap(x->x.getOrDefault(currency, List.of()).stream()).sorted(comparator).collect(Collectors.toList());
+        } else if (StringUtils.equalsIgnoreCase("all", currency)) {
+            list =  orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream).sorted(comparator).collect(Collectors.toList());
+        } else {
+            list =  orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().sorted(comparator).collect(Collectors.toList());
+        }
+
+        int start = pageSize * Math.max((pageNum - 1), 0);
+        int end = Math.min(list.size(), start + pageSize);
+        if (start >= list.size()) {
+            return List.of();
+        }
+        return list.subList(start, end);
     }
 
     public static class BuyBackOrder {

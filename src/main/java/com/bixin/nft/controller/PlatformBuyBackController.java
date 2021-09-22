@@ -23,9 +23,9 @@ public class PlatformBuyBackController {
     public R list(@RequestParam(name = "groupId", defaultValue = "0") long groupId,
             @RequestParam(name = "currency", defaultValue = "all") String currency,
             @RequestParam(name = "sort", defaultValue = "0") int sort,
-            @RequestParam(name = "pageSize", defaultValue = "20") long pageSize,
-            @RequestParam(name = "nextId", defaultValue = "0") long nextId) {
-        List<PlatformBuyBackServiceImpl.BuyBackOrder> orders = platformBuyBackService.getOrders(groupId, currency, sort, pageSize, nextId);
+            @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
+        List<PlatformBuyBackServiceImpl.BuyBackOrder> orders = platformBuyBackService.getOrders(groupId, currency, sort, pageNum, pageSize);
         return R.success(orders);
     }
 
