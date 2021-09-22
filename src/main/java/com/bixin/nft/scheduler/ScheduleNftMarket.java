@@ -202,7 +202,7 @@ public class ScheduleNftMarket {
                             .chainId(so.getId())
                             .nftBoxId(nftInfo.getGroupId())
                             .groupId(nftGroupDo.getId())
-                            .type(NftBoxType.NFT.getDesc())
+                            .type(NftBoxType.BOX.getDesc())
                             .name(nftGroupDo.getName())
                             .owner(so.getSeller())
                             .address(starConfig.getNft().getMarket())
