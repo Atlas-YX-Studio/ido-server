@@ -82,10 +82,10 @@ public class ScheduleNftMarket {
 
                 NftBoxType type = null;
                 if (key.startsWith(nftKeyPrefix)) {
-                    builder.nftMeta(left).nftBody(right).payToken(right);
+                    builder.nftMeta(left).nftBody(middle).payToken(right);
                     type = NftBoxType.NFT;
                 } else if (key.startsWith(boxKeyPrefix)) {
-                    builder.boxToken(left).payToken(right);
+                    builder.boxToken(left).payToken(middle);
                     type = NftBoxType.BOX;
                 }
                 if (Objects.nonNull(type)) {
