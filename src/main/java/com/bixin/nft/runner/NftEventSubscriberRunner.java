@@ -1,20 +1,20 @@
 package com.bixin.nft.runner;
 
-import com.bixin.ido.server.bean.dto.SwapEventDto;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
-import com.bixin.ido.server.core.queue.SwapEventBlockingQueue;
 import com.bixin.ido.server.core.redis.RedisCache;
-import com.bixin.ido.server.enums.StarSwapEventType;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.nft.bean.DO.NftEventDo;
+import com.bixin.nft.bean.dto.NftBidEventtDto;
 import com.bixin.nft.bean.dto.NftBuyEventDto;
+import com.bixin.nft.core.service.NftEventService;
 import com.bixin.nft.enums.NftEventType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.DefaultApplicationArguments;
@@ -24,7 +24,6 @@ import org.starcoin.bean.EventFilter;
 import org.starcoin.bean.EventNotification;
 import org.starcoin.bean.EventNotificationResult;
 import org.web3j.protocol.websocket.WebSocketService;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -32,7 +31,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -49,6 +47,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
     StarConfig idoStarConfig;
     @Resource
     RedisCache redisCache;
+
+    @Autowired
+    private NftEventService nftEventService;
 
     AtomicLong atomicSum = new AtomicLong(0);
     static final long initTime = 2000L;
@@ -119,9 +120,12 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     return;
                 }
                 //todo
-                NftBuyEventDto swapEventDto = mapper.convertValue(data, NftBuyEventDto.class);
+                NftBuyEventDto nftBuyEventDto = mapper.convertValue(data, NftBuyEventDto.class);
+                NftBidEventtDto nftBidEventtDto = mapper.convertValue(data, NftBidEventtDto.class);
 
                 //todo 入库
+                NftEventDo nftEventDo = NftBidEventtDto.of(nftBidEventtDto);
+                //nftEventService.insert(nftEventDo);
 
             });
 

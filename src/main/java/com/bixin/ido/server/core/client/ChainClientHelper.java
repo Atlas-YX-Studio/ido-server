@@ -90,7 +90,7 @@ public class ChainClientHelper {
     }
 
     public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getBuyBackListResp(String meta, String body, String payToken) {
-        List<String> addressArray = Arrays.asList("0x290c7b35320a4dd26f651fd184373fe7", "0x290c7b35320a4dd26f651fd184373fe7::NFTMarket::NFTBuyBack<" + meta + ", " + body + ", " + payToken + ">");
+        List<String> addressArray = Arrays.asList(idoStarConfig.getNft().getMarket(), idoStarConfig.getNft().getScripts() + "::NFTMarket02::NFTBuyBack<" + meta + ", " + body + ", " + payToken + ">");
         return getPostResp(addressArray);
     }
 }

@@ -93,7 +93,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
             if (resp.getStatusCode() == HttpStatus.OK) {
                 List<JSONArray> values = StarCoinJsonUtil.parseRpcResult(resp);
                 if (CollectionUtils.isEmpty(values)) {
-                    log.error("getChainPool result is empty {}, {}, {}",
+                    log.error("getChainBuyBackList result is empty {}, {}, {}",
                             JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
                 }
                 values.forEach(rs -> {
@@ -135,10 +135,10 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                     }
                 });
             } else {
-                log.error("getChainPool get remote result {}", JSON.toJSONString(resp));
+                log.error("getChainBuyBackList get remote result {}", JSON.toJSONString(resp));
             }
         } catch (Exception e) {
-//            log.error("getChainPool get remote chain exception {}, {}", tokenA, tokenB, e);
+            log.error("getChainBuyBackList get remote chain exception meta={}, body={}, payToken={}", groupDo.getNftMeta(), groupDo.getNftBody(), groupDo.getPayToken(), e);
         }
 
         return orders;
