@@ -34,8 +34,8 @@ public class NftStoreController {
             return R.failed("parameter is invalid");
         }
         NftMarketDo marketDo = NftMarketDo.builder().owner(userAddress).build();
-        NftMarketDo nftMarketDo = nftMarketService.selectByObject(marketDo);
+        List<NftMarketDo> nftMarketDos = nftMarketService.listByObject(marketDo);
 
-        return R.success(nftMarketDo);
+        return R.success(nftMarketDos);
     }
 }

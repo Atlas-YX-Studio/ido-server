@@ -109,8 +109,8 @@ public class ScheduleNftMarket {
                 log.error("ScheduleNftMarket exception {}, {}", key, value, e);
             }
         });
-        log.info("nft: " + nftMap);
-        log.info("box: " + boxMap);
+        log.info("nft market: " + nftMap);
+        log.info("box market: " + boxMap);
 
         List<NftMarketDo> list = new ArrayList<>();
         Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
@@ -118,7 +118,7 @@ public class ScheduleNftMarket {
         buildNft(nftMap, list, currentTime);
         buildBox(boxMap, list, currentTime);
 
-        log.info("nftBox infos: " + list);
+        log.info("nftBox market infos: " + list);
 
         nftMarketService.deleteAll();
 
@@ -164,7 +164,7 @@ public class ScheduleNftMarket {
                             .nftBoxId(nftInfo.getId())
                             .groupId(nftGroupDo.getId())
                             .type(NftBoxType.NFT.getDesc())
-                            .name(nftInfo.getName())
+                            .name(nftGroupDo.getName())
                             .owner(so.getSeller())
                             .address(starConfig.getNft().getMarket())
                             .sellPrice(so.getSelling_price())
@@ -201,7 +201,7 @@ public class ScheduleNftMarket {
                             .nftBoxId(nftInfo.getGroupId())
                             .groupId(nftGroupDo.getId())
                             .type(NftBoxType.NFT.getDesc())
-                            .name(nftInfo.getName())
+                            .name(nftGroupDo.getName())
                             .owner(so.getSeller())
                             .address(starConfig.getNft().getMarket())
                             .sellPrice(so.getSelling_price())

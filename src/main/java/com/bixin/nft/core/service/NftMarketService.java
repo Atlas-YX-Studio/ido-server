@@ -57,6 +57,6 @@ public interface NftMarketService {
 
     void deleteAll();
 
-    List<NftMarketDo> selectByPage(long pageSize, long pageNum, int sort, String series,String currency,String open);
+    List<NftMarketDo> selectByPage(long pageSize, long pageNum, int sort, long groupId,String currency,String open);
 
 }

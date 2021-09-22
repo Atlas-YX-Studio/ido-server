@@ -102,12 +102,12 @@ public class NftMarketServiceImpl implements NftMarketService {
 
 
     @Override
-    public List<NftMarketDo> selectByPage(long pageSize, long pageNum, int sort, String series, String currency, String open) {
+    public List<NftMarketDo> selectByPage(long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("sort", "sell_price");
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", (pageNum - 1) * pageSize);
-        if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(series)) {
+        if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
             paramMap.put("type", open);
         }
         if (sort > 0) {
@@ -115,8 +115,8 @@ public class NftMarketServiceImpl implements NftMarketService {
         }
 
         NftGroupDo.NftGroupDoBuilder groupDoBuilder = NftGroupDo.builder();
-        if (StringUtils.isNoneEmpty(series) && !"all".equalsIgnoreCase(series)) {
-            groupDoBuilder.seriesName(series);
+        if (groupId > 0) {
+            groupDoBuilder.id(groupId);
         }
         if (StringUtils.isNoneEmpty(currency) && !"all".equalsIgnoreCase(currency)) {
             groupDoBuilder.payToken(currency);
@@ -124,7 +124,7 @@ public class NftMarketServiceImpl implements NftMarketService {
         NftGroupDo groupParam = groupDoBuilder.build();
         if (StringUtils.isNoneEmpty(groupParam.getSeriesName()) || StringUtils.isNoneEmpty(groupParam.getPayToken())) {
             NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKeySelective(groupParam);
-            if(Objects.nonNull(nftGroupDo)){
+            if (Objects.nonNull(nftGroupDo)) {
                 paramMap.put("groupId", nftGroupDo.getId());
             }
         }
