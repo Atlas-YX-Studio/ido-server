@@ -17,11 +17,11 @@ public class OperationRecordVo {
     private BigDecimal price;
 
     //状态 获得，上架，铸造
-    private String status;
+    private String type;
 
     //地址
     private String address;
 
     // 操作时间
-    private Long created;
+    private Long createTime;
 }

@@ -68,22 +68,43 @@ CREATE TABLE `nft_kiko_cat`
 DROP TABLE IF EXISTS nft_market;
 CREATE TABLE nft_market
 (
-    id               bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-    chain_id         bigint(20) NOT NULL COMMENT '链上 id',
-    nft_box_id       bigint(20) NOT NULL COMMENT 'nft_info表的id',
-    group_id         bigint(20) NOT NULL COMMENT 'nft_group表的id',
-    type             varchar(64) DEFAULT NULL COMMENT '类型：nft/box',
-    name             varchar(128) DEFAULT NULL COMMENT 'ndf/box 全称',
-    owner            varchar(128) DEFAULT NULL COMMENT '当前持有者',
-    address          varchar(128) DEFAULT NULL COMMENT '合约地址',
-    sell_price       DECIMAL(36,18) DEFAULT 0 COMMENT '售价',
-    offer_price      DECIMAL(36,18) DEFAULT 0 COMMENT '报价，0暂无报价，大于0为当前最高出价',
-    icon             varchar(256) DEFAULT NULL COMMENT '图片地址',
-    create_time      bigint(20) NOT NULL COMMENT '创建时间',
-    update_time      bigint(20) NOT NULL COMMENT '更新时间',
+    id          bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+    chain_id    bigint(20) NOT NULL COMMENT '链上 id',
+    nft_box_id  bigint(20) NOT NULL COMMENT 'nft_info表的id',
+    group_id    bigint(20) NOT NULL COMMENT 'nft_group表的id',
+    type        varchar(64)     DEFAULT NULL COMMENT '类型：nft/box',
+    name        varchar(128)    DEFAULT NULL COMMENT 'ndf/box 全称',
+    owner       varchar(128)    DEFAULT NULL COMMENT '当前持有者',
+    address     varchar(128)    DEFAULT NULL COMMENT '合约地址',
+    sell_price  DECIMAL(36, 18) DEFAULT 0 COMMENT '售价',
+    offer_price DECIMAL(36, 18) DEFAULT 0 COMMENT '报价，0暂无报价，大于0为当前最高出价',
+    icon        varchar(256)    DEFAULT NULL COMMENT '图片地址',
+    create_time bigint(20) NOT NULL COMMENT '创建时间',
+    update_time bigint(20) NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    INDEX idx_nb_id(nft_box_id),
-    INDEX idx_address_type(address, type)
+    INDEX       idx_nb_id(nft_box_id),
+    INDEX       idx_address_type(address, type)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='NFT/box市场销售列表';
 
 
+
+DROP TABLE IF EXISTS nft_event;
+CREATE TABLE nft_event
+(
+    id                    bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+    nft_id                bigint(20) NOT NULL COMMENT 'NFT id',
+    pay_token_addr        varchar(64)     DEFAULT NULL COMMENT 'pay token addr',
+    pay_token_module_name varchar(64)     DEFAULT NULL COMMENT 'pay token modult',
+    pay_token_name        varchar(64)     DEFAULT NULL COMMENT 'pay token name',
+    creator               varchar(128)    DEFAULT NULL COMMENT '创建者',
+    seller                varchar(128)    DEFAULT NULL COMMENT '出售者',
+    selling_price         DECIMAL(36, 18) DEFAULT 0 COMMENT '报价',
+    bider                 varchar(128)    DEFAULT NULL COMMENT '出价者',
+    bid_price             DECIMAL(36, 18) DEFAULT 0 COMMENT '出价',
+    type                  varchar(20) NOT NULL COMMENT '类型：获得，上架，铸造',
+    create_time           bigint(20) NOT NULL COMMENT '创建时间',
+    update_time           bigint(20) NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    INDEX                 idx_nft_id(nft_id),
+    INDEX                 idx_nft_type( type)
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='nft事件表';
