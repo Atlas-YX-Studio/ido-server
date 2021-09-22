@@ -51,8 +51,8 @@ public class ScheduleNftMarket {
     ObjectMapper mapper = new ObjectMapper();
 
     static final String separator = "::";
-    static final String boxSuffix = separator + "NFTMarket" + separator + "BoxSelling";
-    static final String nftSuffix = separator + "NFTMarket" + separator + "NFTSelling";
+    static final String boxSuffix = separator + "NFTMarket02" + separator + "BoxSelling";
+    static final String nftSuffix = separator + "NFTMarket02" + separator + "NFTSelling";
 
     //    @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "5 0/1 * * * ?")
