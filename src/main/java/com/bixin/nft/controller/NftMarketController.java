@@ -63,8 +63,9 @@ public class NftMarketController {
             map.put(id, nftGroupDo);
         });
 
-        AtomicReference<List<NftSelfSellingVo>> atomicNft = new AtomicReference<>();
-        nftMarketDos.forEach(p -> {
+        List<NftSelfSellingVo> list = new ArrayList<>();
+        for(NftMarketDo p: nftMarketDos){
+
             NftSelfSellingVo.NftSelfSellingVoBuilder builder = NftSelfSellingVo.builder();
             NftGroupDo nftGroupDo = map.get(p.getGroupId());
             if (Objects.nonNull(nftGroupDo)) {
@@ -79,14 +80,10 @@ public class NftMarketController {
             }
             NftSelfSellingVo sellingVo = builder.build();
             BeanUtils.copyProperties(p, sellingVo);
-            if(Objects.isNull(atomicNft.get())){
-                atomicNft.set(new ArrayList<>());
-            }
-            atomicNft.get().add(sellingVo);
-        });
+            list.add(sellingVo);
+        }
 
         boolean hasNext = false;
-        List<NftSelfSellingVo> list = atomicNft.get();
         if (list.size() > pageSize) {
             list = list.subList(0, nftMarketDos.size() - 1);
             hasNext = true;

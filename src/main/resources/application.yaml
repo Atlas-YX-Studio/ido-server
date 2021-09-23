@@ -1,7 +1,7 @@
 ## 默认配置
 spring:
   profiles:
-    active: @env@
+    active: '@env@'
 
 ---
 ## application name
