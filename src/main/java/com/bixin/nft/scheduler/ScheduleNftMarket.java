@@ -53,7 +53,7 @@ public class ScheduleNftMarket {
     static final String boxSuffix = separator + "NFTMarket04" + separator + "BoxSelling";
     static final String nftSuffix = separator + "NFTMarket04" + separator + "NFTSelling";
 
-    //    @Scheduled(cron = "0/10 * * * * ?")
+//        @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "5 0/1 * * * ?")
     public void getNftMarketList() {
         String resource = contractService.getResource(starConfig.getNft().getMarket());
@@ -206,7 +206,7 @@ public class ScheduleNftMarket {
                             .address(starConfig.getNft().getMarket())
                             .sellPrice(so.getSelling_price())
                             .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
-                            .icon(nftInfo.getImageLink())
+                            .icon(nftGroupDo.getBoxTokenLogo())
                             .createTime(currentTime)
                             .updateTime(currentTime)
                             .build();
