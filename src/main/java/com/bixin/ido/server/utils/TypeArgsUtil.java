@@ -6,6 +6,14 @@ import org.starcoin.bean.TypeObj;
 
 public class TypeArgsUtil {
 
+    /**
+     * 截取合约类型参数
+     * 0xd30b4de81d71c1793aa4db4763211e63::KikoCat::KikoCatBox ->
+     * {moduleAddress:0xd30b4de81d71c1793aa4db4763211e63, moduleName:KikoCat, name:KikoCatBox}
+     *
+     * @param typeAddress
+     * @return
+     */
     public static TypeObj parseTypeObj(String typeAddress) {
         String[] subStr = StringUtils.split(typeAddress, "::");
         if (subStr.length != 3) {

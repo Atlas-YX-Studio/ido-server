@@ -154,6 +154,7 @@ public class NftInfoController {
             nftGroupVo.setOnSell(false);
         } else {
             nftGroupVo.setOnSell(true);
+            nftGroupVo.setSellingPrice(nftMarketDo.getSellPrice());
             nftGroupVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftGroupVo.setOwner(nftMarketDo.getOwner());
         }
@@ -218,6 +219,7 @@ public class NftInfoController {
             nftInfoVo.setOwner(nftInfoDo.getOwner());
         } else {
             nftInfoVo.setOnSell(true);
+            nftInfoVo.setSellingPrice(nftMarketDo.getSellPrice());
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftInfoVo.setOwner(nftMarketDo.getOwner());
         }
@@ -258,6 +260,7 @@ public class NftInfoController {
             nftInfoVo.setOnSell(false);
         } else {
             nftInfoVo.setOnSell(true);
+            nftInfoVo.setSellingPrice(nftMarketDo.getSellPrice());
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftInfoVo.setOwner(nftMarketDo.getOwner());
         }

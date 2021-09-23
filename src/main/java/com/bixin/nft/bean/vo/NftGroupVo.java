@@ -134,6 +134,11 @@ public class NftGroupVo implements Serializable {
     private Boolean onSell;
 
     /**
+     * 出售价格
+     */
+    private BigDecimal sellingPrice;
+
+    /**
      * 最高出价
      */
     private BigDecimal topBidPrice;

@@ -107,14 +107,14 @@ public class NftInfoVo {
     private Integer payTokenPrecision;
 
     /**
-     * 发售价格
-     */
-    private Integer sellingPrice;
-
-    /**
      * 是否 售卖
      */
     private Boolean onSell;
+
+    /**
+     * 出售价格
+     */
+    private BigDecimal sellingPrice;
 
     /**
      * 最高出价
