@@ -97,7 +97,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             WebSocketService service = new WebSocketService("ws://" + idoStarConfig.getNft().getWebsocketHost() + ":" + idoStarConfig.getNft().getWebsocketPort(), true);
             service.connect();
             StarcoinSubscriber subscriber = new StarcoinSubscriber(service);
-            EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getSwap().getWebsocketContractAddress()));
+            EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getNft().getMarket()));
             Flowable<EventNotification> notificationFlowable = subscriber.newTxnSendRecvEventNotifications(eventFilter);
             notificationFlowable.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
@@ -106,19 +106,39 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 // FIXME: 2021/8/30 debug
                 try {
                     log.info("NftEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
+                    log.info("NftEventSubscriberRunner typeTag: {}", eventResult.getTypeTag());
+                    log.info("NftEventSubscriberRunner eventName: {}", getEventName(eventResult.getTypeTag()));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
-                //判断哪一种 event
-                NftEventType eventType = NftEventType.of(getEventName(eventResult.getTypeTag()));
-                if (Objects.isNull(eventType) || Objects.isNull(data)) {
-                    return;
-                }
+
                 //去重
                 if (duplicateEvent(eventResult)) {
                     log.info("NftEventSubscriberRunner duplicate event data {}", eventResult);
                     return;
                 }
+                String tagString = getEventName(eventResult.getTypeTag());
+                // 铸造
+                if(NftEventType.NFTMINTEVENT.getDesc().equals(tagString)){
+                    log.info("NftEventSubscriberRunner 铸造");
+                }
+                // 售卖
+                if(NftEventType.NFTSELLEVENT.getDesc().equals(tagString)){
+                    log.info("NftEventSubscriberRunner 售卖");
+                }
+                // 出价
+                if(NftEventType.NFTBIDEVENT.getDesc().equals(tagString)){
+                    log.info("NftEventSubscriberRunner 出价");
+                }
+                // 购买
+                if(NftEventType.NFTBUYEVENT.getDesc().equals(tagString)){
+                    log.info("NftEventSubscriberRunner 购买");
+                }
+                // 取消
+                if(NftEventType.NFTOFFLINEEVENT.getDesc().equals(tagString)){
+                    log.info("NftEventSubscriberRunner 取消");
+                }
+
                 //todo
                 NftBuyEventDto nftBuyEventDto = mapper.convertValue(data, NftBuyEventDto.class);
                 NftBidEventtDto nftBidEventtDto = mapper.convertValue(data, NftBidEventtDto.class);
@@ -140,8 +160,13 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         }
     }
 
+    public static void main(String[] args) {
+        NftEventSubscriberRunner nft = new NftEventSubscriberRunner();
+        System.out.println(nft.getEventName("type_tag:0x290c7b35320a4dd26f651fd184373fe7::NFTMarket03::NFTSellEvent<0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatMeta,"));
+    }
+
     private String getEventName(String typeTag) {
-        return typeTag.split(separator)[2];
+        return typeTag.split(separator)[2].split("<")[0];
     }
 
     /**

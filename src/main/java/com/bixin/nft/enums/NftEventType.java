@@ -7,20 +7,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum NftEventType {
 
-    SWAP_EVENT("SwapEvent"),
-    LIQUIDITY_EVENT("LiquidityEvent");
+    NFTMINTEVENT("NFTMintEvent"),
+    NFTSELLEVENT("NFTSellEvent"),
+    NFTBIDEVENT("NFTBidEvent"),
+    NFTBUYEVENT("NFTBuyEvent"),
+    NFTOFFLINEEVENT("NFTOfflineEvent");
 
     private String desc;
-
-    public static NftEventType of(String desc) {
-        switch (desc) {
-            case "SwapEvent":
-                return SWAP_EVENT;
-            case "LiquidityEvent":
-                return LIQUIDITY_EVENT;
-            default:
-                return null;
-        }
-    }
 
 }
