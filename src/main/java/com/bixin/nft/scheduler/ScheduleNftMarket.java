@@ -206,7 +206,7 @@ public class ScheduleNftMarket {
                             .address(starConfig.getNft().getMarket())
                             .sellPrice(so.getSelling_price())
                             .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
-                            .icon(nftInfo.getImageLink())
+                            .icon(groupDo.getBoxTokenLogo())
                             .createTime(currentTime)
                             .updateTime(currentTime)
                             .build();
