@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
@@ -62,7 +63,7 @@ public class NftMarketController {
             map.put(id, nftGroupDo);
         });
 
-        List<NftSelfSellingVo> vos = new ArrayList<>();
+        AtomicReference<List<NftSelfSellingVo>> atomicNft = new AtomicReference<>();
         nftMarketDos.forEach(p -> {
             NftSelfSellingVo.NftSelfSellingVoBuilder builder = NftSelfSellingVo.builder();
             NftGroupDo nftGroupDo = map.get(p.getGroupId());
@@ -78,16 +79,20 @@ public class NftMarketController {
             }
             NftSelfSellingVo sellingVo = builder.build();
             BeanUtils.copyProperties(p, sellingVo);
-            vos.add(sellingVo);
+            if(Objects.isNull(atomicNft.get())){
+                atomicNft.set(new ArrayList<>());
+            }
+            atomicNft.get().add(sellingVo);
         });
 
         boolean hasNext = false;
-        if (nftMarketDos.size() > pageSize) {
-            nftMarketDos = nftMarketDos.subList(0, nftMarketDos.size() - 1);
+        List<NftSelfSellingVo> list = atomicNft.get();
+        if (list.size() > pageSize) {
+            list = list.subList(0, nftMarketDos.size() - 1);
             hasNext = true;
         }
 
-        return P.success(vos, hasNext);
+        return P.success(list, hasNext);
     }
 
 }
