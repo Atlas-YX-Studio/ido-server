@@ -46,8 +46,8 @@ public class NftContractService {
     @Value("${ido.star.nft.scripts}")
     private String scripts;
 
-    private static String MARKET_MODULE = "NFTMarket02";
-    private static String SCRIPTS_MODULE = "NFTScripts02";
+    private static String MARKET_MODULE = "NFTMarket04";
+    private static String SCRIPTS_MODULE = "NFTScripts04";
 
     /**
      * 1.部署NFT Market
@@ -146,6 +146,13 @@ public class NftContractService {
         nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (nftGroupDos != null) {
             nftGroupDos.forEach(nftGroupDo -> {
+                if (nftGroupDo.getOfferingQuantity() == 0) {
+                    if (!initMarket(nftGroupDo)) {
+                        log.error("NFT {} 市场初始化失败", nftGroupDo.getName());
+                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                    }
+                    return;
+                }
                 if (!transferBox(nftGroupDo)) {
                     log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
@@ -256,6 +263,27 @@ public class NftContractService {
                 .build();
         return contractService.callFunction(scripts, scriptFunctionObj);
     }
+    /**
+     * 初始化市场
+     */
+    private boolean initMarket(NftGroupDo nftGroupDo) {
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(scripts)
+                .moduleName(SCRIPTS_MODULE)
+                .functionName("init_market")
+                .args(Lists.newArrayList(
+                        BcsSerializeHelper.serializeAddressToBytes(AccountAddressUtils.create(nftGroupDo.getCreator()))
+                ))
+                .tyArgs(Lists.newArrayList(
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()),
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftBody()),
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken()),
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getPayToken())
+                ))
+                .build();
+        return contractService.callFunction(scripts, scriptFunctionObj);
+    }
 
     public boolean initBuyBackNFT() {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
@@ -299,7 +327,7 @@ public class NftContractService {
                 .moduleName(SCRIPTS_MODULE)
                 .functionName("nft_sell")
                 .args(Lists.newArrayList(
-                        BcsSerializeHelper.serializeU64ToBytes(8L),
+                        BcsSerializeHelper.serializeU64ToBytes(6L),
                         BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(100000000))
                 ))
                 .tyArgs(Lists.newArrayList(
