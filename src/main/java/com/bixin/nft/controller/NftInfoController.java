@@ -152,9 +152,10 @@ public class NftInfoController {
      * @return
      */
     @GetMapping("/box/info")
-    public R boxInfo(@RequestParam("boxToken") String boxToken) {
+    public R boxInfo(@RequestParam("boxToken") String boxToken, @RequestParam("payToken") String payToken) {
         NftGroupDo selectNftGroupDo = new NftGroupDo();
         selectNftGroupDo.setBoxToken(boxToken);
+        selectNftGroupDo.setPayToken(payToken);
         NftGroupDo nftGroupDo = groupService.selectByObject(selectNftGroupDo);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("boxToken不存在");
@@ -163,14 +164,16 @@ public class NftInfoController {
     }
 
     @GetMapping("/nft/info")
-    public R nftInfo(@RequestParam("nftMeta") String meta, @RequestParam("nftBody") String body, @RequestParam("nftId") Long nftId) {
+    public R nftInfo(@RequestParam("nftMeta") String nftMeta, @RequestParam("nftBody") String nftBody,
+                     @RequestParam("nftId") Long nftId, @RequestParam("payToken") String payToken) {
         // 获取groupId
         NftGroupDo selectNftGroupDo = new NftGroupDo();
-        selectNftGroupDo.setNftMeta(meta);
-        selectNftGroupDo.setNftBody(body);
+        selectNftGroupDo.setNftMeta(nftMeta);
+        selectNftGroupDo.setNftBody(nftBody);
+        selectNftGroupDo.setPayToken(payToken);
         NftGroupDo nftGroupDo = groupService.selectByObject(selectNftGroupDo);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
-            return R.failed("nftGroupDo不存在，meta = " + meta + "，body = " + body);
+            return R.failed("nftGroupDo不存在，meta = " + nftMeta + "，body = " + nftBody);
         }
         // 获取infoId
         NftInfoDo selectNftInfoDo = new NftInfoDo();
@@ -178,7 +181,7 @@ public class NftInfoController {
         selectNftInfoDo.setNftId(nftId);
         NftInfoDo nftInfoDo = nftInfoService.selectByObject(selectNftInfoDo);
         if (ObjectUtils.isEmpty(nftInfoDo)) {
-            return R.failed("nftInfoDo不存在，meta = " + meta + "，body = " + body + "，nftId = " + nftId);
+            return R.failed("nftInfoDo不存在，meta = " + nftMeta + "，body = " + nftBody + "，nftId = " + nftId);
         }
         // 获取cat
         NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
