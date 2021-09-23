@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -51,8 +52,8 @@ public class ScheduleNftMarket {
     ObjectMapper mapper = new ObjectMapper();
 
     static final String separator = "::";
-    static final String boxSuffix = separator + "NFTMarket" + separator + "BoxSelling";
-    static final String nftSuffix = separator + "NFTMarket" + separator + "NFTSelling";
+    static final String boxSuffix = separator + "NFTMarket02" + separator + "BoxSelling";
+    static final String nftSuffix = separator + "NFTMarket02" + separator + "NFTSelling";
 
     //    @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "5 0/1 * * * ?")
@@ -73,17 +74,18 @@ public class ScheduleNftMarket {
 
         chainResourceDto.getResult().getResources().forEach((key, value) -> {
             try {
-                MutablePair<String, String> triple = getTokens(key);
+                MutableTriple<String, String, String> triple = getTokens(key);
                 String left = triple.getLeft();
+                String middle = triple.getMiddle();
                 String right = triple.getRight();
                 NftGroupDo.NftGroupDoBuilder builder = NftGroupDo.builder();
 
                 NftBoxType type = null;
                 if (key.startsWith(nftKeyPrefix)) {
-                    builder.nftMeta(left).nftBody(right);
+                    builder.nftMeta(left).nftBody(middle).payToken(right);
                     type = NftBoxType.NFT;
                 } else if (key.startsWith(boxKeyPrefix)) {
-                    builder.boxToken(left);
+                    builder.boxToken(left).payToken(middle);
                     type = NftBoxType.BOX;
                 }
                 if (Objects.nonNull(type)) {
@@ -127,19 +129,19 @@ public class ScheduleNftMarket {
     }
 
 
-    private MutablePair<String, String> getTokens(String tokens) {
+    private MutableTriple<String, String, String> getTokens(String tokens) {
         String regex = "\\<(.*)\\>";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(tokens);
         while (matcher.find()) {
             String[] tokenArray = matcher.group(0).replaceAll("<|>", "").split(",");
             if (tokenArray.length == 3) {
-                return new MutablePair<>(tokenArray[0], tokenArray[1]);
+                return new MutableTriple<>(tokenArray[0].trim(), tokenArray[1].trim(), tokenArray[2].trim());
             } else if (tokenArray.length == 2) {
-                return new MutablePair<>(tokenArray[0], "");
+                return new MutableTriple<>(tokenArray[0].trim(), tokenArray[1].trim(), "");
             }
         }
-        return new MutablePair<>("", "");
+        return new MutableTriple<>("", "", "");
     }
 
     private void buildNft(Map<NftGroupDo, List<NFTBoxDto>> nftMap, List<NftMarketDo> list, long currentTime) {
@@ -198,9 +200,9 @@ public class ScheduleNftMarket {
                     }
                     NftMarketDo box = NftMarketDo.builder()
                             .chainId(so.getId())
-                            .nftBoxId(nftInfo.getGroupId())
+                            .nftBoxId(0L)
                             .groupId(nftGroupDo.getId())
-                            .type(NftBoxType.NFT.getDesc())
+                            .type(NftBoxType.BOX.getDesc())
                             .name(nftGroupDo.getName())
                             .owner(so.getSeller())
                             .address(starConfig.getNft().getMarket())

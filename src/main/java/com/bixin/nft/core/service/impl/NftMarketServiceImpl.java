@@ -110,8 +110,10 @@ public class NftMarketServiceImpl implements NftMarketService {
         if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
             paramMap.put("type", open);
         }
-        if (sort > 0) {
-            paramMap.put("order", sort == 2 ? "asc" : "desc");
+        if (sort == 1) {
+            paramMap.put("order", "desc");
+        } else if (sort == 2) {
+            paramMap.put("order", "asc");
         }
 
         NftGroupDo.NftGroupDoBuilder groupDoBuilder = NftGroupDo.builder();
@@ -126,6 +128,8 @@ public class NftMarketServiceImpl implements NftMarketService {
             NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKeySelective(groupParam);
             if (Objects.nonNull(nftGroupDo)) {
                 paramMap.put("groupId", nftGroupDo.getId());
+            } else {
+                paramMap.put("groupId", -1);
             }
         }
         return nftMarketMapper.selectByPage(paramMap);
