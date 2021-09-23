@@ -97,7 +97,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             WebSocketService service = new WebSocketService("ws://" + idoStarConfig.getNft().getWebsocketHost() + ":" + idoStarConfig.getNft().getWebsocketPort(), true);
             service.connect();
             StarcoinSubscriber subscriber = new StarcoinSubscriber(service);
-            EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getSwap().getWebsocketContractAddress()));
+            EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getNft().getMarket()));
             Flowable<EventNotification> notificationFlowable = subscriber.newTxnSendRecvEventNotifications(eventFilter);
             notificationFlowable.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
