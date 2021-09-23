@@ -141,7 +141,7 @@ public class NftContractService {
             });
         }
 
-        // 盲盒发售
+        // 市场创建resource + 盲盒发售
         selectNftGroupDo.setStatus(NftGroupStatus.CREATED.name());
         nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (nftGroupDos != null) {
@@ -151,15 +151,15 @@ public class NftContractService {
                         log.error("NFT {} 市场初始化失败", nftGroupDo.getName());
                         throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                     }
-                    return;
-                }
-                if (!transferBox(nftGroupDo)) {
-                    log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
-                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-                }
-                if (!initBoxOffering(nftGroupDo)) {
-                    log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
-                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                } else {
+                    if (!transferBox(nftGroupDo)) {
+                        log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
+                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                    }
+                    if (!initBoxOffering(nftGroupDo)) {
+                        log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
+                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                    }
                 }
                 // 发售成功
                 log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
