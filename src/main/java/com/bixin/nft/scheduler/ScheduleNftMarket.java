@@ -16,7 +16,6 @@ import com.bixin.nft.enums.NftBoxType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,8 +50,8 @@ public class ScheduleNftMarket {
     ObjectMapper mapper = new ObjectMapper();
 
     static final String separator = "::";
-    static final String boxSuffix = separator + "NFTMarket03" + separator + "BoxSelling";
-    static final String nftSuffix = separator + "NFTMarket03" + separator + "NFTSelling";
+    static final String boxSuffix = separator + "NFTMarket04" + separator + "BoxSelling";
+    static final String nftSuffix = separator + "NFTMarket04" + separator + "NFTSelling";
 
     //    @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "5 0/1 * * * ?")
