@@ -54,4 +54,6 @@ public interface NftEventService {
      */
     List<NftEventDo> listByObject(NftEventDo model);
 
+    List<NftEventDo> getALlByPage(Long nftId, String type, long pageSize, long nextId);
+
 }

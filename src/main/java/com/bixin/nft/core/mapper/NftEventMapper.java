@@ -3,6 +3,7 @@ package com.bixin.nft.core.mapper;
 import com.bixin.nft.bean.DO.NftEventDo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NftEventMapper {
     /**
@@ -40,4 +41,7 @@ public interface NftEventMapper {
      * @param record
      */
     List<NftEventDo> selectByPrimaryKeySelectiveList(NftEventDo record);
+
+
+    List<NftEventDo> selectByPage(Map<String,Object> paramMap);
 }

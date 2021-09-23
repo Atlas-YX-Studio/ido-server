@@ -26,16 +26,6 @@ public class NftEventDo implements Serializable {
     private Long nftId;
 
     /**
-     * pay token addr
-     */
-    private String payTokenAddr;
-
-    /**
-     * pay token modult
-     */
-    private String payTokenModuleName;
-
-    /**
      * pay token name
      */
     private String payTokenName;

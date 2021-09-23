@@ -4,8 +4,6 @@
   <resultMap id="BaseResultMap" type="com.bixin.nft.bean.DO.NftEventDo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="nft_id" jdbcType="BIGINT" property="nftId" />
-    <result column="pay_token_addr" jdbcType="VARCHAR" property="payTokenAddr" />
-    <result column="pay_token_module_name" jdbcType="VARCHAR" property="payTokenModuleName" />
     <result column="pay_token_name" jdbcType="VARCHAR" property="payTokenName" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="seller" jdbcType="VARCHAR" property="seller" />
@@ -17,7 +15,7 @@
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, nft_id, pay_token_addr, pay_token_module_name, pay_token_name, creator, seller, 
+    id, nft_id, pay_token_name, creator, seller,
     selling_price, bider, bid_price, type, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -31,13 +29,11 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftEventDo" useGeneratedKeys="true">
-    insert into nft_event (id, nft_id, pay_token_addr, 
-      pay_token_module_name, pay_token_name, creator, 
+    insert into nft_event (id, nft_id, pay_token_name, creator,
       seller, selling_price, bider, 
       bid_price, type, create_time, 
       update_time)
-    values (#{id,jdbcType=BIGINT}, #{nftId,jdbcType=BIGINT}, #{payTokenAddr,jdbcType=VARCHAR}, 
-      #{payTokenModuleName,jdbcType=VARCHAR}, #{payTokenName,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{nftId,jdbcType=BIGINT}, #{payTokenName,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR},
       #{seller,jdbcType=VARCHAR}, #{sellingPrice,jdbcType=DECIMAL}, #{bider,jdbcType=VARCHAR}, 
       #{bidPrice,jdbcType=DECIMAL}, #{type,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
       #{updateTime,jdbcType=BIGINT})
@@ -47,12 +43,6 @@
     <set>
       <if test="nftId != null">
         nft_id = #{nftId,jdbcType=BIGINT},
-      </if>
-      <if test="payTokenAddr != null">
-        pay_token_addr = #{payTokenAddr,jdbcType=VARCHAR},
-      </if>
-      <if test="payTokenModuleName != null">
-        pay_token_module_name = #{payTokenModuleName,jdbcType=VARCHAR},
       </if>
       <if test="payTokenName != null">
         pay_token_name = #{payTokenName,jdbcType=VARCHAR},
@@ -92,12 +82,6 @@
       <if test="null != nftId">
          and nft_id = #{nftId,jdbcType=BIGINT}
       </if>
-      <if test="null != payTokenAddr">
-         and pay_token_addr = #{payTokenAddr,jdbcType=VARCHAR}
-      </if>
-      <if test="null != payTokenModuleName">
-         and pay_token_module_name = #{payTokenModuleName,jdbcType=VARCHAR}
-      </if>
       <if test="null != payTokenName">
          and pay_token_name = #{payTokenName,jdbcType=VARCHAR}
       </if>
@@ -135,4 +119,25 @@
     select  * from nft_event
     <include refid="baseQuery" />
   </select>
+
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from nft_event
+    where nft_id=#{nftId} and type=#{type}
+    <if test="nextId != null">
+      and id &lt; #{nextId}
+    </if>
+    order by
+    <if test="sort != null">
+      ${sort}
+    </if>
+    <if test="order != null">
+      ${order}
+    </if>
+    <if test="pageSize !=null">
+      limit #{pageSize}
+    </if>
+  </select>
+
 </mapper>

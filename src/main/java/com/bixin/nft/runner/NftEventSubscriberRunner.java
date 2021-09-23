@@ -5,8 +5,7 @@ import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import com.bixin.nft.bean.DO.NftEventDo;
-import com.bixin.nft.bean.dto.NftBidEventtDto;
-import com.bixin.nft.bean.dto.NftBuyEventDto;
+import com.bixin.nft.bean.dto.*;
 import com.bixin.nft.core.service.NftEventService;
 import com.bixin.nft.enums.NftEventType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,6 +18,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.DefaultApplicationArguments;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.starcoin.api.StarcoinSubscriber;
 import org.starcoin.bean.EventFilter;
 import org.starcoin.bean.EventNotification;
@@ -118,35 +118,42 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     return;
                 }
                 String tagString = getEventName(eventResult.getTypeTag());
+                NftEventDo nftEventDo = null;
                 // 铸造
                 if(NftEventType.NFTMINTEVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 铸造");
+                    NftMintEventtDto dto = mapper.convertValue(data, NftMintEventtDto.class);
+                    nftEventDo = NftMintEventtDto.of(dto,NftEventType.NFTMINTEVENT.getDesc());
                 }
                 // 售卖
                 if(NftEventType.NFTSELLEVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 售卖");
+                    NftSellEventtDto dto = mapper.convertValue(data, NftSellEventtDto.class);
+                    nftEventDo = NftSellEventtDto.of(dto,NftEventType.NFTSELLEVENT.getDesc());
                 }
                 // 出价
                 if(NftEventType.NFTBIDEVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 出价");
+                    NftBidEventtDto dto = mapper.convertValue(data, NftBidEventtDto.class);
+                    nftEventDo = NftBidEventtDto.of(dto,NftEventType.NFTBIDEVENT.getDesc());
                 }
                 // 购买
                 if(NftEventType.NFTBUYEVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 购买");
+                    NftBuyEventDto dto = mapper.convertValue(data, NftBuyEventDto.class);
+                    nftEventDo = NftBuyEventDto.of(dto,NftEventType.NFTBUYEVENT.getDesc());
                 }
                 // 取消
                 if(NftEventType.NFTOFFLINEEVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 取消");
+                    NftOffLineEventtDto dto = mapper.convertValue(data, NftOffLineEventtDto.class);
+                    nftEventDo = NftOffLineEventtDto.of(dto,NftEventType.NFTOFFLINEEVENT.getDesc());
                 }
-
-                //todo
-                NftBuyEventDto nftBuyEventDto = mapper.convertValue(data, NftBuyEventDto.class);
-                NftBidEventtDto nftBidEventtDto = mapper.convertValue(data, NftBidEventtDto.class);
-
-                //todo 入库
-                NftEventDo nftEventDo = NftBidEventtDto.of(nftBidEventtDto);
-                //nftEventService.insert(nftEventDo);
-
+                if(!ObjectUtils.isEmpty(nftEventDo)){
+                    nftEventService.insert(nftEventDo);
+                }else{
+                    log.error("NftEventSubscriberRunner 构造");
+                }
             });
 
         } catch (Exception e) {
