@@ -200,7 +200,7 @@ public class ScheduleNftMarket {
                     }
                     NftMarketDo box = NftMarketDo.builder()
                             .chainId(so.getId())
-                            .nftBoxId(nftInfo.getGroupId())
+                            .nftBoxId(0L)
                             .groupId(nftGroupDo.getId())
                             .type(NftBoxType.BOX.getDesc())
                             .name(nftGroupDo.getName())
