@@ -148,20 +148,9 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <!--启用过滤 true:替换   false:不替换-->
                 <filtering>true</filtering>
-                <excludes>
-                    <exclude>mybatis/*.xml</exclude>
-                    <exclude>logback/*.xml</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <!--启用过滤 true:替换   false:不替换-->
-                <filtering>false</filtering>
                 <includes>
-                    <include>mybatis/*.xml</include>
-                    <include>logback/*.xml</include>
+                    <include>**/*</include>
                 </includes>
             </resource>
         </resources>

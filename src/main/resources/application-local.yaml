@@ -21,7 +21,6 @@ spring:
 
 ## 日志配置
 logging:
-  config: classpath:logback/logback-spring.xml
   path: logs
   level:
     # 全局日志级别
