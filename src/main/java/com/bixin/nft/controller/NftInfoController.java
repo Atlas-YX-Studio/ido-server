@@ -107,8 +107,8 @@ public class NftInfoController {
         operationRecordVo.setAddress("aaaaa");
         operationRecordVo.setPrice(new BigDecimal(12));
         operationRecordVo.setCurrencyName("STC");
-        operationRecordVo.setStatus("aaa");
-        operationRecordVo.setCreated(new Date().getTime());
+        operationRecordVo.setType("aaa");
+        operationRecordVo.setCreateTime(new Date().getTime());
         records.add(operationRecordVo);
 
         boolean hasNext = false;
@@ -228,7 +228,8 @@ public class NftInfoController {
             return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
         }
         NftMarketDo nftMarketParm = new NftMarketDo();
-        nftMarketParm.setNftBoxId(nftInfoDo.getGroupId());
+        nftMarketParm.setNftBoxId(nftInfoDo.getId());
+        nftMarketParm.setType("nft");
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParm);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftInfoVo.setOnSell(false);

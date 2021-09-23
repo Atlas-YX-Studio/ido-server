@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.nft.core.mapper.NftEventMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.nft.bean.DO.NftEventDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="nft_id" jdbcType="BIGINT" property="nftId" />
+    <result column="pay_token_addr" jdbcType="VARCHAR" property="payTokenAddr" />
+    <result column="pay_token_module_name" jdbcType="VARCHAR" property="payTokenModuleName" />
+    <result column="pay_token_name" jdbcType="VARCHAR" property="payTokenName" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="seller" jdbcType="VARCHAR" property="seller" />
+    <result column="selling_price" jdbcType="DECIMAL" property="sellingPrice" />
+    <result column="bider" jdbcType="VARCHAR" property="bider" />
+    <result column="bid_price" jdbcType="DECIMAL" property="bidPrice" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, nft_id, pay_token_addr, pay_token_module_name, pay_token_name, creator, seller, 
+    selling_price, bider, bid_price, type, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from nft_event
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from nft_event
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftEventDo" useGeneratedKeys="true">
+    insert into nft_event (id, nft_id, pay_token_addr, 
+      pay_token_module_name, pay_token_name, creator, 
+      seller, selling_price, bider, 
+      bid_price, type, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{nftId,jdbcType=BIGINT}, #{payTokenAddr,jdbcType=VARCHAR}, 
+      #{payTokenModuleName,jdbcType=VARCHAR}, #{payTokenName,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{seller,jdbcType=VARCHAR}, #{sellingPrice,jdbcType=DECIMAL}, #{bider,jdbcType=VARCHAR}, 
+      #{bidPrice,jdbcType=DECIMAL}, #{type,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftEventDo">
+    update nft_event
+    <set>
+      <if test="nftId != null">
+        nft_id = #{nftId,jdbcType=BIGINT},
+      </if>
+      <if test="payTokenAddr != null">
+        pay_token_addr = #{payTokenAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="payTokenModuleName != null">
+        pay_token_module_name = #{payTokenModuleName,jdbcType=VARCHAR},
+      </if>
+      <if test="payTokenName != null">
+        pay_token_name = #{payTokenName,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="seller != null">
+        seller = #{seller,jdbcType=VARCHAR},
+      </if>
+      <if test="sellingPrice != null">
+        selling_price = #{sellingPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="bider != null">
+        bider = #{bider,jdbcType=VARCHAR},
+      </if>
+      <if test="bidPrice != null">
+        bid_price = #{bidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != nftId">
+         and nft_id = #{nftId,jdbcType=BIGINT}
+      </if>
+      <if test="null != payTokenAddr">
+         and pay_token_addr = #{payTokenAddr,jdbcType=VARCHAR}
+      </if>
+      <if test="null != payTokenModuleName">
+         and pay_token_module_name = #{payTokenModuleName,jdbcType=VARCHAR}
+      </if>
+      <if test="null != payTokenName">
+         and pay_token_name = #{payTokenName,jdbcType=VARCHAR}
+      </if>
+      <if test="null != creator">
+         and creator = #{creator,jdbcType=VARCHAR}
+      </if>
+      <if test="null != seller">
+         and seller = #{seller,jdbcType=VARCHAR}
+      </if>
+      <if test="null != sellingPrice">
+         and selling_price = #{sellingPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="null != bider">
+         and bider = #{bider,jdbcType=VARCHAR}
+      </if>
+      <if test="null != bidPrice">
+         and bid_price = #{bidPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="null != type">
+         and type = #{type,jdbcType=VARCHAR}
+      </if>
+      <if test="null != createTime">
+         and create_time = #{createTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != updateTime">
+         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftEventDo" resultMap="BaseResultMap">
+    select  * from nft_event
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.NftEventDo" resultMap="BaseResultMap">
+    select  * from nft_event
+    <include refid="baseQuery" />
+  </select>
+</mapper>

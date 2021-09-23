@@ -4,25 +4,28 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 /**
- * nft购买事件
+ * 取消事件
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NftBuyEventDto {
+public class NftOffLineEventtDto {
 
     // nft id
     private Long id;
     // 售卖者
     private String seller;
-    // 购买者
-    private String buyer;
-    // 购买价格
-    private BigDecimal final_price;
+    // 售价
+    private BigDecimal selling_price;
+    // 出价者
+    private String bider;
+    // 出价
+    private BigDecimal bid_price;
     // 支付token
     private Pay_token_code pay_token_code;
 
@@ -35,4 +38,5 @@ public class NftBuyEventDto {
         private String module_name;
         private String name;
     }
+
 }
