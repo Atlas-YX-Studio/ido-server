@@ -14,12 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.starcoin.bean.ListResourceOption;
-import org.starcoin.bean.ResourceObj;
 import org.starcoin.bean.ScriptFunctionObj;
 import org.starcoin.bean.TypeObj;
-import org.starcoin.types.*;
 import org.starcoin.types.Module;
 import org.starcoin.types.Package;
+import org.starcoin.types.*;
 import org.starcoin.utils.AccountAddressUtils;
 import org.starcoin.utils.SignatureUtils;
 import org.starcoin.utils.StarcoinClient;
@@ -46,6 +45,7 @@ public class ContractService {
         {
             put("0x290c7b35320a4dd26f651fd184373fe7", "0x98e6ded54f698a49365a0a4217d2d5d3cfc516b03c6198b81e47ce0067035c34");
             put("0xd30b4de81d71c1793aa4db4763211e63", "0x908fd8db21674a5bfdb617c2fd588fdd66fbcaf5198007951f24e72ba793f1a6");
+            put("0x142f352A24FEB989C65C1d48c4d884a9", "0x383fbd1c219e4b3e4bf066e952d636220f6628d013cb20df7228c88dae9ed493");
         }
     };
 

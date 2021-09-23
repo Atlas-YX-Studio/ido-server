@@ -12,7 +12,7 @@ import java.math.BigInteger;
 @SpringBootTest(classes = IdoServerApplication.class)
 class NftInitServiceTest {
     @Resource
-    private NftInitService nftInitService;
+    private NftContractService nftInitService;
     @Resource
     private ContractService contractService;
 
@@ -35,6 +35,16 @@ class NftInitServiceTest {
     @Test
     void buyBackNFT() {
         assert nftInitService.buyBackNFT();
+    }
+
+    @Test
+    void sellNFT() {
+        assert nftInitService.sellNFT();
+    }
+
+    @Test
+    void sellBox() {
+        assert nftInitService.sellBox();
     }
 
 }

@@ -29,7 +29,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class NftInitService {
+public class NftContractService {
 
     @Resource
     private NftGroupMapper nftGroupMapper;
@@ -46,6 +46,9 @@ public class NftInitService {
     @Value("${ido.star.nft.scripts}")
     private String scripts;
 
+    private static String MARKET_MODULE = "NFTMarket02";
+    private static String SCRIPTS_MODULE = "NFTScripts02";
+
     /**
      * 1.部署NFT Market
      * 2.部署NFT Scripts
@@ -54,18 +57,18 @@ public class NftInitService {
      * @return
      */
     public boolean initNFTMarket(BigInteger creatorFee, BigInteger platformFee) {
-        if (!contractService.deployContract(market, "contract/nft/NFTMarket.mv", null)) {
+        if (!contractService.deployContract(market, "contract/nft/" + MARKET_MODULE + ".mv", null)) {
             log.error("NFT Market部署失败");
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
-        if (!contractService.deployContract(scripts, "contract/nft/NFTScripts.mv", null)) {
+        if (!contractService.deployContract(scripts, "contract/nft/" + SCRIPTS_MODULE + ".mv", null)) {
             log.error("NFT Scripts部署失败");
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName("NFTScripts")
+                .moduleName(SCRIPTS_MODULE)
                 .functionName("init_config")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU128ToBytes(creatorFee),
@@ -173,7 +176,11 @@ public class NftInitService {
                 .moduleName(moduleName)
                 .functionName("init")
                 .tyArgs(Lists.newArrayList())
-                .args(Lists.newArrayList())
+                .args(Lists.newArrayList(
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getNftTypeImageData())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription()))
+                ))
                 .build();
         return contractService.deployContract(nftGroupDo.getCreator(), path, scriptFunctionObj);
     }
@@ -232,7 +239,7 @@ public class NftInitService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName("NFTScripts")
+                .moduleName(SCRIPTS_MODULE)
                 .functionName("box_initial_offering")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU128ToBytes(boxAmount),
@@ -254,12 +261,12 @@ public class NftInitService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName("NFTScripts")
+                .moduleName(SCRIPTS_MODULE)
                 .functionName("init_buy_back_list")
                 .args(Lists.newArrayList())
                 .tyArgs(Lists.newArrayList(
-                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat03::KikoCatMeta"),
-                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat03::KikoCatBody"),
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatMeta"),
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatBody"),
                         TypeArgsUtil.parseTypeObj("0x1::STC::STC")
                 ))
                 .build();
@@ -270,21 +277,63 @@ public class NftInitService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName("NFTScripts")
+                .moduleName(SCRIPTS_MODULE)
                 .functionName("nft_buy_back")
                 .args(Lists.newArrayList(
-                        BcsSerializeHelper.serializeU64ToBytes(5L),
+                        BcsSerializeHelper.serializeU64ToBytes(2L),
                         BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(100000000))
                 ))
                 .tyArgs(Lists.newArrayList(
-                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat03::KikoCatMeta"),
-                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat03::KikoCatBody"),
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatMeta"),
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatBody"),
                         TypeArgsUtil.parseTypeObj("0x1::STC::STC")
                 ))
                 .build();
         return contractService.callFunction(market, scriptFunctionObj);
     }
 
+    public boolean sellNFT() {
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(scripts)
+                .moduleName(SCRIPTS_MODULE)
+                .functionName("nft_sell")
+                .args(Lists.newArrayList(
+                        BcsSerializeHelper.serializeU64ToBytes(8L),
+                        BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(100000000))
+                ))
+                .tyArgs(Lists.newArrayList(
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatMeta"),
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatBody"),
+                        TypeArgsUtil.parseTypeObj("0x1::STC::STC")
+                ))
+                .build();
+        return contractService.callFunction("0x142f352A24FEB989C65C1d48c4d884a9", scriptFunctionObj);
+    }
 
+    public boolean sellBox() {
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(scripts)
+                .moduleName(SCRIPTS_MODULE)
+                .functionName("box_sell")
+                .args(Lists.newArrayList(
+                        BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(200000000))
+                ))
+                .tyArgs(Lists.newArrayList(
+                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatBox"),
+                        TypeArgsUtil.parseTypeObj("0x1::STC::STC")
+                ))
+                .build();
+        return contractService.callFunction("0x142f352A24FEB989C65C1d48c4d884a9", scriptFunctionObj);
+    }
+
+//    public void rankNft() {
+//
+//
+//        NftInfoDo nftInfoDo = new NftInfoDo();
+//        nftInfoMapper.selectByPrimaryKeySelectiveList();
+//
+//    }
 
 }

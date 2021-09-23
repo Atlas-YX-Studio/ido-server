@@ -210,8 +210,8 @@ public class NftInfoController {
      *
      * @return
      */
-    @GetMapping("/nft/info/{id}")
-    public R nftInfo(@PathVariable(value = "id") Long id) {
+    @GetMapping("/nft/info/{infoId}")
+    public R nftInfo(@PathVariable(value = "infoId") Long id) {
         NftInfoVo nftInfoVo = new NftInfoVo();
         NftInfoDo nftInfoDo = nftInfoService.selectById(id);
         if (ObjectUtils.isEmpty(nftInfoDo)) {

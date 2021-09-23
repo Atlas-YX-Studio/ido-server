@@ -11,7 +11,7 @@ import java.io.Serializable;
 * @Class: NftGroupDo
 * @Description: NFT分组表
 * @author: 系统
-* @created: 2021-09-18
+* @created: 2021-09-22
 */
 @Data
 @Builder
@@ -94,6 +94,11 @@ public class NftGroupDo implements Serializable {
     private String nftTypeInfo;
 
     /**
+     * NFT分组图片
+     */
+    private String nftTypeImageLink;
+
+    /**
      * 创作者地址
      */
     private String creator;
@@ -137,6 +142,11 @@ public class NftGroupDo implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+
+    /**
+     * NFT分组图片
+     */
+    private String nftTypeImageData;
 
     /**
      * 中文描述
