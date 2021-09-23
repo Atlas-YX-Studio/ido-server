@@ -106,6 +106,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 // FIXME: 2021/8/30 debug
                 try {
                     log.info("NftEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
+                    log.info("NftEventSubscriberRunner typeTag: {}", eventResult.getTypeTag());
+                    log.info("NftEventSubscriberRunner eventName: {}", getEventName(eventResult.getTypeTag()));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
