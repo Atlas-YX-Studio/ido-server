@@ -29,6 +29,7 @@
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.bixin.nft.bean.DO.NftGroupDo">
+    <result column="support_token" jdbcType="LONGVARCHAR" property="supportToken" />
     <result column="nft_type_image_data" jdbcType="LONGVARCHAR" property="nftTypeImageData" />
     <result column="cn_description" jdbcType="LONGVARCHAR" property="cnDescription" />
     <result column="en_description" jdbcType="LONGVARCHAR" property="enDescription" />
@@ -44,8 +45,8 @@
     enabled, offering, status, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
-    nft_type_image_data, cn_description, en_description, cn_rule_desc, en_rule_desc,
-    cn_creator_desc, en_creator_desc
+    support_token, nft_type_image_data, cn_description, en_description, cn_rule_desc,
+    en_rule_desc, cn_creator_desc, en_creator_desc
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select
@@ -68,9 +69,10 @@
                            nft_type_image_link, creator, owner,
                            selling_price, selling_time, enabled,
                            offering, status, create_time,
-                           update_time, nft_type_image_data, cn_description,
-                           en_description, cn_rule_desc, en_rule_desc,
-                           cn_creator_desc, en_creator_desc)
+                           update_time, support_token, nft_type_image_data,
+                           cn_description, en_description, cn_rule_desc,
+                           en_rule_desc, cn_creator_desc, en_creator_desc
+    )
     values (#{id,jdbcType=BIGINT}, #{series,jdbcType=VARCHAR}, #{seriesName,jdbcType=VARCHAR},
             #{name,jdbcType=VARCHAR}, #{seriesQuantity,jdbcType=INTEGER}, #{quantity,jdbcType=INTEGER},
             #{offeringQuantity,jdbcType=INTEGER}, #{boxToken,jdbcType=VARCHAR}, #{boxTokenPrecision,jdbcType=INTEGER},
@@ -79,9 +81,10 @@
             #{nftTypeImageLink,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR},
             #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT},
             #{offering,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT},
-            #{updateTime,jdbcType=BIGINT}, #{nftTypeImageData,jdbcType=LONGVARCHAR}, #{cnDescription,jdbcType=LONGVARCHAR},
-            #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR}, #{enRuleDesc,jdbcType=LONGVARCHAR},
-            #{cnCreatorDesc,jdbcType=LONGVARCHAR}, #{enCreatorDesc,jdbcType=LONGVARCHAR})
+            #{updateTime,jdbcType=BIGINT}, #{supportToken,jdbcType=LONGVARCHAR}, #{nftTypeImageData,jdbcType=LONGVARCHAR},
+            #{cnDescription,jdbcType=LONGVARCHAR}, #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR},
+            #{enRuleDesc,jdbcType=LONGVARCHAR}, #{cnCreatorDesc,jdbcType=LONGVARCHAR}, #{enCreatorDesc,jdbcType=LONGVARCHAR}
+           )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftGroupDo">
     update nft_group
@@ -158,6 +161,9 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=BIGINT},
       </if>
+      <if test="supportToken != null">
+        support_token = #{supportToken,jdbcType=LONGVARCHAR},
+      </if>
       <if test="nftTypeImageData != null">
         nft_type_image_data = #{nftTypeImageData,jdbcType=LONGVARCHAR},
       </if>
@@ -208,6 +214,7 @@
         status = #{status,jdbcType=VARCHAR},
         create_time = #{createTime,jdbcType=BIGINT},
         update_time = #{updateTime,jdbcType=BIGINT},
+        support_token = #{supportToken,jdbcType=LONGVARCHAR},
         nft_type_image_data = #{nftTypeImageData,jdbcType=LONGVARCHAR},
         cn_description = #{cnDescription,jdbcType=LONGVARCHAR},
         en_description = #{enDescription,jdbcType=LONGVARCHAR},
@@ -293,6 +300,9 @@
       </if>
       <if test="null != updateTime">
         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != supportToken">
+        and support_token = #{supportToken,jdbcType=LONGVARCHAR}
       </if>
       <if test="null != nftTypeImageData">
         and nft_type_image_data = #{nftTypeImageData,jdbcType=LONGVARCHAR}

@@ -144,6 +144,11 @@ public class NftGroupDo implements Serializable {
     private Long updateTime;
 
     /**
+     * 支持币种
+     */
+    private String supportToken;
+
+    /**
      * NFT分组图片
      */
     private String nftTypeImageData;

@@ -1,5 +1,7 @@
 package com.bixin.nft.core.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.bixin.ido.server.common.errorcode.IdoErrorCode;
 import com.bixin.ido.server.common.exception.IdoException;
 import com.bixin.ido.server.enums.NftGroupStatus;
@@ -8,6 +10,7 @@ import com.bixin.ido.server.utils.TypeArgsUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
+import com.bixin.nft.bean.dto.TokenDto;
 import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftInfoMapper;
 import com.bixin.nft.core.mapper.NftKikoCatMapper;
@@ -151,20 +154,21 @@ public class NftContractService {
         nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (nftGroupDos != null) {
             nftGroupDos.forEach(nftGroupDo -> {
-                if (nftGroupDo.getOfferingQuantity() == 0) {
-                    if (!initMarket(nftGroupDo)) {
-                        log.error("NFT {} 市场初始化失败", nftGroupDo.getName());
+                List<TokenDto> supportTokenList = JSON.parseObject(nftGroupDo.getSupportToken(),
+                        new TypeReference<>() {});
+                supportTokenList.forEach(tokenDto -> {
+                    if (!initMarket(nftGroupDo, tokenDto.getAddress())) {
+                        log.error("NFT {} 市场初始化失败, 设置币种:{}", nftGroupDo.getName(), tokenDto.getAddress());
                         throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                     }
-                } else {
-                    if (!transferBox(nftGroupDo)) {
-                        log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
-                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-                    }
-                    if (!initBoxOffering(nftGroupDo)) {
-                        log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
-                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-                    }
+                });
+                if (!transferBox(nftGroupDo)) {
+                    log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
+                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                }
+                if (!initBoxOffering(nftGroupDo)) {
+                    log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
+                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                 }
                 // 发售成功
                 log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
@@ -237,7 +241,7 @@ public class NftContractService {
     private boolean transferBox(NftGroupDo nftGroupDo) {
         double boxTokenDecimal = nftGroupDo.getOfferingQuantity() * Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken());
-        return contractService.transfer(nftGroupDo.getCreator(), market, typeObj, BigInteger.valueOf((long)boxTokenDecimal));
+        return contractService.transfer(nftGroupDo.getCreator(), market, typeObj, BigInteger.valueOf((long) boxTokenDecimal));
     }
 
     /**
@@ -268,10 +272,11 @@ public class NftContractService {
                 .build();
         return contractService.callFunction(scripts, scriptFunctionObj);
     }
+
     /**
      * 初始化市场
      */
-    private boolean initMarket(NftGroupDo nftGroupDo) {
+    private boolean initMarket(NftGroupDo nftGroupDo, String payToken) {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
@@ -284,7 +289,7 @@ public class NftContractService {
                         TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()),
                         TypeArgsUtil.parseTypeObj(nftGroupDo.getNftBody()),
                         TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken()),
-                        TypeArgsUtil.parseTypeObj(nftGroupDo.getPayToken())
+                        TypeArgsUtil.parseTypeObj(payToken)
                 ))
                 .build();
         return contractService.callFunction(scripts, scriptFunctionObj);
@@ -318,7 +323,6 @@ public class NftContractService {
     }
 
     /**
-     *
      * @return
      */
     public void buyBackNFT(Long infoId, String payToken, BigDecimal price) {

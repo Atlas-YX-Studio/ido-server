@@ -1,9 +1,11 @@
 package com.bixin.nft.bean.vo;
 
 import com.bixin.nft.bean.DO.NftKikoCatDo;
+import com.bixin.nft.bean.dto.TokenDto;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @class: NftInfoVO
@@ -125,5 +127,10 @@ public class NftInfoVo {
      * 配置属性
      */
     private NftKikoCatDo properties;
+
+    /**
+     * 支持币种
+     */
+    private List<TokenDto> supportToken;
 
 }
