@@ -53,7 +53,7 @@ public class ScheduleNftMarket {
     static final String boxSuffix = separator + "NFTMarket04" + separator + "BoxSelling";
     static final String nftSuffix = separator + "NFTMarket04" + separator + "NFTSelling";
 
-//        @Scheduled(cron = "0/10 * * * * ?")
+    //        @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "5 0/1 * * * ?")
     public void getNftMarketList() {
         String resource = contractService.getResource(starConfig.getNft().getMarket());
@@ -195,12 +195,6 @@ public class ScheduleNftMarket {
             }
             boxList.forEach(p -> {
                 p.getItems().forEach(so -> {
-                    NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
-                    NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
-                    if (Objects.isNull(nftInfo)) {
-                        log.error("ScheduleNftMarket buildBox and nftInfo is null");
-                        return;
-                    }
                     NftMarketDo box = NftMarketDo.builder()
                             .chainId(so.getId())
                             .nftBoxId(0L)
