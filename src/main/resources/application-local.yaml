@@ -22,13 +22,7 @@ spring:
 ## 日志配置
 logging:
   path: logs
-  level:
-    # 全局日志级别
-    default: INFO
-    # 项目日志级别
-    project: INFO
-    # mybatis日志级别
-    mybatis: DEBUG
+  level: INFO
 
 
 ## ------------------------------业务相关配置写到下面-------------------------

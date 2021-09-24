@@ -15,16 +15,11 @@
 
     <springProperty scope="context" name="springAppName" source="spring.application.name" />
     <springProperty scope="context" name="logging.path" source="logging.path"/>
-    <springProperty scope="context" name="logging.level.default" source="logging.level.default"/>
-    <springProperty scope="context" name="logging.level.project" source="logging.level.project"/>
-    <springProperty scope="context" name="logging.level.mybatis" source="logging.level.mybatis"/>
-
+    <springProperty scope="context" name="logging.level" source="logging.level"/>
 
     <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
     <property name="logHomeDir" value="${logging.path}"/>
     <property name="logPattern" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([${springAppName:-}]){blue} %clr(%-5level){faint} %clr([%thread]){magenta} %clr(%logger{50}){cyan} - %msg%n"/>
-    <!-- 异步缓冲队列的深度,该值会影响性能.默认值为256-->
-    <property name="queueSize" value="512"/>
 
     <!-- 控制台输出 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -60,30 +55,13 @@
             <pattern>${logPattern}</pattern>c
             <charset>utf-8</charset>
         </encoder>
-        <!-- 过滤器，只记录INFO级别的日志 -->
-        <!-- 果日志级别等于配置级别，过滤器会根据onMath 和 onMismatch接收或拒绝日志。 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <!-- 设置过滤级别 -->
-            <level>DEBUG</level>
-            <!-- 用于配置符合过滤条件的操作 -->
-            <onMatch>ACCEPT</onMatch>
-            <!-- 用于配置不符合过滤条件的操作 -->
-            <onMismatch>DENY</onMismatch>
-        </filter>
     </appender>
 
-    <logger name="com.apache.ibatis" level="${logging.level.mybatis}"/>
-    <logger name="java.sql.Connection" level="${logging.level.mybatis}"/>
-    <logger name="java.sql.Statement" level="${logging.level.mybatis}"/>
-    <logger name="java.sql.PreparedStatement" level="${logging.level.mybatis}"/>
-    <logger name="org.mybatis" level="${logging.level.mybatis}"/>
-    <logger name="com.bixin" level="${logging.level.project}"/>
-
-    <root level="${logging.level.default}">
+    <!-- 全局日志管理 -->
+    <root level="${logging.level}">
         <!-- appender referenced after it is defined -->
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="LOG_FILE"/>
+        <appender-ref ref="LOG_FILE" />
     </root>
-
 
 </configuration>
