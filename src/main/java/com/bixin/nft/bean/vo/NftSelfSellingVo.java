@@ -19,7 +19,6 @@ import lombok.experimental.SuperBuilder;
 public class NftSelfSellingVo extends NftMarketDo {
 
     private String boxToken;
-    private String payToken;
     private String nftMeta;
     private String nftBody;
 

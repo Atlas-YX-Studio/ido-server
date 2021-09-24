@@ -61,11 +61,9 @@ public class NftStoreController {
             NftGroupDo nftGroupDo = map.get(p.getGroupId());
             if (Objects.nonNull(nftGroupDo)) {
                 String boxToken = nftGroupDo.getBoxToken();
-                String payToken = nftGroupDo.getPayToken();
                 String nftMeta = nftGroupDo.getNftMeta();
                 String nftBody = nftGroupDo.getNftBody();
                 builder.boxToken(boxToken)
-                        .payToken(payToken)
                         .nftMeta(nftMeta)
                         .nftBody(nftBody);
             }
