@@ -12,6 +12,7 @@ import com.bixin.nft.bean.vo.NftInfoVo;
 import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
 import com.bixin.nft.core.service.*;
+import com.bixin.nft.enums.NftEventType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,14 +101,46 @@ public class NftInfoController {
             return P.failed("parameter is invalid");
         }
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
-        List<NftEventDo> list = nftEventService.getALlByPage(id,type, pageSize,nextId);
+        // type = null 查询所有
+        List<NftEventDo> list = nftEventService.getALlByPage(id,null, pageSize,nextId);
         List<OperationRecordVo> records = new ArrayList<>();
         if(!CollectionUtils.isEmpty(list)){
             for(NftEventDo nftEventDo : list){
+                if(NftEventType.BOXOPENEVENT.getDesc().equals(nftEventDo.getType())){
+                    continue;
+                }
                 OperationRecordVo operationRecordVo = new OperationRecordVo();
-                operationRecordVo.setAddress(nftEventDo.getSeller());
-                operationRecordVo.setPrice(nftEventDo.getSellingPrice());
-                operationRecordVo.setCurrencyName(nftEventDo.getPayTokenName());
+
+                // 铸造
+                if(NftEventType.NFTMINTEVENT.getDesc().equals(nftEventDo.getType())){
+                    operationRecordVo.setAddress(nftEventDo.getCreator());
+                    operationRecordVo.setPrice(null);
+                    operationRecordVo.setCurrencyName("");
+                }
+                //上架
+                if(NftEventType.NFTSELLEVENT.getDesc().equals(nftEventDo.getType())){
+                    operationRecordVo.setAddress(nftEventDo.getSeller());
+                    operationRecordVo.setPrice(nftEventDo.getSellingPrice());
+                    operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
+                }
+                //报价
+                if(NftEventType.NFTBIDEVENT.getDesc().equals(nftEventDo.getType())){
+                    operationRecordVo.setAddress(nftEventDo.getBider());
+                    operationRecordVo.setPrice(nftEventDo.getBidPrice());
+                    operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
+                }
+                // 获得
+                if(NftEventType.NFTBUYEVENT.getDesc().equals(nftEventDo.getType())){
+                    operationRecordVo.setAddress(nftEventDo.getBider());
+                    operationRecordVo.setPrice(nftEventDo.getBidPrice());
+                    operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
+                }
+                //下架
+                if(NftEventType.NFTOFFLINEEVENT.getDesc().equals(nftEventDo.getType())){
+                    operationRecordVo.setAddress(nftEventDo.getSeller());
+                    operationRecordVo.setPrice(nftEventDo.getSellingPrice());
+                    operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
+                }
                 operationRecordVo.setType(nftEventDo.getType());
                 operationRecordVo.setCreateTime(nftEventDo.getCreateTime());
                 records.add(operationRecordVo);

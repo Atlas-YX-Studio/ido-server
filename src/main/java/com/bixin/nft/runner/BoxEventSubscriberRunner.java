@@ -45,7 +45,7 @@ import java.util.concurrent.locks.LockSupport;
 
 @Slf4j
 @Component
-public class NftEventSubscriberRunner implements ApplicationRunner {
+public class BoxEventSubscriberRunner implements ApplicationRunner {
 
     @Resource
     StarConfig idoStarConfig;
@@ -76,7 +76,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
     @PostConstruct
     public void init() {
         poolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(), new NamedThreadFactory("NftEventSubscriberRunner-", true));
+                new LinkedBlockingQueue<>(), new NamedThreadFactory("BoxEventSubscriberRunner-", true));
     }
 
     @PreDestroy
@@ -87,9 +87,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             }
             poolExecutor.shutdown();
             poolExecutor.awaitTermination(1, TimeUnit.SECONDS);
-            log.info("NftEventSubscriberRunner poolExecutor stopped");
+            log.info("BoxEventSubscriberRunner poolExecutor stopped");
         } catch (InterruptedException ex) {
-            log.error("NftEventSubscriberRunner InterruptedException: ", ex);
+            log.error("BoxEventSubscriberRunner InterruptedException: ", ex);
             Thread.currentThread().interrupt();
         }
     }
@@ -101,66 +101,54 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     public void process(ApplicationArguments args) {
         String[] sourceArgs = 0 == args.getSourceArgs().length ? new String[]{""} : args.getSourceArgs();
-        log.info("NftEventSubscriberRunner start running [{}]", sourceArgs);
+        log.info("BoxEventSubscriberRunner start running [{}]", sourceArgs);
         try {
 
             WebSocketService service = new WebSocketService("ws://" + idoStarConfig.getNft().getWebsocketHost() + ":" + idoStarConfig.getNft().getWebsocketPort(), true);
             service.connect();
             StarcoinSubscriber subscriber = new StarcoinSubscriber(service);
-            EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getNft().getMarket()));
+            EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getNft().getCatadd()));
             Flowable<EventNotification> notificationFlowable = subscriber.newTxnSendRecvEventNotifications(eventFilter);
             notificationFlowable.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
                 JsonNode data = eventResult.getData();
                 // 添加日志
                 try {
-                    log.info("NftEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
+                    log.info("BoxEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
                 //去重
                 if (duplicateEvent(eventResult)) {
-                    log.info("NftEventSubscriberRunner duplicate event data {}", eventResult);
+                    log.info("BoxEventSubscriberRunner duplicate event data {}", eventResult);
                     return;
                 }
                 String tagString = getEventName(eventResult.getTypeTag());
                 NftEventDo nftEventDo = null;
-                // 售卖
-                if(NftEventType.NFTSELLEVENT.getDesc().equals(tagString)){
-                    log.info("NftEventSubscriberRunner 售卖");
-                    NftSellEventtDto dto = mapper.convertValue(data, NftSellEventtDto.class);
-                    nftEventDo = NftSellEventtDto.of(dto,NftEventType.NFTSELLEVENT.getDesc());
+                // 开盲盒
+                if(NftEventType.BOXOPENEVENT.getDesc().equals(tagString)){
+                    log.info("BoxEventSubscriberRunner 铸造");
+                    BoxOpenEventDto dto = mapper.convertValue(data, BoxOpenEventDto.class);
+                    nftEventDo = BoxOpenEventDto.of(dto,NftEventType.BOXOPENEVENT.getDesc());
                 }
-                // 出价
-                if(NftEventType.NFTBIDEVENT.getDesc().equals(tagString)){
-                    log.info("NftEventSubscriberRunner 出价");
-                    NftBidEventtDto dto = mapper.convertValue(data, NftBidEventtDto.class);
-                    nftEventDo = NftBidEventtDto.of(dto,NftEventType.NFTBIDEVENT.getDesc());
-                }
-                // 购买
-                if(NftEventType.NFTBUYEVENT.getDesc().equals(tagString)){
-                    log.info("NftEventSubscriberRunner 购买");
-                    NftBuyEventDto dto = mapper.convertValue(data, NftBuyEventDto.class);
-                    nftEventDo = NftBuyEventDto.of(dto,NftEventType.NFTBUYEVENT.getDesc());
-                }
-                // 取消
-                if(NftEventType.NFTOFFLINEEVENT.getDesc().equals(tagString)){
-                    log.info("NftEventSubscriberRunner 取消");
-                    NftOffLineEventtDto dto = mapper.convertValue(data, NftOffLineEventtDto.class);
-                    nftEventDo = NftOffLineEventtDto.of(dto,NftEventType.NFTOFFLINEEVENT.getDesc());
+                // 铸造
+                if(NftEventType.NFTMINTEVENT.getDesc().equals(tagString)){
+                    log.info("NftEventSubscriberRunner 铸造");
+                    NftMintEventtDto dto = mapper.convertValue(data, NftMintEventtDto.class);
+                    nftEventDo = NftMintEventtDto.of(dto,NftEventType.NFTMINTEVENT.getDesc());
                 }
                 if(!ObjectUtils.isEmpty(nftEventDo)){
                     setGroupIdAndInfoId(nftEventDo,eventResult.getTypeTag(),tagString);
                     nftEventService.insert(nftEventDo);
                 }else{
-                    log.error("NftEventSubscriberRunner nftEventDo 为空");
+                    log.error("BoxEventSubscriberRunner nftEventDo 为空");
                 }
             });
 
         } catch (Exception e) {
             long duration = initTime + (atomicSum.incrementAndGet() - 1) * initIntervalTime;
             duration = Math.min(duration, maxIntervalTime);
-            log.error("NftEventSubscriberRunner run exception count {}, next retry {}, params {}",
+            log.error("BoxEventSubscriberRunner run exception count {}, next retry {}, params {}",
                     atomicSum.get(), duration, idoStarConfig.getSwap(), e);
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(duration));
             DefaultApplicationArguments applicationArguments = new DefaultApplicationArguments("retry " + atomicSum.get());
@@ -168,9 +156,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         }
     }
 
-
     // 设置 infoId 和 groupId
-    // nft 一定都有 meta 和 body
     private void setGroupIdAndInfoId(NftEventDo nftEventDo,String typeTag,String eventType) {
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
@@ -188,20 +174,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         }
         nftEventDo.setInfoId(nftInfoDo.getId());
         nftEventDo.setGroupId(nftGroupDo.getId());
-        try {
-            if(NftEventType.NFTBUYEVENT.getDesc().equals(eventType)){
-                nftInfoDo.setOwner(nftEventDo.getBider());
-                nftInfoService.update(nftInfoDo);
-            }
-        }catch (Exception e){
-            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 : {}",e);
-        }
         return ;
-    }
-
-
-    private String getEventName(String typeTag) {
-        return typeTag.split(separator)[2].split("<")[0];
     }
 
     private String getMeta(String typeTag) {
@@ -210,6 +183,10 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     private String getBody(String typeTag) {
         return typeTag.split("<")[1].split(">")[0].split(",")[1].trim();
+    }
+
+    private String getEventName(String typeTag) {
+        return typeTag.split(separator)[2].split("<")[0];
     }
 
     /**
@@ -226,16 +203,15 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         try {
             key = URLEncoder.encode(typeTag, "utf8") + seqNumber;
         } catch (UnsupportedEncodingException e) {
-            log.error("NftEventSubscriberRunner exception ", e);
+            log.error("BoxEventSubscriberRunner exception ", e);
         }
-        log.info("NftEventSubscriberRunner duplicate event redis key {}", key);
+        log.info("BoxEventSubscriberRunner duplicate event redis key {}", key);
         if (Objects.isNull(key)) {
             return true;
         }
         Long now = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
         return !redisCache.tryGetDistributedLock(
-                key,
-                UUID.randomUUID().toString().replaceAll("-", "") + now,
+                key, UUID.randomUUID().toString().replaceAll("-", "") + now,
                 duplicateExpiredTime
         );
     }

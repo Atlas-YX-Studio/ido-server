@@ -38,4 +38,5 @@ ido:
       chain-id: 1
     nft:
       market: ""
+      catadd: "0xd30b4de81d71c1793aa4db4763211e63"
       scripts: ""

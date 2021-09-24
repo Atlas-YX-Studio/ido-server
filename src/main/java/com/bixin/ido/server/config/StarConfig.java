@@ -87,6 +87,7 @@ public class StarConfig {
         private String websocketHost;
         private String websocketPort;
         private String market;
+        private String catadd;
         private String scripts;
 
     }

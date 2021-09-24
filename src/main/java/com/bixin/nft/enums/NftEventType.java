@@ -11,7 +11,8 @@ public enum NftEventType {
     NFTSELLEVENT("NFTSellEvent"),
     NFTBIDEVENT("NFTBidEvent"),
     NFTBUYEVENT("NFTBuyEvent"),
-    NFTOFFLINEEVENT("NFTOfflineEvent");
+    NFTOFFLINEEVENT("NFTOfflineEvent"),
+    BOXOPENEVENT("BoxOpenEvent");
 
     private String desc;
 

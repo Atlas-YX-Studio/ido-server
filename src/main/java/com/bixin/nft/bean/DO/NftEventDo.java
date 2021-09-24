@@ -1,17 +1,17 @@
 package com.bixin.nft.bean.DO;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import lombok.Builder;
+import lombok.Data;
+
 /**
-* @Class: NftEventDo
-* @Description: nft事件表
-* @author: 系统
-* @created: 2021-09-22
-*/
+ * @Class: NftEventDo
+ * @Description: nft事件表
+ * @author: 系统
+ * @created: 2021-09-23
+ */
 @Data
 @Builder
 public class NftEventDo implements Serializable {
@@ -26,9 +26,19 @@ public class NftEventDo implements Serializable {
     private Long nftId;
 
     /**
-     * pay token name
+     * info 表 id
      */
-    private String payTokenName;
+    private Long infoId;
+
+    /**
+     * group 表 id
+     */
+    private Long groupId;
+
+    /**
+     * pay token
+     */
+    private String payToken;
 
     /**
      * 创建者

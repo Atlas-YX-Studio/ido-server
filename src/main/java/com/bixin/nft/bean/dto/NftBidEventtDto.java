@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -55,10 +55,14 @@ public class NftBidEventtDto {
                 .type(type)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
-        String token = dto.getPay_token_code().getName();
-        if(StringUtils.isNoneEmpty(token)){
-            builder.payTokenName(HexStringUtil.toStringHex(token.replaceAll("0x","")));
+
+        Pay_token_code payTokenCode = dto.getPay_token_code();
+        String tokenCode = "";
+        if(!ObjectUtils.isEmpty(payTokenCode)){
+            tokenCode = payTokenCode.getAddr() + "::" + HexStringUtil.toStringHex(payTokenCode.getName().replaceAll("0x",""))
+                    + "::"+ HexStringUtil.toStringHex(payTokenCode.getModule_name().replaceAll("0x",""));
         }
+        builder.payToken(tokenCode);
         return builder.build();
     }
 

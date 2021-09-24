@@ -92,8 +92,10 @@ DROP TABLE IF EXISTS nft_event;
 CREATE TABLE nft_event
 (
     id                    bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
-    nft_id                bigint(20) NOT NULL COMMENT 'NFT id',
-    pay_token_name        varchar(64)     DEFAULT NULL COMMENT 'pay token name',
+    nft_id                bigint(20)  COMMENT 'NFT id',
+    info_id               bigint(20)  COMMENT 'info 表 id',
+    group_id              bigint(20)  COMMENT 'group 表 id',
+    pay_token             varchar(64)     DEFAULT NULL COMMENT 'pay token',
     creator               varchar(128)    DEFAULT NULL COMMENT '创建者',
     seller                varchar(128)    DEFAULT NULL COMMENT '出售者',
     selling_price         DECIMAL(36, 18) DEFAULT 0 COMMENT '报价',

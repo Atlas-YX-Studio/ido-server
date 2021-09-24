@@ -10,23 +10,23 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 铸造 nft
+ * 开盲盒事件
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NftMintEventtDto {
+public class BoxOpenEventDto {
 
     // nft id
     private Long id;
-    // 铸造者
-    private String creator;
+    // 开盲盒的人
+    private String owner;
 
-    public static NftEventDo of(NftMintEventtDto dto, String type) {
+    public static NftEventDo of(BoxOpenEventDto dto, String type) {
         NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
                 .nftId(dto.getId())
-                .creator(dto.getCreator())
+                .creator(dto.getOwner())
                 .seller("")
                 .sellingPrice(BigDecimal.ZERO)
                 .bider("")

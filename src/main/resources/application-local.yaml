@@ -55,4 +55,5 @@ ido:
       websocket-host: 60.205.3.84
       websocket-port: 8970
       market: "0x290c7b35320a4dd26f651fd184373fe7"
+      catadd: "0xd30b4de81d71c1793aa4db4763211e63"
       scripts: "0x290c7b35320a4dd26f651fd184373fe7"
