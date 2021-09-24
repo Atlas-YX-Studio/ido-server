@@ -93,8 +93,6 @@ CREATE TABLE nft_event
 (
     id                    bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
     nft_id                bigint(20) NOT NULL COMMENT 'NFT id',
-    pay_token_addr        varchar(64)     DEFAULT NULL COMMENT 'pay token addr',
-    pay_token_module_name varchar(64)     DEFAULT NULL COMMENT 'pay token modult',
     pay_token_name        varchar(64)     DEFAULT NULL COMMENT 'pay token name',
     creator               varchar(128)    DEFAULT NULL COMMENT '创建者',
     seller                varchar(128)    DEFAULT NULL COMMENT '出售者',

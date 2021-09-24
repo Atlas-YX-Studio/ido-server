@@ -4,18 +4,14 @@ import com.bixin.ido.server.bean.vo.wrap.P;
 import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.utils.BeanCopyUtil;
-import com.bixin.nft.bean.DO.NftGroupDo;
-import com.bixin.nft.bean.DO.NftInfoDo;
-import com.bixin.nft.bean.DO.NftKikoCatDo;
-import com.bixin.nft.bean.DO.NftMarketDo;
+import com.bixin.ido.server.utils.HexStringUtil;
+import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.nft.bean.DO.*;
 import com.bixin.nft.bean.vo.NftGroupVo;
 import com.bixin.nft.bean.vo.NftInfoVo;
 import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
-import com.bixin.nft.core.service.NftGroupService;
-import com.bixin.nft.core.service.NftInfoService;
-import com.bixin.nft.core.service.NftKikoCatService;
-import com.bixin.nft.core.service.NftMarketService;
+import com.bixin.nft.core.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +20,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +46,9 @@ public class NftInfoController {
 
     @Autowired
     public NftMarketService nftMarketService;
+
+    @Autowired
+    public NftEventService nftEventService;
 
     /**
      * 获取系列列表
@@ -87,7 +87,7 @@ public class NftInfoController {
 
     /**
      * 操作记录
-     *
+     * ID 为 nft id
      * @return
      */
     @GetMapping("/operation/record")
@@ -100,18 +100,19 @@ public class NftInfoController {
             return P.failed("parameter is invalid");
         }
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
-
+        List<NftEventDo> list = nftEventService.getALlByPage(id,type, pageSize,nextId);
         List<OperationRecordVo> records = new ArrayList<>();
-
-        OperationRecordVo operationRecordVo = new OperationRecordVo();
-        //todo
-        operationRecordVo.setAddress("aaaaa");
-        operationRecordVo.setPrice(new BigDecimal(12));
-        operationRecordVo.setCurrencyName("STC");
-        operationRecordVo.setType("aaa");
-        operationRecordVo.setCreateTime(new Date().getTime());
-        records.add(operationRecordVo);
-
+        if(!CollectionUtils.isEmpty(list)){
+            for(NftEventDo nftEventDo : list){
+                OperationRecordVo operationRecordVo = new OperationRecordVo();
+                operationRecordVo.setAddress(nftEventDo.getSeller());
+                operationRecordVo.setPrice(nftEventDo.getSellingPrice());
+                operationRecordVo.setCurrencyName(nftEventDo.getPayTokenName());
+                operationRecordVo.setType(nftEventDo.getType());
+                operationRecordVo.setCreateTime(nftEventDo.getCreateTime());
+                records.add(operationRecordVo);
+            }
+        }
         boolean hasNext = false;
         if (records.size() > pageSize) {
             records = records.subList(0, records.size() - 1);

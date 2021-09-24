@@ -21,7 +21,6 @@ spring:
 
 ## 日志配置
 logging:
-  config: classpath:logback/logback-spring.xml
   path: logs
   level:
     # 全局日志级别
@@ -53,5 +52,7 @@ ido:
       url: https://main-seed.starcoin.org
       chain-id: 1
     nft:
+      websocket-host: 60.205.3.84
+      websocket-port: 8970
       market: "0x290c7b35320a4dd26f651fd184373fe7"
       scripts: "0x290c7b35320a4dd26f651fd184373fe7"

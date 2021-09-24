@@ -44,20 +44,20 @@ public class NftBidEventtDto {
         private String name;
     }
 
-    public static NftEventDo of(NftBidEventtDto dto) {
-        NftEventDo.NftEventDoBuilder builder= NftEventDo.builder()
+    public static NftEventDo of(NftBidEventtDto dto,String type) {
+        NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
                 .nftId(dto.getId())
                 .creator("")
                 .seller(dto.getSeller())
                 .sellingPrice(dto.getSelling_price())
                 .bider(dto.getBider())
                 .bidPrice(dto.getBid_price())
-                .type("出价")
+                .type(type)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
         String token = dto.getPay_token_code().getName();
         if(StringUtils.isNoneEmpty(token)){
-            builder.payTokenAddr(HexStringUtil.toStringHex(token.replaceAll("0x","")));
+            builder.payTokenName(HexStringUtil.toStringHex(token.replaceAll("0x","")));
         }
         return builder.build();
     }
