@@ -1,9 +1,11 @@
 package com.bixin.nft.bean.vo;
 
+import com.bixin.nft.bean.dto.TokenDto;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @class: NftGroupVO
@@ -142,4 +144,9 @@ public class NftGroupVo implements Serializable {
      * 最高出价
      */
     private BigDecimal topBidPrice;
+
+    /**
+     * 支持币种
+     */
+    private List<TokenDto> supportToken;
 }

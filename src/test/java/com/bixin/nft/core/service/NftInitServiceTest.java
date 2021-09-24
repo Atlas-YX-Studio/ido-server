@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @ActiveProfiles("local")
@@ -29,12 +30,12 @@ class NftInitServiceTest {
 
     @Test
     void initBuyBackNFT() {
-        assert nftInitService.initBuyBackNFT();
+        nftInitService.initBuyBackNFT(1L, "0x1::STC::STC");
     }
 
     @Test
     void buyBackNFT() {
-        assert nftInitService.buyBackNFT();
+        nftInitService.buyBackNFT(10000L, "0x1::STC::STC", BigDecimal.valueOf(0.01));
     }
 
     @Test

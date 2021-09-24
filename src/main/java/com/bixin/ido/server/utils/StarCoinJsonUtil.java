@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class StarCoinJsonUtil {
 
@@ -46,7 +47,7 @@ public class StarCoinJsonUtil {
         }
         @SuppressWarnings("unchecked")
         Map<String, Object> result = (Map<String, Object>) respMap.get("result");
-        if (!result.containsKey("value")) {
+        if (Objects.isNull(result) || !result.containsKey("value")) {
             return Collections.EMPTY_LIST;
         }
         @SuppressWarnings("unchecked")

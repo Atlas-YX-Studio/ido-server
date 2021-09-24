@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
@@ -22,23 +23,51 @@ public class NftContractController {
     private final static String SECRET_KEY = "766dF569970B22B29152eB326dad1b1E";
 
     /**
-     *
+     * 初始化市场合约
      *
      * @return
      */
-    @GetMapping("/group/list")
-    public R groupList(@RequestParam(value = "secretKey") String secretKey,
+    @GetMapping("/market/init")
+    public R initNFTMarket(@RequestParam(value = "secretKey") String secretKey,
                        @RequestParam(value = "creatorFee") String creatorFee,
                        @RequestParam(value = "platformFee") String platformFee) {
         if (!SECRET_KEY.equals(secretKey)) {
-            return R.failed();
+            return R.failed("permission denied");
         }
-        boolean success = nftContractService.initNFTMarket(new BigInteger(creatorFee), new BigInteger(platformFee));
-        if (success) {
-            return R.success(true);
-        } else {
-            return R.failed();
+        nftContractService.initNFTMarket(new BigInteger(creatorFee), new BigInteger(platformFee));
+        return R.success(true);
+    }
+
+    @GetMapping("/nft/create")
+    public R createNFT(@RequestParam(value = "secretKey") String secretKey) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
         }
+        nftContractService.createNFT();
+        return R.success(true);
+    }
+
+    @GetMapping("/nft/buyback-init")
+    public R initBuyBackNFT(@RequestParam(value = "secretKey") String secretKey,
+                            @RequestParam(value = "groupId") Long groupId,
+                            @RequestParam(value = "payToken") String payToken) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
+        }
+        nftContractService.initBuyBackNFT(groupId, payToken);
+        return R.success(true);
+    }
+
+    @GetMapping("/nft/buyback")
+    public R buyBackNFT(@RequestParam(value = "secretKey") String secretKey,
+                        @RequestParam(value = "infoId") Long infoId,
+                        @RequestParam(value = "payToken") String payToken,
+                        @RequestParam(value = "price") String price) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
+        }
+        nftContractService.buyBackNFT(infoId, payToken, new BigDecimal(price));
+        return R.success(true);
     }
 
 }

@@ -53,7 +53,10 @@ public enum IdoErrorCode implements ErrorCode {
      */
     CONTRACT_CALL_FAILURE(100008, "contract call failure"),
 
-
+    /**
+     * 数据不存在
+     */
+    DATA_NOT_EXIST(100009, "data not exist"),
 
     ;
 
