@@ -56,9 +56,16 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
 
     @Scheduled(cron = "* 0/10 * * * ?")
     public void refreshNftInfo() {
-
-        List<NftInfoDo> nftInfoDos = nftInfoService.listByObject(new NftInfoDo());
-        nftInfoMap = nftInfoDos.stream().filter(x->!x.getNftId().equals(0L)).collect(Collectors.toMap(x->toInfoKey(x.getGroupId(), x.getNftId()), y->y));
+        try {
+            List<NftInfoDo> nftInfoDos = nftInfoService.listByObject(new NftInfoDo());
+            if (CollectionUtils.isEmpty(nftInfoDos)) {
+                log.warn("platform buy back refresh nft info is empty");
+                return;
+            }
+            nftInfoMap = nftInfoDos.stream().filter(x -> x.getNftId() != 0).collect(Collectors.toMap(x -> toInfoKey(x.getGroupId(), x.getNftId()), y -> y));
+        } catch (Exception e) {
+            log.error("refreshNftInfo exception", e);
+        }
     }
 
     private String toInfoKey(Long groupId, Long nftId) {
@@ -153,13 +160,13 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
 
         List<BuyBackOrder> list;
         if (Objects.equals(0L, groupId) && StringUtils.equalsIgnoreCase("all", currency)) {
-            list =  orderMap.values().stream().flatMap(x->x.values().stream().flatMap(Collection::stream)).sorted(comparator).collect(Collectors.toList());
+            list = orderMap.values().stream().flatMap(x -> x.values().stream().flatMap(Collection::stream)).sorted(comparator).collect(Collectors.toList());
         } else if (Objects.equals(0L, groupId)) {
-            list =  orderMap.values().stream().flatMap(x->x.getOrDefault(currency, List.of()).stream()).sorted(comparator).collect(Collectors.toList());
+            list = orderMap.values().stream().flatMap(x -> x.getOrDefault(currency, List.of()).stream()).sorted(comparator).collect(Collectors.toList());
         } else if (StringUtils.equalsIgnoreCase("all", currency)) {
-            list =  orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream).sorted(comparator).collect(Collectors.toList());
+            list = orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream).sorted(comparator).collect(Collectors.toList());
         } else {
-            list =  orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().sorted(comparator).collect(Collectors.toList());
+            list = orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().sorted(comparator).collect(Collectors.toList());
         }
 
         int start = pageSize * Math.max((pageNum - 1), 0);
@@ -179,6 +186,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         public BigDecimal buyPrice;
         public String fullCurrency;
         public String icon;
+
         public String getCurrency() {
             return fullCurrency.split("::")[2];
         }

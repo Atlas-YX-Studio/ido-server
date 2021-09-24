@@ -75,6 +75,7 @@ CREATE TABLE nft_market
     type        varchar(64)     DEFAULT NULL COMMENT '类型：nft/box',
     name        varchar(128)    DEFAULT NULL COMMENT 'ndf/box 全称',
     owner       varchar(128)    DEFAULT NULL COMMENT '当前持有者',
+    pay_token   varchar(255)    DEFAULT NULL COMMENT '链上支付币种',
     address     varchar(128)    DEFAULT NULL COMMENT '合约地址',
     sell_price  DECIMAL(36, 18) DEFAULT 0 COMMENT '售价',
     offer_price DECIMAL(36, 18) DEFAULT 0 COMMENT '报价，0暂无报价，大于0为当前最高出价',

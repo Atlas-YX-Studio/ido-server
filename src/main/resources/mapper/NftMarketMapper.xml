@@ -10,6 +10,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="pay_token" jdbcType="VARCHAR" property="payToken" />
     <result column="sell_price" jdbcType="DECIMAL" property="sellPrice" />
     <result column="offer_price" jdbcType="DECIMAL" property="offerPrice" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
@@ -17,7 +18,7 @@
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, chain_id, nft_box_id, group_id, type, name, owner, address, sell_price, offer_price, icon,
+    id, chain_id, nft_box_id, group_id, type, name, owner, pay_token, address, sell_price, offer_price, icon,
     create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -33,6 +34,9 @@
     where 1=1
     <if test="groupId != null">
        and group_id = #{groupId}
+    </if>
+    <if test="payToken != null">
+      and pay_token = #{payToken}
     </if>
     <if test="type != null">
       and type = #{type}
@@ -57,12 +61,12 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftMarketDo" useGeneratedKeys="true">
     insert into nft_market (id, chain_id, nft_box_id, group_id,
-      type, name, owner, 
+      type, name, owner, pay_token,
       address, sell_price, offer_price, 
       icon, create_time, update_time
       )
     values (#{id,jdbcType=BIGINT}, #{chainId,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
-            #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR},
+            #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR},
       #{address,jdbcType=VARCHAR}, #{sellPrice,jdbcType=DECIMAL}, #{offerPrice,jdbcType=DECIMAL}, 
       #{icon,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
@@ -87,6 +91,9 @@
       </if>
       <if test="owner != null">
         owner = #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="payToken != null">
+        payToken = #{payToken,jdbcType=VARCHAR},
       </if>
       <if test="address != null">
         address = #{address,jdbcType=VARCHAR},
@@ -131,6 +138,9 @@
       </if>
       <if test="null != owner">
          and owner = #{owner,jdbcType=VARCHAR}
+      </if>
+      <if test="payToken != null">
+         and payToken = #{payToken,jdbcType=VARCHAR}
       </if>
       <if test="null != address">
          and address = #{address,jdbcType=VARCHAR}

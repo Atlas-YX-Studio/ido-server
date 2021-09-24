@@ -146,6 +146,8 @@ public class ScheduleNftMarket {
         nftMap.entrySet().forEach(entry -> {
             NftGroupDo groupDo = entry.getKey();
             List<NFTBoxDto> nftList = entry.getValue();
+            String payToken = groupDo.getPayToken();
+            groupDo.setPayToken(null);
             NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
             if (Objects.isNull(nftGroupDo)) {
                 log.error("ScheduleNftMarket buildNft and nftGroupDo is null");
@@ -166,6 +168,7 @@ public class ScheduleNftMarket {
                             .type(NftBoxType.NFT.getDesc())
                             .name(nftGroupDo.getName())
                             .owner(so.getSeller())
+                            .payToken(payToken)
                             .address(starConfig.getNft().getMarket())
                             .sellPrice(so.getSelling_price())
                             .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
@@ -183,6 +186,8 @@ public class ScheduleNftMarket {
         boxMap.entrySet().forEach(entry -> {
             NftGroupDo groupDo = entry.getKey();
             List<NFTBoxDto> boxList = entry.getValue();
+            String payToken = groupDo.getPayToken();
+            groupDo.setPayToken(null);
             NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
             if (Objects.isNull(nftGroupDo)) {
                 log.error("ScheduleNftMarket buildBox and nftGroupDo is null");
@@ -203,6 +208,7 @@ public class ScheduleNftMarket {
                             .type(NftBoxType.BOX.getDesc())
                             .name(nftGroupDo.getName())
                             .owner(so.getSeller())
+                            .payToken(payToken)
                             .address(starConfig.getNft().getMarket())
                             .sellPrice(so.getSelling_price())
                             .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
