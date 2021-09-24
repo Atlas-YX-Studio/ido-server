@@ -3,6 +3,7 @@ package com.bixin.nft.core.service;
 import com.bixin.ido.server.common.errorcode.IdoErrorCode;
 import com.bixin.ido.server.common.exception.IdoException;
 import com.bixin.ido.server.enums.NftGroupStatus;
+import com.bixin.ido.server.utils.BigDecimalUtil;
 import com.bixin.ido.server.utils.TypeArgsUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
@@ -23,6 +24,7 @@ import org.starcoin.utils.AccountAddressUtils;
 import org.starcoin.utils.BcsSerializeHelper;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.List;
@@ -56,7 +58,7 @@ public class NftContractService {
      *
      * @return
      */
-    public boolean initNFTMarket(BigInteger creatorFee, BigInteger platformFee) {
+    public void initNFTMarket(BigInteger creatorFee, BigInteger platformFee) {
         if (!contractService.deployContract(market, "contract/nft/" + MARKET_MODULE + ".mv", null)) {
             log.error("NFT Market部署失败");
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
@@ -75,7 +77,10 @@ public class NftContractService {
                         BcsSerializeHelper.serializeU128ToBytes(platformFee)
                 ))
                 .build();
-        return contractService.callFunction(market, scriptFunctionObj);
+        if (!contractService.callFunction(market, scriptFunctionObj)) {
+            log.error("NFT Config初始化失败");
+            throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+        }
     }
 
     /**
@@ -285,7 +290,15 @@ public class NftContractService {
         return contractService.callFunction(scripts, scriptFunctionObj);
     }
 
-    public boolean initBuyBackNFT() {
+    /**
+     * 初始化NFT回购
+     */
+    public void initBuyBackNFT(Long groupId, String payToken) {
+        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(groupId);
+        if (nftGroupDo == null) {
+            log.error("NFT市场回购初始化失败, groupId:{} 不存在", groupId);
+            throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
+        }
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
@@ -293,31 +306,52 @@ public class NftContractService {
                 .functionName("init_buy_back_list")
                 .args(Lists.newArrayList())
                 .tyArgs(Lists.newArrayList(
-                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatMeta"),
-                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatBody"),
-                        TypeArgsUtil.parseTypeObj("0x1::STC::STC")
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()),
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftBody()),
+                        TypeArgsUtil.parseTypeObj(payToken)
                 ))
                 .build();
-        return contractService.callFunction(market, scriptFunctionObj);
+        if (!contractService.callFunction(market, scriptFunctionObj)) {
+            log.error("NFT市场回购初始化失败, 合约请求失败");
+            throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+        }
     }
 
-    public boolean buyBackNFT() {
+    /**
+     *
+     * @return
+     */
+    public void buyBackNFT(Long infoId, String payToken, BigDecimal price) {
+        NftInfoDo nftInfoDo = nftInfoMapper.selectByPrimaryKey(infoId);
+        if (nftInfoDo == null) {
+            log.error("NFT市场回购失败, infoId:{} 不存在", infoId);
+            throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
+        }
+        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(nftInfoDo.getGroupId());
+        if (nftGroupDo == null) {
+            log.error("NFT市场回购失败, groupId:{} 不存在", nftInfoDo.getGroupId());
+            throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
+        }
+        BigInteger priceFactor = BigDecimalUtil.getPrecisionFactor(9).multiply(price).toBigInteger();
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
                 .moduleName(SCRIPTS_MODULE)
                 .functionName("nft_buy_back")
                 .args(Lists.newArrayList(
-                        BcsSerializeHelper.serializeU64ToBytes(2L),
-                        BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(100000000))
+                        BcsSerializeHelper.serializeU64ToBytes(nftInfoDo.getNftId()),
+                        BcsSerializeHelper.serializeU128ToBytes(priceFactor)
                 ))
                 .tyArgs(Lists.newArrayList(
-                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatMeta"),
-                        TypeArgsUtil.parseTypeObj("0xd30b4de81d71c1793aa4db4763211e63::KikoCat06::KikoCatBody"),
-                        TypeArgsUtil.parseTypeObj("0x1::STC::STC")
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()),
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftBody()),
+                        TypeArgsUtil.parseTypeObj(payToken)
                 ))
                 .build();
-        return contractService.callFunction(market, scriptFunctionObj);
+        if (!contractService.callFunction(market, scriptFunctionObj)) {
+            log.error("NFT市场回购失败, 合约请求失败");
+            throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+        }
     }
 
     public boolean sellNFT() {
