@@ -15,7 +15,7 @@
 
     <springProperty scope="context" name="springAppName" source="spring.application.name" />
     <springProperty scope="context" name="logging.path" source="logging.path"/>
-    <springProperty scope="context" name="logging.level" source="logging.level"/>
+    <springProperty scope="context" name="logLevel" source="logging.logLevel"/>
 
     <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
     <property name="logHomeDir" value="${logging.path}"/>
@@ -58,7 +58,7 @@
     </appender>
 
     <!-- 全局日志管理 -->
-    <root level="${logging.level}">
+    <root level="${logLevel}">
         <!-- appender referenced after it is defined -->
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOG_FILE" />

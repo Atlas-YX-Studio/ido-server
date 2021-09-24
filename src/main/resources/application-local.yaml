@@ -22,7 +22,7 @@ spring:
 ## 日志配置
 logging:
   path: logs
-  level: INFO
+  logLevel: INFO
 
 
 ## ------------------------------业务相关配置写到下面-------------------------

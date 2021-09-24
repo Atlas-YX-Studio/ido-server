@@ -104,7 +104,7 @@ management:
 logging:
   config: classpath:logback/logback-spring.xml
   path: /data/logs
-  level: INFO
+  logLevel: INFO
 
 ---
 #控制台输出彩色
