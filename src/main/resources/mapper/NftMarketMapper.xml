@@ -35,6 +35,9 @@
     <if test="groupId != null">
        and group_id = #{groupId}
     </if>
+    <if test="payToken != null">
+      and pay_token = #{payToken}
+    </if>
     <if test="type != null">
       and type = #{type}
     </if>
