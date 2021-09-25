@@ -177,6 +177,11 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         return list.subList(start, end);
     }
 
+    @Override
+    public BuyBackOrder getOrder(Long id, Long groupId, String currency) {
+        return this.orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().filter(x -> Objects.equals(id, x.id)).findFirst().orElse(null);
+    }
+
     public static class BuyBackOrder {
         public Long id;
         public Long nftId;
