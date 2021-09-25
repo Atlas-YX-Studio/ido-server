@@ -18,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,6 +169,7 @@ public class NftInfoController {
         NftGroupVo nftGroupVo = BeanCopyUtil.copyProperties(nftGroupDo, () -> {
             NftGroupVo vo = new NftGroupVo();
             vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
+            vo.setSellingPrice(new BigDecimal(nftGroupDo.getSellingPrice()));
             return vo;
         });
         return R.success(nftGroupVo);
