@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 @Data
 public class OperationRecordVo {
 
+    // eventId
+    private Long id;
+
     // 币种列表
     private String currencyName;
 
