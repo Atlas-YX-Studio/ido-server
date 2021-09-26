@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.novi.serde.Bytes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -29,6 +30,7 @@ import org.starcoin.utils.BcsSerializeHelper;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -105,6 +107,7 @@ public class NftContractService {
                     throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
                 }
                 nftGroupDo.setStatus(NftGroupStatus.INITIALIZED.name());
+                nftGroupDo.setUpdateTime(System.currentTimeMillis());
                 log.info("NFT合约 {} 部署成功", nftGroupDo.getName());
                 nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
             });
@@ -140,12 +143,16 @@ public class NftContractService {
                     log.info("NFT {} mint成功", nftInfoDo.getName());
                     nftInfoDo.setNftId(nftId.longValue());
                     nftInfoDo.setCreated(true);
+                    nftInfoDo.setUpdateTime(System.currentTimeMillis());
                     nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
                     nftId.add(1);
                 });
                 // 全部铸造完成，修改
                 nftGroupDo.setStatus(NftGroupStatus.CREATED.name());
+                nftGroupDo.setUpdateTime(System.currentTimeMillis());
                 nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+                // 重新rank
+                reRank(nftGroupDo.getSeries());
             });
         }
 
@@ -173,6 +180,7 @@ public class NftContractService {
                 // 发售成功
                 log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
                 nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
+                nftGroupDo.setUpdateTime(System.currentTimeMillis());
                 nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
             });
         }
@@ -356,6 +364,45 @@ public class NftContractService {
             log.error("NFT市场回购失败, 合约请求失败");
             throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
         }
+    }
+
+    /**
+     * 指定系列重新排序
+     * @param series
+     */
+    public void reRank(String series) {
+        // 获取该系列下所有NFT
+        List<NftInfoDo> nftInfoList = new ArrayList<>();
+        NftGroupDo selectGroupDo = new NftGroupDo();
+        selectGroupDo.setSeries(series);
+        List<NftGroupDo> nftGroupDoList = nftGroupMapper.selectByPrimaryKeySelectiveList(selectGroupDo);
+        nftGroupDoList.forEach(nftGroupDo -> {
+            NftInfoDo selectInfoDo = new NftInfoDo();
+            selectInfoDo.setGroupId(nftGroupDo.getId());
+            List<NftInfoDo> nftInfoDoList = nftInfoMapper.selectByPrimaryKeySelectiveList(selectInfoDo);
+            nftInfoList.addAll(nftInfoDoList);
+        });
+        // 根据score排序
+        MutableInt index = new MutableInt(0);
+        MutableInt preRank = new MutableInt(0);
+        MutableObject<BigDecimal> preScore = new MutableObject<>(new BigDecimal(0));
+        nftInfoList.stream().sorted(Comparator.comparing(NftInfoDo::getScore).reversed()).forEach(nftInfoDo -> {
+            if (nftInfoDo.getScore().equals(preScore.getValue())) {
+                // 与前者分数相同，排名不变
+                nftInfoDo.setRank(preRank.getValue());
+                nftInfoDo.setUpdateTime(System.currentTimeMillis());
+                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+                index.increment();
+            } else {
+                // 大于前者，排名为序列号
+                nftInfoDo.setRank(index.incrementAndGet());
+                nftInfoDo.setUpdateTime(System.currentTimeMillis());
+                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+                // 排名变更
+                preRank.setValue(index.getValue());
+                preScore.setValue(nftInfoDo.getScore());
+            }
+        });
     }
 
     public boolean sellNFT() {

@@ -191,10 +191,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         try {
             if(NftEventType.NFTBUYEVENT.getDesc().equals(eventType)){
                 nftInfoDo.setOwner(nftEventDo.getBider());
+                nftInfoDo.setUpdateTime(System.currentTimeMillis());
                 nftInfoService.update(nftInfoDo);
             }
         }catch (Exception e){
-            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 : {}",e);
+            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
         }
         return ;
     }

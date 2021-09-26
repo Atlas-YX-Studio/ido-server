@@ -12,12 +12,15 @@ import javax.annotation.Resource;
 @Slf4j
 @ActiveProfiles("local")
 @SpringBootTest(classes = IdoServerApplication.class)
-class NftInfoControllerTest {
+class NftControllerTest {
     @Resource
     private NftInfoController nftInfoController;
+
+    private final static String SECRET_KEY = "766dF569970B22B29152eB326dad1b1E";
 
     @Test
     void groupList() {
         log.info("groupList:" + JSON.toJSONString(nftInfoController.groupList()));
     }
+
 }
