@@ -8,6 +8,7 @@
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="nft_name" jdbcType="VARCHAR" property="nftName" />
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="pay_token" jdbcType="VARCHAR" property="payToken" />
@@ -18,7 +19,7 @@
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, chain_id, nft_box_id, group_id, type, name, owner, pay_token, address, sell_price, offer_price, icon,
+    id, chain_id, nft_box_id, group_id, type, name, nft_name, owner, pay_token, address, sell_price, offer_price, icon,
     create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -61,12 +62,12 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftMarketDo" useGeneratedKeys="true">
     insert into nft_market (id, chain_id, nft_box_id, group_id,
-      type, name, owner, pay_token,
+      type, name, owner, pay_token, nft_name,
       address, sell_price, offer_price, 
       icon, create_time, update_time
       )
     values (#{id,jdbcType=BIGINT}, #{chainId,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
-            #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR},
+            #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR}, #{nftName,jdbcType=VARCHAR},
       #{address,jdbcType=VARCHAR}, #{sellPrice,jdbcType=DECIMAL}, #{offerPrice,jdbcType=DECIMAL}, 
       #{icon,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
@@ -88,6 +89,9 @@
       </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nftName != null">
+        nft_name = #{nftName,jdbcType=VARCHAR},
       </if>
       <if test="owner != null">
         owner = #{owner,jdbcType=VARCHAR},
@@ -135,6 +139,9 @@
       </if>
       <if test="null != name">
          and name = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="null != nftName">
+         and nft_name = #{nftName,jdbcType=VARCHAR}
       </if>
       <if test="null != owner">
          and owner = #{owner,jdbcType=VARCHAR}
