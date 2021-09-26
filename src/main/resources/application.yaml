@@ -103,8 +103,12 @@ management:
 ## 日志配置
 logging:
   config: classpath:logback/logback-spring.xml
+  # 日志地址
   path: /data/logs
+  # 日志级别
   logLevel: INFO
+  # 日志保留天数，默认10天
+  maxHistory: 10
 
 ---
 #控制台输出彩色

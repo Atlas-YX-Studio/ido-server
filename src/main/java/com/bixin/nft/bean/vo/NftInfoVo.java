@@ -29,6 +29,10 @@ public class NftInfoVo {
      */
     private Long groupId;
     /**
+     * NFT名
+     */
+    private String name;
+    /**
      * 图片链接
      */
     private String imageLink;
