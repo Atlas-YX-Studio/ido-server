@@ -16,6 +16,7 @@
     <springProperty scope="context" name="springAppName" source="spring.application.name" />
     <springProperty scope="context" name="logging.path" source="logging.path"/>
     <springProperty scope="context" name="logLevel" source="logging.logLevel"/>
+    <springProperty scope="context" name="maxHistory" source="logging.maxHistory"/>
 
     <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
     <property name="logHomeDir" value="${logging.path}"/>
@@ -46,13 +47,13 @@
                 <maxFileSize>50MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <!--日志文件保留天数-->
-            <MaxHistory>10</MaxHistory>
+            <MaxHistory>${maxHistory}</MaxHistory>
         </rollingPolicy>
         <!-- 如果是 true，日志被追加到文件结尾，如果是 false，清空现存文件，默认是true。 -->
         <append>true</append>
         <!-- 日志文件的格式 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>${logPattern}</pattern>c
+            <pattern>${logPattern}</pattern>
             <charset>utf-8</charset>
         </encoder>
     </appender>
