@@ -43,7 +43,7 @@ public class NftMarketDo implements Serializable {
     private String type;
 
     /**
-     * ndf/box 全称
+     * ndf/box 分组全称
      */
     private String name;
 
@@ -83,6 +83,8 @@ public class NftMarketDo implements Serializable {
     private Long updateTime;
 
     private String payToken;
+
+    private String nftName;
 
     private static final long serialVersionUID = 1L;
 }

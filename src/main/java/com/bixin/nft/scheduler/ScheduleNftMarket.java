@@ -153,32 +153,31 @@ public class ScheduleNftMarket {
                 log.error("ScheduleNftMarket buildNft and nftGroupDo is null");
                 return;
             }
-            nftList.forEach(p -> {
-                p.getItems().forEach(so -> {
-                    NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
-                    NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
-                    if (Objects.isNull(nftInfo)) {
-                        log.error("ScheduleNftMarket buildNft and nftInfo is null");
-                        return;
-                    }
-                    NftMarketDo nft = NftMarketDo.builder()
-                            .chainId(so.getId())
-                            .nftBoxId(nftInfo.getId())
-                            .groupId(nftGroupDo.getId())
-                            .type(NftBoxType.NFT.getDesc())
-                            .name(nftGroupDo.getName())
-                            .owner(so.getSeller())
-                            .payToken(payToken)
-                            .address(starConfig.getNft().getMarket())
-                            .sellPrice(so.getSelling_price())
-                            .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
-                            .icon(nftInfo.getImageLink())
-                            .createTime(currentTime)
-                            .updateTime(currentTime)
-                            .build();
-                    list.add(nft);
-                });
-            });
+            nftList.forEach(p -> p.getItems().forEach(so -> {
+                NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
+                NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
+                if (Objects.isNull(nftInfo)) {
+                    log.error("ScheduleNftMarket buildNft and nftInfo is null");
+                    return;
+                }
+                NftMarketDo nft = NftMarketDo.builder()
+                        .chainId(so.getId())
+                        .nftBoxId(nftInfo.getId())
+                        .groupId(nftGroupDo.getId())
+                        .type(NftBoxType.NFT.getDesc())
+                        .name(nftGroupDo.getName())
+                        .nftName(nftInfo.getName())
+                        .owner(so.getSeller())
+                        .payToken(payToken)
+                        .address(starConfig.getNft().getMarket())
+                        .sellPrice(so.getSelling_price())
+                        .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
+                        .icon(nftInfo.getImageLink())
+                        .createTime(currentTime)
+                        .updateTime(currentTime)
+                        .build();
+                list.add(nft);
+            }));
         });
     }
 
@@ -193,26 +192,25 @@ public class ScheduleNftMarket {
                 log.error("ScheduleNftMarket buildBox and nftGroupDo is null");
                 return;
             }
-            boxList.forEach(p -> {
-                p.getItems().forEach(so -> {
-                    NftMarketDo box = NftMarketDo.builder()
-                            .chainId(so.getId())
-                            .nftBoxId(0L)
-                            .groupId(nftGroupDo.getId())
-                            .type(NftBoxType.BOX.getDesc())
-                            .name(nftGroupDo.getName())
-                            .owner(so.getSeller())
-                            .payToken(payToken)
-                            .address(starConfig.getNft().getMarket())
-                            .sellPrice(so.getSelling_price())
-                            .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
-                            .icon(nftGroupDo.getBoxTokenLogo())
-                            .createTime(currentTime)
-                            .updateTime(currentTime)
-                            .build();
-                    list.add(box);
-                });
-            });
+            boxList.forEach(p -> p.getItems().forEach(so -> {
+                NftMarketDo box = NftMarketDo.builder()
+                        .chainId(so.getId())
+                        .nftBoxId(0L)
+                        .groupId(nftGroupDo.getId())
+                        .type(NftBoxType.BOX.getDesc())
+                        .name(nftGroupDo.getName())
+                        .owner(so.getSeller())
+//                        .nftName(null)
+                        .payToken(payToken)
+                        .address(starConfig.getNft().getMarket())
+                        .sellPrice(so.getSelling_price())
+                        .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
+                        .icon(nftGroupDo.getBoxTokenLogo())
+                        .createTime(currentTime)
+                        .updateTime(currentTime)
+                        .build();
+                list.add(box);
+            }));
         });
     }
 

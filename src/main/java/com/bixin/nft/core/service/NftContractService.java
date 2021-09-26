@@ -130,7 +130,7 @@ public class NftContractService {
                 List<NftInfoDo> createdNftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
                 if (!CollectionUtils.isEmpty(createdNftInfoDos)) {
                     createdNftInfoDos.sort(Comparator.comparingLong(NftInfoDo::getNftId).reversed());
-                    nftId.setValue(createdNftInfoDos.get(0).getNftId());
+                    nftId.setValue(createdNftInfoDos.get(0).getNftId() + 1);
                 }
                 nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
                     if (!mintKikoCatNFT(nftGroupDo, nftInfoDo)) {

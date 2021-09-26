@@ -18,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,6 +169,7 @@ public class NftInfoController {
         NftGroupVo nftGroupVo = BeanCopyUtil.copyProperties(nftGroupDo, () -> {
             NftGroupVo vo = new NftGroupVo();
             vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
+            vo.setSellingPrice(new BigDecimal(nftGroupDo.getSellingPrice()));
             return vo;
         });
         return R.success(nftGroupVo);
@@ -317,37 +319,6 @@ public class NftInfoController {
         }
         nftInfoVo.setProperties(nftKikoCatDo);
         return R.success(nftInfoVo);
-    }
-
-    /**
-     * @param series
-     * @param pageSize
-     * @param nextId
-     * @return
-     */
-    @GetMapping("/getAllByPage")
-    public P getALlByPage(
-            @RequestParam(value = "series") String series,
-            @RequestParam(value = "currency") String currency,
-            @RequestParam(value = "open") String open,
-            @RequestParam(value = "sort") String sort,
-            @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
-            @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
-
-        if (nextId < 0 || pageSize <= 0 || StringUtils.isEmpty(currency)) {
-            return P.failed("parameter is invalid");
-        }
-        pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
-
-        //List<LiquidityUserRecord> records = liquidityUserRecordService.getALlByPage(userAddress, pageSize + 1, nextId);
-        List<NftInfoDo> records = null;
-        boolean hasNext = false;
-        if (records.size() > pageSize) {
-            records = records.subList(0, records.size() - 1);
-            hasNext = true;
-        }
-        return P.success(records, hasNext);
-
     }
 
 }

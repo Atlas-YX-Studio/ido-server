@@ -141,6 +141,11 @@ public class NftGroupVo implements Serializable {
     private BigDecimal sellingPrice;
 
     /**
+     * 出售时间
+     */
+    private Long sellingTime;
+
+    /**
      * 最高出价
      */
     private BigDecimal topBidPrice;

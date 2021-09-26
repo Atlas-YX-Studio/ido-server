@@ -86,7 +86,9 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                 tempOrderMap.put(group.getId(), Map.of(group.getPayToken(), chainBuyBackList));
             }
         });
-        this.orderMap = tempOrderMap;
+        if (!CollectionUtils.isEmpty(tempOrderMap) || CollectionUtils.isEmpty(this.orderMap)) {
+            this.orderMap = tempOrderMap;
+        }
     }
 
     private List<BuyBackOrder> getChainBuyBackList(NftGroupDo groupDo) {
@@ -175,6 +177,11 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
             return List.of();
         }
         return list.subList(start, end);
+    }
+
+    @Override
+    public BuyBackOrder getOrder(Long id, Long groupId, String currency) {
+        return this.orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().filter(x -> Objects.equals(id, x.id)).findFirst().orElse(null);
     }
 
     public static class BuyBackOrder {

@@ -29,4 +29,9 @@ public class PlatformBuyBackController {
         return R.success(orders);
     }
 
+    @GetMapping("/getOrder")
+    public R getOrder(@RequestParam("id") Long id, @RequestParam("groupId") Long groupId, @RequestParam("currency") String currency) {
+        return R.success(platformBuyBackService.getOrder(id, groupId, currency));
+    }
+
 }
