@@ -86,7 +86,9 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                 tempOrderMap.put(group.getId(), Map.of(group.getPayToken(), chainBuyBackList));
             }
         });
-        this.orderMap = tempOrderMap;
+        if (!CollectionUtils.isEmpty(tempOrderMap) || CollectionUtils.isEmpty(this.orderMap)) {
+            this.orderMap = tempOrderMap;
+        }
     }
 
     private List<BuyBackOrder> getChainBuyBackList(NftGroupDo groupDo) {
@@ -133,6 +135,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                                 order.id = nftInfo.getId();
                                 order.groupId = nftInfo.getGroupId();
                                 order.address = groupDo.getCreator();
+                                order.metaData = groupDo.getNftMeta();
                                 order.name = nftInfo.getName();
                                 order.fullCurrency = groupDo.getPayToken();
                                 order.icon = nftInfo.getImageLink();
@@ -187,6 +190,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         public Long nftId;
         public Long groupId;
         public String address;
+        public String metaData;
         public String name;
         public BigDecimal buyPrice;
         public String fullCurrency;

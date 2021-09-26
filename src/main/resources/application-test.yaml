@@ -17,6 +17,13 @@ spring:
     host: sandbox-starcoin-redis.xplek9.ng.0001.apse1.cache.amazonaws.com
     port: 6379
     password:
+
+## 日志配置
+logging:
+  # 日志级别
+  logLevel: INFO
+  # 日志保留天数，默认10天
+  maxHistory: 2
 ## ------------------------------业务相关配置写到下面-------------------------
 
 ido:
