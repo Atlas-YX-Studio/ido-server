@@ -26,5 +26,7 @@ public class IdoException extends BizException {
 
     public IdoException(final IdoErrorCode errorCode, final Throwable cause) {
         super(errorCode.getMessage(), cause);
+        this.code = errorCode.getCode();
+        this.message = errorCode.getMessage();
     }
 }
