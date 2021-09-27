@@ -45,7 +45,7 @@ ido:
         max-threads: 1
     client:
       url: https://main-seed.starcoin.org
-      chain-id: 251
+      chain-id: 1
     nft:
       websocket-host: 60.205.3.84
       websocket-port: 8970
