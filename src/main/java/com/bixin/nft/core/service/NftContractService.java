@@ -53,8 +53,8 @@ public class NftContractService {
     @Value("${ido.star.nft.scripts}")
     private String scripts;
 
-    private static String MARKET_MODULE = "NFTMarket04";
-    private static String SCRIPTS_MODULE = "NFTScripts04";
+    private static String MARKET_MODULE = "NFTMarket";
+    private static String SCRIPTS_MODULE = "NFTScripts";
 
     /**
      * 1.部署NFT Market
