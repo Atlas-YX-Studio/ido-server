@@ -42,9 +42,8 @@ public class ContractService {
     // todo
     private Map<String, String> keyMap = new HashMap<>(){
         {
-            put("0xd30b4de81d71c1793aa4db4763211e63", "0x908fd8db21674a5bfdb617c2fd588fdd66fbcaf5198007951f24e72ba793f1a6");
-            put("0x290c7b35320a4dd26f651fd184373fe7", "0x98e6ded54f698a49365a0a4217d2d5d3cfc516b03c6198b81e47ce0067035c34");
-            put("0x142f352A24FEB989C65C1d48c4d884a9", "0x383fbd1c219e4b3e4bf066e952d636220f6628d013cb20df7228c88dae9ed493");
+            put("0xA85291039DdAD8845D5097624C81C3Fd", "67f9969b23ce51050ac2419b1afb1273b949573bb4159db965002ab999b0cba4");
+            put("0x69F1E543A3BeF043B63BEd825fcd2cf6", "b90943e6bd2d69872e86cedcf33c9290d7213e484b1af7d07ea6b719754341ec");
         }
     };
 
