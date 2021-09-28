@@ -174,6 +174,17 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
         }
         nftEventDo.setInfoId(nftInfoDo.getId());
         nftEventDo.setGroupId(nftGroupDo.getId());
+
+        try {
+            if(NftEventType.BOXOPENEVENT.getDesc().equals(eventType)){
+                nftInfoDo.setOwner(nftEventDo.getCreator());
+                nftInfoDo.setUpdateTime(System.currentTimeMillis());
+                nftInfoService.update(nftInfoDo);
+            }
+        }catch (Exception e){
+            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
+        }
+
         return ;
     }
 
