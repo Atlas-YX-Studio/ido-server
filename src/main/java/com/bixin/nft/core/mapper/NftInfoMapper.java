@@ -1,8 +1,10 @@
 package com.bixin.nft.core.mapper;
 
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.bean.DO.NftKikoCatDo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NftInfoMapper {
     /**
@@ -42,4 +44,7 @@ public interface NftInfoMapper {
      * @param record
      */
     List<NftInfoDo> selectByPrimaryKeySelectiveList(NftInfoDo record);
+
+
+    List<NftInfoDo> selectByPage(Map<String,Object> map);
 }
