@@ -1,5 +1,6 @@
 package com.bixin.nft.biz;
 
+import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.utils.Base64Util;
 import com.bixin.ido.server.utils.FileOperateUtil;
@@ -44,20 +45,23 @@ public class NftImagesUploadBiz {
     NftInfoService nftInfoService;
     @Resource
     RestTemplate restTemplate;
+    @Resource
+    private StarConfig starConfig;
 
     ThreadPoolExecutor poolExecutor;
 
     AtomicBoolean hasRun = new AtomicBoolean(false);
     static final long pageSize = 100;
-    static final String imagePrefix = "https://imagedelivery.net";
-    //    static final String imageBasePath = "/data/bixin-ido-server/images/nft/";
-    static final String imageBasePath = "/Users/bixin/Documents/pics/nft/";
 
+    private String imagePrefix;
+    private String imageBasePath;
 
     @PostConstruct
     public void init() {
         poolExecutor = new ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(), new NamedThreadFactory("nftImageUpload-", true));
+        imagePrefix = starConfig.getNft().getImagePrefix();
+        imageBasePath = starConfig.getNft().getImageBasePath();
     }
 
     @PreDestroy

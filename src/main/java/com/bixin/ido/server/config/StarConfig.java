@@ -89,7 +89,8 @@ public class StarConfig {
         private String market;
         private String catadd;
         private String scripts;
-
+        private String imagePrefix;
+        private String imageBasePath;
     }
 
 }
