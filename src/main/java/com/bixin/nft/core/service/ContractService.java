@@ -62,7 +62,7 @@ public class ContractService {
         ListResourceOption listResourceOption = new ListResourceOption();
         listResourceOption.setDecode(true);
         String result = starcoinClient.call("state.list_resource", Lists.newArrayList(new Object[]{AccountAddressUtils.hex(sender), listResourceOption}));
-        log.info("result:{}", result);
+        log.info("starCoin resource result:{}", result);
         return result;
     }
 
