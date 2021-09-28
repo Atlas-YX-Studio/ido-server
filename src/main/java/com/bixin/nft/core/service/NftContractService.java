@@ -148,6 +148,7 @@ public class NftContractService {
                     }
                     log.info("NFT {} mint成功", nftInfoDo.getName());
                     nftInfoDo.setNftId(nftId.longValue());
+                    nftInfoDo.setOwner(nftGroupDo.getOwner());
                     nftInfoDo.setCreated(true);
                     nftInfoDo.setUpdateTime(System.currentTimeMillis());
                     nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
