@@ -172,7 +172,7 @@ public class NftImagesUploadBiz {
     }
 
     private MutablePair<String, String> splitImage(String data) {
-        String regex = "^data:image\\/([A-Za-z]+);base64,(.*)";
+        String regex = "^data:img\\/([A-Za-z]+);base64,(.*)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(data);
         while (matcher.find()) {
