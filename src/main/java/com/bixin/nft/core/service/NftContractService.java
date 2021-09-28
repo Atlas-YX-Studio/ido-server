@@ -11,6 +11,7 @@ import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
 import com.bixin.nft.bean.dto.TokenDto;
+import com.bixin.nft.biz.NftImagesUploadBiz;
 import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftInfoMapper;
 import com.bixin.nft.core.mapper.NftKikoCatMapper;
@@ -46,6 +47,8 @@ public class NftContractService {
     private NftKikoCatMapper nftKikoCatMapper;
     @Resource
     private ContractService contractService;
+    @Resource
+    private NftImagesUploadBiz nftImagesUploadBiz;
 
     @Value("${ido.star.nft.market}")
     private String market;
@@ -96,6 +99,9 @@ public class NftContractService {
      * @return
      */
     public void createNFT() {
+        // 上传图片
+        nftImagesUploadBiz.asyncProcess();
+
         // 部署nft合约
         NftGroupDo selectNftGroupDo = new NftGroupDo();
         selectNftGroupDo.setStatus(NftGroupStatus.APPENDING.name());
@@ -142,6 +148,7 @@ public class NftContractService {
                     }
                     log.info("NFT {} mint成功", nftInfoDo.getName());
                     nftInfoDo.setNftId(nftId.longValue());
+                    nftInfoDo.setOwner(nftGroupDo.getOwner());
                     nftInfoDo.setCreated(true);
                     nftInfoDo.setUpdateTime(System.currentTimeMillis());
                     nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
@@ -440,13 +447,5 @@ public class NftContractService {
                 .build();
         return contractService.callFunction("0x142f352A24FEB989C65C1d48c4d884a9", scriptFunctionObj);
     }
-
-//    public void rankNft() {
-//
-//
-//        NftInfoDo nftInfoDo = new NftInfoDo();
-//        nftInfoMapper.selectByPrimaryKeySelectiveList();
-//
-//    }
 
 }

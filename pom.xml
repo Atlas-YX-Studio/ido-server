@@ -96,7 +96,6 @@
             <version>1.15</version>
         </dependency>
 
-
     </dependencies>
 
     <repositories>
@@ -155,8 +154,15 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/*.mv</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
                 <includes>
-                    <include>**/*</include>
+                    <include>**/*.mv</include>
                 </includes>
             </resource>
         </resources>
