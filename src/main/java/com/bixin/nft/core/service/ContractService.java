@@ -42,8 +42,8 @@ public class ContractService {
     // todo
     private Map<String, String> keyMap = new HashMap<>(){
         {
-            put("0xA85291039DdAD8845D5097624C81C3Fd", "67f9969b23ce51050ac2419b1afb1273b949573bb4159db965002ab999b0cba4");
-            put("0x69F1E543A3BeF043B63BEd825fcd2cf6", "b90943e6bd2d69872e86cedcf33c9290d7213e484b1af7d07ea6b719754341ec");
+            put("0xa85291039ddad8845d5097624c81c3fd", "67f9969b23ce51050ac2419b1afb1273b949573bb4159db965002ab999b0cba4");
+            put("0x69f1e543a3bef043b63bed825fcd2cf6", "b90943e6bd2d69872e86cedcf33c9290d7213e484b1af7d07ea6b719754341ec");
         }
     };
 
@@ -150,7 +150,7 @@ public class ContractService {
 
     // todo
     private Ed25519PrivateKey getPrivateKey(String sender) {
-        return SignatureUtils.strToPrivateKey(keyMap.get(sender));
+        return SignatureUtils.strToPrivateKey(keyMap.get(sender.toLowerCase()));
     }
 
     public boolean checkTxt(String txn) {
