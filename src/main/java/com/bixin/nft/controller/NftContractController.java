@@ -2,13 +2,14 @@ package com.bixin.nft.controller;
 
 import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.nft.core.service.NftContractService;
+import com.bixin.nft.core.service.NftGroupService;
+import com.bixin.nft.core.service.NftInfoService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -19,6 +20,10 @@ import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFI
 public class NftContractController {
     @Resource
     private NftContractService nftContractService;
+    @Resource
+    private NftGroupService nftGroupService;
+    @Resource
+    private NftInfoService nftInfoService;
 
     private final static String SECRET_KEY = "766dF569970B22B29152eB326dad1b1E";
 
@@ -69,5 +74,16 @@ public class NftContractController {
         nftContractService.buyBackNFT(infoId, payToken, new BigDecimal(price));
         return R.success(true);
     }
+
+    @GetMapping("/nft/rank")
+    public R rank(@RequestParam(value = "secretKey") String secretKey,
+                  @RequestParam(value = "series") String series) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
+        }
+        nftContractService.reRank(series);
+        return R.success(true);
+    }
+
 
 }

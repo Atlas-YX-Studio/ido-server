@@ -142,6 +142,7 @@ public class NftInfoController {
                     operationRecordVo.setPrice(nftEventDo.getSellingPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
                 }
+                operationRecordVo.setId(nftEventDo.getId());
                 operationRecordVo.setType(nftEventDo.getType());
                 operationRecordVo.setCreateTime(nftEventDo.getCreateTime());
                 records.add(operationRecordVo);
