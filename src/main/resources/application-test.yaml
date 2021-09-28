@@ -47,7 +47,7 @@ ido:
     nft:
       websocket-host: 10.13.22.40
       websocket-port: 9870
-      market: "0xA85291039DdAD8845D5097624C81C3Fd"
+      market: "0xa85291039ddad8845d5097624c81c3fd"
       scripts: "0xA85291039DdAD8845D5097624C81C3Fd"
       catadd: "0x69F1E543A3BeF043B63BEd825fcd2cf6"
       image-prefix: "https://imagedelivery.net"
