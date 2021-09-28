@@ -7,11 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @class: NftInfoServiceImpl
- * @Description:  NFT信息记录表 接口实现
+ * @Description: NFT信息记录表 接口实现
  * @author: 系统
  * @created: 2021-09-15
  */
@@ -24,8 +26,8 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * @explain: 添加NftInfoDo对象
-     * @param:   model 对象参数
-     * @return:  int
+     * @param: model 对象参数
+     * @return: int
      */
     @Override
     public int insert(NftInfoDo model) {
@@ -34,8 +36,8 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * @explain: 删除NftInfoDo对象
-     * @param:   id
-     * @return:  int
+     * @param: id
+     * @return: int
      */
     @Override
     public int deleteById(Long id) {
@@ -44,8 +46,8 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * @explain: 修改NftInfoDo对象
-     * @param:   model 对象参数
-     * @return:  int
+     * @param: model 对象参数
+     * @return: int
      */
     @Override
     public int update(NftInfoDo model) {
@@ -54,8 +56,8 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * @explain: 查询NftInfoDo对象
-     * @param:   id
-     * @return:  NftInfoDo
+     * @param: id
+     * @return: NftInfoDo
      */
     @Override
     public NftInfoDo selectById(Long id) {
@@ -64,8 +66,8 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * @explain: 查询NftInfoDo对象
-     * @param:   model 对象参数
-     * @return:  NftInfoDo 对象
+     * @param: model 对象参数
+     * @return: NftInfoDo 对象
      */
     @Override
     public NftInfoDo selectByObject(NftInfoDo model) {
@@ -74,12 +76,22 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * @explain: 查询列表
-     * @param:  model  对象参数
+     * @param: model  对象参数
      * @return: list
      */
     @Override
     public List<NftInfoDo> listByObject(NftInfoDo model) {
         return nftInfoMapper.selectByPrimaryKeySelectiveList(model);
+    }
+
+    @Override
+    public List<NftInfoDo> selectByPage(long pageNum, long pageSize, String order, String sort) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("order", order);
+        param.put("sort", sort);
+        param.put("from", (pageNum - 1) * pageSize);
+        param.put("pageSize", pageSize);
+        return nftInfoMapper.selectByPage(param);
     }
 
 

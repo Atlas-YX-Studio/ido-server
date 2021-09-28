@@ -1,9 +1,17 @@
 package com.bixin.ido.server.test;
 
 import com.bixin.ido.server.utils.HexStringUtil;
+import com.bixin.ido.server.utils.JacksonUtil;
+import org.apache.commons.lang3.tuple.MutableTriple;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author zhangcheng
@@ -53,20 +61,38 @@ public class HexTest {
         System.out.println(s);
         System.out.println(s1);
 //        System.out.println(HexStringUtil.decode(hex));
+        System.out.println("--------------------------");
 
+//        String curl = "curl -X POST -F file=@/Users/bixin/Documents/pics/ss.jpg -H \"Authorization: Bearer 5_crM9D0ZQEjTmJm6P_J9CjAgxU06AKt0ZB-xeAb\" https://api.cloudflare.com/client/v4/accounts/06d48301c855502bf143d5a4c5d3a982/images/v1";
+//        String[] cmds = curl.split(" ");
+//        String[] cmds = new String[]{"curl", "-X", "POST", "-F", "file=@/Users/bixin/Documents/pics/ss.jpg", "-H", "Authorization: Bearer 5_crM9D0ZQEjTmJm6P_J9CjAgxU06AKt0ZB-xeAb", "https://api.cloudflare.com/client/v4/accounts/06d48301c855502bf143d5a4c5d3a982/images/v1"};
+//
+//
+//        ProcessBuilder process = new ProcessBuilder(cmds);
+//        Process p;
+//        try {
+//            p = process.start();
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//            StringBuilder builder = new StringBuilder();
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                builder.append(line);
+//            }
+//            System.out.println(builder.toString());
+//            Map map = JacksonUtil.readValue(builder.toString(), Map.class);
+//            boolean success = (boolean) map.get("success");
+//            System.out.println("rs:" + success);
+//            if(success){
+//                Map result = (Map) map.get("result");
+//                ArrayList<String> variants = (ArrayList<String>) result.get("variants");
+//                System.out.println("path:"+variants.get(0));
+//            }
+//
+//
+//        } catch (IOException e) {
+//            System.out.println(e);
+//        }
 
-        List<Integer> list = new ArrayList<>() {{
-            add(1);
-            add(2);
-            add(3);
-            add(4);
-        }};
-        list.forEach(p -> {
-            if (p == 2) {
-                return;
-            }
-            System.out.println(p);
-        });
 
     }
 
