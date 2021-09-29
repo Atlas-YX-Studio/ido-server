@@ -90,6 +90,7 @@ public class NftInfoController {
     /**
      * 操作记录
      * ID 为 nft id
+     *
      * @return
      */
     @GetMapping("/operation/record")
@@ -103,41 +104,47 @@ public class NftInfoController {
         }
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
         // type = null 查询所有
-        List<NftEventDo> list = nftEventService.getALlByPage(id,null, pageSize,nextId);
+        List<NftEventDo> list = nftEventService.getALlByPage(id, null, pageSize + 1, nextId);
+        boolean hasNext = false;
+        if (list.size() > pageSize) {
+            list = list.subList(0, list.size() - 1);
+            hasNext = true;
+        }
+
         List<OperationRecordVo> records = new ArrayList<>();
-        if(!CollectionUtils.isEmpty(list)){
-            for(NftEventDo nftEventDo : list){
-                if(NftEventType.BOXOPENEVENT.getDesc().equals(nftEventDo.getType())){
+        if (!CollectionUtils.isEmpty(list)) {
+            for (NftEventDo nftEventDo : list) {
+                if (NftEventType.BOXOPENEVENT.getDesc().equals(nftEventDo.getType())) {
                     continue;
                 }
                 OperationRecordVo operationRecordVo = new OperationRecordVo();
 
                 // 铸造
-                if(NftEventType.NFTMINTEVENT.getDesc().equals(nftEventDo.getType())){
+                if (NftEventType.NFTMINTEVENT.getDesc().equals(nftEventDo.getType())) {
                     operationRecordVo.setAddress(nftEventDo.getCreator());
                     operationRecordVo.setPrice(null);
                     operationRecordVo.setCurrencyName("");
                 }
                 //上架
-                if(NftEventType.NFTSELLEVENT.getDesc().equals(nftEventDo.getType())){
+                if (NftEventType.NFTSELLEVENT.getDesc().equals(nftEventDo.getType())) {
                     operationRecordVo.setAddress(nftEventDo.getSeller());
                     operationRecordVo.setPrice(nftEventDo.getSellingPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
                 }
                 //报价
-                if(NftEventType.NFTBIDEVENT.getDesc().equals(nftEventDo.getType())){
+                if (NftEventType.NFTBIDEVENT.getDesc().equals(nftEventDo.getType())) {
                     operationRecordVo.setAddress(nftEventDo.getBider());
                     operationRecordVo.setPrice(nftEventDo.getBidPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
                 }
                 // 获得
-                if(NftEventType.NFTBUYEVENT.getDesc().equals(nftEventDo.getType())){
+                if (NftEventType.NFTBUYEVENT.getDesc().equals(nftEventDo.getType())) {
                     operationRecordVo.setAddress(nftEventDo.getBider());
                     operationRecordVo.setPrice(nftEventDo.getBidPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
                 }
                 //下架
-                if(NftEventType.NFTOFFLINEEVENT.getDesc().equals(nftEventDo.getType())){
+                if (NftEventType.NFTOFFLINEEVENT.getDesc().equals(nftEventDo.getType())) {
                     operationRecordVo.setAddress(nftEventDo.getSeller());
                     operationRecordVo.setPrice(nftEventDo.getSellingPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
@@ -148,11 +155,7 @@ public class NftInfoController {
                 records.add(operationRecordVo);
             }
         }
-        boolean hasNext = false;
-        if (records.size() > pageSize) {
-            records = records.subList(0, records.size() - 1);
-            hasNext = true;
-        }
+
         return P.success(records, hasNext);
     }
 
