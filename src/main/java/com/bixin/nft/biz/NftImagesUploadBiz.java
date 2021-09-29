@@ -44,8 +44,6 @@ public class NftImagesUploadBiz {
     @Resource
     NftInfoService nftInfoService;
     @Resource
-    RestTemplate restTemplate;
-    @Resource
     private StarConfig starConfig;
 
     ThreadPoolExecutor poolExecutor;
