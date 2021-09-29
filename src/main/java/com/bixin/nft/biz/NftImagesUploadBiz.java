@@ -86,6 +86,7 @@ public class NftImagesUploadBiz {
             log.warn("nft_cloudflare upload images is running ...");
             return;
         }
+        log.info("nft_cloudflare start upload images ...");
         long pageNum = 1;
         List<NftInfoDo> nftInfoDos = null;
         for (; ; ) {
