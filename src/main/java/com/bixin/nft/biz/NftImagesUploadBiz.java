@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -161,8 +160,8 @@ public class NftImagesUploadBiz {
             }
             pageNum++;
         }
+        hasRun.set(false);
         FileOperateUtil.delAllFile(imageBasePath);
-
     }
 
     private void upload(String filePath) {
