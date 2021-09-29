@@ -83,84 +83,85 @@ public class NftImagesUploadBiz {
     }
 
     private void run() {
-        if (hasRun.compareAndSet(false, true)) {
-            long pageNum = 1;
-            List<NftInfoDo> nftInfoDos = null;
-            for (; ; ) {
-                try {
-                    nftInfoDos = nftInfoService.selectByPage(pageNum, pageSize, "id", "asc");
-                    if (CollectionUtils.isEmpty(nftInfoDos)) {
-                        log.error("nft_cloudflare info data is empty");
-                        break;
-                    }
-                    nftInfoDos.forEach(p -> {
-                        String imageLink = p.getImageLink();
-                        if (StringUtils.isNoneEmpty(imageLink) && imageLink.startsWith(imagePrefix)) {
-                            log.info("nft_cloudflare info of image link is upload id:{}", p.getId());
-                            return;
-                        }
-
-                        MutablePair<String, String> pair = splitImage(p.getImageData());
-                        String imageSuffix = pair.getLeft();
-                        String imageData = pair.getRight();
-                        if (StringUtils.isEmpty(imageSuffix) || StringUtils.isEmpty(imageData)) {
-                            log.error("nft_cloudflare info convert image data error id:{}", p.getId());
-                            return;
-                        }
-                        String imagePath = imageBasePath + p.getId()
-                                + "_" + LocalDateTimeUtil.getMilliByTime(LocalDateTime.now())
-                                + "." + imageSuffix;
-                        FileOperateUtil.newFolder(imageBasePath);
-                        Base64Util.Base64ToImage(imageData, imagePath);
-
-                        String[] cmds = new String[]{"curl", "-X", "POST", "-F", "file=@" + imagePath, "-H", "Authorization: Bearer 5_crM9D0ZQEjTmJm6P_J9CjAgxU06AKt0ZB-xeAb", "https://api.cloudflare.com/client/v4/accounts/06d48301c855502bf143d5a4c5d3a982/images/v1"};
-                        try {
-                            ProcessBuilder process = new ProcessBuilder(cmds);
-                            Process doStart = process.start();
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(doStart.getInputStream()));
-                            StringBuilder builder = new StringBuilder();
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                builder.append(line);
-                            }
-                            if (StringUtils.isEmpty(builder.toString())) {
-                                log.error("nft_cloudflare info upload result is empty");
-                                return;
-                            }
-                            Map map = JacksonUtil.readValue(builder.toString(), Map.class);
-                            if (CollectionUtils.isEmpty(map)) {
-                                log.error("nft_cloudflare info get upload result is error {}", builder.toString());
-                                return;
-                            }
-                            boolean success = (boolean) map.get("success");
-                            if (success) {
-                                Map result = (Map) map.get("result");
-                                ArrayList<String> variants = (ArrayList<String>) result.get("variants");
-                                String newImageLink = variants.get(0);
-                                NftInfoDo newNftInfo = NftInfoDo.builder()
-                                        .id(p.getId())
-                                        .imageLink(newImageLink)
-                                        .build();
-                                nftInfoService.update(newNftInfo);
-                            }
-
-                        } catch (IOException e) {
-                            log.error("", e);
-                        }
-
-                    });
-
-                } catch (Exception e) {
-                    log.error("nft_cloudflare exception", e);
-                }
-                if (CollectionUtils.isEmpty(nftInfoDos) || nftInfoDos.size() < pageSize) {
+        if (!hasRun.compareAndSet(false, true)) {
+            log.warn("nft_cloudflare upload images is running ...");
+            return;
+        }
+        long pageNum = 1;
+        List<NftInfoDo> nftInfoDos = null;
+        for (; ; ) {
+            try {
+                nftInfoDos = nftInfoService.selectByPage(pageNum, pageSize, "id", "asc");
+                if (CollectionUtils.isEmpty(nftInfoDos)) {
+                    log.error("nft_cloudflare info data is empty");
                     break;
                 }
-                pageNum++;
+                nftInfoDos.forEach(p -> {
+                    String imageLink = p.getImageLink();
+                    if (StringUtils.isNoneEmpty(imageLink) && imageLink.startsWith(imagePrefix)) {
+                        log.info("nft_cloudflare info of image link is upload id:{}", p.getId());
+                        return;
+                    }
 
+                    MutablePair<String, String> pair = splitImage(p.getImageData());
+                    String imageSuffix = pair.getLeft();
+                    String imageData = pair.getRight();
+                    if (StringUtils.isEmpty(imageSuffix) || StringUtils.isEmpty(imageData)) {
+                        log.error("nft_cloudflare info convert image data error id:{}", p.getId());
+                        return;
+                    }
+                    String imagePath = imageBasePath + p.getId()
+                            + "_" + LocalDateTimeUtil.getMilliByTime(LocalDateTime.now())
+                            + "." + imageSuffix;
+                    FileOperateUtil.newFolder(imageBasePath);
+                    Base64Util.Base64ToImage(imageData, imagePath);
+
+                    String[] cmds = new String[]{"curl", "-X", "POST", "-F", "file=@" + imagePath, "-H", "Authorization: Bearer 5_crM9D0ZQEjTmJm6P_J9CjAgxU06AKt0ZB-xeAb", "https://api.cloudflare.com/client/v4/accounts/06d48301c855502bf143d5a4c5d3a982/images/v1"};
+                    try {
+                        ProcessBuilder process = new ProcessBuilder(cmds);
+                        Process doStart = process.start();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(doStart.getInputStream()));
+                        StringBuilder builder = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            builder.append(line);
+                        }
+                        if (StringUtils.isEmpty(builder.toString())) {
+                            log.error("nft_cloudflare info upload result is empty");
+                            return;
+                        }
+                        Map map = JacksonUtil.readValue(builder.toString(), Map.class);
+                        if (CollectionUtils.isEmpty(map)) {
+                            log.error("nft_cloudflare info get upload result is error {}", builder.toString());
+                            return;
+                        }
+                        boolean success = (boolean) map.get("success");
+                        if (success) {
+                            Map result = (Map) map.get("result");
+                            ArrayList<String> variants = (ArrayList<String>) result.get("variants");
+                            String newImageLink = variants.get(0);
+                            NftInfoDo newNftInfo = NftInfoDo.builder()
+                                    .id(p.getId())
+                                    .imageLink(newImageLink)
+                                    .build();
+                            nftInfoService.update(newNftInfo);
+                        }
+
+                    } catch (IOException e) {
+                        log.error("", e);
+                    }
+
+                });
+
+            } catch (Exception e) {
+                log.error("nft_cloudflare exception", e);
             }
-            FileOperateUtil.delAllFile(imageBasePath);
+            if (CollectionUtils.isEmpty(nftInfoDos) || nftInfoDos.size() < pageSize) {
+                break;
+            }
+            pageNum++;
         }
+        FileOperateUtil.delAllFile(imageBasePath);
 
     }
 
