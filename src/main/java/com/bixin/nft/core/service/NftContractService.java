@@ -99,8 +99,6 @@ public class NftContractService {
      * @return
      */
     public void createNFT() {
-        // 上传图片
-        nftImagesUploadBiz.asyncProcess();
 
         // 部署nft合约
         NftGroupDo selectNftGroupDo = new NftGroupDo();
@@ -191,6 +189,9 @@ public class NftContractService {
                 nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
             });
         }
+
+        // 上传图片
+        nftImagesUploadBiz.asyncProcess();
     }
 
     /**
