@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.bixin.ido.server.common.errorcode.IdoErrorCode;
 import com.bixin.ido.server.common.exception.IdoException;
+import com.bixin.ido.server.common.exception.SequenceException;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.utils.RetryingUtil;
 import com.google.common.collect.Lists;
@@ -40,7 +41,7 @@ public class ContractService {
     private StarcoinClient starcoinClient;
 
     // todo
-    private Map<String, String> keyMap = new HashMap<>(){
+    private Map<String, String> keyMap = new HashMap<>() {
         {
             put("0xa85291039ddad8845d5097624c81c3fd", "67f9969b23ce51050ac2419b1afb1273b949573bb4159db965002ab999b0cba4");
             put("0x69f1e543a3bef043b63bed825fcd2cf6", "b90943e6bd2d69872e86cedcf33c9290d7213e484b1af7d07ea6b719754341ec");
@@ -54,6 +55,7 @@ public class ContractService {
 
     /**
      * 获取Resource
+     *
      * @param senderAddress
      * @return
      */
@@ -93,11 +95,13 @@ public class ContractService {
         // 获取private key
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
         String result = starcoinClient.submitTransaction(sender, privateKey, payload);
-
         log.info("合约部署 result: {}", result);
         String txn = JSON.parseObject(result).getString("result");
         if (StringUtils.isBlank(txn)) {
             log.info("合约部署失败");
+            if (result.contains("SEQUENCE_NUMBER_TOO_OLD")) {
+                throw new SequenceException();
+            }
             return false;
         }
         return checkTxt(txn);
@@ -155,31 +159,27 @@ public class ContractService {
 
     public boolean checkTxt(String txn) {
         log.info("交易hash:{}", txn);
-        try {
-            return RetryingUtil.retry(
-                    () -> {
-                        String rst = starcoinClient.getTransactionInfo(txn);
-                        JSONObject jsonObject = JSON.parseObject(rst);
-                        JSONObject result = jsonObject.getJSONObject("result");
-                        if (result == null) {
-                            throw new RuntimeException("交易执行中...");
+        return RetryingUtil.retry(
+                () -> {
+                    String rst = starcoinClient.getTransactionInfo(txn);
+                    JSONObject jsonObject = JSON.parseObject(rst);
+                    JSONObject result = jsonObject.getJSONObject("result");
+                    if (result == null) {
+                        throw new RuntimeException("交易执行中...");
+                    } else {
+                        if ("Executed".equalsIgnoreCase(result.getString("status"))) {
+                            log.info("交易执行成功，result: {}", result);
+                            return true;
                         } else {
-                            if ("Executed".equalsIgnoreCase(result.getString("status"))) {
-                                log.info("交易执行成功，result: {}", result);
-                                return true;
-                            } else {
-                                log.info("交易执行失败，result:{}", result);
-                                return false;
-                            }
+                            log.info("交易执行失败，result:{}", result);
+                            return false;
                         }
-                    },
-                    20,
-                    5000
-            );
-        } catch (Exception e) {
-            log.info("交易执行失败，txn：{}", txn);
-            return false;
-        }
+                    }
+                },
+                20,
+                5000,
+                Exception.class
+        );
     }
 
 }

@@ -9,18 +9,18 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RetryingUtil {
 
-    public static <T> T retry(Callable<T> callable, int attempt, long delay) throws Exception {
+    public static <T> T retry(Callable<T> callable, int attempt, long delay, Class<? extends Throwable> exceptionClass) {
         try {
-            return RetryingUtil.<T>buildRetryer(attempt, delay).call(callable);
-        } catch (RetryException e) {
+            return RetryingUtil.<T>buildRetryer(attempt, delay, exceptionClass).call(callable);
+        } catch (Exception e) {
             log.info("retry exception:", e.getCause());
-            throw (Exception) e.getCause();
+            throw new RuntimeException(e.getCause());
         }
     }
 
-    public static void retry(Runnable runnable, int attempt, long delay) {
+    public static void retry(Runnable runnable, int attempt, long delay, Class<? extends Throwable> exceptionClass) {
         try {
-            RetryingUtil.buildRetryer(attempt, delay).call(() -> {
+            RetryingUtil.buildRetryer(attempt, delay, exceptionClass).call(() -> {
                 runnable.run();
                 return null;
             });
@@ -31,17 +31,16 @@ public class RetryingUtil {
         }
     }
 
-    public static <T> Retryer<T> buildRetryer(int attempt, long delay) {
+    public static <T> Retryer<T> buildRetryer(int attempt, long delay, Class<? extends Throwable> exceptionClass) {
         return RetryerBuilder.<T>newBuilder()
-                .retryIfException()
+                .retryIfExceptionOfType(exceptionClass)
                 .withStopStrategy(StopStrategies.stopAfterAttempt(attempt))
                 .withWaitStrategy(WaitStrategies.fixedWait(delay, TimeUnit.MILLISECONDS))
                 .withRetryListener(new RetryListener() {
                     @Override
                     public <V> void onRetry(Attempt<V> attempt) {
                         if (attempt.hasException()) {
-                            log.info("retry time: {}, error: {}",
-                                    attempt.getAttemptNumber(), attempt.getExceptionCause().toString());
+                            log.info("retry time: {}", attempt.getAttemptNumber());
                         }
                     }
                 })
