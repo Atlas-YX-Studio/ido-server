@@ -115,7 +115,6 @@ public class NftImagesUploadBiz {
                     String imagePath = imageBasePath + p.getId()
                             + "_" + LocalDateTimeUtil.getMilliByTime(LocalDateTime.now())
                             + "." + imageSuffix;
-                    FileOperateUtil.newFolder(imageBasePath);
                     Base64Util.Base64ToImage(imageData, imagePath);
 
                     String[] cmds = new String[]{"curl", "-X", "POST", "-F", "file=@" + imagePath, "-H", "Authorization: Bearer 5_crM9D0ZQEjTmJm6P_J9CjAgxU06AKt0ZB-xeAb", "https://api.cloudflare.com/client/v4/accounts/06d48301c855502bf143d5a4c5d3a982/images/v1"};
