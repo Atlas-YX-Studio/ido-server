@@ -87,6 +87,8 @@ public class NftImagesUploadBiz {
             return;
         }
         log.info("nft_cloudflare start upload images ...");
+        FileOperateUtil.newFolder(imageBasePath);
+
         long pageNum = 1;
         List<NftInfoDo> nftInfoDos = null;
         for (; ; ) {
@@ -148,11 +150,10 @@ public class NftImagesUploadBiz {
                         }
 
                     } catch (IOException e) {
-                        log.error("", e);
+                        log.error("nft_cloudflare upload image exceptionß", e);
                     }
 
                 });
-
             } catch (Exception e) {
                 log.error("nft_cloudflare exception", e);
             }
@@ -161,13 +162,9 @@ public class NftImagesUploadBiz {
             }
             pageNum++;
         }
+
         hasRun.set(false);
         FileOperateUtil.delAllFile(imageBasePath);
-    }
-
-    private void upload(String filePath) {
-
-
     }
 
     private MutablePair<String, String> splitImage(String data) {
