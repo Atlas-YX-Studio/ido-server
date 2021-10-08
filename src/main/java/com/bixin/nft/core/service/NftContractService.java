@@ -58,8 +58,11 @@ public class NftContractService {
     @Value("${ido.star.nft.scripts}")
     private String scripts;
 
-    private static String MARKET_MODULE = "NFTMarket";
-    private static String SCRIPTS_MODULE = "NFTScripts";
+    @Value("${ido.star.nft.market-module}")
+    private String marketModule;
+
+    @Value("${ido.star.nft.scripts-module}")
+    private String scriptsModule;
 
     /**
      * 1.部署NFT Market
@@ -69,18 +72,18 @@ public class NftContractService {
      * @return
      */
     public void initNFTMarket(BigInteger creatorFee, BigInteger platformFee) {
-        if (!contractService.deployContract(market, "contract/nft/" + MARKET_MODULE + ".mv", null)) {
+        if (!contractService.deployContract(market, "contract/nft/" + marketModule + ".mv", null)) {
             log.error("NFT Market部署失败");
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
-        if (!contractService.deployContract(scripts, "contract/nft/" + SCRIPTS_MODULE + ".mv", null)) {
+        if (!contractService.deployContract(scripts, "contract/nft/" + scriptsModule + ".mv", null)) {
             log.error("NFT Scripts部署失败");
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName(SCRIPTS_MODULE)
+                .moduleName(scriptsModule)
                 .functionName("init_config")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU128ToBytes(creatorFee),
@@ -278,7 +281,7 @@ public class NftContractService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName(SCRIPTS_MODULE)
+                .moduleName(scriptsModule)
                 .functionName("box_initial_offering")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU128ToBytes(boxAmount),
@@ -303,7 +306,7 @@ public class NftContractService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName(SCRIPTS_MODULE)
+                .moduleName(scriptsModule)
                 .functionName("init_market")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeAddressToBytes(AccountAddressUtils.create(nftGroupDo.getCreator()))
@@ -330,7 +333,7 @@ public class NftContractService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName(SCRIPTS_MODULE)
+                .moduleName(scriptsModule)
                 .functionName("init_buy_back_list")
                 .args(Lists.newArrayList())
                 .tyArgs(Lists.newArrayList(
@@ -363,7 +366,7 @@ public class NftContractService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName(SCRIPTS_MODULE)
+                .moduleName(scriptsModule)
                 .functionName("nft_buy_back")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU64ToBytes(nftInfoDo.getNftId()),
@@ -424,7 +427,7 @@ public class NftContractService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName(SCRIPTS_MODULE)
+                .moduleName(scriptsModule)
                 .functionName("nft_sell")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU64ToBytes(6L),
@@ -443,7 +446,7 @@ public class NftContractService {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
-                .moduleName(SCRIPTS_MODULE)
+                .moduleName(scriptsModule)
                 .functionName("box_sell")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(200000000))

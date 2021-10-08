@@ -50,6 +50,8 @@ ido:
       market: "0xa85291039ddad8845d5097624c81c3fd"
       scripts: "0xa85291039ddad8845d5097624c81c3fd"
       catadd: "0x69f1e543a3bef043b63bed825fcd2cf6"
+      market-module: "NFTMarket"
+      scripts-module: "NFTScripts"
       image-prefix: "https://imagedelivery.net"
       image-base-path: "/data/images/bixin-ido-server/nft/"
 

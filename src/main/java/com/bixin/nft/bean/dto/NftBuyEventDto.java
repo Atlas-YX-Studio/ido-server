@@ -21,22 +21,30 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NftBuyEventDto {
 
-    // nft id
-    private Long id;
     // 售卖者
     private String seller;
-    // 购买者
-    private String buyer;
+    // nft id
+    private Long id;
+    // 支付token
+    private PayTokenCode pay_token_code;
     // 购买价格
     private BigDecimal final_price;
-    // 支付token
-    private Pay_token_code pay_token_code;
+    // 购买者
+    private String buyer;
+    // 上一出价价格
+    private BigDecimal prev_bid_price;
+    // 上一出价者
+    private String prev_bidder;
+    // 创造者分得手续费
+    private BigDecimal creator_fee;
+    // 平台分得手续费
+    private BigDecimal platform_fee;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    static class Pay_token_code {
+    static class PayTokenCode {
         private String addr;
         private String module_name;
         private String name;
@@ -53,7 +61,7 @@ public class NftBuyEventDto {
                 .type(type)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
-        Pay_token_code payTokenCode = dto.getPay_token_code();
+        PayTokenCode payTokenCode = dto.getPay_token_code();
         String tokenCode = "";
         if(!ObjectUtils.isEmpty(payTokenCode)){
             tokenCode = payTokenCode.getAddr() + "::" + HexStringUtil.toStringHex(payTokenCode.getName().replaceAll("0x",""))

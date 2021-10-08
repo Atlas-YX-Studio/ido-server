@@ -7,12 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum NftEventType {
 
-    NFTMINTEVENT("NFTMintEvent"),
-    NFTSELLEVENT("NFTSellEvent"),
-    NFTBIDEVENT("NFTBidEvent"),
-    NFTBUYEVENT("NFTBuyEvent"),
-    NFTOFFLINEEVENT("NFTOfflineEvent"),
-    BOXOPENEVENT("BoxOpenEvent");
+    NFT_MINT_EVENT("NFTMintEvent"),
+    NFT_SELL_EVENT("NFTSellEvent"),
+    NFT_BID_EVENT("NFTBidEvent"),
+    NFT_BUY_EVENT("NFTBuyEvent"),
+    NFT_ACCEPT_BID_EVENT("NFTAcceptBidEvent"),
+    NFT_OFFLINE_EVENT("NFTOfflineEvent"),
+    BOX_OPEN_EVENT("BoxOpenEvent");
 
     private String desc;
 

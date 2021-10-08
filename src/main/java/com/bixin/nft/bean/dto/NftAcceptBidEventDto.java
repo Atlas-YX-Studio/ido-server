@@ -7,56 +7,59 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 取消事件
+ * nft购买事件
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NftOffLineEventtDto {
+public class NftAcceptBidEventDto {
 
-    // nft id
-    private Long id;
     // 售卖者
     private String seller;
-    // 售价
-    private BigDecimal selling_price;
-    // 出价者
-    private String bider;
-    // 出价
-    private BigDecimal bid_price;
+    // nft id
+    private Long id;
     // 支付token
-    private Pay_token_code pay_token_code;
+    private PayTokenCode pay_token_code;
+    // 出售价格
+    private BigDecimal selling_price;
+    // 购买价格
+    private BigDecimal final_price;
+    // 出价者
+    private String bidder;
+    // 创造者分得手续费
+    private BigDecimal creator_fee;
+    // 平台分得手续费
+    private BigDecimal platform_fee;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    static class Pay_token_code {
+    static class PayTokenCode {
         private String addr;
         private String module_name;
         private String name;
     }
 
-    public static NftEventDo of(NftOffLineEventtDto dto, String type) {
+    public static NftEventDo of(NftAcceptBidEventDto dto, String type) {
         NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
                 .nftId(dto.getId())
                 .creator("")
                 .seller(dto.getSeller())
                 .sellingPrice(dto.getSelling_price())
-                .bider(dto.getBider())
-                .bidPrice(dto.getBid_price())
+                .bider(dto.getBidder())
+                .bidPrice(dto.getFinal_price())
                 .type(type)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
-        Pay_token_code payTokenCode = dto.getPay_token_code();
+        PayTokenCode payTokenCode = dto.getPay_token_code();
         String tokenCode = "";
         if(!ObjectUtils.isEmpty(payTokenCode)){
             tokenCode = payTokenCode.getAddr() + "::" + HexStringUtil.toStringHex(payTokenCode.getName().replaceAll("0x",""))
@@ -65,5 +68,4 @@ public class NftOffLineEventtDto {
         builder.payToken(tokenCode);
         return builder.build();
     }
-
 }

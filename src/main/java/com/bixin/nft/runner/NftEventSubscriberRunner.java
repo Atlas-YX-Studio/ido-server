@@ -126,28 +126,34 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 String tagString = getEventName(eventResult.getTypeTag());
                 NftEventDo nftEventDo = null;
                 // 售卖
-                if(NftEventType.NFTSELLEVENT.getDesc().equals(tagString)){
+                if(NftEventType.NFT_SELL_EVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 售卖");
                     NftSellEventtDto dto = mapper.convertValue(data, NftSellEventtDto.class);
-                    nftEventDo = NftSellEventtDto.of(dto,NftEventType.NFTSELLEVENT.getDesc());
+                    nftEventDo = NftSellEventtDto.of(dto,NftEventType.NFT_SELL_EVENT.getDesc());
                 }
                 // 出价
-                if(NftEventType.NFTBIDEVENT.getDesc().equals(tagString)){
+                if(NftEventType.NFT_BID_EVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 出价");
-                    NftBidEventtDto dto = mapper.convertValue(data, NftBidEventtDto.class);
-                    nftEventDo = NftBidEventtDto.of(dto,NftEventType.NFTBIDEVENT.getDesc());
+                    NftBidEventDto dto = mapper.convertValue(data, NftBidEventDto.class);
+                    nftEventDo = NftBidEventDto.of(dto,NftEventType.NFT_BID_EVENT.getDesc());
                 }
                 // 购买
-                if(NftEventType.NFTBUYEVENT.getDesc().equals(tagString)){
+                if(NftEventType.NFT_BUY_EVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 购买");
                     NftBuyEventDto dto = mapper.convertValue(data, NftBuyEventDto.class);
-                    nftEventDo = NftBuyEventDto.of(dto,NftEventType.NFTBUYEVENT.getDesc());
+                    nftEventDo = NftBuyEventDto.of(dto,NftEventType.NFT_BUY_EVENT.getDesc());
                 }
                 // 取消
-                if(NftEventType.NFTOFFLINEEVENT.getDesc().equals(tagString)){
+                if(NftEventType.NFT_OFFLINE_EVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 取消");
-                    NftOffLineEventtDto dto = mapper.convertValue(data, NftOffLineEventtDto.class);
-                    nftEventDo = NftOffLineEventtDto.of(dto,NftEventType.NFTOFFLINEEVENT.getDesc());
+                    NftOffLineEventDto dto = mapper.convertValue(data, NftOffLineEventDto.class);
+                    nftEventDo = NftOffLineEventDto.of(dto,NftEventType.NFT_OFFLINE_EVENT.getDesc());
+                }
+                // 接受报价
+                if(NftEventType.NFT_ACCEPT_BID_EVENT.getDesc().equals(tagString)){
+                    log.info("NftEventSubscriberRunner 接受报价");
+                    NftAcceptBidEventDto dto = mapper.convertValue(data, NftAcceptBidEventDto.class);
+                    nftEventDo = NftAcceptBidEventDto.of(dto,NftEventType.NFT_ACCEPT_BID_EVENT.getDesc());
                 }
                 if(!ObjectUtils.isEmpty(nftEventDo)){
                     setGroupIdAndInfoId(nftEventDo,eventResult.getTypeTag(),tagString);
@@ -189,7 +195,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         nftEventDo.setInfoId(nftInfoDo.getId());
         nftEventDo.setGroupId(nftGroupDo.getId());
         try {
-            if(NftEventType.NFTBUYEVENT.getDesc().equals(eventType)){
+            if(NftEventType.NFT_BUY_EVENT.getDesc().equals(eventType)){
                 nftInfoDo.setOwner(nftEventDo.getBider());
                 nftInfoDo.setUpdateTime(System.currentTimeMillis());
                 nftInfoService.update(nftInfoDo);

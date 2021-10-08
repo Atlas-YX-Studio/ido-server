@@ -8,25 +8,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.ObjectUtils;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * nft出售事件 =  上架
+ * 取消事件
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NftSellEventtDto {
+public class NftOffLineEventDto {
+    // 售卖者
+    private String seller;
     // nft id
     private Long id;
-    // 出售者
-    private String seller;
-    // 出售价格
-    private BigDecimal selling_price;
     // 支付token
     private PayTokenCode pay_token_code;
+    // 售价
+    private BigDecimal selling_price;
+    // 出价
+    private BigDecimal bid_price;
+    // 出价者
+    private String bidder;
 
     @Data
     @Builder
@@ -38,14 +43,14 @@ public class NftSellEventtDto {
         private String name;
     }
 
-    public static NftEventDo of(NftSellEventtDto dto,String type) {
+    public static NftEventDo of(NftOffLineEventDto dto, String type) {
         NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
                 .nftId(dto.getId())
                 .creator("")
                 .seller(dto.getSeller())
                 .sellingPrice(dto.getSelling_price())
-                .bider("")
-                .bidPrice(BigDecimal.ZERO)
+                .bider(dto.getBidder())
+                .bidPrice(dto.getBid_price())
                 .type(type)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));

@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -47,11 +48,17 @@ public class ScheduleNftMarket {
     @Resource
     private StarConfig starConfig;
 
+    @Value("${ido.star.nft.market-module}")
+    private String marketModule;
+
+    @Value("${ido.star.nft.scripts-module}")
+    private String scriptsModule;
+
     ObjectMapper mapper = new ObjectMapper();
 
-    static final String separator = "::";
-    static final String boxSuffix = separator + "NFTMarket" + separator + "BoxSelling";
-    static final String nftSuffix = separator + "NFTMarket" + separator + "NFTSelling";
+    private final String separator = "::";
+    private final String boxSuffix = separator + marketModule + separator + "BoxSelling";
+    private final String nftSuffix = separator + scriptsModule + separator + "NFTSelling";
 
     //        @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "5 0/1 * * * ?")
