@@ -4,10 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.bixin.ido.server.common.errorcode.IdoErrorCode;
 import com.bixin.ido.server.common.exception.IdoException;
-import com.bixin.ido.server.common.exception.SequenceException;
 import com.bixin.ido.server.enums.NftGroupStatus;
 import com.bixin.ido.server.utils.BigDecimalUtil;
-import com.bixin.ido.server.utils.RetryingUtil;
 import com.bixin.ido.server.utils.TypeArgsUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
@@ -253,12 +251,7 @@ public class NftContractService {
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getEyes()))
                 ))
                 .build();
-        return RetryingUtil.retry(
-                () -> contractService.callFunction(address, scriptFunctionObj),
-                5,
-                4000,
-                SequenceException.class
-        );
+        return contractService.callFunction(address, scriptFunctionObj);
     }
 
     /**

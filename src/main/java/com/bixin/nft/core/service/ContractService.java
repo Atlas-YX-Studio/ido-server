@@ -115,17 +115,23 @@ public class ContractService {
         log.info("合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
-        String result = starcoinClient.callScriptFunction(sender, privateKey, scriptFunctionObj);
-        log.info("合约请求 result: {}", result);
-        String txn = JSON.parseObject(result).getString("result");
-        if (StringUtils.isBlank(txn)) {
-            log.info("合约部署失败");
-            if (result.contains("SEQUENCE_NUMBER_TOO_OLD")) {
-                throw new SequenceException();
-            }
-            return false;
-        }
-        return checkTxt(txn);
+        return RetryingUtil.retry(
+                () -> {
+                    String result = starcoinClient.callScriptFunction(sender, privateKey, scriptFunctionObj);
+                    log.info("合约请求 result: {}", result);
+                    String txn = JSON.parseObject(result).getString("result");
+                    if (StringUtils.isBlank(txn)) {
+                        log.info("合约部署失败");
+                        if (result.contains("SEQUENCE_NUMBER_TOO_OLD")) {
+                            throw new SequenceException();
+                        }
+                        return false;
+                    }
+                    return checkTxt(txn);
+                },
+                5,
+                4000,
+                SequenceException.class);
     }
 
     /**
