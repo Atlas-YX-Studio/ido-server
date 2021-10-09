@@ -12,7 +12,6 @@ import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
 import com.bixin.nft.core.service.*;
 import com.bixin.nft.enums.NftEventType;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -98,12 +97,12 @@ public class NftInfoController {
                              @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                              @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
 
-        if (nextId < 0 || pageSize <= 0 || StringUtils.isEmpty(type)) {
+        if (nextId < 0 || pageSize <= 0) {
             return P.failed("parameter is invalid");
         }
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
         // type = null 查询所有
-        List<NftEventDo> list = nftEventService.getALlByPage(id, null, pageSize + 1, nextId);
+        List<NftEventDo> list = nftEventService.getALlByPage(id, type, pageSize + 1, nextId);
         boolean hasNext = false;
         if (list.size() > pageSize) {
             list = list.subList(0, list.size() - 1);

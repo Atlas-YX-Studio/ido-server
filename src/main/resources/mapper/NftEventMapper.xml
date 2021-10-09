@@ -140,7 +140,7 @@
     select
     <include refid="Base_Column_List"/>
     from nft_event
-    where nft_id=#{nftId}
+    where info_id=#{infoId}
     <if test="type != null">
       and type = #{type}
     </if>
