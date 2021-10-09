@@ -5,11 +5,13 @@ import com.bixin.nft.bean.DO.NftEventDo;
 import com.bixin.nft.core.mapper.NftEventMapper;
 import com.bixin.nft.core.service.NftEventService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @class: NftEventServiceImpl
@@ -89,7 +91,7 @@ public class NftEventServiceImpl implements NftEventService {
     public List<NftEventDo> getALlByPage(Long infoId, String type, long pageSize, long nextId) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("infoId", infoId);
-        paramMap.put("type", type);
+        Optional.ofNullable(type).filter(StringUtils::isNotBlank).ifPresent(data -> paramMap.put("type", data));
         paramMap.put("pageSize", pageSize);
         paramMap.put("sort", "id");
         paramMap.put("order", "desc");

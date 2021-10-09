@@ -145,12 +145,15 @@ public class NftContractService {
                     nftId.setValue(createdNftInfoDos.get(0).getNftId() + 1);
                 }
                 nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
+                    nftInfoDo.setNftId(nftId.longValue());
+                    nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
                     if (!mintKikoCatNFT(nftGroupDo, nftInfoDo)) {
                         log.error("NFT {} mint失败", nftInfoDo.getName());
+                        nftInfoDo.setNftId(0L);
+                        nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
                         throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                     }
                     log.info("NFT {} mint成功", nftInfoDo.getName());
-                    nftInfoDo.setNftId(nftId.longValue());
                     nftInfoDo.setOwner(nftGroupDo.getOwner());
                     nftInfoDo.setCreated(true);
                     nftInfoDo.setUpdateTime(System.currentTimeMillis());

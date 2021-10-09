@@ -92,7 +92,7 @@ public class NftInfoController {
      * @return
      */
     @GetMapping("/operation/record")
-    public P operationRecord(@RequestParam(value = "type") String type,
+    public P operationRecord(@RequestParam(value = "type", defaultValue = "") String type,
                              @RequestParam(value = "id") Long id,
                              @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                              @RequestParam(value = "nextId", defaultValue = "0") long nextId) {
@@ -100,9 +100,9 @@ public class NftInfoController {
         if (nextId < 0 || pageSize <= 0) {
             return P.failed("parameter is invalid");
         }
-        pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
+        pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE || pageSize <= 0 ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
         // type = null 查询所有
-        List<NftEventDo> list = nftEventService.getALlByPage(id, type, pageSize + 1, nextId);
+        List<NftEventDo> list = nftEventService.getALlByPage(id, type, pageSize, nextId);
         boolean hasNext = false;
         if (list.size() > pageSize) {
             list = list.subList(0, list.size() - 1);
