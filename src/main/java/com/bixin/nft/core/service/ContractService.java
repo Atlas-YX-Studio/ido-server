@@ -99,9 +99,6 @@ public class ContractService {
         String txn = JSON.parseObject(result).getString("result");
         if (StringUtils.isBlank(txn)) {
             log.info("合约部署失败");
-            if (result.contains("SEQUENCE_NUMBER_TOO_OLD")) {
-                throw new SequenceException();
-            }
             return false;
         }
         return checkTxt(txn);
@@ -122,7 +119,10 @@ public class ContractService {
         log.info("合约请求 result: {}", result);
         String txn = JSON.parseObject(result).getString("result");
         if (StringUtils.isBlank(txn)) {
-            log.info("合约请求失败");
+            log.info("合约部署失败");
+            if (result.contains("SEQUENCE_NUMBER_TOO_OLD")) {
+                throw new SequenceException();
+            }
             return false;
         }
         return checkTxt(txn);
