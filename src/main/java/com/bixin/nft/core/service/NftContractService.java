@@ -147,8 +147,6 @@ public class NftContractService {
                     nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
                     if (!mintKikoCatNFT(nftGroupDo, nftInfoDo)) {
                         log.error("NFT {} mint失败", nftInfoDo.getName());
-                        nftInfoDo.setNftId(0L);
-                        nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
                         throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                     }
                     log.info("NFT {} mint成功", nftInfoDo.getName());
@@ -292,7 +290,7 @@ public class NftContractService {
                         TypeArgsUtil.parseTypeObj(nftGroupDo.getPayToken())
                 ))
                 .build();
-        return contractService.callFunction(scripts, scriptFunctionObj);
+        return contractService.callFunction(market, scriptFunctionObj);
     }
 
     /**
@@ -314,7 +312,7 @@ public class NftContractService {
                         TypeArgsUtil.parseTypeObj(payToken)
                 ))
                 .build();
-        return contractService.callFunction(scripts, scriptFunctionObj);
+        return contractService.callFunction(market, scriptFunctionObj);
     }
 
     /**

@@ -48,10 +48,10 @@ ido:
       websocket-host: 10.13.22.40
       websocket-port: 9870
       market: "0xa85291039ddad8845d5097624c81c3fd"
-      scripts: "0xa85291039ddad8845d5097624c81c3fd"
+      scripts: "0x290c7b35320a4dd26f651fd184373fe7"
       catadd: "0x69f1e543a3bef043b63bed825fcd2cf6"
-      market-module: "NFTMarket03"
-      scripts-module: "NFTScripts03"
+      market-module: "NFTMarket02"
+      scripts-module: "NFTScripts02"
       image-prefix: "https://imagedelivery.net"
       image-base-path: "/data/images/bixin-ido-server/nft/"
 
