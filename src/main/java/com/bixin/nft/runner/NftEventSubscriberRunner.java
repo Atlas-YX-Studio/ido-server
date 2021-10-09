@@ -195,7 +195,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         nftEventDo.setInfoId(nftInfoDo.getId());
         nftEventDo.setGroupId(nftGroupDo.getId());
         try {
-            if(NftEventType.NFT_BUY_EVENT.getDesc().equals(eventType)){
+            if(NftEventType.NFT_BUY_EVENT.getDesc().equals(eventType) || NftEventType.NFT_ACCEPT_BID_EVENT.getDesc().equals(eventType)){
                 nftInfoDo.setOwner(nftEventDo.getBider());
                 nftInfoDo.setUpdateTime(System.currentTimeMillis());
                 nftInfoService.update(nftInfoDo);
