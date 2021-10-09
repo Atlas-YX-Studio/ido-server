@@ -88,7 +88,7 @@ public class NftInfoController {
 
     /**
      * 操作记录
-     * ID 为 nft id
+     * ID 为 nftInfoId
      *
      * @return
      */

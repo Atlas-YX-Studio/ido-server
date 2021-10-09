@@ -86,9 +86,9 @@ public class NftEventServiceImpl implements NftEventService {
 
 
     @Override
-    public List<NftEventDo> getALlByPage(Long nftId, String type, long pageSize, long nextId) {
+    public List<NftEventDo> getALlByPage(Long infoId, String type, long pageSize, long nextId) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("nftId", nftId);
+        paramMap.put("infoId", infoId);
         paramMap.put("type", type);
         paramMap.put("pageSize", pageSize);
         paramMap.put("sort", "id");

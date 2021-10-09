@@ -51,14 +51,11 @@ public class ScheduleNftMarket {
     @Value("${ido.star.nft.market-module}")
     private String marketModule;
 
-    @Value("${ido.star.nft.scripts-module}")
-    private String scriptsModule;
-
     ObjectMapper mapper = new ObjectMapper();
 
     private final String separator = "::";
     private final String boxSuffix = separator + marketModule + separator + "BoxSelling";
-    private final String nftSuffix = separator + scriptsModule + separator + "NFTSelling";
+    private final String nftSuffix = separator + marketModule + separator + "NFTSelling";
 
     //        @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "5 0/1 * * * ?")
