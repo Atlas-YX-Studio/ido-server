@@ -73,8 +73,7 @@ public class NftInfoController {
      */
     @GetMapping("/group/list")
     public R groupList() {
-        NftGroupDo selectNftGroupDo = new NftGroupDo();
-        List<NftGroupDo> nftGroupDoList = groupService.listByObject(selectNftGroupDo);
+        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
         if (CollectionUtils.isEmpty(nftGroupDoList)) {
             return R.failed("group不存在");
         }
