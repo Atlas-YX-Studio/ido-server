@@ -88,6 +88,8 @@ public class StarConfig {
         private String websocketPort;
         private String market;
         private String catadd;
+        private String marketModule;
+        private String scriptsModule;
         private String scripts;
         private String imagePrefix;
         private String imageBasePath;

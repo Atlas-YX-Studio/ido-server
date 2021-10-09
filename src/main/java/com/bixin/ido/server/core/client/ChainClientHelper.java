@@ -4,7 +4,6 @@ import com.beust.jcommander.internal.Maps;
 import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.config.StarConfig;
 import org.apache.commons.lang3.tuple.MutableTriple;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,8 +29,6 @@ public class ChainClientHelper {
     @Resource
     StarConfig idoStarConfig;
 
-    @Value("${ido.star.nft.market-module}")
-    private String marketModule;
     /**
      * 获取链上交易信息
      *
@@ -93,7 +90,7 @@ public class ChainClientHelper {
     }
 
     public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getBuyBackListResp(String meta, String body, String payToken) {
-        List<String> addressArray = Arrays.asList(idoStarConfig.getNft().getMarket(), idoStarConfig.getNft().getScripts() + "::" + marketModule + "::NFTBuyBack<" + meta + ", " + body + ", " + payToken + ">");
+        List<String> addressArray = Arrays.asList(idoStarConfig.getNft().getMarket(), idoStarConfig.getNft().getScripts() + "::" + idoStarConfig.getNft().getMarketModule() + "::NFTBuyBack<" + meta + ", " + body + ", " + payToken + ">");
         return getPostResp(addressArray);
     }
 }

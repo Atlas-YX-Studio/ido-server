@@ -17,7 +17,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -48,14 +47,11 @@ public class ScheduleNftMarket {
     @Resource
     private StarConfig starConfig;
 
-    @Value("${ido.star.nft.market-module}")
-    private String marketModule;
-
     ObjectMapper mapper = new ObjectMapper();
 
-    private final String separator = "::";
-    private final String boxSuffix = separator + marketModule + separator + "BoxSelling";
-    private final String nftSuffix = separator + marketModule + separator + "NFTSelling";
+    private static final String separator = "::";
+    private static final String boxSuffix = separator + "BoxSelling";
+    private static final String nftSuffix = separator + "NFTSelling";
 
     //        @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(cron = "5 0/1 * * * ?")
@@ -68,8 +64,8 @@ public class ScheduleNftMarket {
             log.warn("ScheduleNftMarket get chain resource is empty {}", chainResourceDto);
         }
 
-        String nftKeyPrefix = starConfig.getNft().getMarket() + nftSuffix;
-        String boxKeyPrefix = starConfig.getNft().getMarket() + boxSuffix;
+        String nftKeyPrefix = starConfig.getNft().getMarket() + separator + starConfig.getNft().getMarketModule() + nftSuffix;
+        String boxKeyPrefix = starConfig.getNft().getMarket() + separator + starConfig.getNft().getMarketModule() + boxSuffix;
 
         Map<NftGroupDo, List<NFTBoxDto>> nftMap = new HashMap<>();
         Map<NftGroupDo, List<NFTBoxDto>> boxMap = new HashMap<>();
