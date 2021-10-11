@@ -55,17 +55,17 @@ public class ContractService {
     }
 
     /**
-     * 获取Resource
+     * 获取所有Resource
      *
      * @param senderAddress
      * @return
      */
-    public String getResource(String senderAddress) {
+    public String listResource(String senderAddress) {
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
         ListResourceOption listResourceOption = new ListResourceOption();
         listResourceOption.setDecode(true);
         String result = starcoinClient.call("state.list_resource", Lists.newArrayList(new Object[]{AccountAddressUtils.hex(sender), listResourceOption}));
-        log.info("starCoin resource result:{}", result);
+//        log.info("starCoin resource result:{}", result);
         return result;
     }
 
