@@ -62,4 +62,13 @@ public interface NftGroupService {
 
     List<NftGroupDo> getListByEnabled(Boolean enabled);
 
+    /**
+     * 分页查询
+     * @param enabled
+     * @param pageSize
+     * @param pageNum
+     * @return
+     */
+    List<NftGroupDo> getListByPage(Boolean enabled, long pageSize, long pageNum);
+
 }

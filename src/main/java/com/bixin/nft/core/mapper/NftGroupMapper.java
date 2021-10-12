@@ -3,6 +3,7 @@ package com.bixin.nft.core.mapper;
 import com.bixin.nft.bean.DO.NftGroupDo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NftGroupMapper {
     /**
@@ -49,4 +50,11 @@ public interface NftGroupMapper {
     NftGroupDo offering(Boolean offering);
 
     List<NftGroupDo> getListByEnabled(Boolean enabled);
+
+    /**
+     * 根据分页查询
+     * @param paramMap
+     * @return
+     */
+    List<NftGroupDo> selectByPage(Map<String,Object> paramMap);
 }

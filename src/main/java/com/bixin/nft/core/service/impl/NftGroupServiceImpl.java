@@ -3,14 +3,11 @@ package com.bixin.nft.core.service.impl;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.service.NftGroupService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @class: NftGroupServiceImpl
@@ -96,6 +93,25 @@ public class NftGroupServiceImpl implements NftGroupService {
     @Override
     public List<NftGroupDo> getListByEnabled(Boolean enabled) {
         return nftGroupMapper.getListByEnabled(enabled);
+    }
+
+    /**
+     * 根据分页查询盲盒
+     *
+     * @param enabled
+     * @param pageSize
+     * @param pageNum
+     * @return
+     */
+    @Override
+    public List<NftGroupDo> getListByPage(Boolean enabled, long pageSize, long pageNum) {
+        Map<String, Object> paramMap = new HashMap<>();
+        Optional.ofNullable(enabled).filter(Objects::nonNull).ifPresent(data -> paramMap.put("enabled", enabled));
+        paramMap.put("pageSize", pageSize);
+        paramMap.put("offset", pageSize * (pageNum -1));
+        paramMap.put("sort", "id");
+        paramMap.put("order", "desc");
+        return nftGroupMapper.selectByPage(paramMap);
     }
 
 }

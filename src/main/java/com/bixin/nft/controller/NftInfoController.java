@@ -32,19 +32,15 @@ import java.util.List;
 public class NftInfoController {
 
     @Autowired
-    public NftInfoService nftInfoService;
-
+    private NftInfoService nftInfoService;
     @Autowired
-    public NftGroupService groupService;
-
+    private NftGroupService nftGroupService;
     @Autowired
-    public NftKikoCatService nftKikoCatService;
-
+    private NftKikoCatService nftKikoCatService;
     @Autowired
-    public NftMarketService nftMarketService;
-
+    private NftMarketService nftMarketService;
     @Autowired
-    public NftEventService nftEventService;
+    private NftEventService nftEventService;
 
     /**
      * 获取系列列表
@@ -53,7 +49,7 @@ public class NftInfoController {
      */
     @GetMapping("/series/list")
     public R seriesList() {
-        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
+        List<NftGroupDo> nftGroupDoList = nftGroupService.getListByEnabled(true);
         List<SeriesListVo> list = new ArrayList<>();
         for (NftGroupDo nftGroupDo : nftGroupDoList) {
             SeriesListVo seriesListVo = new SeriesListVo();
@@ -72,7 +68,7 @@ public class NftInfoController {
      */
     @GetMapping("/group/list")
     public R groupList() {
-        List<NftGroupDo> nftGroupDoList = groupService.getListByEnabled(true);
+        List<NftGroupDo> nftGroupDoList = nftGroupService.getListByEnabled(true);
         if (CollectionUtils.isEmpty(nftGroupDoList)) {
             return R.failed("group不存在");
         }
@@ -164,13 +160,42 @@ public class NftInfoController {
     }
 
     /**
+     * 获取盲盒发售列表
+     *
+     * @return
+     */
+    @GetMapping("/box/offering/list")
+    public P offeringList(@RequestParam(value = "pageSize", defaultValue = "10") long pageSize,
+                          @RequestParam(value = "pageNum", defaultValue = "1") long pageNum) {
+        if (pageNum < 0 || pageSize <= 0) {
+            return P.failed("parameter is invalid");
+        }
+        pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE || pageSize <= 0 ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
+        // type = null 查询所有
+        List<NftGroupDo> nftGroupDoList = nftGroupService.getListByPage(true, pageSize, pageNum);
+        if (CollectionUtils.isEmpty(nftGroupDoList)) {
+            return P.success(null, false);
+        }
+        boolean hasNext = false;
+        if (nftGroupDoList.size() == pageSize) {
+            hasNext = true;
+        }
+        List<NftGroupVo> nftGroupVoLis = BeanCopyUtil.copyListProperties(nftGroupDoList, nftGroupDo -> {
+            NftGroupVo nftGroupVo = new NftGroupVo();
+            nftGroupVo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
+            return nftGroupVo;
+        });
+        return P.success(nftGroupVoLis, hasNext);
+    }
+
+    /**
      * 获取待发售盲盒
      *
      * @return
      */
-    @GetMapping("/box/offering")
-    public R offering() {
-        NftGroupDo nftGroupDo = groupService.offering(true);
+    @GetMapping("/box/offering/{groupId}")
+    public R offering(@PathVariable("groupId") Long groupId) {
+        NftGroupDo nftGroupDo = nftGroupService.selectById(groupId);
         if (nftGroupDo == null) {
             return R.success();
         }
@@ -193,7 +218,7 @@ public class NftInfoController {
     public R boxInfo(@RequestParam("boxToken") String boxToken) {
         NftGroupDo selectNftGroupDo = new NftGroupDo();
         selectNftGroupDo.setBoxToken(boxToken);
-        NftGroupDo nftGroupDo = groupService.selectByObject(selectNftGroupDo);
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(selectNftGroupDo);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("boxToken不存在");
         }
@@ -213,7 +238,7 @@ public class NftInfoController {
      */
     @GetMapping("/box/info/{groupId}/{boxId}")
     public R boxInfo(@PathVariable(value = "groupId") Long groupId, @PathVariable(value = "boxId") Long boxId) {
-        NftGroupDo nftGroupDo = groupService.selectById(groupId);
+        NftGroupDo nftGroupDo = nftGroupService.selectById(groupId);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("boxToken不存在");
         }
@@ -255,7 +280,7 @@ public class NftInfoController {
         NftGroupDo selectNftGroupDo = new NftGroupDo();
         selectNftGroupDo.setNftMeta(nftMeta);
         selectNftGroupDo.setNftBody(nftBody);
-        NftGroupDo nftGroupDo = groupService.selectByObject(selectNftGroupDo);
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(selectNftGroupDo);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("nftGroupDo不存在，meta = " + nftMeta + "，body = " + nftBody);
         }
@@ -283,7 +308,6 @@ public class NftInfoController {
         return R.success(nftInfoVo);
     }
 
-
     /**
      * 获取NFT详情，从市场列表进入
      *
@@ -295,7 +319,7 @@ public class NftInfoController {
         if (ObjectUtils.isEmpty(nftInfoDo)) {
             return R.failed("nftInfoDo不存在，id = " + id);
         }
-        NftGroupDo nftGroupDo = groupService.selectById(nftInfoDo.getGroupId());
+        NftGroupDo nftGroupDo = nftGroupService.selectById(nftInfoDo.getGroupId());
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
         }
