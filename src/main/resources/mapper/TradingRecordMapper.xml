@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.nft.core.mapper.TradingRecordMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.nft.bean.DO.TradingRecordDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="ref_id" jdbcType="BIGINT" property="refId" />
+    <result column="direction" jdbcType="VARCHAR" property="direction" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="box_token" jdbcType="VARCHAR" property="boxToken" />
+    <result column="nft_meta" jdbcType="VARCHAR" property="nftMeta" />
+    <result column="nft_body" jdbcType="VARCHAR" property="nftBody" />
+    <result column="pay_token" jdbcType="VARCHAR" property="payToken" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <result column="fee" jdbcType="INTEGER" property="fee" />
+    <result column="finish" jdbcType="BIT" property="finish" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, address, type, ref_id, direction, icon, name, box_token, nft_meta, nft_body, 
+    pay_token, state, price, fee, finish, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trading_records
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from trading_records
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.TradingRecordDo" useGeneratedKeys="true">
+    insert into trading_records (id, address, type, 
+      ref_id, direction, icon, 
+      name, box_token, nft_meta, 
+      nft_body, pay_token, state, 
+      price, fee, finish, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{refId,jdbcType=BIGINT}, #{direction,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{boxToken,jdbcType=VARCHAR}, #{nftMeta,jdbcType=VARCHAR}, 
+      #{nftBody,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
+      #{price,jdbcType=INTEGER}, #{fee,jdbcType=INTEGER}, #{finish,jdbcType=BIT}, #{createTime,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.TradingRecordDo">
+    update trading_records
+    <set>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="refId != null">
+        ref_id = #{refId,jdbcType=BIGINT},
+      </if>
+      <if test="direction != null">
+        direction = #{direction,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="boxToken != null">
+        box_token = #{boxToken,jdbcType=VARCHAR},
+      </if>
+      <if test="nftMeta != null">
+        nft_meta = #{nftMeta,jdbcType=VARCHAR},
+      </if>
+      <if test="nftBody != null">
+        nft_body = #{nftBody,jdbcType=VARCHAR},
+      </if>
+      <if test="payToken != null">
+        pay_token = #{payToken,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=INTEGER},
+      </if>
+      <if test="fee != null">
+        fee = #{fee,jdbcType=INTEGER},
+      </if>
+      <if test="finish != null">
+        finish = #{finish,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != address">
+         and address = #{address,jdbcType=VARCHAR}
+      </if>
+      <if test="null != type">
+         and type = #{type,jdbcType=VARCHAR}
+      </if>
+      <if test="null != refId">
+         and ref_id = #{refId,jdbcType=BIGINT}
+      </if>
+      <if test="null != direction">
+         and direction = #{direction,jdbcType=VARCHAR}
+      </if>
+      <if test="null != icon">
+         and icon = #{icon,jdbcType=VARCHAR}
+      </if>
+      <if test="null != name">
+         and name = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="null != boxToken">
+         and box_token = #{boxToken,jdbcType=VARCHAR}
+      </if>
+      <if test="null != nftMeta">
+         and nft_meta = #{nftMeta,jdbcType=VARCHAR}
+      </if>
+      <if test="null != nftBody">
+         and nft_body = #{nftBody,jdbcType=VARCHAR}
+      </if>
+      <if test="null != payToken">
+         and pay_token = #{payToken,jdbcType=VARCHAR}
+      </if>
+      <if test="null != state">
+         and state = #{state,jdbcType=VARCHAR}
+      </if>
+      <if test="null != price">
+         and price = #{price,jdbcType=INTEGER}
+      </if>
+      <if test="null != fee">
+         and fee = #{fee,jdbcType=INTEGER}
+      </if>
+      <if test="null != finish">
+         and finish = #{finish,jdbcType=BIT}
+      </if>
+      <if test="null != createTime">
+         and create_time = #{createTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != updateTime">
+         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.TradingRecordDo" resultMap="BaseResultMap">
+    select  * from trading_records
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.TradingRecordDo" resultMap="BaseResultMap">
+    select  * from trading_records
+    <include refid="baseQuery" />
+  </select>
+</mapper>
