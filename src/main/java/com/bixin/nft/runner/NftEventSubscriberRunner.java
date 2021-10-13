@@ -291,6 +291,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         } else {
             newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+            newRecordDo.setPrice(dto.getBid_price());
             tradingRecordService.update(newRecordDo);
         }
     }
