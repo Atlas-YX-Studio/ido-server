@@ -30,6 +30,20 @@
     from trading_records
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from trading_records
+    where
+    address = #{address}
+    <if test="direction != null">
+      and direction = #{direction}
+    </if>
+    order by create_time desc
+    <if test="pageFrom != null and pageSize !=null">
+      limit #{pageFrom},#{pageSize}
+    </if>
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from trading_records
     where id = #{id,jdbcType=BIGINT}

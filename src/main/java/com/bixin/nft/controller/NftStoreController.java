@@ -98,31 +98,6 @@ public class NftStoreController {
             tradingRecordDos = tradingRecordDos.subList(0, tradingRecordDos.size() - 1);
             hasNext = true;
         }
-
-//        Set<Long> groupIds = tradingRecordDos.stream().map(p -> p.getGroupId()).collect(Collectors.toSet());
-//        Map<Long, NftGroupDo> map = new HashMap<>();
-//        groupIds.forEach(id -> {
-//            NftGroupDo nftGroupDo = nftGroupService.selectById(id);
-//            map.put(id, nftGroupDo);
-//        });
-//
-//        List<NftSelfSellingVo> list = new ArrayList<>();
-//        for(TradingRecordDo p: tradingRecordDos){
-//            NftSelfSellingVo.NftSelfSellingVoBuilder builder = NftSelfSellingVo.builder();
-//            NftGroupDo nftGroupDo = map.get(p.getGroupId());
-//            if (Objects.nonNull(nftGroupDo)) {
-//                String boxToken = nftGroupDo.getBoxToken();
-//                String nftMeta = nftGroupDo.getNftMeta();
-//                String nftBody = nftGroupDo.getNftBody();
-//                builder.boxToken(boxToken)
-//                        .nftMeta(nftMeta)
-//                        .nftBody(nftBody);
-//            }
-//            NftSelfSellingVo sellingVo = builder.build();
-//            BeanUtils.copyProperties(p, sellingVo);
-//            list.add(sellingVo);
-//        }
-
         return P.success(tradingRecordDos, hasNext);
     }
 }

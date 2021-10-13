@@ -39,6 +39,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -139,20 +140,38 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 String tagString = getEventName(eventResult.getTypeTag());
                 NftEventDo nftEventDo = null;
                 if (NftEventType.NFT_SELL_EVENT.getDesc().equals(tagString)) {
-                    // 售卖
+                    // nft售卖
                     handleNftSellEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.NFT_BID_EVENT.getDesc().equals(tagString)) {
-                    // 出价
+                    // nft出价
                     handleNftBidEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.NFT_BUY_EVENT.getDesc().equals(tagString)) {
-                    // 购买
+                    // nft购买
                     handleNftBuyEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.NFT_OFFLINE_EVENT.getDesc().equals(tagString)) {
-                    // 取消
+                    // nft取消
                     handleNftOfflineEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.NFT_ACCEPT_BID_EVENT.getDesc().equals(tagString)) {
-                    // 接受报价
+                    // nft接受报价
                     handleNftAcceptBidEvent(data, eventResult.getTypeTag());
+                } else if (NftEventType.NFT_BUY_BACK_SELL_EVENT.getDesc().equals(tagString)) {
+                    // nft平台回购卖出
+                    handleNftBuyBackSellEvent(data, eventResult.getTypeTag());
+                } else if (NftEventType.BOX_OFFERING_SELL_EVENT.getDesc().equals(tagString)) {
+                    // 盲盒发售
+                    handleBoxOfferingSellEvent(data, eventResult.getTypeTag());
+                } else if (NftEventType.BOX_BID_EVENT.getDesc().equals(tagString)) {
+                    // 盲盒出价
+                    handleBoxBidEvent(data, eventResult.getTypeTag());
+                } else if (NftEventType.BOX_BUY_EVENT.getDesc().equals(tagString)) {
+                    // 盲盒购买
+                    handleBoxBuyEvent(data, eventResult.getTypeTag());
+                } else if (NftEventType.BOX_OFFLINE_EVENT.getDesc().equals(tagString)) {
+                    // 盲盒取消
+                    handleBoxOfflineEvent(data, eventResult.getTypeTag());
+                } else if (NftEventType.BOX_ACCEPT_BID_EVENT.getDesc().equals(tagString)) {
+                    // 盲盒接受报价
+                    handleBoxAcceptBidEvent(data, eventResult.getTypeTag());
                 } else {
                     log.error("NftEventSubscriberRunner nftEventDo 为空");
                 }
@@ -169,7 +188,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         }
     }
 
-    // 售卖
+    // nft售卖
     private void handleNftSellEvent(JsonNode data,String typeTag) {
         log.info("NftEventSubscriberRunner 售卖");
         NftSellEventtDto dto = mapper.convertValue(data, NftSellEventtDto.class);
@@ -198,7 +217,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         nftEventService.insert(nftEventDo);
     }
 
-    // 出价
+    // nft出价
     private void handleNftBidEvent(JsonNode data,String typeTag) {
         log.info("NftEventSubscriberRunner 出价");
         NftBidEventDto dto = mapper.convertValue(data, NftBidEventDto.class);
@@ -296,7 +315,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         }
     }
 
-    // 购买
+    // nft购买
     private void handleNftBuyEvent(JsonNode data,String typeTag) {
         log.info("NftEventSubscriberRunner 购买");
         NftBuyEventDto dto = mapper.convertValue(data, NftBuyEventDto.class);
@@ -431,7 +450,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         tradingRecordService.insert(sellRecordDo);
     }
 
-    // 取消
+    // nft取消
     private void handleNftOfflineEvent(JsonNode data,String typeTag) {
         log.info("NftEventSubscriberRunner 取消");
         NftOffLineEventDto dto = mapper.convertValue(data, NftOffLineEventDto.class);
@@ -496,7 +515,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         }
     }
 
-    // 接受报价
+    // nft接受报价
     private void handleNftAcceptBidEvent(JsonNode data,String typeTag) {
         log.info("NftEventSubscriberRunner 接受报价");
         NftAcceptBidEventDto dto = mapper.convertValue(data, NftAcceptBidEventDto.class);
@@ -591,6 +610,531 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             sellRecordDo.setIcon(nftInfoDo.getImageLink());
             sellRecordDo.setName(nftInfoDo.getName());
         }
+        tradingRecordService.insert(sellRecordDo);
+    }
+
+    // nft平台回购卖出
+    private void handleNftBuyBackSellEvent(JsonNode data, String typeTag) {
+        log.info("NftEventSubscriberRunner 购买");
+        NFTBuyBackSellEventDto dto = mapper.convertValue(data, NFTBuyBackSellEventDto.class);
+        NftEventDo nftEventDo = NFTBuyBackSellEventDto.of(dto, NftEventType.NFT_BUY_BACK_SELL_EVENT.getDesc());
+
+        String meta = getMeta(typeTag);
+        String body = getBody(typeTag);
+        NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+        NftInfoDo nftInfoDo = null;
+        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
+            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
+        }
+
+        // set group & info id
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
+            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+        } else {
+            nftEventDo.setGroupId(nftGroupDo.getId());
+            nftEventDo.setInfoId(nftInfoDo.getId());
+        }
+
+        // 更新owner
+        try {
+            nftInfoDo.setOwner(nftEventDo.getBider());
+            nftInfoDo.setUpdateTime(System.currentTimeMillis());
+            nftInfoService.update(nftInfoDo);
+        }catch (Exception e){
+            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
+        }
+
+        nftEventService.insert(nftEventDo);
+
+        // 增加出售人出售记录
+        TradingRecordDo sellRecordDo = TradingRecordDo.builder()
+                .address(dto.getSeller())
+                .type(NftBoxType.NFT.getDesc())
+                .refId(dto.getId())
+                .direction(TradingRecordDirection.SELL.name())
+                .boxToken("")
+                .payToken(dto.getPayTokenCodeStr())
+                .state(TradingRecordState.DONE.name())
+                .price(dto.getFinal_price())
+                .fee(BigDecimal.ZERO)
+                .finish(Boolean.TRUE)
+                .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .build();
+        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+            sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+            sellRecordDo.setNftBody(nftGroupDo.getNftBody());
+        }
+        if (!ObjectUtils.isEmpty(nftInfoDo)) {
+            sellRecordDo.setIcon(nftInfoDo.getImageLink());
+            sellRecordDo.setName(nftInfoDo.getName());
+        }
+        tradingRecordService.insert(sellRecordDo);
+    }
+
+    // box平台发售卖出
+    private void handleBoxOfferingSellEvent(JsonNode data, String typeTag) {
+        log.info("NftEventSubscriberRunner 购买");
+        BoxOfferingSellEventDto dto = mapper.convertValue(data, BoxOfferingSellEventDto.class);
+        NftEventDo nftEventDo = BoxOfferingSellEventDto.of(dto, NftEventType.BOX_OFFERING_SELL_EVENT.getDesc());
+
+//        String meta = getMeta(typeTag);
+//        String body = getBody(typeTag);
+//        NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+//        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+//        NftInfoDo nftInfoDo = null;
+//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
+//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
+//        }
+//
+//        // set group & info id
+//        if (ObjectUtils.isEmpty(nftGroupDo)) {
+//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
+//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+//        } else {
+//            nftEventDo.setGroupId(nftGroupDo.getId());
+//            nftEventDo.setInfoId(nftInfoDo.getId());
+//        }
+//
+//        // 更新owner
+//        try {
+//            nftInfoDo.setOwner(nftEventDo.getBider());
+//            nftInfoDo.setUpdateTime(System.currentTimeMillis());
+//            nftInfoService.update(nftInfoDo);
+//        }catch (Exception e){
+//            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
+//        }
+
+        nftEventService.insert(nftEventDo);
+
+        // 新增购买记录
+        TradingRecordDo newRecordDo = TradingRecordDo.builder()
+                .address(dto.getBuyer())
+                .type(NftBoxType.BOX.getDesc())
+                .refId(0L)
+                .direction(TradingRecordDirection.BUY.name())
+                .boxToken(dto.getBoxTokenCodeStr())
+                .payToken(dto.getPayTokenCodeStr())
+                .state(TradingRecordState.ONE_PRICE.name())
+                .price(dto.getTotal_price().divide(dto.getQuantity(), RoundingMode.DOWN))
+                .fee(BigDecimal.ZERO)
+                .finish(Boolean.TRUE)
+                .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .build();
+//            if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//                newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//                newRecordDo.setNftBody(nftGroupDo.getNftBody());
+//            }
+//            if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//                newRecordDo.setIcon(nftInfoDo.getImageLink());
+//                newRecordDo.setName(nftInfoDo.getName());
+//            }
+        for (int i=0; i<dto.getQuantity().intValue(); i++) {
+            tradingRecordService.insert(newRecordDo);
+        }
+
+    }
+
+    // box出价
+    private void handleBoxBidEvent(JsonNode data,String typeTag) {
+        log.info("NftEventSubscriberRunner 出价");
+        BoxBidEventDto dto = mapper.convertValue(data, BoxBidEventDto.class);
+        NftEventDo nftEventDo = BoxBidEventDto.of(dto,NftEventType.BOX_BID_EVENT.getDesc());
+
+//        String meta = getMeta(typeTag);
+//        String body = getBody(typeTag);
+//        NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+//        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+//        NftInfoDo nftInfoDo = null;
+//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
+//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
+//        }
+//
+//        // set group & info id
+//        if (ObjectUtils.isEmpty(nftGroupDo)) {
+//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
+//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+//        } else {
+//            nftEventDo.setGroupId(nftGroupDo.getId());
+//            nftEventDo.setInfoId(nftInfoDo.getId());
+//        }
+
+        nftEventService.insert(nftEventDo);
+
+        // 更新上一个出价人的状态
+        if (StringUtils.isNotBlank(dto.getPrev_bidder())) {
+            TradingRecordDo tradingRecordParam = TradingRecordDo.builder().address(dto.getPrev_bidder()).type(NftBoxType.BOX.getDesc()).refId(dto.getId()).finish(Boolean.FALSE).build();
+            TradingRecordDo oldRecordDo = tradingRecordService.selectByObject(tradingRecordParam);
+            if (ObjectUtils.isEmpty(oldRecordDo)) {
+                oldRecordDo = TradingRecordDo.builder()
+                        .address(dto.getPrev_bidder())
+                        .type(NftBoxType.BOX.getDesc())
+                        .refId(dto.getId())
+                        .direction(TradingRecordDirection.BUY.name())
+                        .boxToken(dto.getBoxTokenCodeStr())
+                        .payToken(dto.getPayTokenCodeStr())
+                        .state(TradingRecordState.OVER_PRICE.name())
+                        .price(dto.getPrev_bid_price())
+                        .fee(BigDecimal.ZERO)
+                        .finish(Boolean.FALSE)
+                        .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .build();
+//                if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//                    oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//                    oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+//                }
+//                if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//                    oldRecordDo.setIcon(nftInfoDo.getImageLink());
+//                    oldRecordDo.setName(nftInfoDo.getName());
+//                }
+                tradingRecordService.insert(oldRecordDo);
+            } else {
+                oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
+                oldRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+                tradingRecordService.update(oldRecordDo);
+            }
+        }
+
+        // 更新或新增最新出价人记录
+        TradingRecordDo tradingRecordParam = TradingRecordDo.builder().address(dto.getBidder()).type(NftBoxType.BOX.getDesc()).refId(dto.getId()).finish(Boolean.FALSE).build();
+        TradingRecordDo newRecordDo = tradingRecordService.selectByObject(tradingRecordParam);
+        if (ObjectUtils.isEmpty(newRecordDo)) {
+            newRecordDo = TradingRecordDo.builder()
+                    .address(dto.getBidder())
+                    .type(NftBoxType.BOX.getDesc())
+                    .refId(dto.getId())
+                    .direction(TradingRecordDirection.BUY.name())
+                    .boxToken(dto.getBoxTokenCodeStr())
+                    .payToken(dto.getPayTokenCodeStr())
+                    .state(TradingRecordState.HIGHEST_PRICE.name())
+                    .price(dto.getBid_price())
+                    .fee(BigDecimal.ZERO)
+                    .finish(Boolean.FALSE)
+                    .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .build();
+//            if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//                newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//                newRecordDo.setNftBody(nftGroupDo.getNftBody());
+//            }
+//            if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//                newRecordDo.setIcon(nftInfoDo.getImageLink());
+//                newRecordDo.setName(nftInfoDo.getName());
+//            }
+            tradingRecordService.insert(newRecordDo);
+        } else {
+            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+            newRecordDo.setPrice(dto.getBid_price());
+            tradingRecordService.update(newRecordDo);
+        }
+    }
+
+    // box购买
+    private void handleBoxBuyEvent(JsonNode data,String typeTag) {
+        log.info("NftEventSubscriberRunner 购买");
+        BoxBuyEventDto dto = mapper.convertValue(data, BoxBuyEventDto.class);
+        NftEventDo nftEventDo = BoxBuyEventDto.of(dto, NftEventType.BOX_BUY_EVENT.getDesc());
+
+//        String meta = getMeta(typeTag);
+//        String body = getBody(typeTag);
+//        NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+//        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+//        NftInfoDo nftInfoDo = null;
+//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
+//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
+//        }
+//
+//        // set group & info id
+//        if (ObjectUtils.isEmpty(nftGroupDo)) {
+//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
+//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+//        } else {
+//            nftEventDo.setGroupId(nftGroupDo.getId());
+//            nftEventDo.setInfoId(nftInfoDo.getId());
+//        }
+//
+//        // 更新owner
+//        try {
+//            nftInfoDo.setOwner(nftEventDo.getBider());
+//            nftInfoDo.setUpdateTime(System.currentTimeMillis());
+//            nftInfoService.update(nftInfoDo);
+//        }catch (Exception e){
+//            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
+//        }
+
+        nftEventService.insert(nftEventDo);
+
+        // 更新上一个出价人的状态
+        if (StringUtils.isNotBlank(dto.getPrev_bidder()) && !StringUtils.equalsIgnoreCase(dto.getPrev_bidder(), dto.getBuyer())) {
+            TradingRecordDo tradingRecordParam = TradingRecordDo.builder().address(dto.getPrev_bidder()).type(NftBoxType.BOX.getDesc()).refId(dto.getId()).finish(Boolean.FALSE).build();
+            TradingRecordDo oldRecordDo = tradingRecordService.selectByObject(tradingRecordParam);
+            if (ObjectUtils.isEmpty(oldRecordDo)) {
+                oldRecordDo = TradingRecordDo.builder()
+                        .address(dto.getPrev_bidder())
+                        .type(NftBoxType.BOX.getDesc())
+                        .refId(dto.getId())
+                        .direction(TradingRecordDirection.BUY.name())
+                        .boxToken(dto.getBoxTokenCodeStr())
+                        .payToken(dto.getPayTokenCodeStr())
+                        .state(TradingRecordState.OVER_PRICE.name())
+                        .price(dto.getPrev_bid_price())
+                        .fee(BigDecimal.ZERO)
+                        .finish(Boolean.TRUE)
+                        .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .build();
+//                if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//                    oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//                    oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+//                }
+//                if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//                    oldRecordDo.setIcon(nftInfoDo.getImageLink());
+//                    oldRecordDo.setName(nftInfoDo.getName());
+//                }
+                tradingRecordService.insert(oldRecordDo);
+            } else {
+                oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
+                oldRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+                oldRecordDo.setFinish(Boolean.TRUE);
+                tradingRecordService.update(oldRecordDo);
+            }
+        }
+
+        // 更新或新增最新出价人记录
+        TradingRecordDo tradingRecordParam = TradingRecordDo.builder().address(dto.getBuyer()).type(NftBoxType.BOX.getDesc()).refId(dto.getId()).finish(Boolean.FALSE).build();
+        TradingRecordDo newRecordDo = tradingRecordService.selectByObject(tradingRecordParam);
+        if (ObjectUtils.isEmpty(newRecordDo)) {
+            newRecordDo = TradingRecordDo.builder()
+                    .address(dto.getBuyer())
+                    .type(NftBoxType.BOX.getDesc())
+                    .refId(dto.getId())
+                    .direction(TradingRecordDirection.BUY.name())
+                    .boxToken(dto.getBoxTokenCodeStr())
+                    .payToken(dto.getPayTokenCodeStr())
+                    .state(TradingRecordState.ONE_PRICE.name())
+                    .price(dto.getFinal_price())
+                    .fee(BigDecimal.ZERO)
+                    .finish(Boolean.TRUE)
+                    .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .build();
+//            if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//                newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//                newRecordDo.setNftBody(nftGroupDo.getNftBody());
+//            }
+//            if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//                newRecordDo.setIcon(nftInfoDo.getImageLink());
+//                newRecordDo.setName(nftInfoDo.getName());
+//            }
+            tradingRecordService.insert(newRecordDo);
+        } else {
+            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+            newRecordDo.setFinish(Boolean.TRUE);
+            newRecordDo.setPrice(dto.getFinal_price());
+            tradingRecordService.update(newRecordDo);
+        }
+
+
+        // 增加出售人出售记录
+        TradingRecordDo sellRecordDo = TradingRecordDo.builder()
+                .address(dto.getSeller())
+                .type(NftBoxType.BOX.getDesc())
+                .refId(dto.getId())
+                .direction(TradingRecordDirection.SELL.name())
+                .boxToken(dto.getBoxTokenCodeStr())
+                .payToken(dto.getPayTokenCodeStr())
+                .state(TradingRecordState.DONE.name())
+                .price(dto.getFinal_price())
+                .fee(BigDecimal.ZERO)
+                .finish(Boolean.TRUE)
+                .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .build();
+//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//            sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//            sellRecordDo.setNftBody(nftGroupDo.getNftBody());
+//        }
+//        if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//            sellRecordDo.setIcon(nftInfoDo.getImageLink());
+//            sellRecordDo.setName(nftInfoDo.getName());
+//        }
+        tradingRecordService.insert(sellRecordDo);
+    }
+
+    // box取消
+    private void handleBoxOfflineEvent(JsonNode data,String typeTag) {
+        log.info("NftEventSubscriberRunner 取消");
+        BoxOffLineEventDto dto = mapper.convertValue(data, BoxOffLineEventDto.class);
+        NftEventDo nftEventDo = BoxOffLineEventDto.of(dto, NftEventType.BOX_OFFLINE_EVENT.getDesc());
+
+//        String meta = getMeta(typeTag);
+//        String body = getBody(typeTag);
+//        NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+//        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+//        NftInfoDo nftInfoDo = null;
+//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
+//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
+//        }
+//
+//        // set group & info id
+//        if (ObjectUtils.isEmpty(nftGroupDo)) {
+//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
+//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+//        } else {
+//            nftEventDo.setGroupId(nftGroupDo.getId());
+//            nftEventDo.setInfoId(nftInfoDo.getId());
+//        }
+
+        nftEventService.insert(nftEventDo);
+
+        // 更新上一个出价人的状态
+        if (StringUtils.isNotBlank(dto.getBidder())) {
+            TradingRecordDo tradingRecordParam = TradingRecordDo.builder().address(dto.getBidder()).type(NftBoxType.BOX.getDesc()).refId(dto.getId()).finish(Boolean.FALSE).build();
+            TradingRecordDo oldRecordDo = tradingRecordService.selectByObject(tradingRecordParam);
+            if (ObjectUtils.isEmpty(oldRecordDo)) {
+                oldRecordDo = TradingRecordDo.builder()
+                        .address(dto.getBidder())
+                        .type(NftBoxType.BOX.getDesc())
+                        .refId(dto.getId())
+                        .direction(TradingRecordDirection.BUY.name())
+                        .boxToken(dto.getBoxTokenCodeStr())
+                        .payToken(dto.getPayTokenCodeStr())
+                        .state(TradingRecordState.SELL_CANCEL.name())
+                        .price(dto.getBid_price())
+                        .fee(BigDecimal.ZERO)
+                        .finish(Boolean.TRUE)
+                        .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .build();
+//                if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//                    oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//                    oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+//                }
+//                if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//                    oldRecordDo.setIcon(nftInfoDo.getImageLink());
+//                    oldRecordDo.setName(nftInfoDo.getName());
+//                }
+                tradingRecordService.insert(oldRecordDo);
+            } else {
+                oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
+                oldRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+                oldRecordDo.setFinish(Boolean.TRUE);
+                tradingRecordService.update(oldRecordDo);
+            }
+        }
+    }
+
+    // box接受报价
+    private void handleBoxAcceptBidEvent(JsonNode data,String typeTag) {
+        log.info("NftEventSubscriberRunner 接受报价");
+        BoxAcceptBidEventDto dto = mapper.convertValue(data, BoxAcceptBidEventDto.class);
+        NftEventDo nftEventDo = BoxAcceptBidEventDto.of(dto, NftEventType.BOX_ACCEPT_BID_EVENT.getDesc());
+
+//        String meta = getMeta(typeTag);
+//        String body = getBody(typeTag);
+//        NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+//        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+//        NftInfoDo nftInfoDo = null;
+//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
+//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
+//        }
+//
+//        // set group & info id
+//        if (ObjectUtils.isEmpty(nftGroupDo)) {
+//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
+//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+//        } else {
+//            nftEventDo.setGroupId(nftGroupDo.getId());
+//            nftEventDo.setInfoId(nftInfoDo.getId());
+//        }
+//
+//        // 更新owner
+//        try {
+//            nftInfoDo.setOwner(nftEventDo.getBider());
+//            nftInfoDo.setUpdateTime(System.currentTimeMillis());
+//            nftInfoService.update(nftInfoDo);
+//        }catch (Exception e){
+//            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
+//        }
+
+        nftEventService.insert(nftEventDo);
+
+        // 更新或新增最新出价人记录
+        TradingRecordDo tradingRecordParam = TradingRecordDo.builder().address(dto.getBidder()).type(NftBoxType.BOX.getDesc()).refId(dto.getId()).finish(Boolean.FALSE).build();
+        TradingRecordDo newRecordDo = tradingRecordService.selectByObject(tradingRecordParam);
+        if (ObjectUtils.isEmpty(newRecordDo)) {
+            newRecordDo = TradingRecordDo.builder()
+                    .address(dto.getBidder())
+                    .type(NftBoxType.BOX.getDesc())
+                    .refId(dto.getId())
+                    .direction(TradingRecordDirection.BUY.name())
+                    .boxToken(dto.getBoxTokenCodeStr())
+                    .payToken(dto.getPayTokenCodeStr())
+                    .state(TradingRecordState.ACCEPT_PRICE.name())
+                    .price(dto.getFinal_price())
+                    .fee(BigDecimal.ZERO)
+                    .finish(Boolean.TRUE)
+                    .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .build();
+//            if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//                newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//                newRecordDo.setNftBody(nftGroupDo.getNftBody());
+//            }
+//            if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//                newRecordDo.setIcon(nftInfoDo.getImageLink());
+//                newRecordDo.setName(nftInfoDo.getName());
+//            }
+            tradingRecordService.insert(newRecordDo);
+        } else {
+            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+            newRecordDo.setFinish(Boolean.TRUE);
+            tradingRecordService.update(newRecordDo);
+        }
+
+
+        // 增加出售人出售记录
+        TradingRecordDo sellRecordDo = TradingRecordDo.builder()
+                .address(dto.getSeller())
+                .type(NftBoxType.BOX.getDesc())
+                .refId(dto.getId())
+                .direction(TradingRecordDirection.SELL.name())
+                .boxToken(dto.getBoxTokenCodeStr())
+                .payToken(dto.getPayTokenCodeStr())
+                .state(TradingRecordState.DONE.name())
+                .price(dto.getFinal_price())
+                .fee(BigDecimal.ZERO)
+                .finish(Boolean.TRUE)
+                .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .build();
+//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+//            sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+//            sellRecordDo.setNftBody(nftGroupDo.getNftBody());
+//        }
+//        if (!ObjectUtils.isEmpty(nftInfoDo)) {
+//            sellRecordDo.setIcon(nftInfoDo.getImageLink());
+//            sellRecordDo.setName(nftInfoDo.getName());
+//        }
         tradingRecordService.insert(sellRecordDo);
     }
 

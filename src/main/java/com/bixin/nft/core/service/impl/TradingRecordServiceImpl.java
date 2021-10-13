@@ -24,23 +24,11 @@ public class TradingRecordServiceImpl implements TradingRecordService {
     @Override
     public List<TradingRecordDo> selectByPage(long pageSize, long pageNum, String address, String direction) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("sort", "sell_price");
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", (pageNum - 1) * pageSize);
-//        if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
-//            paramMap.put("type", open);
-//        }
-//        if (StringUtils.isNoneEmpty(currency) && !"all".equalsIgnoreCase(currency)) {
-//            paramMap.put("payToken", currency);
-//        }
-//        if (groupId > 0) {
-//            paramMap.put("groupId", groupId);
-//        }
-//        if (sort == 1) {
-//            paramMap.put("order", "desc");
-//        } else if (sort == 2) {
-//            paramMap.put("order", "asc");
-//        }
+        if (StringUtils.isNoneEmpty(direction) && !"all".equalsIgnoreCase(direction)) {
+            paramMap.put("direction", direction);
+        }
         return tradingRecordMapper.selectByPage(paramMap);
     }
 
