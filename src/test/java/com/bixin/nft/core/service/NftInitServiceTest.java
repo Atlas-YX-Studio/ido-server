@@ -1,6 +1,7 @@
 package com.bixin.nft.core.service;
 
 import com.bixin.IdoServerApplication;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,8 +25,10 @@ class NftInitServiceTest {
     }
 
     @Test
+    @SneakyThrows
     void createNFT() {
         nftInitService.createNFT();
+        Thread.sleep(10000);
     }
 
     @Test

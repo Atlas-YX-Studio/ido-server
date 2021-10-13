@@ -4,9 +4,9 @@ server:
 # database HikariCP相关配置
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    username: root
-    password: password
+    url: jdbc:mysql://101.201.46.114:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: crypto_rw
+    password: crypto_rw_password
 
 ---
 ## redis config
@@ -48,10 +48,10 @@ ido:
     nft:
       websocket-host: 60.205.3.84
       websocket-port: 8970
-      market: "0xA85291039DdAD8845D5097624C81C3Fd"
-      scripts: "0xA85291039DdAD8845D5097624C81C3Fd"
-      catadd: "0x69F1E543A3BeF043B63BEd825fcd2cf6"
-      market-module: "NFTMarket"
-      scripts-module: "NFTScripts"
+      market: "0xa85291039ddad8845d5097624c81c3fd"
+      scripts: "0x290c7b35320a4dd26f651fd184373fe7"
+      catadd: "0x69f1e543a3bef043b63bed825fcd2cf6"
+      market-module: "NFTMarket04"
+      scripts-module: "NFTScripts04"
       image-prefix: "https://imagedelivery.net"
       image-base-path: "/Users/bixin/Documents/pics/nft/"
