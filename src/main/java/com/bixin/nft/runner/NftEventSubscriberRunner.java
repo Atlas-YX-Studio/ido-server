@@ -334,7 +334,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         nftEventService.insert(nftEventDo);
 
         // 更新上一个出价人的状态
-        if (StringUtils.isNotBlank(dto.getPrev_bidder())) {
+        if (StringUtils.isNotBlank(dto.getPrev_bidder()) && !StringUtils.equalsIgnoreCase(dto.getPrev_bidder(), dto.getBuyer())) {
             TradingRecordDo tradingRecordParam = TradingRecordDo.builder().address(dto.getPrev_bidder()).type(NftBoxType.NFT.getDesc()).refId(dto.getId()).finish(Boolean.FALSE).build();
             TradingRecordDo oldRecordDo = tradingRecordService.selectByObject(tradingRecordParam);
             if (ObjectUtils.isEmpty(oldRecordDo)) {
