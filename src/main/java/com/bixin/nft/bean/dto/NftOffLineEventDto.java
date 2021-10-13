@@ -43,6 +43,11 @@ public class NftOffLineEventDto {
         private String name;
     }
 
+    public String getPayTokenCodeStr() {
+        return this.pay_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.pay_token_code.getName().replaceAll("0x",""))
+                + "::"+ HexStringUtil.toStringHex(this.pay_token_code.getModule_name().replaceAll("0x",""));
+    }
+
     public static NftEventDo of(NftOffLineEventDto dto, String type) {
         NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
                 .nftId(dto.getId())
