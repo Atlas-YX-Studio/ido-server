@@ -83,7 +83,7 @@ public class NftStoreController {
     public P getRecords(@RequestParam(value = "address") String address,
                         @RequestParam(value = "direction", defaultValue = "all") String direction,
                         @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
-                        @RequestParam(value = "pageNum", defaultValue = "0") long pageNum) {
+                        @RequestParam(value = "pageNum", defaultValue = "1") long pageNum) {
         if (pageNum < 0 || pageSize <= 0
                 || StringUtils.isBlank(address) || StringUtils.isEmpty(direction)) {
             return P.failed("parameter is invalid");

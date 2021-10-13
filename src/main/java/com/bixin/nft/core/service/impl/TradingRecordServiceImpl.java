@@ -24,6 +24,7 @@ public class TradingRecordServiceImpl implements TradingRecordService {
     @Override
     public List<TradingRecordDo> selectByPage(long pageSize, long pageNum, String address, String direction) {
         Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("address", address);
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", (pageNum - 1) * pageSize);
         if (StringUtils.isNoneEmpty(direction) && !"all".equalsIgnoreCase(direction)) {
