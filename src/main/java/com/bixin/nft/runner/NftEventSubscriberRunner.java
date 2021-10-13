@@ -242,6 +242,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .price(dto.getPrev_bid_price())
                         .fee(BigDecimal.ZERO)
                         .finish(Boolean.FALSE)
+                        .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -254,6 +256,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 tradingRecordService.insert(oldRecordDo);
             } else {
                 oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
+                oldRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
                 tradingRecordService.update(oldRecordDo);
             }
         }
@@ -273,6 +276,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .price(dto.getBid_price())
                     .fee(BigDecimal.ZERO)
                     .finish(Boolean.FALSE)
+                    .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -285,6 +290,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             tradingRecordService.insert(newRecordDo);
         } else {
             newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             tradingRecordService.update(newRecordDo);
         }
     }
@@ -342,6 +348,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .price(dto.getPrev_bid_price())
                         .fee(BigDecimal.ZERO)
                         .finish(Boolean.TRUE)
+                        .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -354,6 +362,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 tradingRecordService.insert(oldRecordDo);
             } else {
                 oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
+                oldRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+                oldRecordDo.setFinish(Boolean.TRUE);
                 tradingRecordService.update(oldRecordDo);
             }
         }
@@ -373,6 +383,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .price(dto.getFinal_price())
                     .fee(BigDecimal.ZERO)
                     .finish(Boolean.TRUE)
+                    .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -385,6 +397,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             tradingRecordService.insert(newRecordDo);
         } else {
             newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+            newRecordDo.setFinish(Boolean.TRUE);
+            newRecordDo.setPrice(dto.getFinal_price());
             tradingRecordService.update(newRecordDo);
         }
 
@@ -401,6 +416,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .price(dto.getFinal_price())
                 .fee(BigDecimal.ZERO)
                 .finish(Boolean.TRUE)
+                .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -457,6 +474,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .price(dto.getBid_price())
                         .fee(BigDecimal.ZERO)
                         .finish(Boolean.TRUE)
+                        .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -469,6 +488,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 tradingRecordService.insert(oldRecordDo);
             } else {
                 oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
+                oldRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+                oldRecordDo.setFinish(Boolean.TRUE);
                 tradingRecordService.update(oldRecordDo);
             }
         }
@@ -526,6 +547,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .price(dto.getFinal_price())
                     .fee(BigDecimal.ZERO)
                     .finish(Boolean.TRUE)
+                    .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -538,6 +561,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             tradingRecordService.insert(newRecordDo);
         } else {
             newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+            newRecordDo.setFinish(Boolean.TRUE);
             tradingRecordService.update(newRecordDo);
         }
 
@@ -554,6 +579,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .price(dto.getFinal_price())
                 .fee(BigDecimal.ZERO)
                 .finish(Boolean.TRUE)
+                .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
