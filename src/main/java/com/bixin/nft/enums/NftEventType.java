@@ -13,13 +13,16 @@ public enum NftEventType {
     NFT_BUY_EVENT("NFTBuyEvent"),
     NFT_ACCEPT_BID_EVENT("NFTAcceptBidEvent"),
     NFT_OFFLINE_EVENT("NFTOfflineEvent"),
+    NFT_CHANGE_PRICE_EVENT("NFTChangePriceEvent"),
     NFT_BUY_BACK_SELL_EVENT("NFTBuyBackSellEvent"),
     BOX_OFFERING_SELL_EVENT("BoxOfferingSellEvent"),
     BOX_OPEN_EVENT("BoxOpenEvent"),
     BOX_BID_EVENT("BoxBidEvent"),
     BOX_BUY_EVENT("BoxBuyEvent"),
     BOX_ACCEPT_BID_EVENT("BoxAcceptBidEvent"),
-    BOX_OFFLINE_EVENT("BoxOfflineEvent");
+    BOX_OFFLINE_EVENT("BoxOfflineEvent"),
+    BOX_CHANGE_PRICE_EVENT("BoxChangePriceEvent"),
+    ;
 
     private String desc;
 

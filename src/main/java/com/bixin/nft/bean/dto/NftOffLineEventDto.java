@@ -3,6 +3,7 @@ package com.bixin.nft.bean.dto;
 import com.bixin.ido.server.utils.HexStringUtil;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import com.bixin.nft.bean.DO.NftEventDo;
+import com.bixin.nft.enums.NftEventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,7 +49,7 @@ public class NftOffLineEventDto {
                 + "::"+ HexStringUtil.toStringHex(this.pay_token_code.getModule_name().replaceAll("0x",""));
     }
 
-    public static NftEventDo of(NftOffLineEventDto dto, String type) {
+    public static NftEventDo of(NftOffLineEventDto dto) {
         NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
                 .nftId(dto.getId())
                 .creator("")
@@ -56,7 +57,7 @@ public class NftOffLineEventDto {
                 .sellingPrice(dto.getSelling_price())
                 .bider(dto.getBidder())
                 .bidPrice(dto.getBid_price())
-                .type(type)
+                .type(NftEventType.NFT_OFFLINE_EVENT.getDesc())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
         PayTokenCode payTokenCode = dto.getPay_token_code();

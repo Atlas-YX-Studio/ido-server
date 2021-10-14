@@ -14,34 +14,28 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * nft购买事件
+ * 修改盲盒报价
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoxAcceptBidEventDto {
+public class NftChangePriceEventDto {
 
     // 售卖者
     private String seller;
-    // nft id
+    // box id
     private Long id;
-    // box token
-    private PayTokenCode box_token_code;
     // 支付token
     private PayTokenCode pay_token_code;
-    // 数量
-    private BigDecimal quantity;
-    // 出售价格
-    private BigDecimal selling_price;
-    // 购买价格
-    private BigDecimal final_price;
+    // 旧价格
+    private BigDecimal before_price;
+    // 新价格
+    private BigDecimal after_price;
     // 出价者
     private String bidder;
-    // 创造者分得手续费
-    private BigDecimal creator_fee;
-    // 平台分得手续费
-    private BigDecimal platform_fee;
+    // 出价
+    private BigDecimal bid_price;
 
     @Data
     @Builder
@@ -53,27 +47,23 @@ public class BoxAcceptBidEventDto {
         private String name;
     }
 
-    public String getBoxTokenCodeStr() {
-        return this.box_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.box_token_code.getName().replaceAll("0x",""))
-                + "::"+ HexStringUtil.toStringHex(this.box_token_code.getModule_name().replaceAll("0x",""));
-    }
-
     public String getPayTokenCodeStr() {
         return this.pay_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.pay_token_code.getName().replaceAll("0x",""))
                 + "::"+ HexStringUtil.toStringHex(this.pay_token_code.getModule_name().replaceAll("0x",""));
     }
 
-    public static NftEventDo of(BoxAcceptBidEventDto dto) {
+    public static NftEventDo of(NftChangePriceEventDto dto) {
         NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
                 .nftId(dto.getId())
                 .creator("")
                 .seller(dto.getSeller())
-                .sellingPrice(dto.getSelling_price())
+                .sellingPrice(dto.getAfter_price())
                 .bider(dto.getBidder())
-                .bidPrice(dto.getFinal_price())
-                .type(NftEventType.BOX_ACCEPT_BID_EVENT.getDesc())
+                .bidPrice(dto.getBid_price())
+                .type(NftEventType.NFT_CHANGE_PRICE_EVENT.getDesc())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
+
         PayTokenCode payTokenCode = dto.getPay_token_code();
         String tokenCode = "";
         if(!ObjectUtils.isEmpty(payTokenCode)){
@@ -83,4 +73,5 @@ public class BoxAcceptBidEventDto {
         builder.payToken(tokenCode);
         return builder.build();
     }
+
 }

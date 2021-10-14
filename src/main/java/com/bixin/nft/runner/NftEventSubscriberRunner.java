@@ -138,7 +138,6 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     return;
                 }
                 String tagString = getEventName(eventResult.getTypeTag());
-                NftEventDo nftEventDo = null;
                 if (NftEventType.NFT_SELL_EVENT.getDesc().equals(tagString)) {
                     // nft售卖
                     handleNftSellEvent(data, eventResult.getTypeTag());
@@ -148,6 +147,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 } else if (NftEventType.NFT_BUY_EVENT.getDesc().equals(tagString)) {
                     // nft购买
                     handleNftBuyEvent(data, eventResult.getTypeTag());
+                } else if (NftEventType.NFT_CHANGE_PRICE_EVENT.getDesc().equals(tagString)) {
+                    // nft修改价格
+                    handleNftChangePriceEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.NFT_OFFLINE_EVENT.getDesc().equals(tagString)) {
                     // nft取消
                     handleNftOfflineEvent(data, eventResult.getTypeTag());
@@ -190,9 +192,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // nft售卖
     private void handleNftSellEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 售卖");
+        log.info("NftEventSubscriberRunner 售卖NFT");
         NftSellEventtDto dto = mapper.convertValue(data, NftSellEventtDto.class);
-        NftEventDo nftEventDo = NftSellEventtDto.of(dto,NftEventType.NFT_SELL_EVENT.getDesc());
+        NftEventDo nftEventDo = NftSellEventtDto.of(dto);
 
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
@@ -219,9 +221,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // nft出价
     private void handleNftBidEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 出价");
+        log.info("NftEventSubscriberRunner NFT出价");
         NftBidEventDto dto = mapper.convertValue(data, NftBidEventDto.class);
-        NftEventDo nftEventDo = NftBidEventDto.of(dto,NftEventType.NFT_BID_EVENT.getDesc());
+        NftEventDo nftEventDo = NftBidEventDto.of(dto);
 
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
@@ -317,9 +319,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // nft购买
     private void handleNftBuyEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 购买");
+        log.info("NftEventSubscriberRunner 购买NFT");
         NftBuyEventDto dto = mapper.convertValue(data, NftBuyEventDto.class);
-        NftEventDo nftEventDo = NftBuyEventDto.of(dto, NftEventType.NFT_BUY_EVENT.getDesc());
+        NftEventDo nftEventDo = NftBuyEventDto.of(dto);
 
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
@@ -452,9 +454,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // nft取消
     private void handleNftOfflineEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 取消");
+        log.info("NftEventSubscriberRunner 取消NFT");
         NftOffLineEventDto dto = mapper.convertValue(data, NftOffLineEventDto.class);
-        NftEventDo nftEventDo = NftOffLineEventDto.of(dto, NftEventType.NFT_OFFLINE_EVENT.getDesc());
+        NftEventDo nftEventDo = NftOffLineEventDto.of(dto);
 
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
@@ -515,11 +517,40 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         }
     }
 
+    // nft修改价格
+    private void handleNftChangePriceEvent(JsonNode data, String typeTag) {
+        log.info("NftEventSubscriberRunner 修改NFT价格");
+        NftChangePriceEventDto dto = mapper.convertValue(data, NftChangePriceEventDto.class);
+        NftEventDo nftEventDo = NftChangePriceEventDto.of(dto);
+
+        String meta = getMeta(typeTag);
+        String body = getBody(typeTag);
+        NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+        NftInfoDo nftInfoDo = null;
+        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
+            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
+        }
+
+        // set group & info id
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
+            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+        } else {
+            nftEventDo.setGroupId(nftGroupDo.getId());
+            nftEventDo.setInfoId(nftInfoDo.getId());
+        }
+
+        nftEventService.insert(nftEventDo);
+    }
+
     // nft接受报价
     private void handleNftAcceptBidEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 接受报价");
+        log.info("NftEventSubscriberRunner 接受NFT报价");
         NftAcceptBidEventDto dto = mapper.convertValue(data, NftAcceptBidEventDto.class);
-        NftEventDo nftEventDo = NftAcceptBidEventDto.of(dto, NftEventType.NFT_ACCEPT_BID_EVENT.getDesc());
+        NftEventDo nftEventDo = NftAcceptBidEventDto.of(dto);
 
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
@@ -615,9 +646,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // nft平台回购卖出
     private void handleNftBuyBackSellEvent(JsonNode data, String typeTag) {
-        log.info("NftEventSubscriberRunner 购买");
+        log.info("NftEventSubscriberRunner NFT回购卖出");
         NFTBuyBackSellEventDto dto = mapper.convertValue(data, NFTBuyBackSellEventDto.class);
-        NftEventDo nftEventDo = NFTBuyBackSellEventDto.of(dto, NftEventType.NFT_BUY_BACK_SELL_EVENT.getDesc());
+        NftEventDo nftEventDo = NFTBuyBackSellEventDto.of(dto);
 
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
@@ -678,9 +709,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // box平台发售卖出
     private void handleBoxOfferingSellEvent(JsonNode data, String typeTag) {
-        log.info("NftEventSubscriberRunner 购买");
+        log.info("NftEventSubscriberRunner 购买首发盲盒");
         BoxOfferingSellEventDto dto = mapper.convertValue(data, BoxOfferingSellEventDto.class);
-        NftEventDo nftEventDo = BoxOfferingSellEventDto.of(dto, NftEventType.BOX_OFFERING_SELL_EVENT.getDesc());
+        NftEventDo nftEventDo = BoxOfferingSellEventDto.of(dto);
 
 //        String meta = getMeta(typeTag);
 //        String body = getBody(typeTag);
@@ -744,9 +775,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // box出价
     private void handleBoxBidEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 出价");
+        log.info("NftEventSubscriberRunner 盲盒出价");
         BoxBidEventDto dto = mapper.convertValue(data, BoxBidEventDto.class);
-        NftEventDo nftEventDo = BoxBidEventDto.of(dto,NftEventType.BOX_BID_EVENT.getDesc());
+        NftEventDo nftEventDo = BoxBidEventDto.of(dto);
 
 //        String meta = getMeta(typeTag);
 //        String body = getBody(typeTag);
@@ -842,9 +873,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // box购买
     private void handleBoxBuyEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 购买");
+        log.info("NftEventSubscriberRunner 购买盲盒");
         BoxBuyEventDto dto = mapper.convertValue(data, BoxBuyEventDto.class);
-        NftEventDo nftEventDo = BoxBuyEventDto.of(dto, NftEventType.BOX_BUY_EVENT.getDesc());
+        NftEventDo nftEventDo = BoxBuyEventDto.of(dto);
 
 //        String meta = getMeta(typeTag);
 //        String body = getBody(typeTag);
@@ -977,9 +1008,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     // box取消
     private void handleBoxOfflineEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 取消");
+        log.info("NftEventSubscriberRunner 取消盲盒");
         BoxOffLineEventDto dto = mapper.convertValue(data, BoxOffLineEventDto.class);
-        NftEventDo nftEventDo = BoxOffLineEventDto.of(dto, NftEventType.BOX_OFFLINE_EVENT.getDesc());
+        NftEventDo nftEventDo = BoxOffLineEventDto.of(dto);
 
 //        String meta = getMeta(typeTag);
 //        String body = getBody(typeTag);
@@ -1040,11 +1071,40 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         }
     }
 
+    // nft修改价格
+    private void handleBoxChangePriceEvent(JsonNode data, String typeTag) {
+        log.info("NftEventSubscriberRunner 修改盲盒价格");
+        BoxChangePriceEventDto dto = mapper.convertValue(data, BoxChangePriceEventDto.class);
+        NftEventDo nftEventDo = BoxChangePriceEventDto.of(dto);
+
+        String meta = getMeta(typeTag);
+        String body = getBody(typeTag);
+        NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+        NftInfoDo nftInfoDo = null;
+        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
+            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
+        }
+
+        // set group & info id
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
+            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+        } else {
+            nftEventDo.setGroupId(nftGroupDo.getId());
+            nftEventDo.setInfoId(nftInfoDo.getId());
+        }
+
+        nftEventService.insert(nftEventDo);
+    }
+
     // box接受报价
     private void handleBoxAcceptBidEvent(JsonNode data,String typeTag) {
-        log.info("NftEventSubscriberRunner 接受报价");
+        log.info("NftEventSubscriberRunner 接受盲盒报价");
         BoxAcceptBidEventDto dto = mapper.convertValue(data, BoxAcceptBidEventDto.class);
-        NftEventDo nftEventDo = BoxAcceptBidEventDto.of(dto, NftEventType.BOX_ACCEPT_BID_EVENT.getDesc());
+        NftEventDo nftEventDo = BoxAcceptBidEventDto.of(dto);
 
 //        String meta = getMeta(typeTag);
 //        String body = getBody(typeTag);

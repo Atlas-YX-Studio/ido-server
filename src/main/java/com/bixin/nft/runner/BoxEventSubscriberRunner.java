@@ -129,13 +129,13 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
                 if(NftEventType.BOX_OPEN_EVENT.getDesc().equals(tagString)){
                     log.info("BoxEventSubscriberRunner 铸造");
                     BoxOpenEventDto dto = mapper.convertValue(data, BoxOpenEventDto.class);
-                    nftEventDo = BoxOpenEventDto.of(dto,NftEventType.BOX_OPEN_EVENT.getDesc());
+                    nftEventDo = BoxOpenEventDto.of(dto);
                 }
                 // 铸造
                 if(NftEventType.NFT_MINT_EVENT.getDesc().equals(tagString)){
                     log.info("NftEventSubscriberRunner 铸造");
                     NftMintEventtDto dto = mapper.convertValue(data, NftMintEventtDto.class);
-                    nftEventDo = NftMintEventtDto.of(dto,NftEventType.NFT_MINT_EVENT.getDesc());
+                    nftEventDo = NftMintEventtDto.of(dto);
                 }
                 if(!ObjectUtils.isEmpty(nftEventDo)){
                     setGroupIdAndInfoId(nftEventDo,eventResult.getTypeTag(),tagString);

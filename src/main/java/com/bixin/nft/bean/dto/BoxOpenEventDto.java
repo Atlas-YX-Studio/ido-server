@@ -2,10 +2,12 @@ package com.bixin.nft.bean.dto;
 
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import com.bixin.nft.bean.DO.NftEventDo;
+import com.bixin.nft.enums.NftEventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -23,7 +25,7 @@ public class BoxOpenEventDto {
     // 开盲盒的人
     private String owner;
 
-    public static NftEventDo of(BoxOpenEventDto dto, String type) {
+    public static NftEventDo of(BoxOpenEventDto dto) {
         NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
                 .nftId(dto.getId())
                 .creator(dto.getOwner())
@@ -31,7 +33,7 @@ public class BoxOpenEventDto {
                 .sellingPrice(BigDecimal.ZERO)
                 .bider("")
                 .bidPrice(BigDecimal.ZERO)
-                .type(type)
+                .type(NftEventType.BOX_OPEN_EVENT.getDesc())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
         builder.payToken("");
