@@ -52,13 +52,13 @@ public class BoxChangePriceEventDto {
     }
 
     public String getBoxTokenCodeStr() {
-        return this.box_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.box_token_code.getName().replaceAll("0x",""))
-                + "::"+ HexStringUtil.toStringHex(this.box_token_code.getModule_name().replaceAll("0x",""));
+        return this.box_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.box_token_code.getModule_name().replaceAll("0x",""))
+                + "::"+ HexStringUtil.toStringHex(this.box_token_code.getName().replaceAll("0x",""));
     }
 
     public String getPayTokenCodeStr() {
-        return this.pay_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.pay_token_code.getName().replaceAll("0x",""))
-                + "::"+ HexStringUtil.toStringHex(this.pay_token_code.getModule_name().replaceAll("0x",""));
+        return this.pay_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.pay_token_code.getModule_name().replaceAll("0x",""))
+                + "::"+ HexStringUtil.toStringHex(this.pay_token_code.getName().replaceAll("0x",""));
     }
 
     public static NftEventDo of(BoxChangePriceEventDto dto) {
@@ -76,8 +76,8 @@ public class BoxChangePriceEventDto {
         PayTokenCode payTokenCode = dto.getPay_token_code();
         String tokenCode = "";
         if(!ObjectUtils.isEmpty(payTokenCode)){
-            tokenCode = payTokenCode.getAddr() + "::" + HexStringUtil.toStringHex(payTokenCode.getName().replaceAll("0x",""))
-                    + "::"+ HexStringUtil.toStringHex(payTokenCode.getModule_name().replaceAll("0x",""));
+            tokenCode = payTokenCode.getAddr() + "::" + HexStringUtil.toStringHex(payTokenCode.getModule_name().replaceAll("0x",""))
+                    + "::"+ HexStringUtil.toStringHex(payTokenCode.getName().replaceAll("0x",""));
         }
         builder.payToken(tokenCode);
         return builder.build();
