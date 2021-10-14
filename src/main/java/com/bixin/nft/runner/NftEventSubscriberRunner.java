@@ -627,7 +627,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
         NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-        log.info("box token code is {}, nft group do is {}", dto.getBox_token_code(), nftGroupDo);
+        log.info("box token code is {}, nft group do is {}", dto.getBoxTokenCodeStr(), nftGroupDo);
 
         nftEventService.insert(nftEventDo);
 
