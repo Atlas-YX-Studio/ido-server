@@ -6,6 +6,7 @@
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="ref_id" jdbcType="BIGINT" property="refId" />
+    <result column="nft_box_id" jdbcType="BIGINT" property="nftBoxId" />
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="direction" jdbcType="VARCHAR" property="direction" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
@@ -22,11 +23,11 @@
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, address, type, ref_id, group_id, direction, icon, name, box_token, nft_meta,
-    nft_body, pay_token, state, price, fee, finish, create_time, update_time
+    id, address, type, ref_id, nft_box_id, group_id, direction, icon, name, box_token,
+    nft_meta, nft_body, pay_token, state, price, fee, finish, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from trading_records
     where id = #{id,jdbcType=BIGINT}
@@ -50,20 +51,20 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.TradingRecordDo" useGeneratedKeys="true">
-    insert into trading_records (id, address, type, 
-      ref_id, group_id, direction,
-      icon, name, box_token,
-      nft_meta, nft_body, pay_token,
-      state, price, fee,
-      finish, create_time, update_time
-      )
-    values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
-      #{refId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{direction,jdbcType=VARCHAR},
-      #{icon,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{boxToken,jdbcType=VARCHAR},
-      #{nftMeta,jdbcType=VARCHAR}, #{nftBody,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR},
-      #{state,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL},
-      #{finish,jdbcType=BIT}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
-      )
+    insert into trading_records (id, address, type,
+    ref_id, nft_box_id, group_id,
+    direction, icon, name,
+    box_token, nft_meta, nft_body,
+    pay_token, state, price,
+    fee, finish, create_time,
+    update_time)
+    values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+    #{refId,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
+    #{direction,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+    #{boxToken,jdbcType=VARCHAR}, #{nftMeta,jdbcType=VARCHAR}, #{nftBody,jdbcType=VARCHAR},
+    #{payToken,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL},
+    #{fee,jdbcType=DECIMAL}, #{finish,jdbcType=BIT}, #{createTime,jdbcType=BIGINT},
+    #{updateTime,jdbcType=BIGINT})
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.TradingRecordDo">
     update trading_records
@@ -76,6 +77,9 @@
       </if>
       <if test="refId != null">
         ref_id = #{refId,jdbcType=BIGINT},
+      </if>
+      <if test="nftBoxId != null">
+        nft_box_id = #{nftBoxId,jdbcType=BIGINT},
       </if>
       <if test="groupId != null">
         group_id = #{groupId,jdbcType=BIGINT},
@@ -125,58 +129,61 @@
   <sql id="baseQuery">
     <trim prefix="WHERE" prefixOverrides="AND | OR">
       <if test="null != id">
-         and id = #{id,jdbcType=BIGINT}
+        and id = #{id,jdbcType=BIGINT}
       </if>
       <if test="null != address">
-         and address = #{address,jdbcType=VARCHAR}
+        and address = #{address,jdbcType=VARCHAR}
       </if>
       <if test="null != type">
-         and type = #{type,jdbcType=VARCHAR}
+        and type = #{type,jdbcType=VARCHAR}
       </if>
       <if test="null != refId">
-         and ref_id = #{refId,jdbcType=BIGINT}
+        and ref_id = #{refId,jdbcType=BIGINT}
+      </if>
+      <if test="null != nftBoxId">
+        and nft_box_id = #{nftBoxId,jdbcType=BIGINT}
       </if>
       <if test="null != groupId">
-         and group_id = #{groupId,jdbcType=BIGINT}
+        and group_id = #{groupId,jdbcType=BIGINT}
       </if>
       <if test="null != direction">
-         and direction = #{direction,jdbcType=VARCHAR}
+        and direction = #{direction,jdbcType=VARCHAR}
       </if>
       <if test="null != icon">
-         and icon = #{icon,jdbcType=VARCHAR}
+        and icon = #{icon,jdbcType=VARCHAR}
       </if>
       <if test="null != name">
-         and name = #{name,jdbcType=VARCHAR}
+        and name = #{name,jdbcType=VARCHAR}
       </if>
       <if test="null != boxToken">
-         and box_token = #{boxToken,jdbcType=VARCHAR}
+        and box_token = #{boxToken,jdbcType=VARCHAR}
       </if>
       <if test="null != nftMeta">
-         and nft_meta = #{nftMeta,jdbcType=VARCHAR}
+        and nft_meta = #{nftMeta,jdbcType=VARCHAR}
       </if>
       <if test="null != nftBody">
-         and nft_body = #{nftBody,jdbcType=VARCHAR}
+        and nft_body = #{nftBody,jdbcType=VARCHAR}
       </if>
       <if test="null != payToken">
-         and pay_token = #{payToken,jdbcType=VARCHAR}
+        and pay_token = #{payToken,jdbcType=VARCHAR}
       </if>
       <if test="null != state">
-         and state = #{state,jdbcType=VARCHAR}
+        and state = #{state,jdbcType=VARCHAR}
       </if>
       <if test="null != price">
-         and price = #{price,jdbcType=DECIMAL}
+        and price = #{price,jdbcType=DECIMAL}
       </if>
       <if test="null != fee">
-         and fee = #{fee,jdbcType=DECIMAL}
+        and fee = #{fee,jdbcType=DECIMAL}
       </if>
       <if test="null != finish">
-         and finish = #{finish,jdbcType=BIT}
+        and finish = #{finish,jdbcType=BIT}
       </if>
       <if test="null != createTime">
-         and create_time = #{createTime,jdbcType=BIGINT}
+        and create_time = #{createTime,jdbcType=BIGINT}
       </if>
       <if test="null != updateTime">
-         and update_time = #{updateTime,jdbcType=BIGINT}
+        and update_time = #{updateTime,jdbcType=BIGINT}
       </if>
     </trim>
   </sql>

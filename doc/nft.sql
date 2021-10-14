@@ -117,6 +117,7 @@ CREATE TABLE `trading_records` (
   `address` varchar(64) NOT NULL COMMENT '用户地址',
   `type` varchar(32) NOT NULL COMMENT '类型nft、box',
   `ref_id` bigint(20) NOT NULL COMMENT '关联id nft id 或 box id',
+  `nft_box_id`  bigint(20) NOT NULL COMMENT 'nft_info表的id',
   `group_id` bigint(20) COMMENT 'group 表 id',
   `direction` varchar(32) NOT NULL COMMENT '方向buy、sell',
   `icon` varchar(256) NOT NULL COMMENT '图片链接',

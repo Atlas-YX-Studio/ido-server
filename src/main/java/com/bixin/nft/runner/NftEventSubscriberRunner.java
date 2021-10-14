@@ -123,9 +123,6 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getNft().getMarket()));
             Flowable<EventNotification> notificationFlowable = subscriber.newTxnSendRecvEventNotifications(eventFilter);
             notificationFlowable.blockingIterable().forEach(b -> {
-                NftGroupDo nftGroupDo = new NftGroupDo();
-                NftInfoDo nftInfoDo = new NftInfoDo();
-
                 EventNotificationResult eventResult = b.getParams().getResult();
                 JsonNode data = eventResult.getData();
                 // 添加日志
@@ -237,6 +234,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .icon("")
                         .name("")
                         .groupId(0L)
+                        .nftBoxId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -246,6 +244,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftInfoDo)) {
                     oldRecordDo.setIcon(nftInfoDo.getImageLink());
                     oldRecordDo.setName(nftInfoDo.getName());
+                    oldRecordDo.setNftBoxId(nftInfoDo.getId());
                 }
                 tradingRecordService.insert(oldRecordDo);
             } else {
@@ -277,6 +276,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .icon("")
                     .name("")
                     .groupId(0L)
+                    .nftBoxId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -286,6 +286,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftInfoDo)) {
                 newRecordDo.setIcon(nftInfoDo.getImageLink());
                 newRecordDo.setName(nftInfoDo.getName());
+                newRecordDo.setNftBoxId(nftInfoDo.getId());
             }
             tradingRecordService.insert(newRecordDo);
         } else {
@@ -337,6 +338,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .icon("")
                         .name("")
                         .groupId(0L)
+                        .nftBoxId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -346,6 +348,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftInfoDo)) {
                     oldRecordDo.setIcon(nftInfoDo.getImageLink());
                     oldRecordDo.setName(nftInfoDo.getName());
+                    oldRecordDo.setNftBoxId(nftInfoDo.getId());
                 }
                 tradingRecordService.insert(oldRecordDo);
             } else {
@@ -378,6 +381,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .icon("")
                     .name("")
                     .groupId(0L)
+                    .nftBoxId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -387,10 +391,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftInfoDo)) {
                 newRecordDo.setIcon(nftInfoDo.getImageLink());
                 newRecordDo.setName(nftInfoDo.getName());
+                newRecordDo.setNftBoxId(nftInfoDo.getId());
             }
             tradingRecordService.insert(newRecordDo);
         } else {
-            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setState(TradingRecordState.ONE_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             newRecordDo.setFinish(Boolean.TRUE);
             newRecordDo.setPrice(dto.getFinal_price());
@@ -417,6 +422,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .icon("")
                 .name("")
                 .groupId(0L)
+                .nftBoxId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -426,6 +432,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         if (!ObjectUtils.isEmpty(nftInfoDo)) {
             sellRecordDo.setIcon(nftInfoDo.getImageLink());
             sellRecordDo.setName(nftInfoDo.getName());
+            sellRecordDo.setNftBoxId(nftInfoDo.getId());
         }
         tradingRecordService.insert(sellRecordDo);
     }
@@ -463,6 +470,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .icon("")
                         .name("")
                         .groupId(0L)
+                        .nftBoxId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -472,6 +480,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftInfoDo)) {
                     oldRecordDo.setIcon(nftInfoDo.getImageLink());
                     oldRecordDo.setName(nftInfoDo.getName());
+                    oldRecordDo.setNftBoxId(nftInfoDo.getId());
                 }
                 tradingRecordService.insert(oldRecordDo);
             } else {
@@ -532,6 +541,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .icon("")
                     .name("")
                     .groupId(0L)
+                    .nftBoxId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -541,10 +551,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftInfoDo)) {
                 newRecordDo.setIcon(nftInfoDo.getImageLink());
                 newRecordDo.setName(nftInfoDo.getName());
+                newRecordDo.setNftBoxId(nftInfoDo.getId());
             }
             tradingRecordService.insert(newRecordDo);
         } else {
-            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setState(TradingRecordState.ACCEPT_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             newRecordDo.setFinish(Boolean.TRUE);
             tradingRecordService.update(newRecordDo);
@@ -570,6 +581,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .icon("")
                 .name("")
                 .groupId(0L)
+                .nftBoxId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -579,6 +591,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         if (!ObjectUtils.isEmpty(nftInfoDo)) {
             sellRecordDo.setIcon(nftInfoDo.getImageLink());
             sellRecordDo.setName(nftInfoDo.getName());
+            sellRecordDo.setNftBoxId(nftInfoDo.getId());
         }
         tradingRecordService.insert(sellRecordDo);
     }
@@ -620,6 +633,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .icon("")
                 .name("")
                 .groupId(0L)
+                .nftBoxId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -629,6 +643,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         if (!ObjectUtils.isEmpty(nftInfoDo)) {
             sellRecordDo.setIcon(nftInfoDo.getImageLink());
             sellRecordDo.setName(nftInfoDo.getName());
+            sellRecordDo.setNftBoxId(nftInfoDo.getId());
         }
         tradingRecordService.insert(sellRecordDo);
     }
@@ -694,14 +709,15 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .icon("")
                 .name("")
                 .groupId(0L)
+                .nftBoxId(0L)
                 .build();
-            if (!ObjectUtils.isEmpty(nftGroupDo)) {
-                newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
-                newRecordDo.setNftBody(nftGroupDo.getNftBody());
-                newRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
-                newRecordDo.setName(nftGroupDo.getSeriesName());
-                newRecordDo.setGroupId(nftGroupDo.getId());
-            }
+        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+            newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+            newRecordDo.setNftBody(nftGroupDo.getNftBody());
+            newRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+            newRecordDo.setName(nftGroupDo.getSeriesName());
+            newRecordDo.setGroupId(nftGroupDo.getId());
+        }
         for (int i=0; i<dto.getQuantity().intValue(); i++) {
             newRecordDo.setId(null);
             tradingRecordService.insert(newRecordDo);
@@ -743,6 +759,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .icon("")
                         .name("")
                         .groupId(0L)
+                        .nftBoxId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -781,6 +798,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .icon("")
                     .name("")
                     .groupId(0L)
+                    .nftBoxId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -832,6 +850,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .icon("")
                         .name("")
                         .groupId(0L)
+                        .nftBoxId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -871,6 +890,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .icon("")
                     .name("")
                     .groupId(0L)
+                    .nftBoxId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -881,7 +901,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             }
             tradingRecordService.insert(newRecordDo);
         } else {
-            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setState(TradingRecordState.ONE_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             newRecordDo.setFinish(Boolean.TRUE);
             newRecordDo.setPrice(dto.getFinal_price());
@@ -908,6 +928,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .icon("")
                 .name("")
                 .groupId(0L)
+                .nftBoxId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -953,6 +974,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .icon("")
                         .name("")
                         .groupId(0L)
+                        .nftBoxId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -1013,6 +1035,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .icon("")
                     .name("")
                     .groupId(0L)
+                    .nftBoxId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -1022,7 +1045,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             }
             tradingRecordService.insert(newRecordDo);
         } else {
-            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setState(TradingRecordState.ACCEPT_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             newRecordDo.setFinish(Boolean.TRUE);
             tradingRecordService.update(newRecordDo);
@@ -1048,6 +1071,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .icon("")
                 .name("")
                 .groupId(0L)
+                .nftBoxId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
