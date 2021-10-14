@@ -269,6 +269,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                     oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+                    oldRecordDo.setGroupId(nftGroupDo.getId());
                 }
                 if (!ObjectUtils.isEmpty(nftInfoDo)) {
                     oldRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -303,6 +304,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                 newRecordDo.setNftBody(nftGroupDo.getNftBody());
+                newRecordDo.setGroupId(nftGroupDo.getId());
             }
             if (!ObjectUtils.isEmpty(nftInfoDo)) {
                 newRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -376,6 +378,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                     oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+                    oldRecordDo.setGroupId(nftGroupDo.getId());
                 }
                 if (!ObjectUtils.isEmpty(nftInfoDo)) {
                     oldRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -411,6 +414,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                 newRecordDo.setNftBody(nftGroupDo.getNftBody());
+                newRecordDo.setGroupId(nftGroupDo.getId());
             }
             if (!ObjectUtils.isEmpty(nftInfoDo)) {
                 newRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -444,6 +448,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
             sellRecordDo.setNftBody(nftGroupDo.getNftBody());
+            sellRecordDo.setGroupId(nftGroupDo.getId());
         }
         if (!ObjectUtils.isEmpty(nftInfoDo)) {
             sellRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -502,6 +507,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                     oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+                    oldRecordDo.setGroupId(nftGroupDo.getId());
                 }
                 if (!ObjectUtils.isEmpty(nftInfoDo)) {
                     oldRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -604,6 +610,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                 newRecordDo.setNftBody(nftGroupDo.getNftBody());
+                newRecordDo.setGroupId(nftGroupDo.getId());
             }
             if (!ObjectUtils.isEmpty(nftInfoDo)) {
                 newRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -636,6 +643,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
             sellRecordDo.setNftBody(nftGroupDo.getNftBody());
+            sellRecordDo.setGroupId(nftGroupDo.getId());
         }
         if (!ObjectUtils.isEmpty(nftInfoDo)) {
             sellRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -699,6 +707,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
             sellRecordDo.setNftBody(nftGroupDo.getNftBody());
+            sellRecordDo.setGroupId(nftGroupDo.getId());
         }
         if (!ObjectUtils.isEmpty(nftInfoDo)) {
             sellRecordDo.setIcon(nftInfoDo.getImageLink());
@@ -713,34 +722,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         BoxOfferingSellEventDto dto = mapper.convertValue(data, BoxOfferingSellEventDto.class);
         NftEventDo nftEventDo = BoxOfferingSellEventDto.of(dto);
 
-//        String meta = getMeta(typeTag);
-//        String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-//        NftInfoDo nftInfoDo = null;
-//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
-//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
-//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
-//        }
-//
-//        // set group & info id
-//        if (ObjectUtils.isEmpty(nftGroupDo)) {
-//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
-//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
-//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
-//        } else {
-//            nftEventDo.setGroupId(nftGroupDo.getId());
-//            nftEventDo.setInfoId(nftInfoDo.getId());
-//        }
-//
-//        // 更新owner
-//        try {
-//            nftInfoDo.setOwner(nftEventDo.getBider());
-//            nftInfoDo.setUpdateTime(System.currentTimeMillis());
-//            nftInfoService.update(nftInfoDo);
-//        }catch (Exception e){
-//            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
-//        }
 
         nftEventService.insert(nftEventDo);
 
@@ -762,11 +745,10 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                 newRecordDo.setNftBody(nftGroupDo.getNftBody());
+                newRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+                newRecordDo.setName(nftGroupDo.getSeriesName());
+                newRecordDo.setGroupId(nftGroupDo.getId());
             }
-//            if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//                newRecordDo.setIcon(nftInfoDo.getImageLink());
-//                newRecordDo.setName(nftInfoDo.getName());
-//            }
         for (int i=0; i<dto.getQuantity().intValue(); i++) {
             tradingRecordService.insert(newRecordDo);
         }
@@ -779,25 +761,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         BoxBidEventDto dto = mapper.convertValue(data, BoxBidEventDto.class);
         NftEventDo nftEventDo = BoxBidEventDto.of(dto);
 
-//        String meta = getMeta(typeTag);
-//        String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-//        NftInfoDo nftInfoDo = null;
-//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
-//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
-//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
-//        }
-//
-//        // set group & info id
-//        if (ObjectUtils.isEmpty(nftGroupDo)) {
-//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
-//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
-//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
-//        } else {
-//            nftEventDo.setGroupId(nftGroupDo.getId());
-//            nftEventDo.setInfoId(nftInfoDo.getId());
-//        }
 
         nftEventService.insert(nftEventDo);
 
@@ -823,11 +788,10 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                     oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+                    oldRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+                    oldRecordDo.setName(nftGroupDo.getSeriesName());
+                    oldRecordDo.setGroupId(nftGroupDo.getId());
                 }
-//                if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//                    oldRecordDo.setIcon(nftInfoDo.getImageLink());
-//                    oldRecordDo.setName(nftInfoDo.getName());
-//                }
                 tradingRecordService.insert(oldRecordDo);
             } else {
                 oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
@@ -857,11 +821,10 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                 newRecordDo.setNftBody(nftGroupDo.getNftBody());
+                newRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+                newRecordDo.setName(nftGroupDo.getSeriesName());
+                newRecordDo.setGroupId(nftGroupDo.getId());
             }
-//            if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//                newRecordDo.setIcon(nftInfoDo.getImageLink());
-//                newRecordDo.setName(nftInfoDo.getName());
-//            }
             tradingRecordService.insert(newRecordDo);
         } else {
             newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
@@ -877,34 +840,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         BoxBuyEventDto dto = mapper.convertValue(data, BoxBuyEventDto.class);
         NftEventDo nftEventDo = BoxBuyEventDto.of(dto);
 
-//        String meta = getMeta(typeTag);
-//        String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-//        NftInfoDo nftInfoDo = null;
-//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
-//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
-//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
-//        }
-//
-//        // set group & info id
-//        if (ObjectUtils.isEmpty(nftGroupDo)) {
-//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
-//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
-//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
-//        } else {
-//            nftEventDo.setGroupId(nftGroupDo.getId());
-//            nftEventDo.setInfoId(nftInfoDo.getId());
-//        }
-//
-//        // 更新owner
-//        try {
-//            nftInfoDo.setOwner(nftEventDo.getBider());
-//            nftInfoDo.setUpdateTime(System.currentTimeMillis());
-//            nftInfoService.update(nftInfoDo);
-//        }catch (Exception e){
-//            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
-//        }
 
         nftEventService.insert(nftEventDo);
 
@@ -930,11 +867,10 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                     oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+                    oldRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+                    oldRecordDo.setName(nftGroupDo.getSeriesName());
+                    oldRecordDo.setGroupId(nftGroupDo.getId());
                 }
-//                if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//                    oldRecordDo.setIcon(nftInfoDo.getImageLink());
-//                    oldRecordDo.setName(nftInfoDo.getName());
-//                }
                 tradingRecordService.insert(oldRecordDo);
             } else {
                 oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
@@ -965,11 +901,10 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                 newRecordDo.setNftBody(nftGroupDo.getNftBody());
+                newRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+                newRecordDo.setName(nftGroupDo.getSeriesName());
+                newRecordDo.setGroupId(nftGroupDo.getId());
             }
-//            if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//                newRecordDo.setIcon(nftInfoDo.getImageLink());
-//                newRecordDo.setName(nftInfoDo.getName());
-//            }
             tradingRecordService.insert(newRecordDo);
         } else {
             newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
@@ -998,11 +933,10 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
             sellRecordDo.setNftBody(nftGroupDo.getNftBody());
+            sellRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+            sellRecordDo.setName(nftGroupDo.getSeriesName());
+            sellRecordDo.setGroupId(nftGroupDo.getId());
         }
-//        if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//            sellRecordDo.setIcon(nftInfoDo.getImageLink());
-//            sellRecordDo.setName(nftInfoDo.getName());
-//        }
         tradingRecordService.insert(sellRecordDo);
     }
 
@@ -1012,25 +946,8 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         BoxOffLineEventDto dto = mapper.convertValue(data, BoxOffLineEventDto.class);
         NftEventDo nftEventDo = BoxOffLineEventDto.of(dto);
 
-//        String meta = getMeta(typeTag);
-//        String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-//        NftInfoDo nftInfoDo = null;
-//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
-//            NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
-//            nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
-//        }
-//
-//        // set group & info id
-//        if (ObjectUtils.isEmpty(nftGroupDo)) {
-//            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
-//        } else if (ObjectUtils.isEmpty(nftInfoDo)) {
-//            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
-//        } else {
-//            nftEventDo.setGroupId(nftGroupDo.getId());
-//            nftEventDo.setInfoId(nftInfoDo.getId());
-//        }
 
         nftEventService.insert(nftEventDo);
 
@@ -1056,11 +973,10 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                     oldRecordDo.setNftBody(nftGroupDo.getNftBody());
+                    oldRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+                    oldRecordDo.setName(nftGroupDo.getSeriesName());
+                    oldRecordDo.setGroupId(nftGroupDo.getId());
                 }
-//                if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//                    oldRecordDo.setIcon(nftInfoDo.getImageLink());
-//                    oldRecordDo.setName(nftInfoDo.getName());
-//                }
                 tradingRecordService.insert(oldRecordDo);
             } else {
                 oldRecordDo.setState(TradingRecordState.OVER_PRICE.name());
@@ -1158,11 +1074,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
                 newRecordDo.setNftBody(nftGroupDo.getNftBody());
+                newRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+                newRecordDo.setName(nftGroupDo.getSeriesName());
             }
-//            if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//                newRecordDo.setIcon(nftInfoDo.getImageLink());
-//                newRecordDo.setName(nftInfoDo.getName());
-//            }
             tradingRecordService.insert(newRecordDo);
         } else {
             newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
@@ -1187,14 +1101,12 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .build();
-//        if (!ObjectUtils.isEmpty(nftGroupDo)) {
-//            sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
-//            sellRecordDo.setNftBody(nftGroupDo.getNftBody());
-//        }
-//        if (!ObjectUtils.isEmpty(nftInfoDo)) {
-//            sellRecordDo.setIcon(nftInfoDo.getImageLink());
-//            sellRecordDo.setName(nftInfoDo.getName());
-//        }
+        if (!ObjectUtils.isEmpty(nftGroupDo)) {
+            sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
+            sellRecordDo.setNftBody(nftGroupDo.getNftBody());
+            sellRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
+            sellRecordDo.setName(nftGroupDo.getSeriesName());
+        }
         tradingRecordService.insert(sellRecordDo);
     }
 

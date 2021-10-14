@@ -110,3 +110,26 @@ CREATE TABLE nft_event
     INDEX         idx_nft_id(nft_id),
     INDEX         idx_nft_type( type)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='nft事件表';
+
+DROP TABLE IF EXISTS trading_records;
+CREATE TABLE `trading_records` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `address` varchar(64) NOT NULL COMMENT '用户地址',
+  `type` varchar(32) NOT NULL COMMENT '类型nft、box',
+  `ref_id` bigint(20) NOT NULL COMMENT '关联id nft id 或 box id',
+  `group_id` bigint(20) COMMENT 'group 表 id',
+  `direction` varchar(32) NOT NULL COMMENT '方向buy、sell',
+  `icon` varchar(256) NOT NULL COMMENT '图片链接',
+  `name` varchar(32) NOT NULL COMMENT '组名',
+  `box_token` varchar(128) NOT NULL COMMENT '盲盒币种',
+  `nft_meta` varchar(128) NOT NULL COMMENT 'nft_meta地址',
+  `nft_body` varchar(128) NOT NULL COMMENT 'nft_body地址',
+  `pay_token` varchar(128) NOT NULL COMMENT '支付币种',
+  `state` varchar(32) NOT NULL COMMENT '状态',
+  `price` DECIMAL(38, 0) DEFAULT 0 COMMENT '成交价、出价',
+  `fee` DECIMAL(38, 0) DEFAULT 0 COMMENT '手续费',
+  `finish` tinyint(1) NOT NULL COMMENT '是否完结',
+  `create_time` bigint(20) NOT NULL COMMENT '创建时间',
+  `update_time` bigint(20) NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='交易记录表';

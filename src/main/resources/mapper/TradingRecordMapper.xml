@@ -6,6 +6,7 @@
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="ref_id" jdbcType="BIGINT" property="refId" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="direction" jdbcType="VARCHAR" property="direction" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -14,15 +15,15 @@
     <result column="nft_body" jdbcType="VARCHAR" property="nftBody" />
     <result column="pay_token" jdbcType="VARCHAR" property="payToken" />
     <result column="state" jdbcType="VARCHAR" property="state" />
-    <result column="price" jdbcType="INTEGER" property="price" />
-    <result column="fee" jdbcType="INTEGER" property="fee" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="fee" jdbcType="DECIMAL" property="fee" />
     <result column="finish" jdbcType="BIT" property="finish" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, address, type, ref_id, direction, icon, name, box_token, nft_meta, nft_body, 
-    pay_token, state, price, fee, finish, create_time, update_time
+    id, address, type, ref_id, group_id, direction, icon, name, box_token, nft_meta,
+    nft_body, pay_token, state, price, fee, finish, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -50,17 +51,19 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.TradingRecordDo" useGeneratedKeys="true">
     insert into trading_records (id, address, type, 
-      ref_id, direction, icon, 
-      name, box_token, nft_meta, 
-      nft_body, pay_token, state, 
-      price, fee, finish, create_time, 
-      update_time)
+      ref_id, group_id, direction,
+      icon, name, box_token,
+      nft_meta, nft_body, pay_token,
+      state, price, fee,
+      finish, create_time, update_time
+      )
     values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
-      #{refId,jdbcType=BIGINT}, #{direction,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{boxToken,jdbcType=VARCHAR}, #{nftMeta,jdbcType=VARCHAR}, 
-      #{nftBody,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
-      #{price,jdbcType=INTEGER}, #{fee,jdbcType=INTEGER}, #{finish,jdbcType=BIT}, #{createTime,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=BIGINT})
+      #{refId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{direction,jdbcType=VARCHAR},
+      #{icon,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{boxToken,jdbcType=VARCHAR},
+      #{nftMeta,jdbcType=VARCHAR}, #{nftBody,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR},
+      #{state,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL},
+      #{finish,jdbcType=BIT}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
+      )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.TradingRecordDo">
     update trading_records
@@ -73,6 +76,9 @@
       </if>
       <if test="refId != null">
         ref_id = #{refId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
       </if>
       <if test="direction != null">
         direction = #{direction,jdbcType=VARCHAR},
@@ -99,10 +105,10 @@
         state = #{state,jdbcType=VARCHAR},
       </if>
       <if test="price != null">
-        price = #{price,jdbcType=INTEGER},
+        price = #{price,jdbcType=DECIMAL},
       </if>
       <if test="fee != null">
-        fee = #{fee,jdbcType=INTEGER},
+        fee = #{fee,jdbcType=DECIMAL},
       </if>
       <if test="finish != null">
         finish = #{finish,jdbcType=BIT},
@@ -130,6 +136,9 @@
       <if test="null != refId">
          and ref_id = #{refId,jdbcType=BIGINT}
       </if>
+      <if test="null != groupId">
+         and group_id = #{groupId,jdbcType=BIGINT}
+      </if>
       <if test="null != direction">
          and direction = #{direction,jdbcType=VARCHAR}
       </if>
@@ -155,10 +164,10 @@
          and state = #{state,jdbcType=VARCHAR}
       </if>
       <if test="null != price">
-         and price = #{price,jdbcType=INTEGER}
+         and price = #{price,jdbcType=DECIMAL}
       </if>
       <if test="null != fee">
-         and fee = #{fee,jdbcType=INTEGER}
+         and fee = #{fee,jdbcType=DECIMAL}
       </if>
       <if test="null != finish">
          and finish = #{finish,jdbcType=BIT}
