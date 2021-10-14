@@ -395,7 +395,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             }
             tradingRecordService.insert(newRecordDo);
         } else {
-            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setState(TradingRecordState.ONE_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             newRecordDo.setFinish(Boolean.TRUE);
             newRecordDo.setPrice(dto.getFinal_price());
@@ -555,7 +555,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             }
             tradingRecordService.insert(newRecordDo);
         } else {
-            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setState(TradingRecordState.ACCEPT_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             newRecordDo.setFinish(Boolean.TRUE);
             tradingRecordService.update(newRecordDo);
@@ -901,7 +901,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             }
             tradingRecordService.insert(newRecordDo);
         } else {
-            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setState(TradingRecordState.ONE_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             newRecordDo.setFinish(Boolean.TRUE);
             newRecordDo.setPrice(dto.getFinal_price());
@@ -1045,7 +1045,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             }
             tradingRecordService.insert(newRecordDo);
         } else {
-            newRecordDo.setState(TradingRecordState.HIGHEST_PRICE.name());
+            newRecordDo.setState(TradingRecordState.ACCEPT_PRICE.name());
             newRecordDo.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
             newRecordDo.setFinish(Boolean.TRUE);
             tradingRecordService.update(newRecordDo);
