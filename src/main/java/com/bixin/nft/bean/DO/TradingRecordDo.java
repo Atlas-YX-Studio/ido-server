@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -39,6 +38,11 @@ public class TradingRecordDo implements Serializable {
      * 关联id nft id 或 box id
      */
     private Long refId;
+
+    /**
+     * group id
+     */
+    private Long groupId;
 
     /**
      * 方向buy、sell
