@@ -149,6 +149,12 @@ public class NftInfoController {
                     operationRecordVo.setPrice(nftEventDo.getSellingPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
                 }
+                // 修改售价
+                if (NftEventType.NFT_CHANGE_PRICE_EVENT.getDesc().equals(nftEventDo.getType())) {
+                    operationRecordVo.setAddress(nftEventDo.getSeller());
+                    operationRecordVo.setPrice(nftEventDo.getSellingPrice());
+                    operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
+                }
                 operationRecordVo.setId(nftEventDo.getId());
                 operationRecordVo.setType(nftEventDo.getType());
                 operationRecordVo.setCreateTime(nftEventDo.getCreateTime());
