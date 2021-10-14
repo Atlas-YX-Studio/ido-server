@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TradingRecordService {
 
-    List<TradingRecordDo> selectByPage(long pageSize, long pageNum, String address, String direction);
+    List<TradingRecordDo> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, String address, String direction);
 
     /**
      * @explain: 添加TradingRecordDo对象

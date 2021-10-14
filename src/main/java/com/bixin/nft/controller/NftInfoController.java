@@ -178,12 +178,13 @@ public class NftInfoController {
         }
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE || pageSize <= 0 ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
         // type = null 查询所有
-        List<NftGroupDo> nftGroupDoList = nftGroupService.getListByPage(true, pageSize, pageNum);
+        List<NftGroupDo> nftGroupDoList = nftGroupService.getListByPage(true, pageSize + 1, pageNum, true);
         if (CollectionUtils.isEmpty(nftGroupDoList)) {
             return P.success(null, false);
         }
         boolean hasNext = false;
-        if (nftGroupDoList.size() == pageSize) {
+        if (nftGroupDoList.size() > pageSize) {
+            nftGroupDoList = nftGroupDoList.subList(0, nftGroupDoList.size() - 1);
             hasNext = true;
         }
         List<NftGroupVo> nftGroupVoLis = BeanCopyUtil.copyListProperties(nftGroupDoList, nftGroupDo -> {

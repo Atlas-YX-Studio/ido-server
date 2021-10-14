@@ -102,11 +102,11 @@ public class NftMarketServiceImpl implements NftMarketService {
 
 
     @Override
-    public List<NftMarketDo> selectByPage(long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
+    public List<NftMarketDo> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("sort", "sell_price");
         paramMap.put("pageSize", pageSize);
-        paramMap.put("pageFrom", (pageNum - 1) * pageSize);
+        paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
         if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
             paramMap.put("type", open);
         }

@@ -85,11 +85,11 @@ public class NftInfoServiceImpl implements NftInfoService {
     }
 
     @Override
-    public List<NftInfoDo> selectByPage(long pageNum, long pageSize, String order, String sort) {
+    public List<NftInfoDo> selectByPage(boolean predicateNextPage, long pageNum, long pageSize, String order, String sort) {
         Map<String, Object> param = new HashMap<>();
         param.put("order", order);
         param.put("sort", sort);
-        param.put("from", (pageNum - 1) * pageSize);
+        param.put("from", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
         param.put("pageSize", pageSize);
         return nftInfoMapper.selectByPage(param);
     }
