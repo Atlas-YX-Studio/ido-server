@@ -232,6 +232,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .finish(Boolean.FALSE)
                         .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .nftMeta("")
+                        .nftBody("")
+                        .icon("")
+                        .name("")
+                        .groupId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -267,6 +272,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .finish(Boolean.FALSE)
                     .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .nftMeta("")
+                    .nftBody("")
+                    .icon("")
+                    .name("")
+                    .groupId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -322,6 +332,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .finish(Boolean.TRUE)
                         .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .nftMeta("")
+                        .nftBody("")
+                        .icon("")
+                        .name("")
+                        .groupId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -358,6 +373,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .finish(Boolean.TRUE)
                     .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .nftMeta("")
+                    .nftBody("")
+                    .icon("")
+                    .name("")
+                    .groupId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -392,6 +412,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .finish(Boolean.TRUE)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .nftMeta("")
+                .nftBody("")
+                .icon("")
+                .name("")
+                .groupId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -433,6 +458,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .finish(Boolean.TRUE)
                         .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .nftMeta("")
+                        .nftBody("")
+                        .icon("")
+                        .name("")
+                        .groupId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -497,6 +527,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .finish(Boolean.TRUE)
                     .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .nftMeta("")
+                    .nftBody("")
+                    .icon("")
+                    .name("")
+                    .groupId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -530,6 +565,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .finish(Boolean.TRUE)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .nftMeta("")
+                .nftBody("")
+                .icon("")
+                .name("")
+                .groupId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -575,6 +615,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .finish(Boolean.TRUE)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .nftMeta("")
+                .nftBody("")
+                .icon("")
+                .name("")
+                .groupId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -644,6 +689,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .finish(Boolean.TRUE)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .nftMeta("")
+                .nftBody("")
+                .icon("")
+                .name("")
+                .groupId(0L)
                 .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -688,6 +738,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .finish(Boolean.FALSE)
                         .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .nftMeta("")
+                        .nftBody("")
+                        .icon("")
+                        .name("")
+                        .groupId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -721,6 +776,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .finish(Boolean.FALSE)
                     .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .nftMeta("")
+                    .nftBody("")
+                    .icon("")
+                    .name("")
+                    .groupId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -767,6 +827,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .finish(Boolean.TRUE)
                         .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .nftMeta("")
+                        .nftBody("")
+                        .icon("")
+                        .name("")
+                        .groupId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -801,6 +866,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .finish(Boolean.TRUE)
                     .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .nftMeta("")
+                    .nftBody("")
+                    .icon("")
+                    .name("")
+                    .groupId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -833,6 +903,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .finish(Boolean.TRUE)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .nftMeta("")
+                .nftBody("")
+                .icon("")
+                .name("")
+                .groupId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -873,6 +948,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                         .finish(Boolean.TRUE)
                         .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                         .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                        .nftMeta("")
+                        .nftBody("")
+                        .icon("")
+                        .name("")
+                        .groupId(0L)
                         .build();
                 if (!ObjectUtils.isEmpty(nftGroupDo)) {
                     oldRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -928,6 +1008,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     .finish(Boolean.TRUE)
                     .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                     .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                    .nftMeta("")
+                    .nftBody("")
+                    .icon("")
+                    .name("")
+                    .groupId(0L)
                     .build();
             if (!ObjectUtils.isEmpty(nftGroupDo)) {
                 newRecordDo.setNftMeta(nftGroupDo.getNftMeta());
@@ -958,6 +1043,11 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 .finish(Boolean.TRUE)
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
+                .nftMeta("")
+                .nftBody("")
+                .icon("")
+                .name("")
+                .groupId(0L)
                 .build();
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             sellRecordDo.setNftMeta(nftGroupDo.getNftMeta());
