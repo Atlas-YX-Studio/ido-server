@@ -100,4 +100,5 @@ public class NftStoreController {
         }
         return P.success(tradingRecordDos, hasNext);
     }
+
 }
