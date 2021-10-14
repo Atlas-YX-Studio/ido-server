@@ -653,6 +653,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 newRecordDo.setGroupId(nftGroupDo.getId());
             }
         for (int i=0; i<dto.getQuantity().intValue(); i++) {
+            newRecordDo.setId(null);
             tradingRecordService.insert(newRecordDo);
         }
 
