@@ -189,6 +189,7 @@ public class NftInfoController {
         List<NftGroupVo> nftGroupVoLis = BeanCopyUtil.copyListProperties(nftGroupDoList, nftGroupDo -> {
             NftGroupVo nftGroupVo = new NftGroupVo();
             nftGroupVo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
+            nftGroupVo.setSellingPrice(new BigDecimal(nftGroupDo.getSellingPrice()));
             return nftGroupVo;
         });
         return P.success(nftGroupVoLis, hasNext);

@@ -25,7 +25,7 @@ class NftControllerTest {
 
     @Test
     void offeringList() {
-        log.info("groupList:" + JSON.toJSONString(nftInfoController.offeringList(10, 2)));
+        log.info("groupList:" + JSON.toJSONString(nftInfoController.offeringList(10, 1)));
     }
 
 }
