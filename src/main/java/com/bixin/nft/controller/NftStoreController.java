@@ -60,7 +60,7 @@ public class NftStoreController {
         });
 
         List<NftSelfSellingVo> list = new ArrayList<>();
-        for(NftMarketDo p: nftMarketDos){
+        for (NftMarketDo p : nftMarketDos) {
             NftSelfSellingVo.NftSelfSellingVoBuilder builder = NftSelfSellingVo.builder();
             NftGroupDo nftGroupDo = map.get(p.getGroupId());
             if (Objects.nonNull(nftGroupDo)) {
@@ -88,7 +88,7 @@ public class NftStoreController {
                 || StringUtils.isBlank(address) || StringUtils.isEmpty(direction)) {
             return P.failed("parameter is invalid");
         }
-        List<TradingRecordDo> tradingRecordDos = tradingRecordService.selectByPage(pageSize + 1, pageNum, address, direction);
+        List<TradingRecordDo> tradingRecordDos = tradingRecordService.selectByPage(true, pageSize + 1, pageNum, address, direction);
         if (CollectionUtils.isEmpty(tradingRecordDos)) {
             return P.success(null, false);
         }
@@ -100,4 +100,5 @@ public class NftStoreController {
         }
         return P.success(tradingRecordDos, hasNext);
     }
+
 }

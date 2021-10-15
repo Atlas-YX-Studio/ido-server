@@ -93,7 +93,7 @@ public class NftImagesUploadBiz {
         List<NftInfoDo> nftInfoDos = null;
         for (; ; ) {
             try {
-                nftInfoDos = nftInfoService.selectByPage(pageNum, pageSize, "id", "asc");
+                nftInfoDos = nftInfoService.selectByPage(false, pageNum, pageSize, "id", "asc");
                 if (CollectionUtils.isEmpty(nftInfoDos)) {
                     log.error("nft_cloudflare info data is empty");
                     break;

@@ -58,6 +58,6 @@ public interface NftInfoService {
     List<NftInfoDo> listByObject(NftInfoDo model);
 
 
-    List<NftInfoDo> selectByPage(long pageNum, long pageSize, String order, String sort);
+    List<NftInfoDo> selectByPage(boolean predicateNextPage, long pageNum, long pageSize, String order, String sort);
 
 }

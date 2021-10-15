@@ -11,7 +11,7 @@ import java.util.*;
 
 /**
  * @class: NftGroupServiceImpl
- * @Description:  NFT分组表 接口实现
+ * @Description: NFT分组表 接口实现
  * @author: 系统
  * @created: 2021-09-15
  */
@@ -24,8 +24,8 @@ public class NftGroupServiceImpl implements NftGroupService {
 
     /**
      * @explain: 添加NftGroupDo对象
-     * @param:   model 对象参数
-     * @return:  int
+     * @param: model 对象参数
+     * @return: int
      */
     @Override
     public int insert(NftGroupDo model) {
@@ -34,8 +34,8 @@ public class NftGroupServiceImpl implements NftGroupService {
 
     /**
      * @explain: 删除NftGroupDo对象
-     * @param:   id
-     * @return:  int
+     * @param: id
+     * @return: int
      */
     @Override
     public int deleteById(Long id) {
@@ -44,8 +44,8 @@ public class NftGroupServiceImpl implements NftGroupService {
 
     /**
      * @explain: 修改NftGroupDo对象
-     * @param:   model 对象参数
-     * @return:  int
+     * @param: model 对象参数
+     * @return: int
      */
     @Override
     public int update(NftGroupDo model) {
@@ -54,8 +54,8 @@ public class NftGroupServiceImpl implements NftGroupService {
 
     /**
      * @explain: 查询NftGroupDo对象
-     * @param:   id
-     * @return:  NftGroupDo
+     * @param: id
+     * @return: NftGroupDo
      */
     @Override
     public NftGroupDo selectById(Long id) {
@@ -64,8 +64,8 @@ public class NftGroupServiceImpl implements NftGroupService {
 
     /**
      * @explain: 查询NftGroupDo对象
-     * @param:   model 对象参数
-     * @return:  NftGroupDo 对象
+     * @param: model 对象参数
+     * @return: NftGroupDo 对象
      */
     @Override
     public NftGroupDo selectByObject(NftGroupDo model) {
@@ -74,7 +74,7 @@ public class NftGroupServiceImpl implements NftGroupService {
 
     /**
      * @explain: 查询列表
-     * @param:  model  对象参数
+     * @param: model  对象参数
      * @return: list
      */
     @Override
@@ -104,11 +104,11 @@ public class NftGroupServiceImpl implements NftGroupService {
      * @return
      */
     @Override
-    public List<NftGroupDo> getListByPage(Boolean enabled, long pageSize, long pageNum) {
+    public List<NftGroupDo> getListByPage(Boolean enabled, long pageSize, long pageNum, boolean predicateNextPage) {
         Map<String, Object> paramMap = new HashMap<>();
         Optional.ofNullable(enabled).filter(Objects::nonNull).ifPresent(data -> paramMap.put("enabled", enabled));
         paramMap.put("pageSize", pageSize);
-        paramMap.put("offset", pageSize * (pageNum -1));
+        paramMap.put("offset", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
         paramMap.put("sort", "id");
         paramMap.put("order", "desc");
         return nftGroupMapper.selectByPage(paramMap);

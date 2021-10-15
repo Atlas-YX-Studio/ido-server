@@ -40,6 +40,11 @@ public class TradingRecordDo implements Serializable {
     private Long refId;
 
     /**
+     * nft_info表的id
+     */
+    private Long nftBoxId;
+
+    /**
      * group id
      */
     private Long groupId;

@@ -22,11 +22,11 @@ public class TradingRecordServiceImpl implements TradingRecordService {
     private TradingRecordMapper tradingRecordMapper;
 
     @Override
-    public List<TradingRecordDo> selectByPage(long pageSize, long pageNum, String address, String direction) {
+    public List<TradingRecordDo> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, String address, String direction) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("address", address);
         paramMap.put("pageSize", pageSize);
-        paramMap.put("pageFrom", (pageNum - 1) * pageSize);
+        paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
         if (StringUtils.isNoneEmpty(direction) && !"all".equalsIgnoreCase(direction)) {
             paramMap.put("direction", direction);
         }
@@ -35,8 +35,8 @@ public class TradingRecordServiceImpl implements TradingRecordService {
 
     /**
      * @explain: 添加TradingRecordDo对象
-     * @param:   model 对象参数
-     * @return:  int
+     * @param: model 对象参数
+     * @return: int
      */
     @Override
     public int insert(TradingRecordDo model) {
@@ -45,8 +45,8 @@ public class TradingRecordServiceImpl implements TradingRecordService {
 
     /**
      * @explain: 删除TradingRecordDo对象
-     * @param:   id
-     * @return:  int
+     * @param: id
+     * @return: int
      */
     @Override
     public int deleteById(Long id) {
@@ -55,8 +55,8 @@ public class TradingRecordServiceImpl implements TradingRecordService {
 
     /**
      * @explain: 修改TradingRecordDo对象
-     * @param:   model 对象参数
-     * @return:  int
+     * @param: model 对象参数
+     * @return: int
      */
     @Override
     public int update(TradingRecordDo model) {
@@ -65,8 +65,8 @@ public class TradingRecordServiceImpl implements TradingRecordService {
 
     /**
      * @explain: 查询TradingRecordDo对象
-     * @param:   id
-     * @return:  TradingRecordDo
+     * @param: id
+     * @return: TradingRecordDo
      */
     @Override
     public TradingRecordDo selectById(Long id) {
@@ -75,8 +75,8 @@ public class TradingRecordServiceImpl implements TradingRecordService {
 
     /**
      * @explain: 查询TradingRecordDo对象
-     * @param:   model 对象参数
-     * @return:  TradingRecordDo 对象
+     * @param: model 对象参数
+     * @return: TradingRecordDo 对象
      */
     @Override
     public TradingRecordDo selectByObject(TradingRecordDo model) {
@@ -85,7 +85,7 @@ public class TradingRecordServiceImpl implements TradingRecordService {
 
     /**
      * @explain: 查询列表
-     * @param:  model  对象参数
+     * @param: model  对象参数
      * @return: list
      */
     @Override
