@@ -6,7 +6,9 @@ import com.bixin.ido.server.utils.Base64Util;
 import com.bixin.ido.server.utils.FileOperateUtil;
 import com.bixin.ido.server.utils.JacksonUtil;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.core.service.NftGroupService;
 import com.bixin.nft.core.service.NftInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +43,9 @@ import java.util.regex.Pattern;
 public class NftImagesUploadBiz {
 
     @Resource
-    NftInfoService nftInfoService;
+    private NftInfoService nftInfoService;
+    @Resource
+    private NftGroupService nftGroupService;
     @Resource
     private StarConfig starConfig;
 
@@ -123,15 +127,50 @@ public class NftImagesUploadBiz {
             log.info("nft_cloudflare info of image link is upload id:{}", nftInfoDo.getId());
             return true;
         }
+        String newImageLink = uploadImage(nftInfoDo.getId(), nftInfoDo.getImageData());
+        if (StringUtils.isBlank(newImageLink)) {
+            return false;
+        }
+        nftInfoDo.setImageLink(newImageLink);
+        nftInfoService.update(nftInfoDo);
+        return true;
+    }
 
-        MutablePair<String, String> pair = splitImage(nftInfoDo.getImageData());
+    /**
+     * 上传图片并更新image_link
+     * @param nftGroupDo
+     * @return
+     */
+    public boolean uploadImage(NftGroupDo nftGroupDo) {
+        String imageLink = nftGroupDo.getNftTypeImageLink();
+        if (StringUtils.isNoneEmpty(imageLink) && imageLink.startsWith(imagePrefix)) {
+            log.info("nft_cloudflare info of image link is upload id:{}", nftGroupDo.getId());
+            return true;
+        }
+        String newImageLink = uploadImage(nftGroupDo.getId(), nftGroupDo.getNftTypeImageData());
+        if (StringUtils.isBlank(newImageLink)) {
+            return false;
+        }
+        nftGroupDo.setNftTypeImageLink(newImageLink);
+        nftGroupService.update(nftGroupDo);
+        return true;
+    }
+
+    /**
+     * 上传图片
+     * @param id
+     * @param imageBase64
+     * @return
+     */
+    public String uploadImage(Long id, String imageBase64) {
+        MutablePair<String, String> pair = splitImage(imageBase64);
         String imageSuffix = pair.getLeft();
         String imageData = pair.getRight();
         if (StringUtils.isEmpty(imageSuffix) || StringUtils.isEmpty(imageData)) {
-            log.error("nft_cloudflare info convert image data error id:{}", nftInfoDo.getId());
-            return false;
+            log.error("nft_cloudflare info convert image data error id:{}", id);
+            return "";
         }
-        String imagePath = imageBasePath + nftInfoDo.getId()
+        String imagePath = imageBasePath + id
                 + "_" + LocalDateTimeUtil.getMilliByTime(LocalDateTime.now())
                 + "." + imageSuffix;
         Base64Util.Base64ToImage(imageData, imagePath);
@@ -148,26 +187,25 @@ public class NftImagesUploadBiz {
             }
             if (StringUtils.isEmpty(builder.toString())) {
                 log.error("nft_cloudflare info upload result is empty");
-                return false;
+                return "";
             }
             Map map = JacksonUtil.readValue(builder.toString(), Map.class);
             if (CollectionUtils.isEmpty(map)) {
                 log.error("nft_cloudflare info get upload result is error {}", builder.toString());
-                return false;
+                return "";
             }
             boolean success = (boolean) map.get("success");
+            FileOperateUtil.delFile(imagePath);
             if (success) {
                 Map result = (Map) map.get("result");
                 ArrayList<String> variants = (ArrayList<String>) result.get("variants");
                 String newImageLink = variants.get(0);
-                nftInfoDo.setImageLink(newImageLink);
-                nftInfoService.update(nftInfoDo);
+                return newImageLink;
             }
-            FileOperateUtil.delFile(imagePath);
-            return true;
+            return "";
         } catch (IOException e) {
             log.error("nft_cloudflare upload image exceptionß", e);
-            return false;
+            return "";
         }
     }
 

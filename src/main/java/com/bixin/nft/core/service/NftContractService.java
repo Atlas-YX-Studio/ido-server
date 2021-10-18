@@ -52,15 +52,16 @@ public class NftContractService {
 
     @Value("${ido.star.nft.market}")
     private String market;
-
     @Value("${ido.star.nft.scripts}")
     private String scripts;
-
     @Value("${ido.star.nft.market-module}")
     private String marketModule;
-
     @Value("${ido.star.nft.scripts-module}")
     private String scriptsModule;
+    @Value("${ido.star.nft.image-group-api}")
+    private String imageGroupApi;
+    @Value("${ido.star.nft.image-info-api}")
+    private String imageInfoApi;
 
     /**
      * 1.部署NFT Market
@@ -102,7 +103,7 @@ public class NftContractService {
      * @return
      */
     public void createNFT() {
-        // 上传图片
+        // 同步上传图片
         nftImagesUploadBiz.run();
 
         // 部署nft合约
@@ -147,10 +148,7 @@ public class NftContractService {
                 nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
                     nftInfoDo.setNftId(nftId.longValue());
                     nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                    if (!nftImagesUploadBiz.uploadImage(nftInfoDo)) {
-                        log.error("NFT {} 上传图片失败", nftInfoDo.getName());
-                        throw new IdoException(IdoErrorCode.IMAGE_UPLOAD_FAILURE);
-                    }
+                    // 铸造NFT，存放图片url
                     if (!mintKikoCatNFTWithImage(nftGroupDo, nftInfoDo)) {
                         log.error("NFT {} mint失败", nftInfoDo.getName());
                         throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
@@ -217,8 +215,7 @@ public class NftContractService {
                 .tyArgs(Lists.newArrayList())
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getName())),
-//                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getNftTypeImageLink())),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString("")),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(imageGroupApi + nftGroupDo.getId())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription()))
                 ))
                 .build();
@@ -242,7 +239,7 @@ public class NftContractService {
                 .functionName("mint_with_image")
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getImageLink())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(imageInfoApi + nftInfoDo.getId())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getBackground())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getFur())),

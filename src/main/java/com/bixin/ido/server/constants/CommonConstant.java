@@ -14,6 +14,7 @@ public interface CommonConstant {
     long MAX_PAGE_SIZE = 1000;
     long DEFAULT_PAGE_SIZE = 20;
 
-    String IMAGE_URL_PREFIX_KEY = "image_url_";
+    String IMAGE_INFO_URL_PREFIX_KEY = "image_info_url_";
+    String IMAGE_GROUP_URL_PREFIX_KEY = "image_group_url_";
 
 }

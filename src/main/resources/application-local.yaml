@@ -55,3 +55,5 @@ ido:
       scripts-module: "NFTScripts05"
       image-prefix: "https://imagedelivery.net"
       image-base-path: "/Users/bixin/Documents/pics/nft/"
+      image-info-api: "https://test.kikoswap.com/v1/nft/image/info/"
+      image-group-api: "https://test.kikoswap.com/v1/nft/image/group/"
