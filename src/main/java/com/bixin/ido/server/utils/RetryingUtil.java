@@ -13,7 +13,6 @@ public class RetryingUtil {
         try {
             return RetryingUtil.<T>buildRetryer(attempt, delay, exceptionClass).call(callable);
         } catch (Exception e) {
-            log.info("retry exception:", e.getCause());
             throw new RuntimeException(e.getCause());
         }
     }
@@ -24,10 +23,8 @@ public class RetryingUtil {
                 runnable.run();
                 return null;
             });
-        } catch (RetryException e) {
-            log.info("retry exception:", e.getCause());
         } catch (Exception e) {
-            log.info("retry exception:", e);
+            throw new RuntimeException(e.getCause());
         }
     }
 

@@ -28,7 +28,6 @@ class NftInitServiceTest {
     @SneakyThrows
     void createNFT() {
         nftInitService.createNFT();
-        Thread.sleep(10000);
     }
 
     @Test
@@ -39,6 +38,16 @@ class NftInitServiceTest {
     @Test
     void buyBackNFT() {
         nftInitService.buyBackNFT(10000L, "0x1::STC::STC", BigDecimal.valueOf(0.01));
+    }
+
+    @Test
+    void buyFromOffering() {
+        assert nftInitService.buyFromOffering();
+    }
+
+    @Test
+    void open_box() {
+        assert nftInitService.open_box("0x69f1e543a3bef043b63bed825fcd2cf6", "KikoCat09");
     }
 
     @Test

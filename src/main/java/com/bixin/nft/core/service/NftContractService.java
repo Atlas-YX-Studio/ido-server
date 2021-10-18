@@ -102,6 +102,8 @@ public class NftContractService {
      * @return
      */
     public void createNFT() {
+        // 上传图片
+        nftImagesUploadBiz.run();
 
         // 部署nft合约
         NftGroupDo selectNftGroupDo = new NftGroupDo();
@@ -109,7 +111,7 @@ public class NftContractService {
         List<NftGroupDo> nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (nftGroupDos != null) {
             nftGroupDos.forEach(nftGroupDo -> {
-                if (!deployNFTContract(nftGroupDo)) {
+                if (!deployNFTContractWithImage(nftGroupDo)) {
                     log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
                 }
@@ -145,7 +147,11 @@ public class NftContractService {
                 nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
                     nftInfoDo.setNftId(nftId.longValue());
                     nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                    if (!mintKikoCatNFT(nftGroupDo, nftInfoDo)) {
+                    if (!nftImagesUploadBiz.uploadImage(nftInfoDo)) {
+                        log.error("NFT {} 上传图片失败", nftInfoDo.getName());
+                        throw new IdoException(IdoErrorCode.IMAGE_UPLOAD_FAILURE);
+                    }
+                    if (!mintKikoCatNFTWithImage(nftGroupDo, nftInfoDo)) {
                         log.error("NFT {} mint失败", nftInfoDo.getName());
                         throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                     }
@@ -193,24 +199,76 @@ public class NftContractService {
                 nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
             });
         }
-
-        // 上传图片
-        nftImagesUploadBiz.asyncProcess();
     }
 
     /**
-     * 部署NFT Token
+     * 部署NFT Token，封面为图片url
      *
      * @return
      */
-    private boolean deployNFTContract(NftGroupDo nftGroupDo) {
+    private boolean deployNFTContractWithImage(NftGroupDo nftGroupDo) {
         String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
         String path = "contract/nft/" + moduleName + ".mv";
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(nftGroupDo.getCreator())
                 .moduleName(moduleName)
-                .functionName("init")
+                .functionName("init_with_image")
+                .tyArgs(Lists.newArrayList())
+                .args(Lists.newArrayList(
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getName())),
+//                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getNftTypeImageLink())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString("")),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription()))
+                ))
+                .build();
+        return contractService.deployContract(nftGroupDo.getCreator(), path, scriptFunctionObj);
+    }
+
+    /**
+     * mint NFT，存放图片url
+     */
+    private boolean mintKikoCatNFTWithImage(NftGroupDo nftGroupDo, NftInfoDo nftInfoDo) {
+        TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta());
+        String address = typeObj.getModuleAddress();
+        NftKikoCatDo nftKikoCatDo = new NftKikoCatDo();
+        nftKikoCatDo.setInfoId(nftInfoDo.getId());
+        nftKikoCatDo = nftKikoCatMapper.selectByPrimaryKeySelective(nftKikoCatDo);
+
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(address)
+                .moduleName(typeObj.getModuleName())
+                .functionName("mint_with_image")
+                .args(Lists.newArrayList(
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getImageLink())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getBackground())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getFur())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getClothes())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getFacialExpression())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getHead())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getAccessories())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getEyes()))
+                ))
+                .build();
+        return contractService.callFunction(address, scriptFunctionObj);
+    }
+
+    /**
+     * 部署NFT Token，封面为图片元数据
+     *
+     * @return
+     */
+    private boolean deployNFTContractWithImageData(NftGroupDo nftGroupDo) {
+        String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
+        String path = "contract/nft/" + moduleName + ".mv";
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(nftGroupDo.getCreator())
+                .moduleName(moduleName)
+                .functionName("init_with_image_data")
                 .tyArgs(Lists.newArrayList())
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getName())),
@@ -222,9 +280,9 @@ public class NftContractService {
     }
 
     /**
-     * mint NFT
+     * mint NFT，存放图片元数据
      */
-    private boolean mintKikoCatNFT(NftGroupDo nftGroupDo, NftInfoDo nftInfoDo) {
+    private boolean mintKikoCatNFTWithImageData(NftGroupDo nftGroupDo, NftInfoDo nftInfoDo) {
         TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta());
         String address = typeObj.getModuleAddress();
         NftKikoCatDo nftKikoCatDo = new NftKikoCatDo();
@@ -235,7 +293,7 @@ public class NftContractService {
                 .builder()
                 .moduleAddress(address)
                 .moduleName(typeObj.getModuleName())
-                .functionName("mint")
+                .functionName("mint_with_image_data")
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getImageData())),
@@ -415,6 +473,34 @@ public class NftContractService {
                 preScore.setValue(nftInfoDo.getScore());
             }
         });
+    }
+
+    public boolean buyFromOffering() {
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(scripts)
+                .moduleName(scriptsModule)
+                .functionName("box_buy_from_offering")
+                .args(Lists.newArrayList(
+                        BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(1))
+                ))
+                .tyArgs(Lists.newArrayList(
+                        TypeArgsUtil.parseTypeObj("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCat09::KikoCatBox"),
+                        TypeArgsUtil.parseTypeObj("0x1::STC::STC")
+                ))
+                .build();
+        return contractService.callFunction(market, scriptFunctionObj);
+    }
+
+    public boolean open_box(String address, String module) {
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(address)
+                .moduleName(module)
+                .functionName("open_box")
+                .args(Lists.newArrayList())
+                .build();
+        return contractService.callFunction(market, scriptFunctionObj);
     }
 
     public boolean sellNFT() {

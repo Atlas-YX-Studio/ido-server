@@ -58,6 +58,11 @@ public enum IdoErrorCode implements ErrorCode {
      */
     DATA_NOT_EXIST(100009, "data not exist"),
 
+    /**
+     * 图片上传
+     */
+    IMAGE_UPLOAD_FAILURE(100010, "image upload failure"),
+
     ;
 
     private final int code;
