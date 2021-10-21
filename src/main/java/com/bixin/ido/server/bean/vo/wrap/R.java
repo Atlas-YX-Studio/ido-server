@@ -1,5 +1,6 @@
 package com.bixin.ido.server.bean.vo.wrap;
 
+import com.bixin.ido.server.common.errorcode.IdoErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,6 +43,10 @@ public class R<T> {
 
     public static R failed(String errorMsg) {
         return failed(10002, errorMsg);
+    }
+
+    public static R failed(IdoErrorCode idoErrorCode) {
+        return failed(idoErrorCode.getCode(), idoErrorCode.getMessage());
     }
 
     public static R failed(int errorCode, String errorMsg) {

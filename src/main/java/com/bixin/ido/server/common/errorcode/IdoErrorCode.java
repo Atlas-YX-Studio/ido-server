@@ -63,6 +63,11 @@ public enum IdoErrorCode implements ErrorCode {
      */
     IMAGE_UPLOAD_FAILURE(100010, "image upload failure"),
 
+    /**
+     * Token校验失败
+     */
+    TOKEN_VERIFY_FAILURE(100011, "token verify failure"),
+
     ;
 
     private final int code;

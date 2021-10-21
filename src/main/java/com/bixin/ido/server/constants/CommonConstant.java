@@ -18,6 +18,8 @@ public interface CommonConstant {
     String IMAGE_GROUP_URL_PREFIX_KEY = "image_group_url_";
 
     String HTTP_X_REQUESTED_WITH = "X-Request-With";
+    String HTTP_X_TOKEN = "X-Token";
+
     String HTTP_AJAX_REQUEST_HEADER = "XMLHttpRequest";
 
 }
