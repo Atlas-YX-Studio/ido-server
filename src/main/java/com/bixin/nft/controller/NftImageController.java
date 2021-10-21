@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +48,7 @@ public class NftImageController {
 
 
     @GetMapping("/group/{id}")
-    public void getGroupImage(@PathVariable("id") Long id, HttpServletResponse response) {
+    public R getGroupImage(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         String url = (String) redisCache.getValue(CommonConstant.IMAGE_GROUP_URL_PREFIX_KEY + id);
         if (StringUtils.isBlank(url)) {
             NftGroupDo nftGroupDo = nftGroupService.selectById(id);
@@ -65,14 +66,19 @@ public class NftImageController {
             redisCache.setValue(CommonConstant.IMAGE_GROUP_URL_PREFIX_KEY + id, url, 1, TimeUnit.HOURS);
         }
         try {
+            if (StringUtils.equalsIgnoreCase(request.getHeader(CommonConstant.HTTP_X_REQUESTED_WITH),
+                    CommonConstant.HTTP_AJAX_REQUEST_HEADER)) {
+                return R.success(url);
+            }
             response.sendRedirect(url);
+            return R.success();
         } catch (IOException e) {
             throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
         }
     }
 
     @GetMapping("/info/{id}")
-    public void getInfoImage(@PathVariable("id") Long id, HttpServletResponse response) {
+    public R getInfoImage(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         String url = (String) redisCache.getValue(CommonConstant.IMAGE_INFO_URL_PREFIX_KEY + id);
         if (StringUtils.isBlank(url)) {
             NftInfoDo nftInfoDo = nftInfoService.selectById(id);
@@ -90,7 +96,12 @@ public class NftImageController {
             redisCache.setValue(CommonConstant.IMAGE_INFO_URL_PREFIX_KEY + id, url, 1, TimeUnit.HOURS);
         }
         try {
+            if (StringUtils.equalsIgnoreCase(request.getHeader(CommonConstant.HTTP_X_REQUESTED_WITH),
+                    CommonConstant.HTTP_AJAX_REQUEST_HEADER)) {
+                return R.success(url);
+            }
             response.sendRedirect(url);
+            return R.success();
         } catch (IOException e) {
             throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
         }
