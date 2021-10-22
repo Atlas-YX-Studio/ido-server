@@ -1,5 +1,6 @@
 package com.bixin.nft.controller;
 
+import com.bixin.ido.server.bean.vo.wrap.P;
 import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.constants.PathConstant;
 import com.bixin.ido.server.service.IPlatformBuyBackService;
@@ -20,13 +21,19 @@ public class PlatformBuyBackController {
     private IPlatformBuyBackService platformBuyBackService;
 
     @GetMapping("/getALL")
-    public R list(@RequestParam(name = "groupId", defaultValue = "0") long groupId,
+    public P list(@RequestParam(name = "groupId", defaultValue = "0") long groupId,
             @RequestParam(name = "currency", defaultValue = "all") String currency,
             @RequestParam(name = "sort", defaultValue = "0") int sort,
             @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
-        List<PlatformBuyBackServiceImpl.BuyBackOrder> orders = platformBuyBackService.getOrders(groupId, currency, sort, pageNum, pageSize);
-        return R.success(orders);
+        List<PlatformBuyBackServiceImpl.BuyBackOrder> orders = platformBuyBackService.getOrders(groupId, currency, sort, pageNum, pageSize + 1);
+        boolean hasNext = false;
+        if (orders.size() > pageSize) {
+            orders = orders.subList(0, orders.size() - 1);
+            hasNext = true;
+        }
+
+        return P.success(orders, hasNext);
     }
 
     @GetMapping("/getOrder")
