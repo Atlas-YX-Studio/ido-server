@@ -26,10 +26,10 @@ public class PlatformBuyBackController {
             @RequestParam(name = "sort", defaultValue = "0") int sort,
             @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
-        List<PlatformBuyBackServiceImpl.BuyBackOrder> orders = platformBuyBackService.getOrders(groupId, currency, sort, pageNum, pageSize + 1);
+        List<PlatformBuyBackServiceImpl.BuyBackOrder> orders = platformBuyBackService.getOrders(groupId, currency, sort, pageNum, pageSize);
         boolean hasNext = false;
         if (orders.size() > pageSize) {
-            orders = orders.subList(0, orders.size() - 1);
+            orders = orders.subList(0, pageSize);
             hasNext = true;
         }
 
