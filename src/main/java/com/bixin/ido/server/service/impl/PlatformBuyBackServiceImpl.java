@@ -173,11 +173,11 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         }
 
         int start = pageSize * Math.max((pageNum - 1), 0);
-        int end = Math.min(list.size(), start + pageSize);
+//        int end = Math.min(list.size(), start + pageSize);
         if (start >= list.size()) {
             return List.of();
         }
-        return list.subList(start, end);
+        return list.subList(start, list.size());
     }
 
     @Override
