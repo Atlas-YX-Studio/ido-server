@@ -13,5 +13,5 @@ public interface ISwapCoinsService {
 
     List<SwapCoins> selectByDDL(SwapCoins coins);
 
-
+    List<SwapCoins> getALlByPage(int from, int offset);
 }
