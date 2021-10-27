@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.beust.jcommander.internal.Lists;
 import com.bixin.ido.server.bean.DO.SwapCoins;
+import com.bixin.ido.server.bean.vo.CoinStatsInfoVO;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
 import com.bixin.ido.server.config.StarConfig;
@@ -14,6 +15,7 @@ import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.utils.GrfAllEdge;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -375,14 +377,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void allAssets() {
-        Map<String, BigDecimal> tempPrice = new HashMap<>();
-        liquidityPoolMap.forEach((x, y) -> {
-            if (Objects.equals(y.tokenA, USDT_CODE)) {
-                tempPrice.put(toPair(y.tokenB, y.tokenA), y.tokenAmountA.divide(y.tokenAmountB, DEFAULT_SCALE, RoundingMode.DOWN));
-            } else if (Objects.equals(y.tokenB, USDT_CODE)) {
-                tempPrice.put(toPair(y.tokenA, y.tokenB), y.tokenAmountB.divide(y.tokenAmountA, DEFAULT_SCALE, RoundingMode.DOWN));
-            }
-        });
+        Map<String, BigDecimal> tempPrice = getCoinPriceInfo();
         totalAssets = liquidityPoolMap.values().stream().map(x -> {
             if (Objects.equals(x.tokenA, USDT_CODE)) {
                 return x.tokenAmountA.multiply(new BigDecimal(2));
@@ -392,6 +387,41 @@ public class SwapPathServiceImpl implements ISwapPathService {
                 return x.tokenAmountA.multiply(tempPrice.getOrDefault(toPair(x.tokenA, USDT_CODE), BigDecimal.ZERO)).add(x.tokenAmountB.multiply(tempPrice.getOrDefault(toPair(x.tokenB, USDT_CODE), BigDecimal.ZERO)));
             }
         }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
+
+    @NotNull
+    private Map<String, BigDecimal> getCoinPriceInfo() {
+        Map<String, BigDecimal> tempPrice = new HashMap<>();
+        liquidityPoolMap.forEach((x, y) -> {
+            if (Objects.equals(y.tokenA, USDT_CODE)) {
+                tempPrice.put(toPair(y.tokenB, y.tokenA), y.tokenAmountA.divide(y.tokenAmountB, DEFAULT_SCALE, RoundingMode.DOWN));
+            } else if (Objects.equals(y.tokenB, USDT_CODE)) {
+                tempPrice.put(toPair(y.tokenA, y.tokenB), y.tokenAmountB.divide(y.tokenAmountA, DEFAULT_SCALE, RoundingMode.DOWN));
+            }
+        });
+        return tempPrice;
+    }
+
+    @Override
+    public List<CoinStatsInfoVO> coinInfos(int pageNum, int pageSize) {
+
+        List<SwapCoins> swapCoins = swapCoinsService.getALlByPage(pageSize * (pageNum - 1), pageSize + 1);
+        Map<String, BigDecimal> tempPrice = getCoinPriceInfo();
+
+        // 计算币种数量
+        Map<String, BigDecimal> coinVolumeMap = new HashMap<>();
+        liquidityPoolMap.forEach((x, y) -> {
+            coinVolumeMap.compute(y.tokenA, (k, v) -> Objects.isNull(v) ? y.tokenAmountA : v.add(y.tokenAmountA));
+            coinVolumeMap.compute(y.tokenB, (k, v) -> Objects.isNull(v) ? y.tokenAmountB : v.add(y.tokenAmountB));
+        });
+        List<CoinStatsInfoVO> coinInfoVos = swapCoins.stream().map(coin -> CoinStatsInfoVO.builder()
+                .name(coin.getShortName())
+                .price(tempPrice.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
+                .rate(BigDecimal.ZERO.toPlainString())
+                .amount(BigDecimal.ZERO.toPlainString())
+                .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(tempPrice.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
+                .build()).collect(Collectors.toList());
+        return coinInfoVos;
     }
 
     public static class Pool {

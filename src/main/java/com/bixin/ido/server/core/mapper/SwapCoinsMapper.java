@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface SwapCoinsMapper {
@@ -22,6 +23,8 @@ public interface SwapCoinsMapper {
     List<SwapCoins> selectByDDL(SwapCoinsDDL DDL);
 
     SwapCoins selectByPrimaryKey(Long id);
+
+    List<SwapCoins> selectByPage(Map<String, Object> paramMap);
 
     int updateByDDLSelective(@Param("record") SwapCoins record, @Param("DDL") SwapCoinsDDL DDL);
 
