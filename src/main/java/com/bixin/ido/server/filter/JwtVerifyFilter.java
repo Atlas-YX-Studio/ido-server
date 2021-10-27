@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
 
@@ -26,6 +27,12 @@ import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFI
 @Component
 public class JwtVerifyFilter implements Filter {
 
+    private static List<String> pathWhitelist = List.of(
+            NFT_REQUEST_PATH_PREFIX + "/image/group",
+            NFT_REQUEST_PATH_PREFIX + "/image/info",
+            NFT_REQUEST_PATH_PREFIX + "/contract"
+            );
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
@@ -36,7 +43,7 @@ public class JwtVerifyFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String uri = httpServletRequest.getRequestURI();
         // 获取图片不需要验证token
-        if (StringUtils.startsWithAny(uri, NFT_REQUEST_PATH_PREFIX + "/image/group", NFT_REQUEST_PATH_PREFIX + "/image/info")) {
+        if (StringUtils.startsWithAny(uri, pathWhitelist.toArray(new CharSequence[0]))) {
             chain.doFilter(request, response);
             return;
         }

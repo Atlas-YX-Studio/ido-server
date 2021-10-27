@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Supplier;
@@ -37,6 +40,43 @@ public class RedisCache {
     public void setValue(String key, Object value, long expiredTime, TimeUnit unit) {
         redisTemplate.opsForValue().set(key, value, expiredTime, unit);
     }
+
+    /**
+     * 增加元素到sorted list
+     * @param key
+     * @param value
+     * @param score
+     */
+    public void zAdd(String key, Object value, double score) {
+        redisTemplate.opsForZSet().add(key, value, score);
+    }
+
+    /**
+     * 返回指定 key 的 指定下标的成员，结果按照分数从小到大排列
+     * start=0 && stop=-1 表示取出所有
+     * @param key
+     * @param start
+     * @param stop
+     */
+    public List<Object> zRange(String key, long start, long stop) {
+        Set<Object> objectSet = redisTemplate.opsForZSet().range(key, start, stop);
+        if (CollectionUtils.isEmpty(objectSet)) {
+            return List.of();
+        }
+        return Arrays.asList(objectSet.toArray());
+    }
+
+    /**
+     * 移除指定key的 分数介于 min 和 max 之间的成员
+     * @param key
+     * @param min
+     * @param max
+     */
+    public void zRemoveRangeByScore(String key, long min, long max) {
+        redisTemplate.opsForZSet().removeRangeByScore(key, min, max);
+    }
+
+
 
     /**
      * 尝试获取分布式锁
