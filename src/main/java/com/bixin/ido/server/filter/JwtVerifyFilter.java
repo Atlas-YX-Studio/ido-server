@@ -47,6 +47,7 @@ public class JwtVerifyFilter implements Filter {
         // 非生产环境不验证
         if (!StringUtils.equalsIgnoreCase(env, "prod")) {
             chain.doFilter(request, response);
+            return;
         }
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String uri = httpServletRequest.getRequestURI();
