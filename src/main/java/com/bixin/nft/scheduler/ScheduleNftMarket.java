@@ -54,7 +54,7 @@ public class ScheduleNftMarket {
     private static final String nftSuffix = separator + "NFTSelling";
 
     //        @Scheduled(cron = "0/10 * * * * ?")
-    @Scheduled(cron = "5 0/1 * * * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     public void getNftMarketList() {
         String resource = contractService.listResource(starConfig.getNft().getMarket());
         ChainResourceDto chainResourceDto = JacksonUtil.readValue(resource, new TypeReference<ChainResourceDto>() {
