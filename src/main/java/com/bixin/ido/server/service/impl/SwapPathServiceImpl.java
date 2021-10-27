@@ -43,6 +43,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     private Map<String, Pool> liquidityPoolMap;
 
+    private Map<String, BigDecimal> priceMap;
+
     private GrfAllEdge grf;
 
     private BigDecimal totalAssets;
@@ -264,6 +266,17 @@ public class SwapPathServiceImpl implements ISwapPathService {
         GrfAllEdge tempGrf = new GrfAllEdge(nodes.size(), new ArrayList<>(nodes));
         liquidityPoolMap.values().forEach(x -> tempGrf.addPath(x.tokenA, x.tokenB));
         this.grf = tempGrf;
+
+        // 同步更新价格信息
+        Map<String, BigDecimal> tempPrice = new HashMap<>();
+        liquidityPoolMap.forEach((x, y) -> {
+            if (Objects.equals(y.tokenA, USDT_CODE)) {
+                tempPrice.put(toPair(y.tokenB, y.tokenA), y.tokenAmountA.divide(y.tokenAmountB, DEFAULT_SCALE, RoundingMode.DOWN));
+            } else if (Objects.equals(y.tokenB, USDT_CODE)) {
+                tempPrice.put(toPair(y.tokenA, y.tokenB), y.tokenAmountB.divide(y.tokenAmountA, DEFAULT_SCALE, RoundingMode.DOWN));
+            }
+        });
+        this.priceMap = tempPrice;
     }
 
     private List<Pool> getAllChainPools() {
@@ -377,37 +390,25 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void allAssets() {
-        Map<String, BigDecimal> tempPrice = getCoinPriceInfo();
         totalAssets = liquidityPoolMap.values().stream().map(x -> {
             if (Objects.equals(x.tokenA, USDT_CODE)) {
                 return x.tokenAmountA.multiply(new BigDecimal(2));
             } else if (Objects.equals(x.tokenB, USDT_CODE)) {
                 return x.tokenAmountB.multiply(new BigDecimal(2));
             } else {
-                return x.tokenAmountA.multiply(tempPrice.getOrDefault(toPair(x.tokenA, USDT_CODE), BigDecimal.ZERO)).add(x.tokenAmountB.multiply(tempPrice.getOrDefault(toPair(x.tokenB, USDT_CODE), BigDecimal.ZERO)));
+                return x.tokenAmountA.multiply(this.priceMap.getOrDefault(toPair(x.tokenA, USDT_CODE), BigDecimal.ZERO)).add(x.tokenAmountB.multiply(this.priceMap.getOrDefault(toPair(x.tokenB, USDT_CODE), BigDecimal.ZERO)));
             }
         }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
-    @NotNull
-    private Map<String, BigDecimal> getCoinPriceInfo() {
-        Map<String, BigDecimal> tempPrice = new HashMap<>();
-        liquidityPoolMap.forEach((x, y) -> {
-            if (Objects.equals(y.tokenA, USDT_CODE)) {
-                tempPrice.put(toPair(y.tokenB, y.tokenA), y.tokenAmountA.divide(y.tokenAmountB, DEFAULT_SCALE, RoundingMode.DOWN));
-            } else if (Objects.equals(y.tokenB, USDT_CODE)) {
-                tempPrice.put(toPair(y.tokenA, y.tokenB), y.tokenAmountB.divide(y.tokenAmountA, DEFAULT_SCALE, RoundingMode.DOWN));
-            }
-        });
-        return tempPrice;
+    @Override
+    public Map<String, BigDecimal> getCoinPriceInfos() {
+        return this.priceMap;
     }
 
     @Override
     public List<CoinStatsInfoVO> coinInfos(int pageNum, int pageSize) {
-
         List<SwapCoins> swapCoins = swapCoinsService.getALlByPage(pageSize * (pageNum - 1), pageSize + 1);
-        Map<String, BigDecimal> tempPrice = getCoinPriceInfo();
-
         // 计算币种数量
         Map<String, BigDecimal> coinVolumeMap = new HashMap<>();
         liquidityPoolMap.forEach((x, y) -> {
@@ -416,10 +417,10 @@ public class SwapPathServiceImpl implements ISwapPathService {
         });
         List<CoinStatsInfoVO> coinInfoVos = swapCoins.stream().map(coin -> CoinStatsInfoVO.builder()
                 .name(coin.getShortName())
-                .price(tempPrice.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
+                .price(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
                 .rate(BigDecimal.ZERO.toPlainString())
                 .amount(BigDecimal.ZERO.toPlainString())
-                .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(tempPrice.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
+                .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
                 .build()).collect(Collectors.toList());
         return coinInfoVos;
     }
