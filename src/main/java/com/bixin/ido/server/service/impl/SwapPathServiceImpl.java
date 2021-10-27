@@ -9,20 +9,20 @@ import com.bixin.ido.server.bean.vo.CoinStatsInfoVO;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
 import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.core.client.ChainClientHelper;
+import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.utils.GrfAllEdge;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -53,10 +53,13 @@ public class SwapPathServiceImpl implements ISwapPathService {
     private ChainClientHelper chainClientHelper;
 
     @Resource
-    StarConfig idoStarConfig;
+    private StarConfig idoStarConfig;
 
     @Resource
-    ISwapCoinsService swapCoinsService;
+    private ISwapCoinsService swapCoinsService;
+
+    @Resource
+    private RedisCache redisCache;
 
 //    @PostConstruct
     public void init() {
@@ -418,8 +421,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
         List<CoinStatsInfoVO> coinInfoVos = swapCoins.stream().map(coin -> CoinStatsInfoVO.builder()
                 .name(coin.getShortName())
                 .price(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
-                .rate(BigDecimal.ZERO.toPlainString())
-                .amount(BigDecimal.ZERO.toPlainString())
+                .rate((String) redisCache.getValue(CommonConstant.SWAP_TOKEN_PRICE_RATE_PREFIX_KEY + coin.getShortName()))
+                .amount((String) redisCache.getValue(CommonConstant.SWAP_TOKEN_SWAP_AMOUNT_PREFIX_KEY + coin.getShortName()))
                 .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
                 .build()).collect(Collectors.toList());
         return coinInfoVos;
