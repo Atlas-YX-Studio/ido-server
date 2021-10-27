@@ -8,6 +8,7 @@ import com.bixin.ido.server.utils.JwtUtil;
 import com.bixin.ido.server.utils.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -27,6 +28,9 @@ import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFI
 @Component
 public class JwtVerifyFilter implements Filter {
 
+    @Value("${spring.profiles.active}")
+    private String env;
+
     private static List<String> pathWhitelist = List.of(
             NFT_REQUEST_PATH_PREFIX + "/image/group",
             NFT_REQUEST_PATH_PREFIX + "/image/info",
@@ -40,6 +44,10 @@ public class JwtVerifyFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        // 非生产环境不验证
+        if (!StringUtils.equalsIgnoreCase(env, "prod")) {
+            chain.doFilter(request, response);
+        }
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String uri = httpServletRequest.getRequestURI();
         // 获取图片不需要验证token
