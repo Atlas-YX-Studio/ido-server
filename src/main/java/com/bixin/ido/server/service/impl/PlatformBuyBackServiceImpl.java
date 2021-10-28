@@ -197,7 +197,10 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         public String icon;
 
         public String getCurrency() {
-            return fullCurrency.split("::")[2];
+            if (StringUtils.isBlank(this.fullCurrency)) {
+                return "";
+            }
+            return this.fullCurrency.split("::")[2];
         }
     }
 
