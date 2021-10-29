@@ -1,5 +1,6 @@
 package com.bixin.ido.server.core.redis;
 
+import com.alibaba.fastjson.JSON;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
@@ -35,6 +37,14 @@ public class RedisCache {
 
     public Object getValue(String key) {
         return redisTemplate.opsForValue().get(key);
+    }
+
+    public <T> T getValue(String key, Class<T> tClass) {
+        Object value = redisTemplate.opsForValue().get(key);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return JSON.parseObject((String) value, tClass);
     }
 
     public void setValue(String key, Object value, long expiredTime, TimeUnit unit) {

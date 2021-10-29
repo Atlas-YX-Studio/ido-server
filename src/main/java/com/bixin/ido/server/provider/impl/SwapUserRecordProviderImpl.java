@@ -1,7 +1,8 @@
 package com.bixin.ido.server.provider.impl;
 
 import com.bixin.ido.server.bean.DO.SwapUserRecord;
-import com.bixin.ido.server.bean.dto.SwapTickDto;
+import com.bixin.ido.server.bean.dto.SwapSymbolTickDto;
+import com.bixin.ido.server.bean.dto.SwapTokenTickDto;
 import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.enums.DirectionType;
@@ -36,33 +37,62 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
         String tokenY = idoSwapUserRecord.getTokenCodeY();
         // tokenX
         if (BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenInX()) && !BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenOutX())) {
-            BigDecimal amount = idoSwapUserRecord.getTokenOutX();
-            BigDecimal usdtExRate = StringUtils.equals(tokenX, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(tokenX);
-            addSwapTick(tokenX, DirectionType.SHORT.name(), amount, usdtExRate, idoSwapUserRecord.getSwapTime());
+            cacheSymbolTick(tokenX, tokenY, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutX(), idoSwapUserRecord.getTokenInY(), idoSwapUserRecord.getSwapTime());
+            cacheTokenTick(tokenX, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutX(), idoSwapUserRecord.getSwapTime());
         } else {
-            BigDecimal amount = idoSwapUserRecord.getTokenInX();
-            BigDecimal usdtExRate = StringUtils.equals(tokenX, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(tokenX);
-            addSwapTick(tokenX, DirectionType.LONG.name(), amount, usdtExRate, idoSwapUserRecord.getSwapTime());
+            cacheSymbolTick(tokenX, tokenY, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInX(), idoSwapUserRecord.getTokenOutY(), idoSwapUserRecord.getSwapTime());
+            cacheTokenTick(tokenX, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInX(), idoSwapUserRecord.getSwapTime());
         }
         // tokenY
         if (BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenInY()) && !BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenOutY())) {
-            BigDecimal amount = idoSwapUserRecord.getTokenOutY();
-            BigDecimal usdtExRate = StringUtils.equals(tokenY, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(tokenY);
-            addSwapTick(tokenY, DirectionType.SHORT.name(), amount, usdtExRate, idoSwapUserRecord.getSwapTime());
+            cacheTokenTick(tokenY, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutY(), idoSwapUserRecord.getSwapTime());
         } else {
-            BigDecimal amount = idoSwapUserRecord.getTokenInY();
-            BigDecimal usdtExRate = StringUtils.equals(tokenY, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(tokenY);
-            addSwapTick(tokenY, DirectionType.LONG.name(), amount, usdtExRate, idoSwapUserRecord.getSwapTime());
+            cacheTokenTick(tokenY, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInY(), idoSwapUserRecord.getSwapTime());
         }
     }
 
-    private void addSwapTick(String token, String direction, BigDecimal amount, BigDecimal usdtExRate, long time) {
-        SwapTickDto swapTickDto = new SwapTickDto();
-        swapTickDto.setDirection(direction);
-        swapTickDto.setAmount(amount);
-        swapTickDto.setUsdtExRate(usdtExRate);
-        swapTickDto.setUsdtAmount(amount.multiply(usdtExRate));
-        redisCache.zAdd(CommonConstant.SWAP_TOKEN_TICKS_PREFIX_KEY + token, swapTickDto, time);
+    /**
+     * 缓存交易对数据
+     * @param token0
+     * @param token1
+     * @param direction0
+     * @param amount0
+     * @param amount1
+     * @param time
+     */
+    private void cacheSymbolTick(String token0, String token1, String direction0, BigDecimal amount0, BigDecimal amount1, long time) {
+        BigDecimal usdtExRate0 = StringUtils.equals(token0, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(token0);
+        BigDecimal usdtExRate1 = StringUtils.equals(token1, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(token1);
+
+        SwapSymbolTickDto swapSymbolTickDto = new SwapSymbolTickDto();
+        swapSymbolTickDto.setToken0(token0);
+        swapSymbolTickDto.setToken1(token1);
+        swapSymbolTickDto.setDirection0(direction0);
+        swapSymbolTickDto.setAmount0(amount0);
+        swapSymbolTickDto.setAmount1(amount1);
+        swapSymbolTickDto.setUsdtAmount0(amount0.multiply(usdtExRate0));
+        swapSymbolTickDto.setUsdtAmount1(amount1.multiply(usdtExRate1));
+        swapSymbolTickDto.setSwapTime(time);
+        redisCache.zAdd(CommonConstant.SWAP_SYMBOL_TICKS_PREFIX_KEY + token0 + "_" + token1, swapSymbolTickDto, time);
+    }
+
+    /**
+     * 缓存token交易数据
+     * @param token
+     * @param direction
+     * @param amount
+     * @param time
+     */
+    private void cacheTokenTick(String token, String direction, BigDecimal amount, long time) {
+        BigDecimal usdtExRate = StringUtils.equals(token, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(token);
+
+        SwapTokenTickDto swapTokenTickDto = new SwapTokenTickDto();
+        swapTokenTickDto.setDirection(direction);
+        swapTokenTickDto.setAmount(amount);
+        swapTokenTickDto.setUsdtExRate(usdtExRate);
+        swapTokenTickDto.setUsdtAmount(amount.multiply(usdtExRate));
+        swapTokenTickDto.setSwapTime(time);
+        redisCache.zAdd(CommonConstant.SWAP_TOKEN_TICKS_PREFIX_KEY + token, swapTokenTickDto, time);
     }
 
 }

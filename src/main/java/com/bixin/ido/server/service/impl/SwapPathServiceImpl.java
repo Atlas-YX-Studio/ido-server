@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.beust.jcommander.internal.Lists;
 import com.bixin.ido.server.bean.DO.SwapCoins;
+import com.bixin.ido.server.bean.dto.SwapTokenMarketDto;
 import com.bixin.ido.server.bean.vo.CoinStatsInfoVO;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
@@ -246,6 +247,11 @@ public class SwapPathServiceImpl implements ISwapPathService {
         return priceA.subtract(finalPriceA).divide(priceA, DEFAULT_SCALE, RoundingMode.DOWN);
     }
 
+    @Override
+    public List<Pool> getPoolList() {
+        return List.of(liquidityPoolMap.values().toArray(new Pool[0]));
+    }
+
     private Pool getPool(String tokenA, String tokenB) {
         return liquidityPoolMap.containsKey(toPair(tokenA, tokenB)) ? liquidityPoolMap.get(toPair(tokenA, tokenB)) : liquidityPoolMap.get(toPair(tokenB, tokenA));
     }
@@ -418,13 +424,16 @@ public class SwapPathServiceImpl implements ISwapPathService {
             coinVolumeMap.compute(y.tokenA, (k, v) -> Objects.isNull(v) ? y.tokenAmountA : v.add(y.tokenAmountA));
             coinVolumeMap.compute(y.tokenB, (k, v) -> Objects.isNull(v) ? y.tokenAmountB : v.add(y.tokenAmountB));
         });
-        List<CoinStatsInfoVO> coinInfoVos = swapCoins.stream().map(coin -> CoinStatsInfoVO.builder()
+        List<CoinStatsInfoVO> coinInfoVos = swapCoins.stream().map(coin -> {
+            SwapTokenMarketDto swapTokenMarketDto = redisCache.getValue(CommonConstant.SWAP_TOKEN_MARKET_PREFIX_KEY + coin.getShortName(), SwapTokenMarketDto.class);
+            return CoinStatsInfoVO.builder()
                 .name(coin.getShortName())
                 .price(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
-                .rate((String) redisCache.getValue(CommonConstant.SWAP_TOKEN_PRICE_RATE_PREFIX_KEY + coin.getShortName()))
-                .amount((String) redisCache.getValue(CommonConstant.SWAP_TOKEN_SWAP_AMOUNT_PREFIX_KEY + coin.getShortName()))
+                .rate(swapTokenMarketDto.getPriceRate().toPlainString())
+                .amount(swapTokenMarketDto.getSwapAmount().toPlainString())
                 .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
-                .build()).collect(Collectors.toList());
+                .build();
+        }).collect(Collectors.toList());
         return coinInfoVos;
     }
 

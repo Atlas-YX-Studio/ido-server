@@ -3,6 +3,7 @@ package com.bixin.ido.server.service;
 import com.bixin.ido.server.bean.vo.CoinStatsInfoVO;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
+import com.bixin.ido.server.service.impl.SwapPathServiceImpl;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,6 +15,8 @@ public interface ISwapPathService {
     SwapPathOutVO exchangeOut(String tokenA, String tokenB, BigDecimal tokenAmount, BigDecimal slippageTolerance, boolean multiMode);
 
     BigDecimal totalAssets();
+
+    List<SwapPathServiceImpl.Pool> getPoolList();
 
     Map<String, BigDecimal> getCoinPriceInfos();
 

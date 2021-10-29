@@ -20,8 +20,10 @@ public interface CommonConstant {
     String IMAGE_GROUP_URL_PREFIX_KEY = "image_group_url_";
 
     String SWAP_TOKEN_TICKS_PREFIX_KEY = "swap_token_ticks_";
-    String SWAP_TOKEN_PRICE_RATE_PREFIX_KEY = "swap_token_price_rate_";
-    String SWAP_TOKEN_SWAP_AMOUNT_PREFIX_KEY = "swap_token_swap_amount_";
+    String SWAP_TOKEN_MARKET_PREFIX_KEY = "swap_token_market_";
+
+    String SWAP_SYMBOL_TICKS_PREFIX_KEY = "swap_symbol_ticks_";
+    String SWAP_SYMBOL_MARKET_PREFIX_KEY = "swap_symbol_market_";
 
     String HTTP_X_REQUESTED_WITH = "X-Request-With";
     String HTTP_X_TOKEN = "X-Token";
