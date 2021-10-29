@@ -1,6 +1,7 @@
 package com.bixin.ido.server.core.redis;
 
 import com.alibaba.fastjson.JSON;
+import com.bixin.ido.server.utils.BeanCopyUtil;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,13 +42,15 @@ public class RedisCache {
 
     public <T> T getValue(String key, Class<T> tClass) {
         Object value = redisTemplate.opsForValue().get(key);
+        log.info("getValue key {} value {}", key, value);
         if (Objects.isNull(value)) {
             return null;
         }
-        return JSON.parseObject((String) value, tClass);
+        return JSON.parseObject(JSON.toJSONString(value), tClass);
     }
 
     public void setValue(String key, Object value, long expiredTime, TimeUnit unit) {
+        log.info("setValue key {} value {} expiredTime{}", key, value, expiredTime);
         redisTemplate.opsForValue().set(key, value, expiredTime, unit);
     }
 
@@ -58,6 +61,7 @@ public class RedisCache {
      * @param score
      */
     public void zAdd(String key, Object value, double score) {
+        log.info("zAdd key {} value {} score {}", key, value, score);
         redisTemplate.opsForZSet().add(key, value, score);
     }
 
@@ -68,12 +72,13 @@ public class RedisCache {
      * @param start
      * @param stop
      */
-    public List<Object> zRange(String key, long start, long stop) {
+    public <T> List<T> zRange(String key, long start, long stop, Class<T> tClass) {
         Set<Object> objectSet = redisTemplate.opsForZSet().range(key, start, stop);
+        log.info("zRange key {} start {} stop {} object {}", key, start, stop, JSON.toJSON(objectSet));
         if (CollectionUtils.isEmpty(objectSet)) {
             return List.of();
         }
-        return Arrays.asList(objectSet.toArray());
+        return BeanCopyUtil.copyListProperties(Arrays.asList(objectSet.toArray()), object -> JSON.parseObject(JSON.toJSONString(object), tClass));
     }
 
     /**
@@ -83,6 +88,7 @@ public class RedisCache {
      * @param max
      */
     public void zRemoveRangeByScore(String key, long min, long max) {
+        log.info("zRemoveRangeByScore key {} min {} max {}", key, min, max);
         redisTemplate.opsForZSet().removeRangeByScore(key, min, max);
     }
 

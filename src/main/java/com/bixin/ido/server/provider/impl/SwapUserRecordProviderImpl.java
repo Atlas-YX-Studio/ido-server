@@ -1,5 +1,6 @@
 package com.bixin.ido.server.provider.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.bixin.ido.server.bean.DO.SwapUserRecord;
 import com.bixin.ido.server.bean.dto.SwapSymbolTickDto;
 import com.bixin.ido.server.bean.dto.SwapTokenTickDto;
@@ -10,6 +11,7 @@ import com.bixin.ido.server.provider.IStarSwapProvider;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.service.ISwapUserRecordService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -28,6 +30,9 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
     private RedisCache redisCache;
     @Resource
     private ISwapPathService swapPathService;
+
+    @Value("${ido.star.swap.usdt-address}")
+    private String usdtAddress;
 
     @Override
     public void dispatcher(SwapUserRecord idoSwapUserRecord) {
@@ -61,8 +66,10 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
      * @param time
      */
     private void cacheSymbolTick(String token0, String token1, String direction0, BigDecimal amount0, BigDecimal amount1, long time) {
-        BigDecimal usdtExRate0 = StringUtils.equals(token0, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(token0);
-        BigDecimal usdtExRate1 = StringUtils.equals(token1, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(token1);
+        BigDecimal usdtExRate0 = StringUtils.equals(token0, CommonConstant.USDT_NAME) ? BigDecimal.ONE :
+                swapPathService.getCoinPriceInfos().getOrDefault(token0 + "_" + usdtAddress, BigDecimal.ZERO);
+        BigDecimal usdtExRate1 = StringUtils.equals(token1, CommonConstant.USDT_NAME) ? BigDecimal.ONE :
+                swapPathService.getCoinPriceInfos().getOrDefault(token1 + "_" + usdtAddress, BigDecimal.ZERO);
 
         SwapSymbolTickDto swapSymbolTickDto = new SwapSymbolTickDto();
         swapSymbolTickDto.setToken0(token0);
@@ -70,10 +77,12 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
         swapSymbolTickDto.setDirection0(direction0);
         swapSymbolTickDto.setAmount0(amount0);
         swapSymbolTickDto.setAmount1(amount1);
+        swapSymbolTickDto.setUsdtExRate0(usdtExRate0);
+        swapSymbolTickDto.setUsdtExRate1(usdtExRate1);
         swapSymbolTickDto.setUsdtAmount0(amount0.multiply(usdtExRate0));
         swapSymbolTickDto.setUsdtAmount1(amount1.multiply(usdtExRate1));
         swapSymbolTickDto.setSwapTime(time);
-        redisCache.zAdd(CommonConstant.SWAP_SYMBOL_TICKS_PREFIX_KEY + token0 + "_" + token1, swapSymbolTickDto, time);
+        redisCache.zAdd(CommonConstant.SWAP_SYMBOL_TICKS_PREFIX_KEY + token0 + "_" + token1, JSON.toJSON(swapSymbolTickDto), time);
     }
 
     /**
@@ -84,7 +93,8 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
      * @param time
      */
     private void cacheTokenTick(String token, String direction, BigDecimal amount, long time) {
-        BigDecimal usdtExRate = StringUtils.equals(token, CommonConstant.USDT_NAME) ? BigDecimal.ONE : swapPathService.getCoinPriceInfos().get(token);
+        BigDecimal usdtExRate = StringUtils.equals(token, usdtAddress) ? BigDecimal.ONE :
+                swapPathService.getCoinPriceInfos().getOrDefault(token + "_" + usdtAddress, BigDecimal.ZERO);
 
         SwapTokenTickDto swapTokenTickDto = new SwapTokenTickDto();
         swapTokenTickDto.setDirection(direction);
@@ -92,7 +102,7 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
         swapTokenTickDto.setUsdtExRate(usdtExRate);
         swapTokenTickDto.setUsdtAmount(amount.multiply(usdtExRate));
         swapTokenTickDto.setSwapTime(time);
-        redisCache.zAdd(CommonConstant.SWAP_TOKEN_TICKS_PREFIX_KEY + token, swapTokenTickDto, time);
+        redisCache.zAdd(CommonConstant.SWAP_TOKEN_TICKS_PREFIX_KEY + token, JSON.toJSON(swapTokenTickDto), time);
     }
 
 }

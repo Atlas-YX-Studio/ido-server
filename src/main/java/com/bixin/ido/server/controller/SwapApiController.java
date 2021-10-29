@@ -9,14 +9,17 @@ import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.service.impl.SwapPathServiceImpl;
 import com.bixin.ido.server.utils.BeanCopyUtil;
-import com.bixin.ido.server.utils.TypeArgsUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(PathConstant.SWAP_REQUEST_PATH_PREFIX + "/api")
@@ -26,6 +29,9 @@ public class SwapApiController {
     private ISwapPathService iSwapPathService;
     @Resource
     private RedisCache redisCache;
+
+    @Value("${ido.star.swap.usdt-address}")
+    private String usdtAddress;
 
     @GetMapping("/meta")
     public R meta() {
@@ -39,10 +45,18 @@ public class SwapApiController {
             return R.success();
         }
         List<SwapPairMarketVO> swapPairMarketVOList = BeanCopyUtil.copyListProperties(poolList, pool -> {
-            String token0 = TypeArgsUtil.parseTypeObj(pool.tokenA).getName();
-            String token1 = TypeArgsUtil.parseTypeObj(pool.tokenB).getName();
-            SwapSymbolMarketDto swapTokenMarketDto = redisCache.getValue(CommonConstant.SWAP_SYMBOL_MARKET_PREFIX_KEY + token0 + "_" + token1, SwapSymbolMarketDto.class);
-
+            SwapSymbolMarketDto swapTokenMarketDto = redisCache.getValue(CommonConstant.SWAP_SYMBOL_MARKET_PREFIX_KEY + pool.tokenA + "_" + pool.tokenB, SwapSymbolMarketDto.class);
+            if (swapTokenMarketDto == null) {
+                Map<String, BigDecimal> coinPriceInfos = iSwapPathService.getCoinPriceInfos();
+                return SwapPairMarketVO.builder()
+                        .token0(pool.tokenA)
+                        .token1(pool.tokenB)
+                        .reserve0(pool.tokenAmountA)
+                        .reserve1(pool.tokenAmountB)
+                        .usdtPrice0(StringUtils.equals(pool.tokenA, usdtAddress) ? BigDecimal.ONE : coinPriceInfos.getOrDefault(pool.tokenA + "_" + usdtAddress, BigDecimal.ZERO))
+                        .usdtPrice1(StringUtils.equals(pool.tokenB, usdtAddress) ? BigDecimal.ONE : coinPriceInfos.getOrDefault(pool.tokenB + "_" + usdtAddress, BigDecimal.ZERO))
+                        .build();
+            }
             return SwapPairMarketVO.builder()
                     .token0(swapTokenMarketDto.getToken0())
                     .token1(swapTokenMarketDto.getToken1())

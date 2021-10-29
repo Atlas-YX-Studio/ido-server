@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -61,11 +60,21 @@ public class SwapEventDto {
         private String name;
     }
 
+    public String getXTokenCodeStr() {
+        return this.x_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.x_token_code.getModule_name().replaceAll("0x",""))
+                + "::"+ HexStringUtil.toStringHex(this.x_token_code.getName().replaceAll("0x",""));
+    }
+
+    public String getYTokenCodeStr() {
+        return this.y_token_code.getAddr() + "::" + HexStringUtil.toStringHex(this.y_token_code.getModule_name().replaceAll("0x",""))
+                + "::"+ HexStringUtil.toStringHex(this.y_token_code.getName().replaceAll("0x",""));
+    }
+
     public static SwapUserRecord of(SwapEventDto dto) {
         SwapUserRecord.SwapUserRecordBuilder builder = SwapUserRecord.builder()
                 .userAddress(dto.getSigner())
-//                .tokenCodeX("")
-//                .tokenCodeY("")
+                .tokenCodeX(dto.getXTokenCodeStr())
+                .tokenCodeY(dto.getYTokenCodeStr())
                 .tokenInX(dto.getAmount_x_in())
                 .tokenInY(dto.getAmount_y_in())
                 .tokenOutX(dto.getAmount_x_out())
@@ -74,15 +83,6 @@ public class SwapEventDto {
                 .reserveAmountY(dto.reserve_y)
                 .swapTime(dto.getBlock_timestamp_last())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
-
-        String tokenX = dto.getX_token_code().getName();
-        String tokenY = dto.getY_token_code().getName();
-        if(StringUtils.isNoneEmpty(tokenX)){
-            builder.tokenCodeX(HexStringUtil.toStringHex(tokenX.replaceAll("0x","")));
-        }
-        if(StringUtils.isNoneEmpty(tokenY)){
-            builder.tokenCodeY(HexStringUtil.toStringHex(tokenY.replaceAll("0x","")));
-        }
 
         return builder.build();
     }

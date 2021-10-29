@@ -283,6 +283,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
         // 同步更新价格信息
         Map<String, BigDecimal> tempPrice = new HashMap<>();
+        tempPrice.put(toPair(USDT_CODE, USDT_CODE), BigDecimal.ONE);
         liquidityPoolMap.forEach((x, y) -> {
             if (Objects.equals(y.tokenA, USDT_CODE)) {
                 tempPrice.put(toPair(y.tokenB, y.tokenA), y.tokenAmountA.divide(y.tokenAmountB, DEFAULT_SCALE, RoundingMode.DOWN));
@@ -430,7 +431,14 @@ public class SwapPathServiceImpl implements ISwapPathService {
             coinVolumeMap.compute(y.tokenB, (k, v) -> Objects.isNull(v) ? y.tokenAmountB : v.add(y.tokenAmountB));
         });
         List<CoinStatsInfoVO> coinInfoVos = swapCoins.stream().map(coin -> {
-            SwapTokenMarketDto swapTokenMarketDto = redisCache.getValue(CommonConstant.SWAP_TOKEN_MARKET_PREFIX_KEY + coin.getShortName(), SwapTokenMarketDto.class);
+            SwapTokenMarketDto swapTokenMarketDto = redisCache.getValue(CommonConstant.SWAP_TOKEN_MARKET_PREFIX_KEY + coin.getAddress(), SwapTokenMarketDto.class);
+            if (swapTokenMarketDto == null) {
+                return CoinStatsInfoVO.builder()
+                        .name(coin.getShortName())
+                        .price(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
+                        .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
+                        .build();
+            }
             return CoinStatsInfoVO.builder()
                 .name(coin.getShortName())
                 .price(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
