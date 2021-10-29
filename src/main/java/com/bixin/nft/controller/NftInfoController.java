@@ -98,7 +98,7 @@ public class NftInfoController {
         }
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE || pageSize <= 0 ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
         // type = null 查询所有
-        List<NftEventDo> list = nftEventService.getALlByPage(id, type, pageSize, nextId);
+        List<NftEventDo> list = nftEventService.getALlByPage(id, type, pageSize + 1, nextId);
         boolean hasNext = false;
         if (list.size() > pageSize) {
             list = list.subList(0, list.size() - 1);
