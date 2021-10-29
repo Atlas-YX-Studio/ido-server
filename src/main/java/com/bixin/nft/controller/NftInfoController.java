@@ -99,11 +99,6 @@ public class NftInfoController {
         pageSize = pageSize > CommonConstant.MAX_PAGE_SIZE || pageSize <= 0 ? CommonConstant.DEFAULT_PAGE_SIZE : pageSize;
         // type = null 查询所有
         List<NftEventDo> list = nftEventService.getALlByPage(id, type, pageSize + 1, nextId);
-        boolean hasNext = false;
-        if (list.size() > pageSize) {
-            list = list.subList(0, list.size() - 1);
-            hasNext = true;
-        }
 
         List<OperationRecordVo> records = new ArrayList<>();
         if (!CollectionUtils.isEmpty(list)) {
@@ -160,6 +155,11 @@ public class NftInfoController {
                 operationRecordVo.setCreateTime(nftEventDo.getCreateTime());
                 records.add(operationRecordVo);
             }
+        }
+        boolean hasNext = false;
+        if (records.size() > pageSize) {
+            records = records.subList(0, records.size() - 1);
+            hasNext = true;
         }
 
         return P.success(records, hasNext);
