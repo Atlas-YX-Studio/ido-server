@@ -2,6 +2,7 @@ package com.bixin.ido.server.service.impl;
 
 import com.bixin.ido.server.bean.DO.SwapUserRecord;
 import com.bixin.ido.server.core.mapper.SwapUserRecordMapper;
+import com.bixin.ido.server.core.wrapDDL.SwapUserRecordDDL;
 import com.bixin.ido.server.service.ISwapUserRecordService;
 import com.bixin.ido.server.utils.CaseUtil;
 import org.springframework.stereotype.Service;
@@ -37,5 +38,12 @@ public class SwapUserRecordImpl implements ISwapUserRecordService {
         CaseUtil.buildNoneValue(nextId, id -> paramMap.put("nextId", id));
 
         return swapUserRecordMapper.selectByPage(paramMap);
+    }
+
+    @Override
+    public Long countVisits(Long timestamp) {
+        SwapUserRecordDDL swapUserRecordDDL = new SwapUserRecordDDL();
+        swapUserRecordDDL.createCriteria().andCreateTimeGreaterThanOrEqualTo(timestamp);
+        return swapUserRecordMapper.countByDDL(swapUserRecordDDL);
     }
 }

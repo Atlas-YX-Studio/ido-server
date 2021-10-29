@@ -7,6 +7,7 @@ import com.beust.jcommander.internal.Lists;
 import com.bixin.ido.server.bean.DO.SwapCoins;
 import com.bixin.ido.server.bean.dto.SwapTokenMarketDto;
 import com.bixin.ido.server.bean.vo.CoinStatsInfoVO;
+import com.bixin.ido.server.bean.vo.SwapMetaVO;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
 import com.bixin.ido.server.config.StarConfig;
@@ -15,6 +16,7 @@ import com.bixin.ido.server.core.client.ChainClientHelper;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
+import com.bixin.ido.server.service.ISwapUserRecordService;
 import com.bixin.ido.server.utils.GrfAllEdge;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
@@ -58,6 +60,9 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     @Resource
     private ISwapCoinsService swapCoinsService;
+
+    @Resource
+    private ISwapUserRecordService swapUserRecordService;
 
     @Resource
     private RedisCache redisCache;
@@ -437,6 +442,14 @@ public class SwapPathServiceImpl implements ISwapPathService {
         return coinInfoVos;
     }
 
+    @Override
+    public SwapMetaVO meta() {
+        List<SwapCoins> swapCoins = swapCoinsService.selectByDDL(SwapCoins.builder().build());
+        Map<String, Pool> liquidityPoolMap = this.liquidityPoolMap;
+        Long visits = swapUserRecordService.countVisits(System.currentTimeMillis() - 1000 * 60 * 60 * 24);
+        return SwapMetaVO.convertToMeta(swapCoins, liquidityPoolMap, visits);
+    }
+
     public static class Pool {
         public String tokenA;
         public String tokenB;
@@ -449,42 +462,6 @@ public class SwapPathServiceImpl implements ISwapPathService {
             this.tokenAmountA = tokenAmountA;
             this.tokenAmountB = tokenAmountB;
         }
-    }
-
-    private void fillTestData() {
-        liquidityPoolMap = new HashMap<>();
-        Pool pool1 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::BTC", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::USDT", new BigDecimal(100), new BigDecimal(1000000));
-        Pool pool2 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::ETH", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::USDT", new BigDecimal(100), new BigDecimal(200000));
-        Pool pool3 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::EOS", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::USDT", new BigDecimal(10000), new BigDecimal(100000));
-        Pool pool4 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::STC", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::USDT", new BigDecimal(100000000), new BigDecimal(20000000));
-        Pool pool5 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::BTC", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::ETH", new BigDecimal(100), new BigDecimal(500));
-        Pool pool6 = new Pool("0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::BTC", "0xc9bcf78045e7264c2b9d0b62a09e566a::DummyToken::STC", new BigDecimal(2000), new BigDecimal(100000000));
-        liquidityPoolMap.put(toPair(pool1.tokenA, pool1.tokenB), pool1);
-        liquidityPoolMap.put(toPair(pool2.tokenA, pool2.tokenB), pool2);
-        liquidityPoolMap.put(toPair(pool3.tokenA, pool3.tokenB), pool3);
-        liquidityPoolMap.put(toPair(pool4.tokenA, pool4.tokenB), pool4);
-        liquidityPoolMap.put(toPair(pool5.tokenA, pool5.tokenB), pool5);
-        liquidityPoolMap.put(toPair(pool6.tokenA, pool6.tokenB), pool6);
-
-        Set<String> nodes = new HashSet<>();
-        liquidityPoolMap.values().forEach(x -> {
-            nodes.add(x.tokenA);
-            nodes.add(x.tokenB);
-        });
-        grf = new GrfAllEdge(nodes.size(), new ArrayList<>(nodes));
-        liquidityPoolMap.values().forEach(x -> grf.addPath(x.tokenA, x.tokenB));
-        this.allAssets();
-    }
-
-
-    public static void main(String[] args) {
-        SwapPathServiceImpl swapPathService = new SwapPathServiceImpl();
-        swapPathService.init();
-
-//        swapPathService.exchangeIn("STC", "USDT", new BigDecimal("1"), new BigDecimal("0.01"));
-//        swapPathService.exchangeOut("USDT", "STC", new BigDecimal("1000"), new BigDecimal("0.01"));
-//        swapPathService.exchangeOut("BTC", "STC", new BigDecimal("1000"), new BigDecimal("0.01"));
-
     }
 
 }
