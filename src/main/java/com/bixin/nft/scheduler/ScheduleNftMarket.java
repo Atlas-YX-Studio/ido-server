@@ -3,16 +3,15 @@ package com.bixin.nft.scheduler;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.utils.JacksonUtil;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.nft.bean.DO.NftEventDo;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.bean.dto.ChainResourceDto;
 import com.bixin.nft.bean.dto.NFTBoxDto;
-import com.bixin.nft.core.service.ContractService;
-import com.bixin.nft.core.service.NftGroupService;
-import com.bixin.nft.core.service.NftInfoService;
-import com.bixin.nft.core.service.NftMarketService;
+import com.bixin.nft.core.service.*;
 import com.bixin.nft.enums.NftBoxType;
+import com.bixin.nft.enums.NftEventType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +43,8 @@ public class ScheduleNftMarket {
     NftMarketService nftMarketService;
     @Resource
     NftInfoService nftInfoService;
+    @Resource
+    NftEventService nftEventService;
     @Resource
     private StarConfig starConfig;
 
@@ -160,6 +161,11 @@ public class ScheduleNftMarket {
                     log.error("ScheduleNftMarket buildNft and nftInfo is null");
                     return;
                 }
+                long sellingTime = System.currentTimeMillis();
+                List<NftEventDo> nftEventDos = nftEventService.getALlByPage(nftInfo.getId(), NftEventType.NFT_SELL_EVENT.getDesc(), 1, 0);
+                if (!CollectionUtils.isEmpty(nftEventDos)) {
+                    sellingTime = nftEventDos.get(0).getCreateTime();
+                }
                 NftMarketDo nft = NftMarketDo.builder()
                         .chainId(so.getId())
                         .nftBoxId(nftInfo.getId())
@@ -173,7 +179,7 @@ public class ScheduleNftMarket {
                         .sellPrice(so.getSelling_price())
                         .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
                         .icon(nftInfo.getImageLink())
-                        .createTime(currentTime)
+                        .createTime(sellingTime)
                         .updateTime(currentTime)
                         .build();
                 list.add(nft);
@@ -193,6 +199,11 @@ public class ScheduleNftMarket {
                 return;
             }
             boxList.forEach(p -> p.getItems().forEach(so -> {
+                long sellingTime = System.currentTimeMillis();
+                List<NftEventDo> nftEventDos = nftEventService.getALlByPage(so.getId(), NftEventType.BOX_SELL_EVENT.getDesc(), 1, 0);
+                if (!CollectionUtils.isEmpty(nftEventDos)) {
+                    sellingTime = nftEventDos.get(0).getCreateTime();
+                }
                 NftMarketDo box = NftMarketDo.builder()
                         .chainId(so.getId())
                         .nftBoxId(0L)
@@ -206,7 +217,7 @@ public class ScheduleNftMarket {
                         .sellPrice(so.getSelling_price())
                         .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
                         .icon(nftGroupDo.getBoxTokenLogo())
-                        .createTime(currentTime)
+                        .createTime(sellingTime)
                         .updateTime(currentTime)
                         .build();
                 list.add(box);

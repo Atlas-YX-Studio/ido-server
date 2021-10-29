@@ -46,9 +46,6 @@
     <if test="sort != null">
       ${sort}
     </if>
-    <if test="order != null">
-      ${order}
-    </if>
     <if test="pageFrom != null and pageSize !=null">
       limit #{pageFrom},#{pageSize}
     </if>

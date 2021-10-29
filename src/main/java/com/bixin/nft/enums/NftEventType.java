@@ -16,6 +16,7 @@ public enum NftEventType {
     NFT_CHANGE_PRICE_EVENT("NFTChangePriceEvent"),
     NFT_BUY_BACK_SELL_EVENT("NFTBuyBackSellEvent"),
     BOX_OFFERING_SELL_EVENT("BoxOfferingSellEvent"),
+    BOX_SELL_EVENT("BoxSellEvent"),
     BOX_OPEN_EVENT("BoxOpenEvent"),
     BOX_BID_EVENT("BoxBidEvent"),
     BOX_BUY_EVENT("BoxBuyEvent"),

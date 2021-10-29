@@ -1,21 +1,17 @@
 package com.bixin.nft.core.service.impl;
 
-import com.bixin.ido.server.utils.CaseUtil;
-import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftMarketMapper;
 import com.bixin.nft.core.service.NftMarketService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @class: NftMarketServiceImpl
@@ -104,7 +100,6 @@ public class NftMarketServiceImpl implements NftMarketService {
     @Override
     public List<NftMarketDo> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("sort", "sell_price");
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
         if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
@@ -116,10 +111,12 @@ public class NftMarketServiceImpl implements NftMarketService {
         if (groupId > 0) {
             paramMap.put("groupId", groupId);
         }
-        if (sort == 1) {
-            paramMap.put("order", "desc");
+        if (sort == 0) {
+            paramMap.put("sort", "create_time desc");
+        } else if (sort == 1) {
+            paramMap.put("sort", "sell_price desc, create_time desc");
         } else if (sort == 2) {
-            paramMap.put("order", "asc");
+            paramMap.put("sort", "sell_price asc, create_time desc");
         }
         return nftMarketMapper.selectByPage(paramMap);
     }

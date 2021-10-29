@@ -161,6 +161,9 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 } else if (NftEventType.BOX_OFFERING_SELL_EVENT.getDesc().equals(tagString)) {
                     // 盲盒发售
                     handleBoxOfferingSellEvent(data, eventResult.getTypeTag());
+                } else if (NftEventType.BOX_SELL_EVENT.getDesc().equals(tagString)) {
+                    // 盲盒出售
+                    handleBoxSellEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.BOX_BID_EVENT.getDesc().equals(tagString)) {
                     // 盲盒出价
                     handleBoxBidEvent(data, eventResult.getTypeTag());
@@ -685,10 +688,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         BoxOfferingSellEventDto dto = mapper.convertValue(data, BoxOfferingSellEventDto.class);
         NftEventDo nftEventDo = BoxOfferingSellEventDto.of(dto);
 
-        NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-
-        nftEventService.insert(nftEventDo);
+        NftGroupDo nftGroupDo = saveBoxEvent(nftEventDo, dto.getBoxTokenCodeStr());
 
         // 新增购买记录
         TradingRecordDo newRecordDo = TradingRecordDo.builder()
@@ -725,16 +725,22 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
 
     }
 
+    // box售卖
+    private void handleBoxSellEvent(JsonNode data, String typeTag) {
+        log.info("NftEventSubscriberRunner 盲盒售卖");
+        BoxSellEventDto dto = mapper.convertValue(data, BoxSellEventDto.class);
+        NftEventDo nftEventDo = BoxSellEventDto.of(dto);
+
+        saveBoxEvent(nftEventDo, dto.getBoxTokenCodeStr());
+    }
+
     // box出价
     private void handleBoxBidEvent(JsonNode data,String typeTag) {
         log.info("NftEventSubscriberRunner 盲盒出价");
         BoxBidEventDto dto = mapper.convertValue(data, BoxBidEventDto.class);
         NftEventDo nftEventDo = BoxBidEventDto.of(dto);
 
-        NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-
-        nftEventService.insert(nftEventDo);
+        NftGroupDo nftGroupDo = saveBoxEvent(nftEventDo, dto.getBoxTokenCodeStr());
 
         // 更新上一个出价人的状态
         if (StringUtils.isNotBlank(dto.getPrev_bidder())) {
@@ -822,10 +828,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         BoxBuyEventDto dto = mapper.convertValue(data, BoxBuyEventDto.class);
         NftEventDo nftEventDo = BoxBuyEventDto.of(dto);
 
-        NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-
-        nftEventService.insert(nftEventDo);
+        NftGroupDo nftGroupDo = saveBoxEvent(nftEventDo, dto.getBoxTokenCodeStr());
 
         // 更新上一个出价人的状态
         if (StringUtils.isNotBlank(dto.getPrev_bidder()) && !StringUtils.equalsIgnoreCase(dto.getPrev_bidder(), dto.getBuyer())) {
@@ -946,10 +949,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         BoxOffLineEventDto dto = mapper.convertValue(data, BoxOffLineEventDto.class);
         NftEventDo nftEventDo = BoxOffLineEventDto.of(dto);
 
-        NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-
-        nftEventService.insert(nftEventDo);
+        NftGroupDo nftGroupDo = saveBoxEvent(nftEventDo, dto.getBoxTokenCodeStr());
 
         // 更新上一个出价人的状态
         if (StringUtils.isNotBlank(dto.getBidder())) {
@@ -1008,10 +1008,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         BoxAcceptBidEventDto dto = mapper.convertValue(data, BoxAcceptBidEventDto.class);
         NftEventDo nftEventDo = BoxAcceptBidEventDto.of(dto);
 
-        NftGroupDo nftGroupParm = NftGroupDo.builder().boxToken(dto.getBoxTokenCodeStr()).build();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-
-        nftEventService.insert(nftEventDo);
+        NftGroupDo nftGroupDo = saveBoxEvent(nftEventDo, dto.getBoxTokenCodeStr());
 
         // 更新或新增最新出价人记录
         TradingRecordDo tradingRecordParam = TradingRecordDo.builder().address(dto.getBidder()).type(NftBoxType.BOX.getDesc()).refId(dto.getId()).finish(Boolean.FALSE).build();
@@ -1080,6 +1077,23 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             sellRecordDo.setName(nftGroupDo.getSeriesName());
         }
         tradingRecordService.insert(sellRecordDo);
+    }
+
+    /**
+     * 保存event
+     * @param nftEventDo
+     * @param boxTokenStr
+     */
+    private NftGroupDo saveBoxEvent(NftEventDo nftEventDo, String boxTokenStr) {
+        NftGroupDo nftGroupParam = NftGroupDo.builder().boxToken(boxTokenStr).build();
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParam);
+        NftInfoDo nftInfoDo = null;
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            log.error("NftEventSubscriberRunner group 不存在，boxToken = {}", boxTokenStr);
+        }
+        nftEventDo.setGroupId(nftGroupDo.getId());
+        nftEventService.insert(nftEventDo);
+        return nftGroupDo;
     }
 
     private String getEventName(String typeTag) {

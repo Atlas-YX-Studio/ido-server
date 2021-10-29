@@ -1,7 +1,6 @@
 package com.bixin.nft.controller;
 
 import com.bixin.ido.server.bean.vo.wrap.P;
-import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.bean.vo.NftSelfSellingVo;
@@ -40,6 +39,7 @@ public class NftMarketController {
     public P getALlByPage(@RequestParam(value = "groupId", defaultValue = "0") long groupId,
                           @RequestParam(value = "currency", defaultValue = "all") String currency,
                           @RequestParam(value = "open", defaultValue = "all") String open,
+                          @RequestParam(value = "sortPrice", defaultValue = "0") boolean sortPrice,
                           @RequestParam(value = "sort", defaultValue = "0") int sort,
                           @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "0") long pageNum) {
