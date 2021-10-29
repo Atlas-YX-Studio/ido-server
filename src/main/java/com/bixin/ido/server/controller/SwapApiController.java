@@ -27,6 +27,11 @@ public class SwapApiController {
     @Resource
     private RedisCache redisCache;
 
+    @GetMapping("/meta")
+    public R meta() {
+        return R.success(iSwapPathService.meta());
+    }
+
     @GetMapping("/market")
     public R market(){
         List<SwapPathServiceImpl.Pool> poolList = iSwapPathService.getPoolList();

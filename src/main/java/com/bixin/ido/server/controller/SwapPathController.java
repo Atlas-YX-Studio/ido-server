@@ -49,10 +49,4 @@ public class SwapPathController {
         }
         return P.success(coinStatsInfoVOS, hasNext);
     }
-
-    @GetMapping("/meta")
-    public R meta() {
-        return R.success(iSwapPathService.meta());
-    }
-
 }
