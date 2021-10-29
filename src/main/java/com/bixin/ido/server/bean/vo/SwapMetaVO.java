@@ -34,7 +34,9 @@ public class SwapMetaVO {
                         .displayPrecision(c.getDisplayPrecision()).build()).collect(Collectors.toList()))
                 .pairs(liquidityPoolMap.values().stream().map(pool -> Pair.builder()
                         .tokenA(pool.tokenA)
-                        .tokenB(pool.tokenB).build()).collect(Collectors.toList()))
+                        .tokenB(pool.tokenB)
+                        .tokenAmountA(pool.tokenAmountA.toPlainString())
+                        .tokenAmountB(pool.tokenAmountB.toPlainString()).build()).collect(Collectors.toList()))
                 .visits(visits)
                 .build();
     }
@@ -62,11 +64,14 @@ public class SwapMetaVO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Pair {
-//        private String name;
 
         private String tokenA;
 
         private String tokenB;
+
+        private String tokenAmountA;
+
+        private String tokenAmountB;
 
     }
 
