@@ -189,6 +189,7 @@ public class ScheduleMarketInfo {
                         }
                         nextId = swapUserRecords.get(swapUserRecords.size() - 1).getId();
                     }
+                    log.info("updateVolumeInfo swapTotalVolume: {}", swapTotalVolume);
 
                     // nft
                     nextId = 0;
@@ -212,6 +213,7 @@ public class ScheduleMarketInfo {
                         }
                         nextId = nftEventDos.get(nftEventDos.size() - 1).getId();
                     }
+                    log.info("updateVolumeInfo nftTotalVolume: {}", nftTotalVolume);
 
                     VolumeInfoVO volumeInfoVO = new VolumeInfoVO();
                     volumeInfoVO.setTvl(swapPathService.totalAssets());

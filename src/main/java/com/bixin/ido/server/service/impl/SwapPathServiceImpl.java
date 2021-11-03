@@ -403,7 +403,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
         return resPool;
     }
 
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void allAssets() {
         totalAssets = liquidityPoolMap.values().stream().map(x -> {
             if (Objects.equals(x.tokenA, USDT_CODE)) {
@@ -414,6 +414,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
                 return x.tokenAmountA.multiply(this.priceMap.getOrDefault(toPair(x.tokenA, USDT_CODE), BigDecimal.ZERO)).add(x.tokenAmountB.multiply(this.priceMap.getOrDefault(toPair(x.tokenB, USDT_CODE), BigDecimal.ZERO)));
             }
         }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        log.info("update totalAssets:{}", totalAssets);
     }
 
     @Override
