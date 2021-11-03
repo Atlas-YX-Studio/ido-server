@@ -14,6 +14,7 @@ import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.service.ISwapUserRecordService;
 import com.bixin.ido.server.service.impl.SwapPathServiceImpl;
+import com.bixin.ido.server.utils.BigDecimalUtil;
 import com.bixin.nft.bean.DO.NftEventDo;
 import com.bixin.nft.core.service.NftEventService;
 import com.bixin.nft.enums.NftEventType;
@@ -87,6 +88,8 @@ public class ScheduleMarketInfo {
                                 lastPrice.subtract(firstPrice).divide(firstPrice, 18, RoundingMode.HALF_UP).multiply(new BigDecimal(2));
                         // 获取token 24H总交易额，以USDT计价
                         BigDecimal usdtSwapAmount = swapTicks.stream().map(SwapTokenTickDto::getUsdtAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+                        usdtSwapAmount = BigDecimalUtil.removePrecision(usdtSwapAmount, swapPathService.getCoinPrecision(usdtAddress));
+
                         // 存入redis
                         SwapTokenMarketDto swapTokenMarketDto = new SwapTokenMarketDto();
                         swapTokenMarketDto.setPriceRate(priceRate);
@@ -120,7 +123,9 @@ public class ScheduleMarketInfo {
                         }
                         // 24h 交易额
                         BigDecimal usdtSwapAmount0 = swapTicks.stream().map(SwapSymbolTickDto::getUsdtAmount0).reduce(BigDecimal.ZERO, BigDecimal::add);
+                        usdtSwapAmount0 = BigDecimalUtil.removePrecision(usdtSwapAmount0, swapPathService.getCoinPrecision(usdtAddress));
                         BigDecimal usdtSwapAmount1 = swapTicks.stream().map(SwapSymbolTickDto::getUsdtAmount1).reduce(BigDecimal.ZERO, BigDecimal::add);
+                        usdtSwapAmount1 = BigDecimalUtil.removePrecision(usdtSwapAmount1, swapPathService.getCoinPrecision(usdtAddress));
                         // 最近一笔交易
                         SwapSymbolTickDto swapSymbolTickDto = swapTicks.get(swapTicks.size() - 1);
                         // 存入redis
@@ -193,6 +198,7 @@ public class ScheduleMarketInfo {
                         }
                         nextId = swapUserRecords.get(swapUserRecords.size() - 1).getId();
                     }
+                    swapTotalVolume = BigDecimalUtil.removePrecision(swapTotalVolume, swapPathService.getCoinPrecision(usdtAddress));
                     log.info("updateVolumeInfo swapTotalVolume: {}", swapTotalVolume);
 
                     // nft
@@ -217,6 +223,7 @@ public class ScheduleMarketInfo {
                         }
                         nextId = nftEventDos.get(nftEventDos.size() - 1).getId();
                     }
+                    nftTotalVolume = BigDecimalUtil.removePrecision(nftTotalVolume, swapPathService.getCoinPrecision(usdtAddress));
                     log.info("updateVolumeInfo nftTotalVolume: {}", nftTotalVolume);
 
                     VolumeInfoVO volumeInfoVO = new VolumeInfoVO();

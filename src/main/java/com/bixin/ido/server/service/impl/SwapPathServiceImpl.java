@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 public class SwapPathServiceImpl implements ISwapPathService {
 
     private static final int DEFAULT_SCALE = 18;
+    private static final int DEFAULT_PRECISION = 8;
 
     private static final BigDecimal FEE_RATE = new BigDecimal("0.003");
 
@@ -47,6 +49,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
     private Map<String, Pool> liquidityPoolMap;
 
     private Map<String, BigDecimal> priceMap;
+
+    Map<String, Short> coinPrecisionMap;
 
     private GrfAllEdge grf;
 
@@ -348,6 +352,9 @@ public class SwapPathServiceImpl implements ISwapPathService {
         } catch (Exception e) {
             log.error("getChainPool get remote chain exception", e);
         }
+        if (!CollectionUtils.isEmpty(coinMap)) {
+            coinPrecisionMap = coinMap;
+        }
 
         return pools;
     }
@@ -451,6 +458,14 @@ public class SwapPathServiceImpl implements ISwapPathService {
                     .build();
         }).collect(Collectors.toList());
         return coinInfoVos;
+    }
+
+    @Override
+    public Integer getCoinPrecision(String coinAddress) {
+        if (CollectionUtils.isEmpty(coinPrecisionMap)) {
+            return DEFAULT_PRECISION;
+        }
+        return coinPrecisionMap.containsKey(coinAddress) ? (int) coinPrecisionMap.get(coinAddress) : DEFAULT_PRECISION;
     }
 
     @Override

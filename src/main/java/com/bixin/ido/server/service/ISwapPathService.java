@@ -23,5 +23,7 @@ public interface ISwapPathService {
 
     List<CoinStatsInfoVO> coinInfos(int pageNum, int pageSize);
 
+    Integer getCoinPrecision(String coinAddress);
+
     SwapMetaVO meta();
 }
