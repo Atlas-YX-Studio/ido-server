@@ -60,7 +60,7 @@ public class BoxOfferingSellEventDto {
 //                .nftId(dto.getId())
                 .creator("")
 //                .seller(dto.getSeller())
-//                .sellingPrice(dto.getFinal_price())
+                .sellingPrice(dto.getTotal_price())
                 .bider(dto.getBuyer())
 //                .bidPrice(dto.getFinal_price())
                 .type(NftEventType.BOX_OFFERING_SELL_EVENT.getDesc())

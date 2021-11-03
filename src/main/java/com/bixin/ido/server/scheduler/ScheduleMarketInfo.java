@@ -202,7 +202,8 @@ public class ScheduleMarketInfo {
                             BigDecimal nftVolume = BigDecimal.ZERO;
                             if (StringUtils.equalsAny(swapUserRecord.getType(), NftEventType.BOX_SELL_EVENT.getDesc(),
                                     NftEventType.NFT_SELL_EVENT.getDesc(), NftEventType.BOX_OFFERING_SELL_EVENT.getDesc(), NftEventType.NFT_BUY_BACK_SELL_EVENT.getDesc())) {
-                                nftVolume = coinPriceInfos.getOrDefault(swapUserRecord.getPayToken(), BigDecimal.ZERO).multiply(swapUserRecord.getSellingPrice());
+                                BigDecimal sellingPrice = swapUserRecord.getSellingPrice() == null ? BigDecimal.ZERO : swapUserRecord.getSellingPrice();
+                                nftVolume = coinPriceInfos.getOrDefault(swapUserRecord.getPayToken(), BigDecimal.ZERO).multiply(sellingPrice);
                             }
                             return nftVolume;
                         }).reduce(BigDecimal.ZERO, BigDecimal::add).add(nftTotalVolume);
