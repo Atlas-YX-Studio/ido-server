@@ -21,6 +21,8 @@ public class CoinStatsInfoVO {
      */
     private String name;
 
+    private String icon;
+
     /**
      * 价格
      */
@@ -41,9 +43,10 @@ public class CoinStatsInfoVO {
      */
     private String liquidity;
 
-    public static CoinStatsInfoVO convertToVO(String name, BigDecimal price, BigDecimal rate, BigDecimal amount, BigDecimal liquidity) {
+    public static CoinStatsInfoVO convertToVO(String name, String icon, BigDecimal price, BigDecimal rate, BigDecimal amount, BigDecimal liquidity) {
         return new CoinStatsInfoVO(
                 name,
+                icon,
                 price.toPlainString(),
                 rate.toPlainString(),
                 amount.toPlainString(),

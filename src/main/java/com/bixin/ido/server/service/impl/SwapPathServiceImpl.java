@@ -435,17 +435,19 @@ public class SwapPathServiceImpl implements ISwapPathService {
             if (swapTokenMarketDto == null) {
                 return CoinStatsInfoVO.builder()
                         .name(coin.getShortName())
+                        .icon(coin.getIcon())
                         .price(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
                         .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
                         .build();
             }
             return CoinStatsInfoVO.builder()
-                .name(coin.getShortName())
-                .price(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
-                .rate(swapTokenMarketDto.getPriceRate().toPlainString())
-                .amount(swapTokenMarketDto.getSwapAmount().toPlainString())
-                .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
-                .build();
+                    .name(coin.getShortName())
+                    .icon(coin.getIcon())
+                    .price(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO).toPlainString())
+                    .rate(swapTokenMarketDto.getPriceRate().toPlainString())
+                    .amount(swapTokenMarketDto.getSwapAmount().toPlainString())
+                    .liquidity(coinVolumeMap.getOrDefault(coin.getAddress(), BigDecimal.ZERO).multiply(this.priceMap.getOrDefault(toPair(coin.getAddress(), USDT_CODE), BigDecimal.ZERO)).toPlainString())
+                    .build();
         }).collect(Collectors.toList());
         return coinInfoVos;
     }
