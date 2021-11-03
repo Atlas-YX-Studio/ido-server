@@ -20,6 +20,7 @@ import com.bixin.nft.enums.NftEventType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -53,6 +54,9 @@ public class ScheduleMarketInfo {
     private NftEventService nftEventService;
     @Resource
     private RedisCache redisCache;
+
+    @Value("${ido.star.swap.usdt-address}")
+    private String usdtAddress;
 
     @Scheduled(cron = "0 */5 * * * ?")
     public void updateSwapTokenMarket() {
@@ -173,8 +177,8 @@ public class ScheduleMarketInfo {
                         }
                         swapTotalVolume = swapUserRecords.stream().map(swapUserRecord -> {
                             BigDecimal swapVolume = BigDecimal.ZERO;
-                            BigDecimal priceX = coinPriceInfos.getOrDefault(swapUserRecord.getTokenCodeX(), BigDecimal.ZERO);
-                            BigDecimal priceY = coinPriceInfos.getOrDefault(swapUserRecord.getTokenCodeY(), BigDecimal.ZERO);
+                            BigDecimal priceX = coinPriceInfos.getOrDefault(swapUserRecord.getTokenCodeX() + "_" + usdtAddress, BigDecimal.ZERO);
+                            BigDecimal priceY = coinPriceInfos.getOrDefault(swapUserRecord.getTokenCodeY() + "_" + usdtAddress, BigDecimal.ZERO);
                             if (!BigDecimal.ZERO.equals(swapUserRecord.getTokenInX())) {
                                 swapVolume = swapVolume.add(swapUserRecord.getTokenInX().multiply(priceX));
                                 swapVolume = swapVolume.add(swapUserRecord.getTokenOutY().multiply(priceY));
@@ -204,7 +208,7 @@ public class ScheduleMarketInfo {
                             if (StringUtils.equalsAny(swapUserRecord.getType(), NftEventType.BOX_SELL_EVENT.getDesc(),
                                     NftEventType.NFT_SELL_EVENT.getDesc(), NftEventType.BOX_OFFERING_SELL_EVENT.getDesc(), NftEventType.NFT_BUY_BACK_SELL_EVENT.getDesc())) {
                                 BigDecimal sellingPrice = swapUserRecord.getSellingPrice() == null ? BigDecimal.ZERO : swapUserRecord.getSellingPrice();
-                                nftVolume = coinPriceInfos.getOrDefault(swapUserRecord.getPayToken(), BigDecimal.ZERO).multiply(sellingPrice);
+                                nftVolume = coinPriceInfos.getOrDefault(swapUserRecord.getPayToken() + "_" + usdtAddress, BigDecimal.ZERO).multiply(sellingPrice);
                             }
                             return nftVolume;
                         }).reduce(BigDecimal.ZERO, BigDecimal::add).add(nftTotalVolume);
