@@ -14,4 +14,6 @@ public interface ILiquidityUserRecordService {
 
     List<LiquidityUserRecord> getALlByPage(String userAddress, long pageSize, long nextId);
 
+    List<String> selectAllAddress();
+
 }

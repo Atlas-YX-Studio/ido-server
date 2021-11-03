@@ -1,11 +1,9 @@
 package com.bixin.ido.server.service;
 
-import com.bixin.ido.server.bean.DO.IdoDxProduct;
 import com.bixin.ido.server.bean.DO.IdoDxUserRecord;
 import com.bixin.ido.server.bean.bo.UserRecordReqBo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author zhangcheng

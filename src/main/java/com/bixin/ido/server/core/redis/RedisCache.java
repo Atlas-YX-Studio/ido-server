@@ -151,6 +151,22 @@ public class RedisCache {
     }
 
     /**
+     * 尝试获取分布式锁, 执行任务后 并主动释放锁
+     *
+     * @param lockKey
+     * @param requestId
+     * @param expireTime
+     * @param lockNextExpireTime 如果未获取到锁，则持续等待【lockNextExpireTime】时间ms后不在尝试获取
+     * @param runnable
+     */
+    public void tryGetDistributedLock(String lockKey, String requestId, Long expireTime, long lockNextExpireTime, Runnable runnable) {
+        tryGetDistributedLock(lockKey, requestId, expireTime, lockNextExpireTime, () -> {
+            runnable.run();
+            return null;
+        });
+    }
+
+    /**
      * 主动释放分布式锁
      *
      * @param lockKey

@@ -56,4 +56,9 @@ public interface NftEventService {
 
     List<NftEventDo> getALlByPage(Long infoId, String type, long pageSize, long nextId);
 
+    /**
+     * 获取所有使用者地址
+     * @return
+     */
+    List<String> selectAllAddress();
 }

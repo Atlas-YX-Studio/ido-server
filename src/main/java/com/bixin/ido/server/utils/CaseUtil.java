@@ -1,13 +1,9 @@
 package com.bixin.ido.server.utils;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Service;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * @author zhangcheng
@@ -26,6 +22,12 @@ public class CaseUtil {
     public static void buildNoneValue(Number number, Consumer<Number> consumer) {
         if (Objects.nonNull(number) && number.toString().compareTo("0") > 0) {
             consumer.accept(number);
+        }
+    }
+
+    public static void buildNoneValue(String t, Consumer<String> consumer) {
+        if (StringUtils.isNotBlank(t)) {
+            consumer.accept(t);
         }
     }
 

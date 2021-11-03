@@ -1,12 +1,15 @@
 package com.bixin.ido.server.controller;
 
 import com.bixin.ido.server.bean.bo.SwapBo;
+import com.bixin.ido.server.bean.vo.VolumeInfoVO;
 import com.bixin.ido.server.bean.vo.CoinStatsInfoVO;
-import com.bixin.ido.server.bean.vo.wrap.P;
-import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.bean.vo.SwapPathInVO;
 import com.bixin.ido.server.bean.vo.SwapPathOutVO;
+import com.bixin.ido.server.bean.vo.wrap.P;
+import com.bixin.ido.server.bean.vo.wrap.R;
+import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.constants.PathConstant;
+import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ISwapPathService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +22,8 @@ public class SwapPathController {
 
     @Resource
     private ISwapPathService iSwapPathService;
+    @Resource
+    private RedisCache redisCache;
 
     @PostMapping("/in")
     public R exchangeIn(@RequestBody SwapBo req) {
@@ -36,6 +41,11 @@ public class SwapPathController {
     @GetMapping("/totalAssets")
     public R totalAssets() {
         return R.success(iSwapPathService.totalAssets().toPlainString());
+    }
+
+    @GetMapping("/volumeInfo")
+    public R assetsInfo() {
+        return R.success(redisCache.getValue(CommonConstant.VOLUME_INFO_KEY, VolumeInfoVO.class));
     }
 
     @GetMapping("/coinInfos")

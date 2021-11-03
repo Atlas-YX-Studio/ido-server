@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Mapper
 public interface SwapUserRecordMapper {
@@ -26,6 +25,8 @@ public interface SwapUserRecordMapper {
     List<SwapUserRecord> selectByPage(Map<String, Object> paramMap);
 
     SwapUserRecord selectByPrimaryKey(Long id);
+
+    List<String> selectAllAddress();
 
     int updateByDDLSelective(@Param("record") SwapUserRecord record, @Param("DDL") SwapUserRecordDDL DDL);
 

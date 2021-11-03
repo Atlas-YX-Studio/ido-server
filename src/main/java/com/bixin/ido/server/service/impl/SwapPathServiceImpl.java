@@ -169,7 +169,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     @Override
     public BigDecimal totalAssets() {
-        return this.totalAssets;
+        return Objects.isNull(this.totalAssets) ? BigDecimal.ZERO : this.totalAssets;
     }
 
     private List<List<String>> getPaths(String tokenA, String tokenB, boolean multiMode) {

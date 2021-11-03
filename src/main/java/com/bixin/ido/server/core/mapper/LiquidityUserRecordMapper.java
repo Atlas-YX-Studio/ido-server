@@ -26,6 +26,8 @@ public interface LiquidityUserRecordMapper {
 
     LiquidityUserRecord selectByPrimaryKey(Long id);
 
+    List<String> selectAllAddress();
+
     int updateByDDLSelective(@Param("record") LiquidityUserRecord record, @Param("DDL") LiquidityUserRecordDDL DDL);
 
     int updateByDDL(@Param("record") LiquidityUserRecord record, @Param("DDL") LiquidityUserRecordDDL DDL);

@@ -38,4 +38,9 @@ public class LiquidityUserRecordImpl implements ILiquidityUserRecordService {
 
         return liquidityUserRecordMapper.selectByPage(paramMap);
     }
+
+    @Override
+    public List<String> selectAllAddress() {
+        return liquidityUserRecordMapper.selectAllAddress();
+    }
 }

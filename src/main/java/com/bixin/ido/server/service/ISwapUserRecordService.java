@@ -14,6 +14,7 @@ public interface ISwapUserRecordService {
 
     List<SwapUserRecord> getALlByPage(String userAddress, long pageSize, long nextId);
 
-
     Long countVisits(Long timestamp);
+
+    List<String> selectAllAddress();
 }

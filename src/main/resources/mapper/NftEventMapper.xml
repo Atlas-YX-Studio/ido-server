@@ -140,7 +140,10 @@
     select
     <include refid="Base_Column_List"/>
     from nft_event
-    where info_id=#{infoId}
+    where 1=1
+    <if test="info_id != null">
+      and info_id = #{infoId}
+    </if>
     <if test="type != null">
       and type = #{type}
     </if>
@@ -158,5 +161,13 @@
       limit #{pageSize}
     </if>
   </select>
-
+  <select id="selectAllAddress" parameterType="java.lang.String" resultType="java.lang.String">
+    select
+      distinct seller
+    from nft_event
+      union
+    select
+      distinct bider
+    from nft_event
+  </select>
 </mapper>

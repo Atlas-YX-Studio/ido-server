@@ -44,4 +44,6 @@ public interface NftEventMapper {
 
 
     List<NftEventDo> selectByPage(Map<String,Object> paramMap);
+
+    List<String> selectAllAddress();
 }

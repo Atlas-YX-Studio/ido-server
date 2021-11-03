@@ -99,7 +99,10 @@
         select
         <include refid="Base_Column_List"/>
         from swap_user_record
-        where userAddress=#{userAddress}
+        where 1=1
+        <if test="userAddress != null">
+            userAddress=#{userAddress}
+        </if>
         <if test="nextId != null">
             and id &lt; #{nextId}
         </if>
@@ -119,6 +122,11 @@
         <include refid="Base_Column_List"/>
         from swap_user_record
         where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAllAddress" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+            distinct userAddress
+        from swap_user_record
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete

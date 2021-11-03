@@ -30,7 +30,7 @@ public class SwapUserRecordImpl implements ISwapUserRecordService {
     @Override
     public List<SwapUserRecord> getALlByPage(String userAddress, long pageSize, long nextId) {
         Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("userAddress", userAddress);
+        CaseUtil.buildNoneValue(userAddress, address -> paramMap.put("userAddress", userAddress));
         paramMap.put("pageSize", pageSize);
         paramMap.put("sort", "id");
         paramMap.put("order", "desc");
@@ -45,5 +45,10 @@ public class SwapUserRecordImpl implements ISwapUserRecordService {
         SwapUserRecordDDL swapUserRecordDDL = new SwapUserRecordDDL();
         swapUserRecordDDL.createCriteria().andCreateTimeGreaterThanOrEqualTo(timestamp);
         return swapUserRecordMapper.countByDDL(swapUserRecordDDL);
+    }
+
+    @Override
+    public List<String> selectAllAddress() {
+        return swapUserRecordMapper.selectAllAddress();
     }
 }

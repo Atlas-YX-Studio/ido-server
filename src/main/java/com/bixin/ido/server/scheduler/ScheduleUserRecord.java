@@ -33,16 +33,14 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class ScheduleUserRecord {
-
-
     @Resource
-    IDxProductService idoDxProductService;
+    private IDxProductService idoDxProductService;
     @Resource
-    IDxUserRecordService idoDxUserRecordService;
+    private IDxUserRecordService idoDxUserRecordService;
     @Resource
-    ChainClientHelper chainClientHelper;
+    private ChainClientHelper chainClientHelper;
     @Resource
-    RedisCache redisCache;
+    private RedisCache redisCache;
 
     static final String UPDATE_LOCK_KEY = "updateUserTokenAmountTask";
     static final Long EXPIRE_TIME = 4 * 60 * 1000L;

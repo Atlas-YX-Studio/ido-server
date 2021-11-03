@@ -16,6 +16,7 @@ public interface CommonConstant {
 
     String USDT_NAME = "USDT";
 
+    // redis key
     String IMAGE_INFO_URL_PREFIX_KEY = "image_info_url_";
     String IMAGE_GROUP_URL_PREFIX_KEY = "image_group_url_";
 
@@ -25,6 +26,9 @@ public interface CommonConstant {
     String SWAP_SYMBOL_TICKS_PREFIX_KEY = "swap_symbol_ticks_";
     String SWAP_SYMBOL_MARKET_PREFIX_KEY = "swap_symbol_market_";
 
+    String VOLUME_INFO_KEY = "volume_info";
+
+    // http header
     String HTTP_X_REQUESTED_WITH = "X-Request-With";
     String HTTP_X_TOKEN = "X-Token";
 

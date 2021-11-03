@@ -9,7 +9,6 @@ import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.service.impl.SwapPathServiceImpl;
 import com.bixin.ido.server.utils.BeanCopyUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,8 +52,8 @@ public class SwapApiController {
                         .token1(pool.tokenB)
                         .reserve0(pool.tokenAmountA)
                         .reserve1(pool.tokenAmountB)
-                        .usdtPrice0(StringUtils.equals(pool.tokenA, usdtAddress) ? BigDecimal.ONE : coinPriceInfos.getOrDefault(pool.tokenA + "_" + usdtAddress, BigDecimal.ZERO))
-                        .usdtPrice1(StringUtils.equals(pool.tokenB, usdtAddress) ? BigDecimal.ONE : coinPriceInfos.getOrDefault(pool.tokenB + "_" + usdtAddress, BigDecimal.ZERO))
+                        .usdtPrice0(coinPriceInfos.getOrDefault(pool.tokenA + "_" + usdtAddress, BigDecimal.ZERO))
+                        .usdtPrice1(coinPriceInfos.getOrDefault(pool.tokenB + "_" + usdtAddress, BigDecimal.ZERO))
                         .build();
             }
             return SwapPairMarketVO.builder()
