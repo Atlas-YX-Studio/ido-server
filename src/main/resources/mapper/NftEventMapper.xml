@@ -141,8 +141,11 @@
     <include refid="Base_Column_List"/>
     from nft_event
     where 1=1
-    <if test="info_id != null">
+    <if test="infoId != null">
       and info_id = #{infoId}
+    </if>
+    <if test="nftId != null">
+      and nft_id = #{nftId}
     </if>
     <if test="type != null">
       and type = #{type}

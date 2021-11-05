@@ -200,7 +200,7 @@ public class ScheduleNftMarket {
             }
             boxList.forEach(p -> p.getItems().forEach(so -> {
                 long sellingTime = System.currentTimeMillis();
-                List<NftEventDo> nftEventDos = nftEventService.getALlByPage(so.getId(), NftEventType.BOX_SELL_EVENT.getDesc(), 1, 0);
+                List<NftEventDo> nftEventDos = nftEventService.getALlByBoxId(so.getId(), NftEventType.BOX_SELL_EVENT.getDesc(), 1, 0);
                 if (!CollectionUtils.isEmpty(nftEventDos)) {
                     sellingTime = nftEventDos.get(0).getCreateTime();
                 }
