@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.core.mapper.TradingPoolUserMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.TradingPoolUserDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="pool_id" jdbcType="BIGINT" property="poolId" />
+    <result column="current_trading_amount" jdbcType="DECIMAL" property="currentTradingAmount" />
+    <result column="total_trading_amount" jdbcType="DECIMAL" property="totalTradingAmount" />
+    <result column="current_reward" jdbcType="DECIMAL" property="currentReward" />
+    <result column="total_reward" jdbcType="DECIMAL" property="totalReward" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, address, pool_id, current_trading_amount, total_trading_amount, current_reward, 
+    total_reward, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trading_pool_users
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from trading_pool_users
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo" useGeneratedKeys="true">
+    insert into trading_pool_users (id, address, pool_id, 
+      current_trading_amount, total_trading_amount, 
+      current_reward, total_reward, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{poolId,jdbcType=BIGINT}, 
+      #{currentTradingAmount,jdbcType=DECIMAL}, #{totalTradingAmount,jdbcType=DECIMAL}, 
+      #{currentReward,jdbcType=DECIMAL}, #{totalReward,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo">
+    update trading_pool_users
+    <set>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="poolId != null">
+        pool_id = #{poolId,jdbcType=BIGINT},
+      </if>
+      <if test="currentTradingAmount != null">
+        current_trading_amount = #{currentTradingAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="totalTradingAmount != null">
+        total_trading_amount = #{totalTradingAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="currentReward != null">
+        current_reward = #{currentReward,jdbcType=DECIMAL},
+      </if>
+      <if test="totalReward != null">
+        total_reward = #{totalReward,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != address">
+         and address = #{address,jdbcType=VARCHAR}
+      </if>
+      <if test="null != poolId">
+         and pool_id = #{poolId,jdbcType=BIGINT}
+      </if>
+      <if test="null != currentTradingAmount">
+         and current_trading_amount = #{currentTradingAmount,jdbcType=DECIMAL}
+      </if>
+      <if test="null != totalTradingAmount">
+         and total_trading_amount = #{totalTradingAmount,jdbcType=DECIMAL}
+      </if>
+      <if test="null != currentReward">
+         and current_reward = #{currentReward,jdbcType=DECIMAL}
+      </if>
+      <if test="null != totalReward">
+         and total_reward = #{totalReward,jdbcType=DECIMAL}
+      </if>
+      <if test="null != createTime">
+         and create_time = #{createTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != updateTime">
+         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
+    select  * from trading_pool_users
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
+    select  * from trading_pool_users
+    <include refid="baseQuery" />
+  </select>
+</mapper>
