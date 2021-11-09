@@ -20,6 +20,7 @@ import com.bixin.ido.server.service.ISwapUserRecordService;
 import com.bixin.ido.server.utils.GrfAllEdge;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
 
     private static final BigDecimal REMAIN_RATE = BigDecimal.ONE.subtract(FEE_RATE);
 
-    private static final String USDT_CODE = "0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::USDT";
+    @Value("${ido.star.swap.usdt-address}")
+    private String USDT_CODE;
 
     private Map<String, Pool> liquidityPoolMap;
 
