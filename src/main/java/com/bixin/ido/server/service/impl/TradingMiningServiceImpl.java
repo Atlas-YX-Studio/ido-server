@@ -4,6 +4,7 @@ import com.bixin.ido.server.bean.DO.SwapCoins;
 import com.bixin.ido.server.bean.DO.TradingPoolDo;
 import com.bixin.ido.server.bean.DO.TradingPoolUserDo;
 import com.bixin.ido.server.bean.dto.TradingPoolDto;
+import com.bixin.ido.server.bean.vo.TradingMiningOverviewVO;
 import com.bixin.ido.server.bean.vo.TradingPoolVo;
 import com.bixin.ido.server.core.mapper.TradingPoolMapper;
 import com.bixin.ido.server.core.mapper.TradingPoolUserMapper;
@@ -108,9 +109,10 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
     }
 
     /**
-     * 每日预估收益
+     * 数据总览
      */
-    public BigDecimal dayReward(String address) {
+    @Override
+    public TradingMiningOverviewVO market(String address) {
         List<TradingPoolDo> tradingPools = tradingPoolMapper.selectByPrimaryKeySelectiveList(TradingPoolDo.builder().build());
         Integer total = tradingPools.stream().map(TradingPoolDo::getAllocationMultiple).reduce(Integer::sum).orElse(0);
         Map<Long, TradingPoolDto> tradingPollMap = tradingPools.stream().collect(Collectors.toMap(TradingPoolDo::getId, y -> TradingPoolDto.convertToDto(y, total)));
@@ -121,11 +123,22 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
 
         BigDecimal dayReward = userPools.stream().map(x -> {
             TradingPoolDto tradingPool = tradingPollMap.get(x.getPoolId());
+            if (x.getCurrentTradingAmount().compareTo(BigDecimal.ZERO) <= 0
+                    || tradingPool.getCurrentTradingAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                return BigDecimal.ZERO;
+            }
             BigDecimal currentPoolDayReward = dayTotalReward.multiply(tradingPool.getAllocationRatio());
-            return x.getCurrentReward().multiply(currentPoolDayReward).divide(tradingPool.getCurrentTradingAmount(), 18, RoundingMode.DOWN);
+            return x.getCurrentTradingAmount().multiply(currentPoolDayReward).divide(tradingPool.getCurrentTradingAmount(), 18, RoundingMode.DOWN);
         }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
 
-        return dayReward;
+//        return dayReward;
+        return TradingMiningOverviewVO.builder()
+                .currentTradingAmount(tradingPools.stream().map(TradingPoolDo::getCurrentTradingAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO).toPlainString())
+                .totalTradingAmount(tradingPools.stream().map(TradingPoolDo::getTotalTradingAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO).toPlainString())
+                .userCurrentTradingAmount(userPools.stream().map(TradingPoolUserDo::getCurrentTradingAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO).toPlainString())
+                .dailyTotalOutput(dayTotalReward.toPlainString())
+                .dailyUserReward(dayReward.toPlainString())
+                .build();
     }
 
 }

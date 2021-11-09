@@ -22,4 +22,9 @@ public class TradingMiningController {
         return R.success(tradingMiningService.poolList(address));
     }
 
+    @GetMapping("/market")
+    public R market(@RequestParam("address") String address) {
+        return R.success(tradingMiningService.market(address));
+    }
+
 }
