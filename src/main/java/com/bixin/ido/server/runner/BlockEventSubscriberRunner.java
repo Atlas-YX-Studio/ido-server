@@ -3,6 +3,7 @@ package com.bixin.ido.server.runner;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.redis.RedisCache;
+import com.bixin.ido.server.service.ITradingMiningService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,6 +55,9 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
     ObjectMapper mapper = new ObjectMapper();
 
     ThreadPoolExecutor poolExecutor;
+
+    @Resource
+    private ITradingMiningService tradingMiningService;
 
     @PostConstruct
     public void init() {
@@ -109,6 +113,8 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
                 if ("NewBlockEvent".equals(tagString)) {
                     // 新块产生事件
                     log.info("BlockEventSubscriberRunner duplicate event data {}", data);
+                    // FIXME: 2021/11/8 区块id
+                    tradingMiningService.currentReward(12L);
 //                    handleBlockSellEvent(data, eventResult.getTypeTag());
                 } else {
                     log.error("BlockEventSubscriberRunner blockEventDo 为空");

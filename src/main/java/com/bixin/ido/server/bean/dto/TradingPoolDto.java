@@ -1,5 +1,9 @@
-package com.bixin.ido.server.bean.DO;
+package com.bixin.ido.server.bean.dto;
 
+import com.bixin.ido.server.bean.DO.TradingPoolDo;
+import com.bixin.ido.server.utils.BeanCopyUtil;
+import com.bixin.nft.bean.dto.TokenDto;
+import com.bixin.nft.bean.vo.NftInfoVo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +22,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TradingPoolDo implements Serializable {
+public class TradingPoolDto implements Serializable {
     /**
      * 主键id
      */
@@ -43,6 +47,11 @@ public class TradingPoolDo implements Serializable {
      * 奖励分配倍数
      */
     private Integer allocationMultiple;
+
+    /**
+     * 奖励分配比例
+     */
+    private BigDecimal allocationRatio;
 
     /**
      * 当前交易额
@@ -75,4 +84,12 @@ public class TradingPoolDo implements Serializable {
     private Integer weight;
 
     private static final long serialVersionUID = 1L;
+
+    public static TradingPoolDto convertToDto(TradingPoolDo tradingPoolDo, Integer total) {
+        return BeanCopyUtil.copyProperties(tradingPoolDo, () -> {
+            TradingPoolDto dto = new TradingPoolDto();
+            dto.setAllocationRatio(BigDecimal.valueOf(tradingPoolDo.getAllocationMultiple() / total));
+            return dto;
+        });
+    }
 }
