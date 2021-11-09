@@ -15,6 +15,7 @@ public interface CommonConstant {
     long DEFAULT_PAGE_SIZE = 20;
 
     String USDT_NAME = "USDT";
+    String STC_ADDRESS = "0x00000000000000000000000000000001::STC::STC";
 
     // redis key
     String IMAGE_INFO_URL_PREFIX_KEY = "image_info_url_";
@@ -27,6 +28,7 @@ public interface CommonConstant {
     String SWAP_SYMBOL_MARKET_PREFIX_KEY = "swap_symbol_market_";
 
     String VOLUME_INFO_KEY = "volume_info";
+    String STC_FEE_PRICE_KEY = "stc_fee_price";
 
     // http header
     String HTTP_X_REQUESTED_WITH = "X-Request-With";

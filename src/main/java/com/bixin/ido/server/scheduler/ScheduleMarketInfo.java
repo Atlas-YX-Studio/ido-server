@@ -234,4 +234,21 @@ public class ScheduleMarketInfo {
                     redisCache.setValue(CommonConstant.VOLUME_INFO_KEY, volumeInfoVO, EXPIRE_MINUTES, TimeUnit.MINUTES);
                 });
     }
+
+    /**
+     * 更新stc价格
+     */
+    @Scheduled(cron = "0 0 * * * ?")
+    public void updateStcFeePrice() {
+        Calendar instance = Calendar.getInstance();
+        if (instance.get(Calendar.HOUR_OF_DAY) != 0) {
+            BigDecimal price = (BigDecimal) redisCache.getValue(CommonConstant.STC_FEE_PRICE_KEY);
+            if (price != null && !price.equals(BigDecimal.ZERO)) {
+                return;
+            }
+        }
+        BigDecimal price = swapPathService.getCoinPriceInfos().getOrDefault(CommonConstant.STC_ADDRESS + "_" + usdtAddress, BigDecimal.ZERO);
+        redisCache.setValue(CommonConstant.STC_FEE_PRICE_KEY, price, 25, TimeUnit.HOURS);
+    }
+
 }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.nft.core.mapper.TradingRewardUserMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.nft.bean.DO.TradingRewardUserDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="locked_reward" jdbcType="DECIMAL" property="lockedReward" />
+    <result column="freed_reward" jdbcType="DECIMAL" property="freedReward" />
+    <result column="pending_reward" jdbcType="DECIMAL" property="pendingReward" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, address, locked_reward, freed_reward, pending_reward, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trading_reward_users
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from trading_reward_users
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.TradingRewardUserDo" useGeneratedKeys="true">
+    insert into trading_reward_users (id, address, locked_reward, 
+      freed_reward, pending_reward, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{lockedReward,jdbcType=DECIMAL}, 
+      #{freedReward,jdbcType=DECIMAL}, #{pendingReward,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.TradingRewardUserDo">
+    update trading_reward_users
+    <set>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="lockedReward != null">
+        locked_reward = #{lockedReward,jdbcType=DECIMAL},
+      </if>
+      <if test="freedReward != null">
+        freed_reward = #{freedReward,jdbcType=DECIMAL},
+      </if>
+      <if test="pendingReward != null">
+        pending_reward = #{pendingReward,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != address">
+         and address = #{address,jdbcType=VARCHAR}
+      </if>
+      <if test="null != lockedReward">
+         and locked_reward = #{lockedReward,jdbcType=DECIMAL}
+      </if>
+      <if test="null != freedReward">
+         and freed_reward = #{freedReward,jdbcType=DECIMAL}
+      </if>
+      <if test="null != pendingReward">
+         and pending_reward = #{pendingReward,jdbcType=DECIMAL}
+      </if>
+      <if test="null != createTime">
+         and create_time = #{createTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != updateTime">
+         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.TradingRewardUserDo" resultMap="BaseResultMap">
+    select  * from trading_reward_users
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.TradingRewardUserDo" resultMap="BaseResultMap">
+    select  * from trading_reward_users
+    <include refid="baseQuery" />
+  </select>
+</mapper>

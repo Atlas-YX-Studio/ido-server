@@ -1,6 +1,7 @@
 package com.bixin.ido.server.provider.impl;
 
 import com.bixin.ido.server.bean.DO.SwapUserRecord;
+import com.bixin.ido.server.bean.DO.TradingPoolDo;
 import com.bixin.ido.server.bean.dto.SwapSymbolTickDto;
 import com.bixin.ido.server.bean.dto.SwapTokenTickDto;
 import com.bixin.ido.server.constants.CommonConstant;
@@ -9,6 +10,10 @@ import com.bixin.ido.server.enums.DirectionType;
 import com.bixin.ido.server.provider.IStarSwapProvider;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.service.ISwapUserRecordService;
+import com.bixin.ido.server.service.ITradingMiningService;
+import com.bixin.ido.server.utils.BigDecimalUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +24,7 @@ import java.math.BigDecimal;
  * @author zhangcheng
  * create  2021-08-25 3:04 下午
  */
+@Slf4j
 @Component
 public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRecord> {
 
@@ -28,6 +34,8 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
     private RedisCache redisCache;
     @Resource
     private ISwapPathService swapPathService;
+    @Resource
+    private ITradingMiningService tradingMiningService;
 
     @Value("${ido.star.swap.usdt-address}")
     private String usdtAddress;
@@ -38,19 +46,18 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
         // 保存tick
         String tokenX = idoSwapUserRecord.getTokenCodeX();
         String tokenY = idoSwapUserRecord.getTokenCodeY();
-        // tokenX
-        if (BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenInX()) && !BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenOutX())) {
-            cacheSymbolTick(tokenX, tokenY, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutX(), idoSwapUserRecord.getTokenInY(), idoSwapUserRecord.getSwapTime());
+        if (BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenInX())) {
+            // x <- y
             cacheTokenTick(tokenX, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutX(), idoSwapUserRecord.getSwapTime());
-        } else {
-            cacheSymbolTick(tokenX, tokenY, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInX(), idoSwapUserRecord.getTokenOutY(), idoSwapUserRecord.getSwapTime());
-            cacheTokenTick(tokenX, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInX(), idoSwapUserRecord.getSwapTime());
-        }
-        // tokenY
-        if (BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenInY()) && !BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenOutY())) {
-            cacheTokenTick(tokenY, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutY(), idoSwapUserRecord.getSwapTime());
-        } else {
             cacheTokenTick(tokenY, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInY(), idoSwapUserRecord.getSwapTime());
+            cacheSymbolTick(tokenX, tokenY, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutX(), idoSwapUserRecord.getTokenInY(), idoSwapUserRecord.getSwapTime());
+            addTradingAmount(idoSwapUserRecord.getUserAddress(), tokenX, tokenY, idoSwapUserRecord.getTokenOutX(), idoSwapUserRecord.getTokenInY());
+        } else {
+            // x -> y
+            cacheTokenTick(tokenX, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInX(), idoSwapUserRecord.getSwapTime());
+            cacheTokenTick(tokenY, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutY(), idoSwapUserRecord.getSwapTime());
+            cacheSymbolTick(tokenX, tokenY, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInX(), idoSwapUserRecord.getTokenOutY(), idoSwapUserRecord.getSwapTime());
+            addTradingAmount(idoSwapUserRecord.getUserAddress(), tokenX, tokenY, idoSwapUserRecord.getTokenInX(), idoSwapUserRecord.getTokenOutY());
         }
     }
 
@@ -98,6 +105,32 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
         swapTokenTickDto.setUsdtAmount(amount.multiply(usdtExRate));
         swapTokenTickDto.setSwapTime(time);
         redisCache.zAdd(CommonConstant.SWAP_TOKEN_TICKS_PREFIX_KEY + token, swapTokenTickDto, time);
+    }
+
+    /**
+     * 累加交易额
+     * @param userAddress
+     * @param tokenX
+     * @param tokenY
+     * @param amountX
+     * @param amountY
+     */
+    private void addTradingAmount(String userAddress, String tokenX, String tokenY, BigDecimal amountX, BigDecimal amountY) {
+        TradingPoolDo tradingPoolDo = tradingMiningService.getTradingPoolByTokenCode(tokenX, tokenY);
+        if (tradingPoolDo == null) {
+            log.info("TradingPool not exists, tokenX:{}, tokenY:{}", tokenX, tokenY);
+            return;
+        }
+        BigDecimal tradingAmount;
+        if (StringUtils.equalsIgnoreCase(tokenX, usdtAddress)) {
+            tradingAmount = BigDecimalUtil.removePrecision(amountX, swapPathService.getCoinPrecision(tokenX));
+        } else if (StringUtils.equalsIgnoreCase(tokenY, usdtAddress)) {
+            tradingAmount = BigDecimalUtil.removePrecision(amountY, swapPathService.getCoinPrecision(tokenY));
+        } else {
+            BigDecimal usdtExRate = swapPathService.getCoinPriceInfos().getOrDefault(tokenX + "_" + usdtAddress, BigDecimal.ZERO);
+            tradingAmount = BigDecimalUtil.removePrecision(amountX.subtract(usdtExRate), swapPathService.getCoinPrecision(tokenY));
+        }
+        tradingMiningService.addTradingAmount(userAddress, tradingPoolDo.getId(), tradingAmount);
     }
 
 }

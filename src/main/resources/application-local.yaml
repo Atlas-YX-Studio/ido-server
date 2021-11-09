@@ -58,3 +58,10 @@ ido:
       image-base-path: "/Users/bixin/Documents/pics/nft/"
       image-info-api: "https://test.kikoswap.com/v1/nft/image/info/"
       image-group-api: "https://test.kikoswap.com/v1/nft/image/group/"
+    mining:
+      mining-address: "0xa85291039ddad8845d5097624c81c3fd"
+      mining-module: "Mining"
+      mining-manager: "0xa85291039ddad8845d5097624c81c3fd"
+      kiko-address: "0x69f1e543a3bef043b63bed825fcd2cf6"
+      kiko-module: "KIKO"
+      stc-gas: 0.01

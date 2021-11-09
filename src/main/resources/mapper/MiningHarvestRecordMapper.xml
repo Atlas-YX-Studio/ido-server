@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.nft.core.mapper.MiningHarvestRecordMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.nft.bean.DO.MiningHarvestRecordDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="mining_type" jdbcType="VARCHAR" property="miningType" />
+    <result column="reward_type" jdbcType="VARCHAR" property="rewardType" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="hash" jdbcType="VARCHAR" property="hash" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, address, amount, mining_type, reward_type, status, hash, create_time,
+    update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mining_harvest_records
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from mining_harvest_records
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.MiningHarvestRecordDo" useGeneratedKeys="true">
+    insert into mining_harvest_records (id, address,
+      amount, mining_type, reward_type, 
+      status, hash, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR},
+      #{amount,jdbcType=DECIMAL}, #{miningType,jdbcType=VARCHAR}, #{rewardType,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{hash,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.MiningHarvestRecordDo">
+    update mining_harvest_records
+    <set>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="miningType != null">
+        mining_type = #{miningType,jdbcType=VARCHAR},
+      </if>
+      <if test="rewardType != null">
+        reward_type = #{rewardType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="hash != null">
+        hash = #{hash,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != address">
+         and address = #{address,jdbcType=VARCHAR}
+      </if>
+      <if test="null != amount">
+         and amount = #{amount,jdbcType=DECIMAL}
+      </if>
+      <if test="null != miningType">
+         and mining_type = #{miningType,jdbcType=VARCHAR}
+      </if>
+      <if test="null != rewardType">
+         and reward_type = #{rewardType,jdbcType=VARCHAR}
+      </if>
+      <if test="null != status">
+         and status = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="null != hash">
+         and hash = #{hash,jdbcType=VARCHAR}
+      </if>
+      <if test="null != createTime">
+         and create_time = #{createTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != updateTime">
+         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.MiningHarvestRecordDo" resultMap="BaseResultMap">
+    select  * from mining_harvest_records
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.MiningHarvestRecordDo" resultMap="BaseResultMap">
+    select  * from mining_harvest_records
+    <include refid="baseQuery" />
+  </select>
+</mapper>

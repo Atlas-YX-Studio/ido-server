@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 /**
  * @author zhangcheng
  * create          2021-08-12 4:20 下午
@@ -20,6 +22,7 @@ public class StarConfig {
     private starSwap swap = new starSwap();
     private Runner runner = new Runner();
     private Nft nft = new Nft();
+    private Mining mining = new Mining();
 
 
     @Data
@@ -83,7 +86,7 @@ public class StarConfig {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Nft{
+    public static class Nft {
         private String websocketHost;
         private String websocketPort;
         private String market;
@@ -93,6 +96,18 @@ public class StarConfig {
         private String scripts;
         private String imagePrefix;
         private String imageBasePath;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Mining {
+        private String miningAddress;
+        private String miningModule;
+        private String managerAddress;
+        private String kikoAddress;
+        private String kikoModule;
+        private BigDecimal stcFee;
     }
 
 }

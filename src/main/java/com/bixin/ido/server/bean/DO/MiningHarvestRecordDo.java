@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
-* @Class: TradingPoolUserDo
-* @Description: 用户交易挖矿表
+* @Class: MiningHarvestRecordDo
+* @Description: 挖矿收益提取记录表
 * @author: 系统
 * @created: 2021-11-09
 */
@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TradingPoolUserDo implements Serializable {
+public class MiningHarvestRecordDo implements Serializable {
     /**
      * 主键id
      */
@@ -30,39 +30,29 @@ public class TradingPoolUserDo implements Serializable {
     private String address;
 
     /**
-     * 矿池id
+     * 提取收益
      */
-    private Long poolId;
+    private BigDecimal amount;
 
     /**
-     * 当前交易额
+     * 挖矿类型，TRADING：交易挖矿，LP_STAKING：Lp质押挖矿
      */
-    private BigDecimal currentTradingAmount;
+    private String miningType;
 
     /**
-     * 累计交易额
+     * 收益类型，CURRENT：当前收益，FREED：已释放收益
      */
-    private BigDecimal totalTradingAmount;
+    private String rewardType;
 
     /**
-     * 当前收益
+     * 操作状态，PENDING：待确认，FAILED：失败，SUCCESS：成功
      */
-    private BigDecimal currentReward;
+    private String status;
 
     /**
-     * 累计收益
+     * 交易哈希
      */
-    private BigDecimal totalReward;
-
-    /**
-     * 待结算交易额
-     */
-    private BigDecimal pendingTradingReward;
-
-    /**
-     * 待结算收益
-     */
-    private BigDecimal pendingReward;
+    private String hash;
 
     /**
      * 创建时间

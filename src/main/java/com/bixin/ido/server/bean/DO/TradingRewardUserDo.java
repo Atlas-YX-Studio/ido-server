@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
-* @Class: TradingPoolUserDo
-* @Description: 用户交易挖矿表
+* @Class: TradingRewardUserDo
+* @Description: 用户交易挖矿收益表
 * @author: 系统
 * @created: 2021-11-09
 */
@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TradingPoolUserDo implements Serializable {
+public class TradingRewardUserDo implements Serializable {
     /**
      * 主键id
      */
@@ -30,34 +30,14 @@ public class TradingPoolUserDo implements Serializable {
     private String address;
 
     /**
-     * 矿池id
-     */
-    private Long poolId;
-
-    /**
-     * 当前交易额
-     */
-    private BigDecimal currentTradingAmount;
-
-    /**
-     * 累计交易额
-     */
-    private BigDecimal totalTradingAmount;
-
-    /**
      * 当前收益
      */
-    private BigDecimal currentReward;
+    private BigDecimal lockedReward;
 
     /**
      * 累计收益
      */
-    private BigDecimal totalReward;
-
-    /**
-     * 待结算交易额
-     */
-    private BigDecimal pendingTradingReward;
+    private BigDecimal freedReward;
 
     /**
      * 待结算收益

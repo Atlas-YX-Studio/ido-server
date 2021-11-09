@@ -12,4 +12,6 @@ public interface PathConstant {
 
     String NFT_REQUEST_PATH_PREFIX = "/v1/nft";
 
+    String MINING_REQUEST_PATH_PREFIX = "/v1/mining";
+
 }
