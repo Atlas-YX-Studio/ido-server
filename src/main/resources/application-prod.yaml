@@ -46,6 +46,14 @@ ido:
       url: https://main-seed.starcoin.org
       chain-id: 1
     nft:
-      market: ""
-      catadd: "0xd30b4de81d71c1793aa4db4763211e63"
-      scripts: ""
+      websocket-host: 10.13.22.40
+      websocket-port: 9870
+      market: "0x7ed4261b68ddb20158109794bbab3ae7"
+      scripts: "0x7ed4261b68ddb20158109794bbab3ae7"
+      catadd: "0x8355417c88d969f656935244641256ad"
+      market-module: "NFTMarket"
+      scripts-module: "NFTScripts"
+      image-prefix: "https://imagedelivery.net"
+      image-base-path: "/data/images/bixin-ido-server/nft/"
+      image-info-api: "https://kikoswap.com/v1/nft/image/info/"
+      image-group-api: "https://kikoswap.com/v1/nft/image/group/"
