@@ -1,6 +1,7 @@
 package com.bixin.nft.scheduler;
 
 import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.utils.JacksonUtil;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import com.bixin.nft.bean.DO.NftEventDo;
@@ -46,6 +47,8 @@ public class ScheduleNftMarket {
     @Resource
     NftEventService nftEventService;
     @Resource
+    private RedisCache redisCache;
+    @Resource
     private StarConfig starConfig;
 
     ObjectMapper mapper = new ObjectMapper();
@@ -54,9 +57,22 @@ public class ScheduleNftMarket {
     private static final String boxSuffix = separator + "BoxSelling";
     private static final String nftSuffix = separator + "NFTSelling";
 
+    private static final long PROCESSING_EXPIRE_TIME = 30 * 1000L;
+    private static final long LOCK_EXPIRE_TIME = 0L;
+    private static final String GET_NFT_MARKET_LOCK = "get_nft_market_lock";
+
     //        @Scheduled(cron = "0/10 * * * * ?")
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(fixedDelay = 5000)
     public void getNftMarketList() {
+        redisCache.tryGetDistributedLock(
+                GET_NFT_MARKET_LOCK,
+                UUID.randomUUID().toString(),
+                PROCESSING_EXPIRE_TIME,
+                LOCK_EXPIRE_TIME,
+                this::pullNftMarketList);
+    }
+
+    private void pullNftMarketList() {
         String resource = contractService.listResource(starConfig.getNft().getMarket());
         ChainResourceDto chainResourceDto = JacksonUtil.readValue(resource, new TypeReference<ChainResourceDto>() {
         });
@@ -124,7 +140,6 @@ public class ScheduleNftMarket {
         nftMarketService.deleteAll();
 
         list.forEach(so -> nftMarketService.insert(so));
-
     }
 
 
