@@ -154,7 +154,7 @@ public class NftContractService {
                         throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                     }
                     log.info("NFT {} mint成功", nftInfoDo.getName());
-                    nftInfoDo.setOwner(nftGroupDo.getOwner());
+                    nftInfoDo.setOwner("");
                     nftInfoDo.setCreated(true);
                     nftInfoDo.setUpdateTime(System.currentTimeMillis());
                     nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
