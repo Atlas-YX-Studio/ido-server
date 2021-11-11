@@ -61,4 +61,24 @@ public interface TradingPoolUserMapper {
      */
     int harvestReward(Long id, BigDecimal tradingAmount, BigDecimal rewardAmount, Long updateTime);
 
+    /**
+     * 提取成功
+     * @param id
+     * @param tradingAmount
+     * @param rewardAmount
+     * @param updateTime
+     * @return
+     */
+    int harvestSuccess(Long id, BigDecimal tradingAmount, BigDecimal rewardAmount, Long updateTime);
+
+    /**
+     * 提取失败
+     * @param id
+     * @param tradingAmount
+     * @param rewardAmount
+     * @param updateTime
+     * @return
+     */
+    int harvestFailed(Long id, BigDecimal tradingAmount, BigDecimal rewardAmount, Long updateTime);
+
 }

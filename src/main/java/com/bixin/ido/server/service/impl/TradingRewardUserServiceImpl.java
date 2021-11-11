@@ -2,7 +2,7 @@ package com.bixin.ido.server.service.impl;
 
 import com.bixin.ido.server.bean.DO.TradingRewardUserDo;
 import com.bixin.ido.server.core.mapper.TradingRewardUserMapper;
-import com.bixin.ido.server.service.TradingRewardUserService;
+import com.bixin.ido.server.service.ITradingRewardUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class TradingRewardUserServiceImpl implements TradingRewardUserService {
+public class TradingRewardUserServiceImpl implements ITradingRewardUserService {
 
     @Autowired
     private TradingRewardUserMapper tradingRewardUserMapper;
@@ -81,5 +81,10 @@ public class TradingRewardUserServiceImpl implements TradingRewardUserService {
     public List<TradingRewardUserDo> listByObject(TradingRewardUserDo model) {
         return tradingRewardUserMapper.selectByPrimaryKeySelectiveList(model);
     }
+
+
+//    public int updateFreedReward() {
+//
+//    }
 
 }

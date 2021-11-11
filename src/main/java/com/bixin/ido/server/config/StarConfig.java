@@ -56,6 +56,7 @@ public class StarConfig {
         private String websocketContractAddress;
         private String contractAddress;
         private String lpPoolResourceName;
+        private String usdtAddress;
 
         //starCoin-sdk 需要去掉合约地址的前缀 "0x"
         public String getWebsocketContractAddress() {

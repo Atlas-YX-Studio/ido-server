@@ -2,7 +2,8 @@ package com.bixin.ido.server.controller;
 
 import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.constants.PathConstant;
-import com.bixin.ido.server.service.TradingRewardUserService;
+import com.bixin.ido.server.service.ITradingMiningService;
+import com.bixin.ido.server.service.ITradingRewardUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,17 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class TradingMiningController {
 
     @Autowired
-    public TradingRewardUserService tradingRewardUserService;
+    private ITradingRewardUserService tradingRewardUserService;
+    @Autowired
+    private ITradingMiningService tradingMiningService;
 
     @PostMapping("/currentReward/harvest")
     public R harvestCurrentReward(@RequestParam("address") String address) {
-
-        return R.success();
+        String hash = tradingMiningService.harvestCurrentReward(address);
+        return R.success(hash);
     }
 
     @PostMapping("/freedReward/harvest")
     public R harvestFreedReward(@RequestParam("address") String address) {
-
+        String hash = tradingMiningService.harvestFreedReward(address);
         return R.success();
     }
 

@@ -16,6 +16,7 @@ public interface CommonConstant {
 
     String USDT_NAME = "USDT";
     String STC_ADDRESS = "0x00000000000000000000000000000001::STC::STC";
+    String KIKO_NAME = "KIKO";
 
     // redis key
     String IMAGE_INFO_URL_PREFIX_KEY = "image_info_url_";

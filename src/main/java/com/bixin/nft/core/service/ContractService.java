@@ -136,6 +136,27 @@ public class ContractService {
     }
 
     /**
+     * 签名并请求合约
+     *
+     * @param senderAddress
+     * @param scriptFunctionObj
+     * @return
+     */
+    public String callFunctionAndGetHash(String senderAddress, ScriptFunctionObj scriptFunctionObj) {
+        log.info("合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
+        AccountAddress sender = AccountAddressUtils.create(senderAddress);
+        Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
+        String result = starcoinClient.callScriptFunction(sender, privateKey, scriptFunctionObj);
+        log.info("合约请求 result: {}", result);
+        String txn = JSON.parseObject(result).getString("result");
+        if (StringUtils.isBlank(txn)) {
+            log.info("合约请求失败");
+            throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+        }
+        return txn;
+    }
+
+    /**
      * 转账请求
      *
      * @param senderAddress

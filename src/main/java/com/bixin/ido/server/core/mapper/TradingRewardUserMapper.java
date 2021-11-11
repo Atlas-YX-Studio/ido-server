@@ -3,6 +3,7 @@ package com.bixin.ido.server.core.mapper;
 
 import com.bixin.ido.server.bean.DO.TradingRewardUserDo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface TradingRewardUserMapper {
@@ -41,4 +42,32 @@ public interface TradingRewardUserMapper {
      * @param record
      */
     List<TradingRewardUserDo> selectByPrimaryKeySelectiveList(TradingRewardUserDo record);
+
+    /**
+     * 提取收益
+     * @param id
+     * @param rewardAmount
+     * @param updateTime
+     * @return
+     */
+    int harvestReward(Long id, BigDecimal rewardAmount, Long updateTime);
+
+    /**
+     * 提取成功
+     * @param id
+     * @param rewardAmount
+     * @param updateTime
+     * @return
+     */
+    int harvestSuccess(Long id, BigDecimal rewardAmount, Long updateTime);
+
+    /**
+     * 提取失败
+     * @param id
+     * @param rewardAmount
+     * @param updateTime
+     * @return
+     */
+    int harvestFailed(Long id, BigDecimal rewardAmount, Long updateTime);
+
 }

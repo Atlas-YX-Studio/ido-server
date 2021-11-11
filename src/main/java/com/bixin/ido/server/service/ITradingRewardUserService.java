@@ -10,7 +10,7 @@ import java.util.List;
  * @author: 系统
  * @created: 2021-11-09
  */
-public interface TradingRewardUserService {
+public interface ITradingRewardUserService {
 
     /**
      * @explain: 添加TradingRewardUserDo对象

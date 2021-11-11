@@ -88,4 +88,48 @@
     select  * from trading_reward_users
     <include refid="baseQuery" />
   </select>
+  <update id="harvestReward" parameterType="map">
+    update trading_reward_users
+    <set>
+      freed_reward = freed_reward - #{rewardAmount,jdbcType=DECIMAL},
+      pending_reward = pending_reward + #{rewardAmount,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="harvestSuccess" parameterType="map">
+    update trading_reward_users
+    <set>
+      pending_reward = pending_reward - #{rewardAmount,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="harvestFailed" parameterType="map">
+    update trading_reward_users
+    <set>
+      pending_reward = pending_reward - #{rewardAmount,jdbcType=DECIMAL},
+      freed_reward = freed_reward + #{rewardAmount,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+<!--  <update id="unlockReward" parameterType="map">-->
+<!--    update trading_reward_users-->
+<!--    <set>-->
+<!--      locked_reward = locked_reward - unlock_reward_per_day,-->
+<!--      freed_reward = freed_reward + unlock_reward_per_day,-->
+<!--      <if test="updateTime != null">-->
+<!--        update_time = #{updateTime,jdbcType=BIGINT}-->
+<!--      </if>-->
+<!--    </set>-->
+<!--    where locked_reward >= unlock_reward_per_day-->
+<!--      and-->
+<!--  </update>-->
 </mapper>

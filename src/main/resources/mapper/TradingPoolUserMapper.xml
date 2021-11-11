@@ -127,7 +127,7 @@
       current_trading_amount = current_trading_amount + #{tradingAmount,jdbcType=DECIMAL},
       total_trading_amount = total_trading_amount + #{tradingAmount,jdbcType=DECIMAL},
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=BIGINT},
+        update_time = #{updateTime,jdbcType=BIGINT}
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -136,10 +136,35 @@
     update trading_pool_users
     <set>
       current_trading_amount = current_trading_amount - #{tradingAmount,jdbcType=DECIMAL},
+      pending_trading_reward = pending_trading_reward + #{tradingAmount,jdbcType=DECIMAL},
       current_reward = current_reward - #{rewardAmount,jdbcType=DECIMAL},
       pending_reward = pending_reward + #{rewardAmount,jdbcType=DECIMAL},
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=BIGINT},
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="harvestSuccess" parameterType="map">
+    update trading_pool_users
+    <set>
+      pending_trading_reward = pending_trading_reward - #{tradingAmount,jdbcType=DECIMAL},
+      pending_reward = pending_reward - #{rewardAmount,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="harvestFailed" parameterType="map">
+    update trading_pool_users
+    <set>
+      pending_trading_reward = pending_trading_reward - #{tradingAmount,jdbcType=DECIMAL},
+      current_trading_amount = current_trading_amount + #{tradingAmount,jdbcType=DECIMAL},
+      pending_reward = pending_reward - #{rewardAmount,jdbcType=DECIMAL},
+      current_reward = current_reward + #{rewardAmount,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
