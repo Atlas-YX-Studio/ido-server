@@ -18,12 +18,12 @@ public class TradingMiningController {
     private ITradingMiningService tradingMiningService;
 
     @GetMapping("/pool/list")
-    public R poolList(@RequestParam("address") String address) {
+    public R poolList(@RequestParam(value = "address", required = false) String address) {
         return R.success(tradingMiningService.poolList(address));
     }
 
     @GetMapping("/market")
-    public R market(@RequestParam("address") String address) {
+    public R market(@RequestParam(value = "address", required = false) String address) {
         return R.success(tradingMiningService.market(address));
     }
 
