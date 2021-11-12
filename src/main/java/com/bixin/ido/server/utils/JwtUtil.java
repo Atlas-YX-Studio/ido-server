@@ -46,6 +46,7 @@ public class JwtUtil {
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(ISSUER)
                     .acceptExpiresAt(0)
+                    .ignoreIssuedAt()
                     .build();
             verifier.verify(token);
             return true;
