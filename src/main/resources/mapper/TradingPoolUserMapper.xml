@@ -167,4 +167,25 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <update id="attenuation" parameterType="map">
+    update trading_pool_users
+    <set>
+      current_trading_amount = current_trading_amount * #{rate,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+  </update>
+  <update id="currentReward" parameterType="map">
+    update trading_pool_users a
+    INNER JOIN (select pool_id, sum(current_trading_amount) total FROM trading_pool_users where pool_id = #{poolId,jdbcType=BIGINT} group by pool_id) b on a.pool_id = b.pool_id
+    <set>
+      a.current_reward = a.current_reward + #{rewardAmount,jdbcType=DECIMAL} * a.current_trading_amount/b.total,
+      a.total_reward = a.total_reward + #{rewardAmount,jdbcType=DECIMAL} * a.current_trading_amount/b.total,
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+  </update>
+
 </mapper>

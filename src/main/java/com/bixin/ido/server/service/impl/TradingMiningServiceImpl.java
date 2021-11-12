@@ -67,45 +67,30 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
     private RedisCache redisCache;
 
     /**
-     * 累计交易额（平台）
-     */
-    public void totalTradingAmount() {
-
-        // select sum(current_trading_amount), sum(total_trading_amount) from trading_pool_users;
-    }
-
-    /**
-     * 当前交易额（平台）
-     */
-    public void currentTradingAmount() {
-
-    }
-
-    /**
-     * 当前收益（个人）
-     */
-    public void currentReward() {
-        // update trading_pool_users a INNER JOIN (select sum(current_trading_amount) total FROM trading_pool_users) b  set a.current_reward = a.current_reward + 100 * a.current_trading_amount/b.total, a.current_reward = a.total_reward + 100 * a.current_trading_amount/b.total;
-    }
-
-    /**
      * 计算当前收益（个人）
      */
     @Override
     public void currentReward(Long blockId) {
-        // 更新个人收益
-        // update trading_pool_users a INNER JOIN (select sum(current_trading_amount) total FROM trading_pool_users) b  set a.current_reward = a.current_reward + 100 * a.current_trading_amount/b.total, a.total_reward = a.total_reward + 100 * a.current_trading_amount/b.total;
-        // 更新交易对已发放收益
-        // update trading_pools a left join (select pool_id, sum(total_reward) total_reward from trading_pool_users GROUP BY pool_id) b on a.id = b.pool_id set a.allocated_reward_amount = b.total_reward;
+        List<TradingPoolDo> tradingPools = tradingPoolMapper.selectByPrimaryKeySelectiveList(TradingPoolDo.builder().build());
+        Integer total = tradingPools.stream().map(TradingPoolDo::getAllocationMultiple).reduce(Integer::sum).orElse(0);
+        Map<Long, TradingPoolDto> tradingPollMap = tradingPools.stream().collect(Collectors.toMap(TradingPoolDo::getId, y -> TradingPoolDto.convertToDto(y, total)));
+        BigDecimal dayTotalReward = BigDecimal.TEN;
+        BigDecimal blockTotalReward = BigDecimal.TEN;
+
+        tradingPollMap.values().parallelStream().forEach(pool -> {
+            // 更新个人收益
+            tradingPoolUserMapper.currentReward(pool.getId(), blockTotalReward.multiply(pool.getAllocationRatio()), System.currentTimeMillis());
+        });
+        tradingPoolMapper.updateAllocatedReward(System.currentTimeMillis());
+
     }
 
     /**
      * 衰减
      */
-    @Scheduled(cron = "0 0 0/4 * * ?")
+    @Override
     public void attenuation() {
-        // update trading_pool_users set current_trading_amount = current_trading_amount * 0.8;
-        // update trading_pool_users set current_trading_amount = current_trading_amount * 0.8, block_id = 101 where block_id=100;
+        tradingPoolUserMapper.attenuation(BigDecimal.valueOf(0.8), System.currentTimeMillis());
     }
 
     /**
@@ -274,7 +259,6 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
         miningHarvestRecordDo.setUpdateTime(System.currentTimeMillis());
         miningHarvestRecordMapper.updateByPrimaryKeySelective(miningHarvestRecordDo);
     }
-
 
     /**
      * 收取已释放收益

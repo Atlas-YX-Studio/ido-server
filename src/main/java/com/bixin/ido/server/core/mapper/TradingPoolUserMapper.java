@@ -80,4 +80,24 @@ public interface TradingPoolUserMapper {
      * @return
      */
     int harvestFailed(Long id, BigDecimal tradingAmount, BigDecimal rewardAmount, Long updateTime);
+
+    /**
+     * 衰减
+     *
+     * @param rate
+     * @param updateTime
+     * @return
+     */
+    int attenuation(BigDecimal rate, Long updateTime);
+
+    /**
+     * 计算发放收益
+     *
+     * @param poolId
+     * @param rewardAmount
+     * @param updateTime
+     * @return
+     */
+    int currentReward(Long poolId, BigDecimal rewardAmount, Long updateTime);
+
 }

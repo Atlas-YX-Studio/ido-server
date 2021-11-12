@@ -40,4 +40,12 @@ public interface TradingPoolMapper {
      * @param record
      */
     List<TradingPoolDo> selectByPrimaryKeySelectiveList(TradingPoolDo record);
+
+    /**
+     * 更新已发放收益
+     *
+     * @param updateTime
+     * @return
+     */
+    int updateAllocatedReward(Long updateTime);
 }

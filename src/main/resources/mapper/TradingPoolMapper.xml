@@ -121,4 +121,14 @@
     select  * from trading_pools
     <include refid="baseQuery" />
   </select>
+  <update id="updateAllocatedReward" parameterType="map">
+    update trading_pools a
+    left join (select pool_id, sum(total_reward) total_reward from trading_pool_users GROUP BY pool_id) b on a.id = b.pool_id
+    <set>
+      a.allocated_reward_amount = b.total_reward
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+  </update>
 </mapper>
