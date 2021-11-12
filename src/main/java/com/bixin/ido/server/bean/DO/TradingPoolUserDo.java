@@ -55,7 +55,6 @@ public class TradingPoolUserDo implements Serializable {
     private BigDecimal totalReward;
 
     /**
-<<<<<<< HEAD
      * 待结算交易额
      */
     private BigDecimal pendingTradingReward;
@@ -66,8 +65,6 @@ public class TradingPoolUserDo implements Serializable {
     private BigDecimal pendingReward;
 
     /**
-=======
->>>>>>> c0d1f3c80114c9ef73676cd582dc8ae73da841f8
      * 创建时间
      */
     private Long createTime;
