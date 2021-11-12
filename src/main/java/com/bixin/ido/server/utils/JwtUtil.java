@@ -17,7 +17,7 @@ public class JwtUtil {
 
     private static String HMAC256_KEY = "4858BAe65490df199FE8D76aC9087620";
 
-    private static int EXPIRED = 10 * 60 * 1000;
+    private static int EXPIRED = 20 * 60 * 1000;
 
     private static String ISSUER = "kiko";
 
@@ -50,7 +50,7 @@ public class JwtUtil {
             verifier.verify(token);
             return true;
         } catch (Exception e) {
-            log.error("JwtDecode failure", e);
+            log.error("JwtDecode failure, token:{}", token, e);
             return false;
         }
     }
