@@ -62,6 +62,7 @@ public class JwtVerifyFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             // 验证失败
+            log.info("请求失败, request:{}, token:{}, ", httpServletRequest.getRequestURI(), token);
             ResponseUtil.setBody((HttpServletResponse) response, R.failed(IdoErrorCode.TOKEN_VERIFY_FAILURE));
         }
     }

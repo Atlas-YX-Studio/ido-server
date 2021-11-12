@@ -3,8 +3,6 @@ package com.bixin.ido.server.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @Slf4j
 class JwtUtilTest {
 
@@ -15,7 +13,7 @@ class JwtUtilTest {
 
     @Test
     void decode() {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJraWtvIiwiZXhwIjoxNjM0NzIzMzIyLCJpYXQiOjE2MzQ3MjI3MjJ9.JCdyXT7zLoG9ksiyrCvfcffR-kIaGEdstEbFubuw4dc";
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJraWtvIiwiZXhwIjoxNjM2Njk0OTYzMzM4LCJpYXQiOjE2MzY2OTQzNjN9.VlFweQMRug-ck4dqnnbp-PyRmBD2AWMEK4eY3HT84_8";
         log.info("" + JwtUtil.decode(token));
     }
 }
