@@ -81,7 +81,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
             // 更新个人收益
             tradingPoolUserMapper.currentReward(pool.getId(), blockTotalReward.multiply(pool.getAllocationRatio()), System.currentTimeMillis());
         });
-        tradingPoolMapper.updateAllocatedReward(System.currentTimeMillis());
+        tradingPoolMapper.updateStatistic(System.currentTimeMillis());
 
     }
 

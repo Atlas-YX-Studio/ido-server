@@ -121,11 +121,13 @@
     select  * from trading_pools
     <include refid="baseQuery" />
   </select>
-  <update id="updateAllocatedReward" parameterType="map">
+  <update id="updateStatistic" parameterType="map">
     update trading_pools a
-    left join (select pool_id, sum(total_reward) total_reward from trading_pool_users GROUP BY pool_id) b on a.id = b.pool_id
+    left join (select pool_id, sum(total_reward) total_reward, sum(current_trading_amount) current_trading_amount, sum(total_trading_amount) total_trading_amount from trading_pool_users GROUP BY pool_id) b on a.id = b.pool_id
     <set>
-      a.allocated_reward_amount = b.total_reward
+      a.allocated_reward_amount = b.total_reward,
+      a.current_trading_amount = b.current_trading_amount,
+      a.total_trading_amount = b.total_trading_amount,
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=BIGINT}
       </if>

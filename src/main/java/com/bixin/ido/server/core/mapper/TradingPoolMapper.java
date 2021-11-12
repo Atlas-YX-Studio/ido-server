@@ -47,5 +47,5 @@ public interface TradingPoolMapper {
      * @param updateTime
      * @return
      */
-    int updateAllocatedReward(Long updateTime);
+    int updateStatistic(Long updateTime);
 }
