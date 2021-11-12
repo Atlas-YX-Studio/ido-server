@@ -1,4 +1,4 @@
-`package com.bixin.ido.server.bean.vo;
+package com.bixin.ido.server.bean.vo;
 
 import com.bixin.ido.server.bean.DO.TradingPoolUserDo;
 import lombok.Data;

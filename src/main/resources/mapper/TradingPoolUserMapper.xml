@@ -111,11 +111,11 @@
       </if>
     </trim>
   </sql>
-  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
     select  * from trading_pool_users
     <include refid="baseQuery" />
   </select>
-  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
     select  * from trading_pool_users
     <include refid="baseQuery" />
   </select>

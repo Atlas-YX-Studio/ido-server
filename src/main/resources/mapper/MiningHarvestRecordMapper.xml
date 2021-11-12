@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.nft.core.mapper.MiningHarvestRecordMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.nft.bean.DO.MiningHarvestRecordDo">
+<mapper namespace="com.bixin.ido.server.core.mapper.MiningHarvestRecordMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.MiningHarvestRecordDo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="amount" jdbcType="DECIMAL" property="amount" />
@@ -26,7 +26,7 @@
     delete from mining_harvest_records
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.MiningHarvestRecordDo" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.MiningHarvestRecordDo" useGeneratedKeys="true">
     insert into mining_harvest_records (id, address,
       amount, mining_type, reward_type, 
       status, hash, create_time, 
@@ -36,7 +36,7 @@
       #{status,jdbcType=VARCHAR}, #{hash,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
       #{updateTime,jdbcType=BIGINT})
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.MiningHarvestRecordDo">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.MiningHarvestRecordDo">
     update mining_harvest_records
     <set>
       <if test="address != null">
@@ -97,11 +97,11 @@
       </if>
     </trim>
   </sql>
-  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.MiningHarvestRecordDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.MiningHarvestRecordDo" resultMap="BaseResultMap">
     select  * from mining_harvest_records
     <include refid="baseQuery" />
   </select>
-  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.MiningHarvestRecordDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.MiningHarvestRecordDo" resultMap="BaseResultMap">
     select  * from mining_harvest_records
     <include refid="baseQuery" />
   </select>
