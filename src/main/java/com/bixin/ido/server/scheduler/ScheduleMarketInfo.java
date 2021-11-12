@@ -211,9 +211,12 @@ public class ScheduleMarketInfo {
                         }
                         nftTotalVolume = nftEventDos.stream().map(swapUserRecord -> {
                             BigDecimal nftVolume = BigDecimal.ZERO;
-                            if (StringUtils.equalsAny(swapUserRecord.getType(), NftEventType.BOX_SELL_EVENT.getDesc(),
-                                    NftEventType.NFT_SELL_EVENT.getDesc(), NftEventType.BOX_OFFERING_SELL_EVENT.getDesc(), NftEventType.NFT_BUY_BACK_SELL_EVENT.getDesc())) {
+                            if (StringUtils.equalsAny(swapUserRecord.getType(), NftEventType.BOX_BUY_EVENT.getDesc(),
+                                    NftEventType.NFT_BUY_EVENT.getDesc(), NftEventType.BOX_OFFERING_SELL_EVENT.getDesc(), NftEventType.NFT_BUY_BACK_SELL_EVENT.getDesc())) {
                                 BigDecimal sellingPrice = swapUserRecord.getSellingPrice() == null ? BigDecimal.ZERO : swapUserRecord.getSellingPrice();
+                                nftVolume = coinPriceInfos.getOrDefault(swapUserRecord.getPayToken() + "_" + usdtAddress, BigDecimal.ZERO).multiply(sellingPrice);
+                            } else if (StringUtils.equalsAny(swapUserRecord.getType(), NftEventType.BOX_ACCEPT_BID_EVENT.getDesc(), NftEventType.NFT_ACCEPT_BID_EVENT.getDesc())) {
+                                BigDecimal sellingPrice = swapUserRecord.getBidPrice() == null ? BigDecimal.ZERO : swapUserRecord.getBidPrice();
                                 nftVolume = coinPriceInfos.getOrDefault(swapUserRecord.getPayToken() + "_" + usdtAddress, BigDecimal.ZERO).multiply(sellingPrice);
                             }
                             return nftVolume;
