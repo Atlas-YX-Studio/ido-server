@@ -3,6 +3,10 @@ package com.bixin.ido.server.runner;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.redis.RedisCache;
+<<<<<<< HEAD
+=======
+import com.bixin.ido.server.service.ITradingMiningService;
+>>>>>>> c0d1f3c80114c9ef73676cd582dc8ae73da841f8
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -55,6 +59,12 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
 
     ThreadPoolExecutor poolExecutor;
 
+<<<<<<< HEAD
+=======
+    @Resource
+    private ITradingMiningService tradingMiningService;
+
+>>>>>>> c0d1f3c80114c9ef73676cd582dc8ae73da841f8
     @PostConstruct
     public void init() {
         poolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
@@ -109,6 +119,11 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
                 if ("NewBlockEvent".equals(tagString)) {
                     // 新块产生事件
                     log.info("BlockEventSubscriberRunner duplicate event data {}", data);
+<<<<<<< HEAD
+=======
+                    // FIXME: 2021/11/8 区块id
+                    tradingMiningService.currentReward(12L);
+>>>>>>> c0d1f3c80114c9ef73676cd582dc8ae73da841f8
 //                    handleBlockSellEvent(data, eventResult.getTypeTag());
                 } else {
                     log.error("BlockEventSubscriberRunner blockEventDo 为空");

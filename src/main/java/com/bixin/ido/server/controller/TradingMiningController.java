@@ -6,6 +6,7 @@ import com.bixin.ido.server.service.ITradingMiningService;
 import com.bixin.ido.server.service.ITradingRewardUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,16 @@ public class TradingMiningController {
     public R harvestFreedReward(@RequestParam("address") String address) {
         String hash = tradingMiningService.harvestFreedReward(address);
         return R.success();
+    }
+
+    @GetMapping("/pool/list")
+    public R poolList(@RequestParam(value = "address", required = false) String address) {
+        return R.success(tradingMiningService.poolList(address));
+    }
+
+    @GetMapping("/market")
+    public R market(@RequestParam(value = "address", required = false) String address) {
+        return R.success(tradingMiningService.market(address));
     }
 
 }

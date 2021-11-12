@@ -3,7 +3,10 @@ package com.bixin.ido.server.core.mapper;
 
 import com.bixin.ido.server.bean.DO.TradingPoolUserDo;
 
+<<<<<<< HEAD
 import java.math.BigDecimal;
+=======
+>>>>>>> c0d1f3c80114c9ef73676cd582dc8ae73da841f8
 import java.util.List;
 
 public interface TradingPoolUserMapper {
@@ -42,6 +45,7 @@ public interface TradingPoolUserMapper {
      * @param record
      */
     List<TradingPoolUserDo> selectByPrimaryKeySelectiveList(TradingPoolUserDo record);
+<<<<<<< HEAD
 
     /**
      * 累加交易额
@@ -81,4 +85,6 @@ public interface TradingPoolUserMapper {
      */
     int harvestFailed(Long id, BigDecimal tradingAmount, BigDecimal rewardAmount, Long updateTime);
 
+=======
+>>>>>>> c0d1f3c80114c9ef73676cd582dc8ae73da841f8
 }

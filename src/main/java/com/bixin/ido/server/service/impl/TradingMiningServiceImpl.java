@@ -1,6 +1,9 @@
 package com.bixin.ido.server.service.impl;
 
 import com.bixin.ido.server.bean.DO.*;
+import com.bixin.ido.server.bean.dto.TradingPoolDto;
+import com.bixin.ido.server.bean.vo.TradingMiningOverviewVO;
+import com.bixin.ido.server.bean.vo.TradingPoolVo;
 import com.bixin.ido.server.common.enums.HarvestStatusEnum;
 import com.bixin.ido.server.common.enums.MiningTypeEnum;
 import com.bixin.ido.server.common.enums.RewardTypeEnum;
@@ -17,11 +20,14 @@ import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.service.ITradingMiningService;
 import com.bixin.ido.server.utils.ApplicationContextUtils;
+import com.bixin.ido.server.utils.BeanCopyUtil;
 import com.bixin.ido.server.utils.BigDecimalUtil;
 import com.bixin.ido.server.utils.ThreadPoolUtil;
 import com.bixin.nft.core.service.ContractService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -65,6 +71,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
      */
     public void totalTradingAmount() {
 
+        // select sum(current_trading_amount), sum(total_trading_amount) from trading_pool_users;
     }
 
     /**
@@ -81,51 +88,24 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
         // update trading_pool_users a INNER JOIN (select sum(current_trading_amount) total FROM trading_pool_users) b  set a.current_reward = a.current_reward + 100 * a.current_trading_amount/b.total, a.current_reward = a.total_reward + 100 * a.current_trading_amount/b.total;
     }
 
+    /**
+     * 计算当前收益（个人）
+     */
+    @Override
+    public void currentReward(Long blockId) {
+        // 更新个人收益
+        // update trading_pool_users a INNER JOIN (select sum(current_trading_amount) total FROM trading_pool_users) b  set a.current_reward = a.current_reward + 100 * a.current_trading_amount/b.total, a.total_reward = a.total_reward + 100 * a.current_trading_amount/b.total;
+        // 更新交易对已发放收益
+        // update trading_pools a left join (select pool_id, sum(total_reward) total_reward from trading_pool_users GROUP BY pool_id) b on a.id = b.pool_id set a.allocated_reward_amount = b.total_reward;
+    }
 
     /**
      * 衰减
      */
+    @Scheduled(cron = "0 0 0/4 * * ?")
     public void attenuation() {
         // update trading_pool_users set current_trading_amount = current_trading_amount * 0.8;
         // update trading_pool_users set current_trading_amount = current_trading_amount * 0.8, block_id = 101 where block_id=100;
-    }
-
-    /**
-     * apy
-     */
-    public void apy() {
-        List<TradingPoolDo> tradingPools = tradingPoolMapper.selectByPrimaryKeySelectiveList(TradingPoolDo.builder().build());
-        Map<Long, TradingPoolDo> tradingPollMap = tradingPools.stream().collect(Collectors.toMap(TradingPoolDo::getId, y -> y));
-        BigDecimal dayTotalReward = BigDecimal.TEN;
-        List<BigDecimal> apyList = tradingPools.stream().map(tradingPool -> {
-            BigDecimal currentPoolDayReward = dayTotalReward.multiply(tradingPool.getAllocationRatio());
-            BigDecimal apy = currentPoolDayReward.multiply(BigDecimal.valueOf(0.003))
-                    .divide(tradingPool.getCurrentTradingAmount(), 18, RoundingMode.DOWN)
-                    .subtract(BigDecimal.ONE).multiply(BigDecimal.valueOf(365L));
-            return apy;
-        }).collect(Collectors.toList());
-
-
-    }
-
-    /**
-     * 每日预估收益
-     */
-    public BigDecimal dayReward(String address) {
-        List<TradingPoolDo> tradingPools = tradingPoolMapper.selectByPrimaryKeySelectiveList(TradingPoolDo.builder().build());
-        Map<Long, TradingPoolDo> tradingPollMap = tradingPools.stream().collect(Collectors.toMap(TradingPoolDo::getId, y -> y));
-        BigDecimal dayTotalReward = BigDecimal.TEN;
-
-        TradingPoolUserDo param = TradingPoolUserDo.builder().address(address).build();
-        List<TradingPoolUserDo> userPools = tradingPoolUserMapper.selectByPrimaryKeySelectiveList(param);
-
-        BigDecimal dayReward = userPools.stream().map(x -> {
-            TradingPoolDo tradingPool = tradingPollMap.get(x.getPoolId());
-            BigDecimal currentPoolDayReward = dayTotalReward.multiply(tradingPool.getAllocationRatio());
-            return x.getCurrentReward().multiply(currentPoolDayReward).divide(tradingPool.getCurrentTradingAmount(), 18, RoundingMode.DOWN);
-        }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-
-        return dayReward;
     }
 
     /**
@@ -431,6 +411,87 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
                 .tyArgs(Lists.newArrayList())
                 .build();
         return contractService.callFunctionAndGetHash(starConfig.getMining().getManagerAddress(), scriptFunctionObj);
+    }
+
+    /**
+     * 交易矿池列表
+     */
+    @Override
+    public List<TradingPoolVo> poolList(String address) {
+        List<TradingPoolDo> tradingPools = tradingPoolMapper.selectByPrimaryKeySelectiveList(TradingPoolDo.builder().build());
+        Integer total = tradingPools.stream().map(TradingPoolDo::getAllocationMultiple).reduce(Integer::sum).orElse(0);
+        Map<Long, TradingPoolDto> tradingPollMap = tradingPools.stream().collect(Collectors.toMap(TradingPoolDo::getId, y -> TradingPoolDto.convertToDto(y, total)));
+        BigDecimal dayTotalReward = BigDecimal.TEN;
+
+        List<SwapCoins> swapCoins = swapCoinsService.selectByDDL(SwapCoins.builder().build());
+        Map<String, SwapCoins> coinMap = swapCoins.stream().collect(Collectors.toMap(SwapCoins::getAddress, y -> y));
+        List<TradingPoolUserDo> userTradingPools = Lists.newArrayList();
+        if (StringUtils.isNotBlank(address)) {
+            userTradingPools = tradingPoolUserMapper.selectByPrimaryKeySelectiveList(TradingPoolUserDo.builder().address(address).build());
+        }
+        Map<Long, TradingPoolUserDo>  userTradingPoolMap = userTradingPools.stream().collect(Collectors.toMap(TradingPoolUserDo::getPoolId, y -> y));
+        List<TradingPoolVo> tradingPoolList = tradingPollMap.values().stream().map(tradingPool -> BeanCopyUtil.copyProperties(tradingPool, () -> {
+            TradingPoolVo vo = new TradingPoolVo();
+            BigDecimal currentPoolDayReward = dayTotalReward.multiply(tradingPool.getAllocationRatio());
+            BigDecimal apy = BigDecimal.valueOf(999999L);
+            if (tradingPool.getCurrentTradingAmount().compareTo(BigDecimal.ZERO) > 0) {
+                apy = currentPoolDayReward.multiply(BigDecimal.valueOf(0.003))
+                        .divide(tradingPool.getCurrentTradingAmount(), 18, RoundingMode.DOWN)
+                        .subtract(BigDecimal.ONE).multiply(BigDecimal.valueOf(365L));
+            }
+            vo.setApy(apy);
+            if (userTradingPoolMap.containsKey(tradingPool.getId())) {
+                TradingPoolUserDo tempUserTradingPool = userTradingPoolMap.get(tradingPool.getId());
+                vo.setTradingAmount(tempUserTradingPool.getCurrentTradingAmount());
+                vo.setCurrentReward(tempUserTradingPool.getCurrentReward());
+                vo.setTotalReward(tempUserTradingPool.getTotalReward());
+            }
+            if (coinMap.containsKey(tradingPool.getTokenA())) {
+                vo.setTokenIconA(coinMap.get(tradingPool.getTokenA()).getIcon());
+            }
+            if (coinMap.containsKey(tradingPool.getTokenB())) {
+                vo.setTokenIconB(coinMap.get(tradingPool.getTokenB()).getIcon());
+            }
+            return vo;
+        })).collect(Collectors.toList());
+        return tradingPoolList;
+    }
+
+    /**
+     * 数据总览
+     */
+    @Override
+    public TradingMiningOverviewVO market(String address) {
+        List<TradingPoolDo> tradingPools = tradingPoolMapper.selectByPrimaryKeySelectiveList(TradingPoolDo.builder().build());
+        Integer total = tradingPools.stream().map(TradingPoolDo::getAllocationMultiple).reduce(Integer::sum).orElse(0);
+        Map<Long, TradingPoolDto> tradingPollMap = tradingPools.stream().collect(Collectors.toMap(TradingPoolDo::getId, y -> TradingPoolDto.convertToDto(y, total)));
+        BigDecimal dayTotalReward = BigDecimal.TEN;
+
+        BigDecimal userCurrentTradingAmount = BigDecimal.ZERO;
+        BigDecimal dayReward = BigDecimal.ZERO;
+        if (StringUtils.isNotBlank(address)) {
+            TradingPoolUserDo param = TradingPoolUserDo.builder().address(address).build();
+            List<TradingPoolUserDo> userPools = tradingPoolUserMapper.selectByPrimaryKeySelectiveList(param);
+
+            dayReward = userPools.stream().map(x -> {
+                TradingPoolDto tradingPool = tradingPollMap.get(x.getPoolId());
+                if (x.getCurrentTradingAmount().compareTo(BigDecimal.ZERO) <= 0
+                        || tradingPool.getCurrentTradingAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                    return BigDecimal.ZERO;
+                }
+                BigDecimal currentPoolDayReward = dayTotalReward.multiply(tradingPool.getAllocationRatio());
+                return x.getCurrentTradingAmount().multiply(currentPoolDayReward).divide(tradingPool.getCurrentTradingAmount(), 18, RoundingMode.DOWN);
+            }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            userCurrentTradingAmount = userPools.stream().map(TradingPoolUserDo::getCurrentTradingAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        }
+
+        return TradingMiningOverviewVO.builder()
+                .currentTradingAmount(tradingPools.stream().map(TradingPoolDo::getCurrentTradingAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO).toPlainString())
+                .totalTradingAmount(tradingPools.stream().map(TradingPoolDo::getTotalTradingAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO).toPlainString())
+                .userCurrentTradingAmount(userCurrentTradingAmount.toPlainString())
+                .dailyTotalOutput(dayTotalReward.toPlainString())
+                .dailyUserReward(dayReward.toPlainString())
+                .build();
     }
 
 }
