@@ -6,11 +6,15 @@ import com.bixin.ido.server.bean.DO.TradingPoolUserDo;
 import com.bixin.ido.server.bean.DO.TradingRewardUserDo;
 import com.bixin.ido.server.bean.vo.TradingMiningOverviewVO;
 import com.bixin.ido.server.bean.vo.TradingPoolVo;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface ITradingMiningService {
+
+    @Scheduled(cron = "0 0 0/4 * * ?")
+    void attenuation();
 
     int addTradingAmount(String userAddress, Long poolId, BigDecimal tradingAmount);
 
