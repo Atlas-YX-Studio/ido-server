@@ -30,19 +30,29 @@ public class TradingRewardUserDo implements Serializable {
     private String address;
 
     /**
-     * 当前收益
+     * 锁定收益
      */
     private BigDecimal lockedReward;
 
     /**
-     * 累计收益
+     * 已释放收益
      */
     private BigDecimal freedReward;
+
+    /**
+     * 每日解锁收益
+     */
+    private BigDecimal unlockRewardPerDay;
 
     /**
      * 待结算收益
      */
     private BigDecimal pendingReward;
+
+    /**
+     * 下次解锁时间
+     */
+    private Long nextUnlockTime;
 
     /**
      * 创建时间

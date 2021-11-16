@@ -2,6 +2,7 @@ package com.bixin.ido.server.service.impl;
 
 import com.bixin.ido.server.bean.DO.*;
 import com.bixin.ido.server.bean.dto.TradingPoolDto;
+import com.bixin.ido.server.bean.vo.RewardVO;
 import com.bixin.ido.server.bean.vo.TradingMiningOverviewVO;
 import com.bixin.ido.server.bean.vo.TradingPoolVo;
 import com.bixin.ido.server.common.enums.HarvestStatusEnum;
@@ -241,8 +242,10 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
         TradingRewardUserDo tradingRewardUserDo = new TradingRewardUserDo();
         tradingRewardUserDo.setAddress(miningHarvestRecordDo.getAddress());
         tradingRewardUserDo.setLockedReward(miningHarvestRecordDo.getAmount());
+        tradingRewardUserDo.setUnlockRewardPerDay(miningHarvestRecordDo.getAmount().divide(BigDecimal.valueOf(7L), 9, RoundingMode.DOWN));
         tradingRewardUserDo.setFreedReward(BigDecimal.ZERO);
         tradingRewardUserDo.setPendingReward(BigDecimal.ZERO);
+        tradingRewardUserDo.setNextUnlockTime(System.currentTimeMillis());
         tradingRewardUserDo.setCreateTime(System.currentTimeMillis());
         tradingRewardUserDo.setUpdateTime(System.currentTimeMillis());
         tradingRewardUserMapper.insert(tradingRewardUserDo);
@@ -395,6 +398,29 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
                 .tyArgs(Lists.newArrayList())
                 .build();
         return contractService.callFunctionAndGetHash(starConfig.getMining().getManagerAddress(), scriptFunctionObj);
+    }
+
+    @Override
+    public void unlockReward() {
+        Long now = System.currentTimeMillis();
+        tradingRewardUserMapper.unlockReward(now, now);
+    }
+
+    @Override
+    public RewardVO reward(String address) {
+        if (StringUtils.isBlank(address)) {
+            return RewardVO.builder().build();
+        }
+        List<TradingPoolUserDo> userPools = tradingPoolUserMapper.selectByPrimaryKeySelectiveList(TradingPoolUserDo.builder().address(address).build());
+        List<TradingRewardUserDo> userRewards = tradingRewardUserMapper.selectByPrimaryKeySelectiveList(TradingRewardUserDo.builder().address(address).build());
+        BigDecimal currentReward = userPools.stream().map(TradingPoolUserDo::getCurrentReward).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        BigDecimal lockedReward = userRewards.stream().filter(x->x.getLockedReward().compareTo(x.getUnlockRewardPerDay()) > 0).map(TradingRewardUserDo::getLockedReward).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        BigDecimal freedReward = userRewards.stream().filter(x->x.getLockedReward().compareTo(x.getUnlockRewardPerDay()) > 0).map(TradingRewardUserDo::getFreedReward).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        return RewardVO.builder()
+                .currentReward(currentReward.toPlainString())
+                .lockedReward(lockedReward.add(freedReward).toPlainString())
+                .freedReward(freedReward.toPlainString())
+                .build();
     }
 
     /**

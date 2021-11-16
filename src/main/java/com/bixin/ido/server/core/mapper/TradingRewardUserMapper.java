@@ -2,6 +2,7 @@ package com.bixin.ido.server.core.mapper;
 
 
 import com.bixin.ido.server.bean.DO.TradingRewardUserDo;
+import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -50,7 +51,7 @@ public interface TradingRewardUserMapper {
      * @param updateTime
      * @return
      */
-    int harvestReward(Long id, BigDecimal rewardAmount, Long updateTime);
+    int harvestReward(@Param("id") Long id, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
 
     /**
      * 提取成功
@@ -59,7 +60,7 @@ public interface TradingRewardUserMapper {
      * @param updateTime
      * @return
      */
-    int harvestSuccess(Long id, BigDecimal rewardAmount, Long updateTime);
+    int harvestSuccess(@Param("id") Long id, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
 
     /**
      * 提取失败
@@ -68,6 +69,15 @@ public interface TradingRewardUserMapper {
      * @param updateTime
      * @return
      */
-    int harvestFailed(Long id, BigDecimal rewardAmount, Long updateTime);
+    int harvestFailed(@Param("id") Long id, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
+
+    /**
+     * 解锁收益
+     *
+     * @param now
+     * @param updateTime
+     * @return
+     */
+    int unlockReward(@Param("now") Long now, @Param("updateTime") Long updateTime);
 
 }

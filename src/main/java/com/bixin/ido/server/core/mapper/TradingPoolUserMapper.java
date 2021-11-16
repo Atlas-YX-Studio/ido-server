@@ -2,6 +2,7 @@ package com.bixin.ido.server.core.mapper;
 
 
 import com.bixin.ido.server.bean.DO.TradingPoolUserDo;
+import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,7 +50,7 @@ public interface TradingPoolUserMapper {
      * @param tradingAmount
      * @return
      */
-    int addTradingAmount(Long id, BigDecimal tradingAmount, Long updateTime);
+    int addTradingAmount(@Param("id") Long id, @Param("tradingAmount") BigDecimal tradingAmount, @Param("updateTime") Long updateTime);
 
     /**
      * 提取收益
@@ -59,7 +60,7 @@ public interface TradingPoolUserMapper {
      * @param updateTime
      * @return
      */
-    int harvestReward(Long id, BigDecimal tradingAmount, BigDecimal rewardAmount, Long updateTime);
+    int harvestReward(@Param("id") Long id, @Param("tradingAmount") BigDecimal tradingAmount, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
 
     /**
      * 提取成功
@@ -69,7 +70,7 @@ public interface TradingPoolUserMapper {
      * @param updateTime
      * @return
      */
-    int harvestSuccess(Long id, BigDecimal tradingAmount, BigDecimal rewardAmount, Long updateTime);
+    int harvestSuccess(@Param("id") Long id, @Param("tradingAmount") BigDecimal tradingAmount, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
 
     /**
      * 提取失败
@@ -79,7 +80,7 @@ public interface TradingPoolUserMapper {
      * @param updateTime
      * @return
      */
-    int harvestFailed(Long id, BigDecimal tradingAmount, BigDecimal rewardAmount, Long updateTime);
+    int harvestFailed(@Param("id") Long id, @Param("tradingAmount") BigDecimal tradingAmount, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
 
     /**
      * 衰减
@@ -88,7 +89,7 @@ public interface TradingPoolUserMapper {
      * @param updateTime
      * @return
      */
-    int attenuation(BigDecimal rate, Long updateTime);
+    int attenuation(@Param("rate") BigDecimal rate, @Param("updateTime") Long updateTime);
 
     /**
      * 计算发放收益
@@ -98,6 +99,6 @@ public interface TradingPoolUserMapper {
      * @param updateTime
      * @return
      */
-    int currentReward(Long poolId, BigDecimal rewardAmount, Long updateTime);
+    int currentReward(@Param("poolId") Long poolId, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
 
 }

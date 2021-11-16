@@ -18,6 +18,7 @@ public class ScheduleFreedReward {
     private static final long LOCK_EXPIRE_TIME = 0L;
     private static final String UPDATE_FREED_REWARD_LOCK = "update_freed_reward_lock";
     private static final String UPDATE_ATTENUATION_LOCK = "update_attenuation_lock";
+    private static final String UPDATE_UNLOCK_REWARD_LOCK = "update_unlock_reward_lock";
 
     @Resource
     private RedisCache redisCache;
@@ -47,6 +48,18 @@ public class ScheduleFreedReward {
                 LOCK_EXPIRE_TIME,
                 () -> {
                     tradingMiningService.attenuation();
+                });
+    }
+
+    @Scheduled(cron = "0 */5 * * * ?")
+    public void unlockReward() {
+        redisCache.tryGetDistributedLock(
+                UPDATE_UNLOCK_REWARD_LOCK,
+                UUID.randomUUID().toString(),
+                PROCESSING_EXPIRE_TIME,
+                LOCK_EXPIRE_TIME,
+                () -> {
+                    tradingMiningService.unlockReward();
                 });
     }
 

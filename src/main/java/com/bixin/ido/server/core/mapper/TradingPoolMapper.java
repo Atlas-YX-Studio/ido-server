@@ -1,6 +1,7 @@
 package com.bixin.ido.server.core.mapper;
 
 import com.bixin.ido.server.bean.DO.TradingPoolDo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -47,5 +48,5 @@ public interface TradingPoolMapper {
      * @param updateTime
      * @return
      */
-    int updateStatistic(Long updateTime);
+    int updateStatistic(@Param("updateTime") Long updateTime);
 }

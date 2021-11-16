@@ -6,12 +6,15 @@
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="locked_reward" jdbcType="DECIMAL" property="lockedReward" />
     <result column="freed_reward" jdbcType="DECIMAL" property="freedReward" />
+    <result column="unlock_reward_per_day" jdbcType="DECIMAL" property="unlockRewardPerDay" />
     <result column="pending_reward" jdbcType="DECIMAL" property="pendingReward" />
+    <result column="next_unlock_time" jdbcType="BIGINT" property="nextUnlockTime" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, address, locked_reward, freed_reward, pending_reward, create_time, update_time
+    id, address, locked_reward, freed_reward, unlock_reward_per_day, pending_reward,
+    next_unlock_time, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -25,11 +28,13 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.TradingRewardUserDo" useGeneratedKeys="true">
     insert into trading_reward_users (id, address, locked_reward, 
-      freed_reward, pending_reward, create_time, 
-      update_time)
+      freed_reward, unlock_reward_per_day, pending_reward,
+      next_unlock_time, create_time, update_time
+      )
     values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{lockedReward,jdbcType=DECIMAL}, 
-      #{freedReward,jdbcType=DECIMAL}, #{pendingReward,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=BIGINT})
+      #{freedReward,jdbcType=DECIMAL}, #{unlockRewardPerDay,jdbcType=DECIMAL}, #{pendingReward,jdbcType=DECIMAL},
+      #{nextUnlockTime,jdbcType=BIGINT}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
+      )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.TradingRewardUserDo">
     update trading_reward_users
@@ -43,8 +48,14 @@
       <if test="freedReward != null">
         freed_reward = #{freedReward,jdbcType=DECIMAL},
       </if>
+      <if test="unlockRewardPerDay != null">
+        unlock_reward_per_day = #{unlockRewardPerDay,jdbcType=DECIMAL},
+      </if>
       <if test="pendingReward != null">
         pending_reward = #{pendingReward,jdbcType=DECIMAL},
+      </if>
+      <if test="nextUnlockTime != null">
+        next_unlock_time = #{nextUnlockTime,jdbcType=BIGINT},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -69,8 +80,14 @@
       <if test="null != freedReward">
          and freed_reward = #{freedReward,jdbcType=DECIMAL}
       </if>
+      <if test="null != unlockRewardPerDay">
+         and unlock_reward_per_day = #{unlockRewardPerDay,jdbcType=DECIMAL}
+      </if>
       <if test="null != pendingReward">
          and pending_reward = #{pendingReward,jdbcType=DECIMAL}
+      </if>
+      <if test="null != nextUnlockTime">
+         and next_unlock_time = #{nextUnlockTime,jdbcType=BIGINT}
       </if>
       <if test="null != createTime">
          and create_time = #{createTime,jdbcType=BIGINT}
@@ -120,16 +137,17 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-<!--  <update id="unlockReward" parameterType="map">-->
-<!--    update trading_reward_users-->
-<!--    <set>-->
-<!--      locked_reward = locked_reward - unlock_reward_per_day,-->
-<!--      freed_reward = freed_reward + unlock_reward_per_day,-->
-<!--      <if test="updateTime != null">-->
-<!--        update_time = #{updateTime,jdbcType=BIGINT}-->
-<!--      </if>-->
-<!--    </set>-->
-<!--    where locked_reward >= unlock_reward_per_day-->
-<!--      and-->
-<!--  </update>-->
+  <update id="unlockReward" parameterType="map">
+    update trading_reward_users
+    <set>
+      locked_reward = locked_reward - unlock_reward_per_day,
+      freed_reward = freed_reward + unlock_reward_per_day,
+      next_unlock_time = next_unlock_time + 86400000,
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where locked_reward >= unlock_reward_per_day
+      and #{now,jdbcType=BIGINT} > next_unlock_time
+  </update>
 </mapper>

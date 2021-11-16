@@ -48,4 +48,9 @@ public class TradingMiningController {
         return R.success(tradingMiningService.market(address));
     }
 
+    @GetMapping("/reward")
+    public R reward(@RequestParam(value = "address", required = false) String address) {
+        return R.success(tradingMiningService.reward(address));
+    }
+
 }
