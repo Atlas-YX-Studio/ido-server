@@ -146,18 +146,19 @@ public class NftContractService {
                     nftId.setValue(createdNftInfoDos.get(0).getNftId() + 1);
                 }
                 nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
-                    nftInfoDo.setNftId(nftId.longValue());
-                    nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+                    NftInfoDo nftInfoDoWithImage = nftInfoMapper.selectByPrimaryKey(nftInfoDo.getId());
+                    nftInfoDoWithImage.setNftId(nftId.longValue());
+                    nftInfoMapper.updateByPrimaryKeySelective(nftInfoDoWithImage);
                     // 铸造NFT，存放图片url
-                    if (!mintKikoCatNFTWithImage(nftGroupDo, nftInfoDo)) {
-                        log.error("NFT {} mint失败", nftInfoDo.getName());
+                    if (!mintKikoCatNFTWithImage(nftGroupDo, nftInfoDoWithImage)) {
+                        log.error("NFT {} mint失败", nftInfoDoWithImage.getName());
                         throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                     }
-                    log.info("NFT {} mint成功", nftInfoDo.getName());
-                    nftInfoDo.setOwner("");
-                    nftInfoDo.setCreated(true);
-                    nftInfoDo.setUpdateTime(System.currentTimeMillis());
-                    nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+                    log.info("NFT {} mint成功", nftInfoDoWithImage.getName());
+                    nftInfoDoWithImage.setOwner("");
+                    nftInfoDoWithImage.setCreated(true);
+                    nftInfoDoWithImage.setUpdateTime(System.currentTimeMillis());
+                    nftInfoMapper.updateByPrimaryKeySelective(nftInfoDoWithImage);
                     nftId.add(1);
                 });
                 // 全部铸造完成，修改
