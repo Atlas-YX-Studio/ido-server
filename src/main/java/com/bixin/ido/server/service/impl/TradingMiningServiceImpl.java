@@ -28,7 +28,6 @@ import com.bixin.nft.core.service.ContractService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -175,7 +174,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
         }
         // stc 手续费兑换usdt
         BigDecimal stcFeePrice = (BigDecimal) redisCache.getValue(CommonConstant.STC_FEE_PRICE_KEY);
-        BigDecimal usdtFee = starConfig.getMining().getStcFee().subtract(stcFeePrice);
+        BigDecimal kikoFee = starConfig.getMining().getStcFee().subtract(stcFeePrice);
 
         // kiko 收益兑换usdt
         SwapCoins swapCoins = new SwapCoins();
@@ -186,10 +185,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
             throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
         }
         SwapCoins swapCoinsKIKO = swapCoinsList.get(0);
-        BigDecimal kikoPrice = swapPathService.getCoinPriceInfos().getOrDefault(swapCoinsKIKO.getAddress() + "_" + starConfig.getSwap().getUsdtAddress(), BigDecimal.ZERO);
-        BigDecimal usdtReward = currentReward.subtract(kikoPrice);
-
-        if (usdtReward.compareTo(usdtFee) <= 0) {
+        if (currentReward.compareTo(kikoFee) <= 0) {
             log.info("harvestCurrentReward 可提取收益不足 {}", currentReward.toPlainString());
             throw new IdoException(IdoErrorCode.REWARD_NOT_INSUFFICIENT);
         }
@@ -209,7 +205,8 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
         }
         // 调取合约，返回hash，异步获取合约结果，成功后更新事件状态+50%进入锁仓，失败后恢复数据
         BigInteger amount = freedReward.subtract(BigDecimalUtil.addPrecision(freedReward, swapPathService.getCoinPrecision(swapCoinsKIKO.getAddress()))).toBigInteger();
-        String hash = harvestTradingReward(userAddress, amount);
+        BigInteger fee = BigDecimalUtil.addPrecision(kikoFee, swapPathService.getCoinPrecision(swapCoinsKIKO.getAddress())).toBigInteger();
+        String hash = harvestTradingReward(userAddress, amount, fee);
         ThreadPoolUtil.execute(() -> {
             boolean success;
             try {
@@ -294,7 +291,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
         }
         // stc 手续费兑换usdt
         BigDecimal stcFeePrice = (BigDecimal) redisCache.getValue(CommonConstant.STC_FEE_PRICE_KEY);
-        BigDecimal usdtFee = starConfig.getMining().getStcFee().subtract(stcFeePrice);
+        BigDecimal kikoFee = starConfig.getMining().getStcFee().subtract(stcFeePrice);
 
         // kiko 收益兑换usdt
         SwapCoins swapCoins = new SwapCoins();
@@ -305,10 +302,8 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
             throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
         }
         SwapCoins swapCoinsKIKO = swapCoinsList.get(0);
-        BigDecimal kikoPrice = swapPathService.getCoinPriceInfos().getOrDefault(swapCoinsKIKO.getAddress() + "_" + starConfig.getSwap().getUsdtAddress(), BigDecimal.ZERO);
-        BigDecimal usdtReward = freedReward.subtract(kikoPrice);
 
-        if (usdtReward.compareTo(usdtFee) <= 0) {
+        if (freedReward.compareTo(kikoFee) <= 0) {
             log.info("harvestFreedReward 可提取收益不足 {}", freedReward.toPlainString());
             throw new IdoException(IdoErrorCode.REWARD_NOT_INSUFFICIENT);
         }
@@ -327,7 +322,8 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
         }
         // 调取合约，返回hash，异步获取合约结果，成功后更新事件状态，失败后恢复数据
         BigInteger amount = freedReward.subtract(BigDecimalUtil.addPrecision(freedReward, swapPathService.getCoinPrecision(swapCoinsKIKO.getAddress()))).toBigInteger();
-        String hash = harvestTradingReward(userAddress, amount);
+        BigInteger fee = BigDecimalUtil.addPrecision(kikoFee, swapPathService.getCoinPrecision(swapCoinsKIKO.getAddress())).toBigInteger();
+        String hash = harvestTradingReward(userAddress, amount, fee);
         ThreadPoolUtil.execute(() -> {
             boolean success;
             try {
@@ -383,7 +379,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
      * @param amount
      * @return
      */
-    public String harvestTradingReward(String userAddress, BigInteger amount) {
+    public String harvestTradingReward(String userAddress, BigInteger amount, BigInteger fee) {
         log.info("harvestTradingReward  userAddress:{} amount:{} 提取收益中...", userAddress, amount);
 
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
@@ -393,7 +389,8 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
                 .functionName("trading_harvest")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeAddressToBytes(AccountAddressUtils.create(userAddress)),
-                        BcsSerializeHelper.serializeU128ToBytes(amount)
+                        BcsSerializeHelper.serializeU128ToBytes(amount),
+                        BcsSerializeHelper.serializeU128ToBytes(fee)
                 ))
                 .tyArgs(Lists.newArrayList())
                 .build();

@@ -7,6 +7,7 @@ import com.bixin.ido.server.bean.dto.SwapSymbolTickDto;
 import com.bixin.ido.server.bean.dto.SwapTokenMarketDto;
 import com.bixin.ido.server.bean.dto.SwapTokenTickDto;
 import com.bixin.ido.server.bean.vo.VolumeInfoVO;
+import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ILiquidityUserRecordService;
@@ -55,6 +56,8 @@ public class ScheduleMarketInfo {
     private NftEventService nftEventService;
     @Resource
     private RedisCache redisCache;
+    @Resource
+    private StarConfig starConfig;
 
     @Value("${ido.star.swap.usdt-address}")
     private String usdtAddress;
@@ -250,7 +253,7 @@ public class ScheduleMarketInfo {
                 return;
             }
         }
-        BigDecimal price = swapPathService.getCoinPriceInfos().getOrDefault(CommonConstant.STC_ADDRESS + "_" + usdtAddress, BigDecimal.ZERO);
+        BigDecimal price = swapPathService.getCoinPriceInfos().getOrDefault(CommonConstant.STC_ADDRESS + "_" + starConfig.getMining().getKikoAddress(), BigDecimal.ZERO);
         redisCache.setValue(CommonConstant.STC_FEE_PRICE_KEY, price, 25, TimeUnit.HOURS);
     }
 

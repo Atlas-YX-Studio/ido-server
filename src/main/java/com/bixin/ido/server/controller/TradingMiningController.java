@@ -1,15 +1,16 @@
 package com.bixin.ido.server.controller;
 
 import com.bixin.ido.server.bean.vo.wrap.R;
+import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.constants.PathConstant;
+import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ITradingMiningService;
 import com.bixin.ido.server.service.ITradingRewardUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 /**
  * @class: TradingRewardUserController
@@ -25,6 +26,10 @@ public class TradingMiningController {
     private ITradingRewardUserService tradingRewardUserService;
     @Autowired
     private ITradingMiningService tradingMiningService;
+    @Autowired
+    private RedisCache redisCache;
+    @Autowired
+    private StarConfig starConfig;
 
     @PostMapping("/currentReward/harvest")
     public R harvestCurrentReward(@RequestParam("address") String address) {
@@ -51,6 +56,13 @@ public class TradingMiningController {
     @GetMapping("/reward")
     public R reward(@RequestParam(value = "address", required = false) String address) {
         return R.success(tradingMiningService.reward(address));
+    }
+
+    @GetMapping("/fee")
+    public R reward() {
+        BigDecimal stcFeePrice = (BigDecimal) redisCache.getValue(CommonConstant.STC_FEE_PRICE_KEY);
+        BigDecimal kikoFee = starConfig.getMining().getStcFee().subtract(stcFeePrice);
+        return R.success(kikoFee);
     }
 
 }
