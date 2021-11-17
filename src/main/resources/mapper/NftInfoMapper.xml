@@ -151,11 +151,11 @@
     </trim>
   </sql>
   <select id="selectByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftInfoDo" resultMap="BaseResultMap">
-    select  * from nft_info
+    select <include refid="Base_Column_List" /> from nft_info
     <include refid="baseQuery" />
   </select>
   <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.NftInfoDo" resultMap="BaseResultMap">
-    select  * from nft_info
+    select <include refid="Base_Column_List" /> from nft_info
     <include refid="baseQuery" />
   </select>
 </mapper>
