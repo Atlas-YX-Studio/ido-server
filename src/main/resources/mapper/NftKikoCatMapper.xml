@@ -18,28 +18,94 @@
     <result column="accessories_score" jdbcType="DECIMAL" property="accessoriesScore" />
     <result column="eyes" jdbcType="VARCHAR" property="eyes" />
     <result column="eyes_score" jdbcType="DECIMAL" property="eyesScore" />
+    <result column="hat" jdbcType="VARCHAR" property="hat" />
+    <result column="hat_score" jdbcType="DECIMAL" property="hatScore" />
+    <result column="costume" jdbcType="VARCHAR" property="costume" />
+    <result column="costume_score" jdbcType="DECIMAL" property="costumeScore" />
+    <result column="makeup" jdbcType="VARCHAR" property="makeup" />
+    <result column="makeup_score" jdbcType="DECIMAL" property="makeupScore" />
+    <result column="shoes" jdbcType="VARCHAR" property="shoes" />
+    <result column="shoes_score" jdbcType="DECIMAL" property="shoesScore" />
+    <result column="mouth" jdbcType="VARCHAR" property="mouth" />
+    <result column="mouth_score" jdbcType="DECIMAL" property="mouthScore" />
+    <result column="earring" jdbcType="VARCHAR" property="earring" />
+    <result column="earring_score" jdbcType="DECIMAL" property="earringScore" />
+    <result column="necklace" jdbcType="VARCHAR" property="necklace" />
+    <result column="necklace_score" jdbcType="DECIMAL" property="necklaceScore" />
+    <result column="neck" jdbcType="VARCHAR" property="neck" />
+    <result column="neck_score" jdbcType="DECIMAL" property="neckScore" />
+    <result column="hair" jdbcType="VARCHAR" property="hair" />
+    <result column="hair_score" jdbcType="DECIMAL" property="hairScore" />
+    <result column="horn" jdbcType="VARCHAR" property="horn" />
+    <result column="horn_score" jdbcType="DECIMAL" property="hornScore" />
+    <result column="hands" jdbcType="VARCHAR" property="hands" />
+    <result column="hands_score" jdbcType="DECIMAL" property="handsScore" />
+    <result column="body" jdbcType="VARCHAR" property="body" />
+    <result column="body_score" jdbcType="DECIMAL" property="bodyScore" />
+    <result column="skin" jdbcType="VARCHAR" property="skin" />
+    <result column="skin_score" jdbcType="DECIMAL" property="skinScore" />
+    <result column="tattoo" jdbcType="VARCHAR" property="tattoo" />
+    <result column="tattoo_score" jdbcType="DECIMAL" property="tattooScore" />
+    <result column="people" jdbcType="VARCHAR" property="people" />
+    <result column="people_score" jdbcType="DECIMAL" property="peopleScore" />
+    <result column="characteristic" jdbcType="VARCHAR" property="characteristic" />
+    <result column="characteristic_score" jdbcType="DECIMAL" property="characteristicScore" />
+    <result column="hobby" jdbcType="VARCHAR" property="hobby" />
+    <result column="hobby_score" jdbcType="DECIMAL" property="hobbyScore" />
+    <result column="zodiac" jdbcType="VARCHAR" property="zodiac" />
+    <result column="zodiac_score" jdbcType="DECIMAL" property="zodiacScore" />
+    <result column="action" jdbcType="VARCHAR" property="action" />
+    <result column="action_score" jdbcType="DECIMAL" property="actionScore" />
+    <result column="toys" jdbcType="VARCHAR" property="toys" />
+    <result column="toys_score" jdbcType="DECIMAL" property="toysScore" />
+    <result column="fruits" jdbcType="VARCHAR" property="fruits" />
+    <result column="fruits_score" jdbcType="DECIMAL" property="fruitsScore" />
+    <result column="vegetables" jdbcType="VARCHAR" property="vegetables" />
+    <result column="vegetables_score" jdbcType="DECIMAL" property="vegetablesScore" />
+    <result column="meat" jdbcType="VARCHAR" property="meat" />
+    <result column="meat_score" jdbcType="DECIMAL" property="meatScore" />
+    <result column="beverages" jdbcType="VARCHAR" property="beverages" />
+    <result column="beverages_score" jdbcType="DECIMAL" property="beveragesScore" />
+    <result column="food" jdbcType="VARCHAR" property="food" />
+    <result column="food_score" jdbcType="DECIMAL" property="foodScore" />
+    <result column="vehicle" jdbcType="VARCHAR" property="vehicle" />
+    <result column="vehicle_score" jdbcType="DECIMAL" property="vehicleScore" />
+    <result column="weather" jdbcType="VARCHAR" property="weather" />
+    <result column="weather_score" jdbcType="DECIMAL" property="weatherScore" />
+    <result column="month" jdbcType="VARCHAR" property="month" />
+    <result column="month_score" jdbcType="DECIMAL" property="monthScore" />
+    <result column="sports" jdbcType="VARCHAR" property="sports" />
+    <result column="sports_score" jdbcType="DECIMAL" property="sportsScore" />
+    <result column="music" jdbcType="VARCHAR" property="music" />
+    <result column="music_score" jdbcType="DECIMAL" property="musicScore" />
+    <result column="movies" jdbcType="VARCHAR" property="movies" />
+    <result column="movies_score" jdbcType="DECIMAL" property="moviesScore" />
+    <result column="season" jdbcType="VARCHAR" property="season" />
+    <result column="season_score" jdbcType="DECIMAL" property="seasonScore" />
+    <result column="outfit" jdbcType="VARCHAR" property="outfit" />
+    <result column="outfit_score" jdbcType="DECIMAL" property="outfitScore" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
     id, info_id, background, background_score, fur, fur_score, clothes, clothes_score, 
     facial_expression, facial_expression_score, head, head_score, accessories, accessories_score, 
-    eyes, eyes_score, create_time, update_time
+    eyes, eyes_score, hat, hat_score, costume, costume_score, makeup, makeup_score, shoes, 
+    shoes_score, mouth, mouth_score, earring, earring_score, necklace, necklace_score, 
+    neck, neck_score, hair, hair_score, horn, horn_score, hands, hands_score, body, body_score, 
+    skin, skin_score, tattoo, tattoo_score, people, people_score, characteristic, characteristic_score, 
+    hobby, hobby_score, zodiac, zodiac_score, action, action_score, toys, toys_score, 
+    fruits, fruits_score, vegetables, vegetables_score, meat, meat_score, beverages, 
+    beverages_score, food, food_score, vehicle, vehicle_score, weather, weather_score, 
+    month, month_score, sports, sports_score, music, music_score, movies, movies_score, 
+    season, season_score, outfit, outfit_score, create_time, update_time
   </sql>
-
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select
+    select 
     <include refid="Base_Column_List" />
     from nft_kiko_cat
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectByNftId" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from nft_kiko_cat
-    where info_id = #{infoId,jdbcType=BIGINT}
-  </select>
-
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from nft_kiko_cat
     where id = #{id,jdbcType=BIGINT}
@@ -50,14 +116,58 @@
       clothes, clothes_score, facial_expression, 
       facial_expression_score, head, head_score, 
       accessories, accessories_score, eyes, 
-      eyes_score, create_time, update_time
+      eyes_score, hat, hat_score, 
+      costume, costume_score, makeup, 
+      makeup_score, shoes, shoes_score, 
+      mouth, mouth_score, earring, 
+      earring_score, necklace, necklace_score, 
+      neck, neck_score, hair, 
+      hair_score, horn, horn_score, 
+      hands, hands_score, body, 
+      body_score, skin, skin_score, 
+      tattoo, tattoo_score, people, 
+      people_score, characteristic, characteristic_score, 
+      hobby, hobby_score, zodiac, 
+      zodiac_score, action, action_score, 
+      toys, toys_score, fruits, 
+      fruits_score, vegetables, vegetables_score, 
+      meat, meat_score, beverages, 
+      beverages_score, food, food_score, 
+      vehicle, vehicle_score, weather, 
+      weather_score, month, month_score, 
+      sports, sports_score, music, 
+      music_score, movies, movies_score, 
+      season, season_score, outfit, 
+      outfit_score, create_time, update_time
       )
     values (#{id,jdbcType=BIGINT}, #{infoId,jdbcType=BIGINT}, #{background,jdbcType=VARCHAR}, 
       #{backgroundScore,jdbcType=DECIMAL}, #{fur,jdbcType=VARCHAR}, #{furScore,jdbcType=DECIMAL}, 
       #{clothes,jdbcType=VARCHAR}, #{clothesScore,jdbcType=DECIMAL}, #{facialExpression,jdbcType=VARCHAR}, 
       #{facialExpressionScore,jdbcType=DECIMAL}, #{head,jdbcType=VARCHAR}, #{headScore,jdbcType=DECIMAL}, 
       #{accessories,jdbcType=VARCHAR}, #{accessoriesScore,jdbcType=DECIMAL}, #{eyes,jdbcType=VARCHAR}, 
-      #{eyesScore,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
+      #{eyesScore,jdbcType=DECIMAL}, #{hat,jdbcType=VARCHAR}, #{hatScore,jdbcType=DECIMAL}, 
+      #{costume,jdbcType=VARCHAR}, #{costumeScore,jdbcType=DECIMAL}, #{makeup,jdbcType=VARCHAR}, 
+      #{makeupScore,jdbcType=DECIMAL}, #{shoes,jdbcType=VARCHAR}, #{shoesScore,jdbcType=DECIMAL}, 
+      #{mouth,jdbcType=VARCHAR}, #{mouthScore,jdbcType=DECIMAL}, #{earring,jdbcType=VARCHAR}, 
+      #{earringScore,jdbcType=DECIMAL}, #{necklace,jdbcType=VARCHAR}, #{necklaceScore,jdbcType=DECIMAL}, 
+      #{neck,jdbcType=VARCHAR}, #{neckScore,jdbcType=DECIMAL}, #{hair,jdbcType=VARCHAR}, 
+      #{hairScore,jdbcType=DECIMAL}, #{horn,jdbcType=VARCHAR}, #{hornScore,jdbcType=DECIMAL}, 
+      #{hands,jdbcType=VARCHAR}, #{handsScore,jdbcType=DECIMAL}, #{body,jdbcType=VARCHAR}, 
+      #{bodyScore,jdbcType=DECIMAL}, #{skin,jdbcType=VARCHAR}, #{skinScore,jdbcType=DECIMAL}, 
+      #{tattoo,jdbcType=VARCHAR}, #{tattooScore,jdbcType=DECIMAL}, #{people,jdbcType=VARCHAR}, 
+      #{peopleScore,jdbcType=DECIMAL}, #{characteristic,jdbcType=VARCHAR}, #{characteristicScore,jdbcType=DECIMAL}, 
+      #{hobby,jdbcType=VARCHAR}, #{hobbyScore,jdbcType=DECIMAL}, #{zodiac,jdbcType=VARCHAR}, 
+      #{zodiacScore,jdbcType=DECIMAL}, #{action,jdbcType=VARCHAR}, #{actionScore,jdbcType=DECIMAL}, 
+      #{toys,jdbcType=VARCHAR}, #{toysScore,jdbcType=DECIMAL}, #{fruits,jdbcType=VARCHAR}, 
+      #{fruitsScore,jdbcType=DECIMAL}, #{vegetables,jdbcType=VARCHAR}, #{vegetablesScore,jdbcType=DECIMAL}, 
+      #{meat,jdbcType=VARCHAR}, #{meatScore,jdbcType=DECIMAL}, #{beverages,jdbcType=VARCHAR}, 
+      #{beveragesScore,jdbcType=DECIMAL}, #{food,jdbcType=VARCHAR}, #{foodScore,jdbcType=DECIMAL}, 
+      #{vehicle,jdbcType=VARCHAR}, #{vehicleScore,jdbcType=DECIMAL}, #{weather,jdbcType=VARCHAR}, 
+      #{weatherScore,jdbcType=DECIMAL}, #{month,jdbcType=VARCHAR}, #{monthScore,jdbcType=DECIMAL}, 
+      #{sports,jdbcType=VARCHAR}, #{sportsScore,jdbcType=DECIMAL}, #{music,jdbcType=VARCHAR}, 
+      #{musicScore,jdbcType=DECIMAL}, #{movies,jdbcType=VARCHAR}, #{moviesScore,jdbcType=DECIMAL}, 
+      #{season,jdbcType=VARCHAR}, #{seasonScore,jdbcType=DECIMAL}, #{outfit,jdbcType=VARCHAR}, 
+      #{outfitScore,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftKikoCatDo">
@@ -107,6 +217,204 @@
       </if>
       <if test="eyesScore != null">
         eyes_score = #{eyesScore,jdbcType=DECIMAL},
+      </if>
+      <if test="hat != null">
+        hat = #{hat,jdbcType=VARCHAR},
+      </if>
+      <if test="hatScore != null">
+        hat_score = #{hatScore,jdbcType=DECIMAL},
+      </if>
+      <if test="costume != null">
+        costume = #{costume,jdbcType=VARCHAR},
+      </if>
+      <if test="costumeScore != null">
+        costume_score = #{costumeScore,jdbcType=DECIMAL},
+      </if>
+      <if test="makeup != null">
+        makeup = #{makeup,jdbcType=VARCHAR},
+      </if>
+      <if test="makeupScore != null">
+        makeup_score = #{makeupScore,jdbcType=DECIMAL},
+      </if>
+      <if test="shoes != null">
+        shoes = #{shoes,jdbcType=VARCHAR},
+      </if>
+      <if test="shoesScore != null">
+        shoes_score = #{shoesScore,jdbcType=DECIMAL},
+      </if>
+      <if test="mouth != null">
+        mouth = #{mouth,jdbcType=VARCHAR},
+      </if>
+      <if test="mouthScore != null">
+        mouth_score = #{mouthScore,jdbcType=DECIMAL},
+      </if>
+      <if test="earring != null">
+        earring = #{earring,jdbcType=VARCHAR},
+      </if>
+      <if test="earringScore != null">
+        earring_score = #{earringScore,jdbcType=DECIMAL},
+      </if>
+      <if test="necklace != null">
+        necklace = #{necklace,jdbcType=VARCHAR},
+      </if>
+      <if test="necklaceScore != null">
+        necklace_score = #{necklaceScore,jdbcType=DECIMAL},
+      </if>
+      <if test="neck != null">
+        neck = #{neck,jdbcType=VARCHAR},
+      </if>
+      <if test="neckScore != null">
+        neck_score = #{neckScore,jdbcType=DECIMAL},
+      </if>
+      <if test="hair != null">
+        hair = #{hair,jdbcType=VARCHAR},
+      </if>
+      <if test="hairScore != null">
+        hair_score = #{hairScore,jdbcType=DECIMAL},
+      </if>
+      <if test="horn != null">
+        horn = #{horn,jdbcType=VARCHAR},
+      </if>
+      <if test="hornScore != null">
+        horn_score = #{hornScore,jdbcType=DECIMAL},
+      </if>
+      <if test="hands != null">
+        hands = #{hands,jdbcType=VARCHAR},
+      </if>
+      <if test="handsScore != null">
+        hands_score = #{handsScore,jdbcType=DECIMAL},
+      </if>
+      <if test="body != null">
+        body = #{body,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyScore != null">
+        body_score = #{bodyScore,jdbcType=DECIMAL},
+      </if>
+      <if test="skin != null">
+        skin = #{skin,jdbcType=VARCHAR},
+      </if>
+      <if test="skinScore != null">
+        skin_score = #{skinScore,jdbcType=DECIMAL},
+      </if>
+      <if test="tattoo != null">
+        tattoo = #{tattoo,jdbcType=VARCHAR},
+      </if>
+      <if test="tattooScore != null">
+        tattoo_score = #{tattooScore,jdbcType=DECIMAL},
+      </if>
+      <if test="people != null">
+        people = #{people,jdbcType=VARCHAR},
+      </if>
+      <if test="peopleScore != null">
+        people_score = #{peopleScore,jdbcType=DECIMAL},
+      </if>
+      <if test="characteristic != null">
+        characteristic = #{characteristic,jdbcType=VARCHAR},
+      </if>
+      <if test="characteristicScore != null">
+        characteristic_score = #{characteristicScore,jdbcType=DECIMAL},
+      </if>
+      <if test="hobby != null">
+        hobby = #{hobby,jdbcType=VARCHAR},
+      </if>
+      <if test="hobbyScore != null">
+        hobby_score = #{hobbyScore,jdbcType=DECIMAL},
+      </if>
+      <if test="zodiac != null">
+        zodiac = #{zodiac,jdbcType=VARCHAR},
+      </if>
+      <if test="zodiacScore != null">
+        zodiac_score = #{zodiacScore,jdbcType=DECIMAL},
+      </if>
+      <if test="action != null">
+        action = #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="actionScore != null">
+        action_score = #{actionScore,jdbcType=DECIMAL},
+      </if>
+      <if test="toys != null">
+        toys = #{toys,jdbcType=VARCHAR},
+      </if>
+      <if test="toysScore != null">
+        toys_score = #{toysScore,jdbcType=DECIMAL},
+      </if>
+      <if test="fruits != null">
+        fruits = #{fruits,jdbcType=VARCHAR},
+      </if>
+      <if test="fruitsScore != null">
+        fruits_score = #{fruitsScore,jdbcType=DECIMAL},
+      </if>
+      <if test="vegetables != null">
+        vegetables = #{vegetables,jdbcType=VARCHAR},
+      </if>
+      <if test="vegetablesScore != null">
+        vegetables_score = #{vegetablesScore,jdbcType=DECIMAL},
+      </if>
+      <if test="meat != null">
+        meat = #{meat,jdbcType=VARCHAR},
+      </if>
+      <if test="meatScore != null">
+        meat_score = #{meatScore,jdbcType=DECIMAL},
+      </if>
+      <if test="beverages != null">
+        beverages = #{beverages,jdbcType=VARCHAR},
+      </if>
+      <if test="beveragesScore != null">
+        beverages_score = #{beveragesScore,jdbcType=DECIMAL},
+      </if>
+      <if test="food != null">
+        food = #{food,jdbcType=VARCHAR},
+      </if>
+      <if test="foodScore != null">
+        food_score = #{foodScore,jdbcType=DECIMAL},
+      </if>
+      <if test="vehicle != null">
+        vehicle = #{vehicle,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleScore != null">
+        vehicle_score = #{vehicleScore,jdbcType=DECIMAL},
+      </if>
+      <if test="weather != null">
+        weather = #{weather,jdbcType=VARCHAR},
+      </if>
+      <if test="weatherScore != null">
+        weather_score = #{weatherScore,jdbcType=DECIMAL},
+      </if>
+      <if test="month != null">
+        month = #{month,jdbcType=VARCHAR},
+      </if>
+      <if test="monthScore != null">
+        month_score = #{monthScore,jdbcType=DECIMAL},
+      </if>
+      <if test="sports != null">
+        sports = #{sports,jdbcType=VARCHAR},
+      </if>
+      <if test="sportsScore != null">
+        sports_score = #{sportsScore,jdbcType=DECIMAL},
+      </if>
+      <if test="music != null">
+        music = #{music,jdbcType=VARCHAR},
+      </if>
+      <if test="musicScore != null">
+        music_score = #{musicScore,jdbcType=DECIMAL},
+      </if>
+      <if test="movies != null">
+        movies = #{movies,jdbcType=VARCHAR},
+      </if>
+      <if test="moviesScore != null">
+        movies_score = #{moviesScore,jdbcType=DECIMAL},
+      </if>
+      <if test="season != null">
+        season = #{season,jdbcType=VARCHAR},
+      </if>
+      <if test="seasonScore != null">
+        season_score = #{seasonScore,jdbcType=DECIMAL},
+      </if>
+      <if test="outfit != null">
+        outfit = #{outfit,jdbcType=VARCHAR},
+      </if>
+      <if test="outfitScore != null">
+        outfit_score = #{outfitScore,jdbcType=DECIMAL},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -166,6 +474,204 @@
       </if>
       <if test="null != eyesScore">
          and eyes_score = #{eyesScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != hat">
+         and hat = #{hat,jdbcType=VARCHAR}
+      </if>
+      <if test="null != hatScore">
+         and hat_score = #{hatScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != costume">
+         and costume = #{costume,jdbcType=VARCHAR}
+      </if>
+      <if test="null != costumeScore">
+         and costume_score = #{costumeScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != makeup">
+         and makeup = #{makeup,jdbcType=VARCHAR}
+      </if>
+      <if test="null != makeupScore">
+         and makeup_score = #{makeupScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != shoes">
+         and shoes = #{shoes,jdbcType=VARCHAR}
+      </if>
+      <if test="null != shoesScore">
+         and shoes_score = #{shoesScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != mouth">
+         and mouth = #{mouth,jdbcType=VARCHAR}
+      </if>
+      <if test="null != mouthScore">
+         and mouth_score = #{mouthScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != earring">
+         and earring = #{earring,jdbcType=VARCHAR}
+      </if>
+      <if test="null != earringScore">
+         and earring_score = #{earringScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != necklace">
+         and necklace = #{necklace,jdbcType=VARCHAR}
+      </if>
+      <if test="null != necklaceScore">
+         and necklace_score = #{necklaceScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != neck">
+         and neck = #{neck,jdbcType=VARCHAR}
+      </if>
+      <if test="null != neckScore">
+         and neck_score = #{neckScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != hair">
+         and hair = #{hair,jdbcType=VARCHAR}
+      </if>
+      <if test="null != hairScore">
+         and hair_score = #{hairScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != horn">
+         and horn = #{horn,jdbcType=VARCHAR}
+      </if>
+      <if test="null != hornScore">
+         and horn_score = #{hornScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != hands">
+         and hands = #{hands,jdbcType=VARCHAR}
+      </if>
+      <if test="null != handsScore">
+         and hands_score = #{handsScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != body">
+         and body = #{body,jdbcType=VARCHAR}
+      </if>
+      <if test="null != bodyScore">
+         and body_score = #{bodyScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != skin">
+         and skin = #{skin,jdbcType=VARCHAR}
+      </if>
+      <if test="null != skinScore">
+         and skin_score = #{skinScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != tattoo">
+         and tattoo = #{tattoo,jdbcType=VARCHAR}
+      </if>
+      <if test="null != tattooScore">
+         and tattoo_score = #{tattooScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != people">
+         and people = #{people,jdbcType=VARCHAR}
+      </if>
+      <if test="null != peopleScore">
+         and people_score = #{peopleScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != characteristic">
+         and characteristic = #{characteristic,jdbcType=VARCHAR}
+      </if>
+      <if test="null != characteristicScore">
+         and characteristic_score = #{characteristicScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != hobby">
+         and hobby = #{hobby,jdbcType=VARCHAR}
+      </if>
+      <if test="null != hobbyScore">
+         and hobby_score = #{hobbyScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != zodiac">
+         and zodiac = #{zodiac,jdbcType=VARCHAR}
+      </if>
+      <if test="null != zodiacScore">
+         and zodiac_score = #{zodiacScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != action">
+         and action = #{action,jdbcType=VARCHAR}
+      </if>
+      <if test="null != actionScore">
+         and action_score = #{actionScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != toys">
+         and toys = #{toys,jdbcType=VARCHAR}
+      </if>
+      <if test="null != toysScore">
+         and toys_score = #{toysScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != fruits">
+         and fruits = #{fruits,jdbcType=VARCHAR}
+      </if>
+      <if test="null != fruitsScore">
+         and fruits_score = #{fruitsScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != vegetables">
+         and vegetables = #{vegetables,jdbcType=VARCHAR}
+      </if>
+      <if test="null != vegetablesScore">
+         and vegetables_score = #{vegetablesScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != meat">
+         and meat = #{meat,jdbcType=VARCHAR}
+      </if>
+      <if test="null != meatScore">
+         and meat_score = #{meatScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != beverages">
+         and beverages = #{beverages,jdbcType=VARCHAR}
+      </if>
+      <if test="null != beveragesScore">
+         and beverages_score = #{beveragesScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != food">
+         and food = #{food,jdbcType=VARCHAR}
+      </if>
+      <if test="null != foodScore">
+         and food_score = #{foodScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != vehicle">
+         and vehicle = #{vehicle,jdbcType=VARCHAR}
+      </if>
+      <if test="null != vehicleScore">
+         and vehicle_score = #{vehicleScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != weather">
+         and weather = #{weather,jdbcType=VARCHAR}
+      </if>
+      <if test="null != weatherScore">
+         and weather_score = #{weatherScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != month">
+         and month = #{month,jdbcType=VARCHAR}
+      </if>
+      <if test="null != monthScore">
+         and month_score = #{monthScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != sports">
+         and sports = #{sports,jdbcType=VARCHAR}
+      </if>
+      <if test="null != sportsScore">
+         and sports_score = #{sportsScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != music">
+         and music = #{music,jdbcType=VARCHAR}
+      </if>
+      <if test="null != musicScore">
+         and music_score = #{musicScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != movies">
+         and movies = #{movies,jdbcType=VARCHAR}
+      </if>
+      <if test="null != moviesScore">
+         and movies_score = #{moviesScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != season">
+         and season = #{season,jdbcType=VARCHAR}
+      </if>
+      <if test="null != seasonScore">
+         and season_score = #{seasonScore,jdbcType=DECIMAL}
+      </if>
+      <if test="null != outfit">
+         and outfit = #{outfit,jdbcType=VARCHAR}
+      </if>
+      <if test="null != outfitScore">
+         and outfit_score = #{outfitScore,jdbcType=DECIMAL}
       </if>
       <if test="null != createTime">
          and create_time = #{createTime,jdbcType=BIGINT}
