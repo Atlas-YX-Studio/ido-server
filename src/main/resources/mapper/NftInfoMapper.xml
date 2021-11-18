@@ -24,7 +24,13 @@
   <sql id="Blob_Column_List">
     image_data
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nft_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByPrimaryKeyWithBLOBs" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select
     <include refid="Base_Column_List" />
     ,
@@ -35,8 +41,6 @@
   <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from nft_info
     <include refid="baseQuery" />
     order by ${order} ${sort}

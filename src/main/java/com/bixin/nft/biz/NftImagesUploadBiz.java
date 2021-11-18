@@ -102,7 +102,10 @@ public class NftImagesUploadBiz {
                     log.error("nft_cloudflare info data is empty");
                     break;
                 }
-                nftInfoDos.forEach(this::uploadImage);
+                nftInfoDos.forEach(nftInfoDo -> {
+                    NftInfoDo nftInfoDoImage = nftInfoService.selectByIdWithImage(nftInfoDo.getId());
+                    uploadImage(nftInfoDoImage);
+                });
             } catch (Exception e) {
                 log.error("nft_cloudflare exception", e);
             }

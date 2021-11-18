@@ -1,7 +1,6 @@
 package com.bixin.nft.core.mapper;
 
 import com.bixin.nft.bean.DO.NftInfoDo;
-import com.bixin.nft.bean.DO.NftKikoCatDo;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,12 @@ public interface NftInfoMapper {
      * @param id
      */
     NftInfoDo selectByPrimaryKey(Long id);
+
+    /**
+     * 根据主键id查询
+     * @param id
+     */
+    NftInfoDo selectByPrimaryKeyWithBLOBs(Long id);
 
     /**
      * 修改数据
