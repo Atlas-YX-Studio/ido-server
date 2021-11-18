@@ -212,13 +212,13 @@ public class NftImagesUploadBiz {
         }
     }
 
-    private MutablePair<String, String> splitImage(String data) {
-        String regex = "^data:img\\/([A-Za-z]+);base64,(.*)";
+    public MutablePair<String, String> splitImage(String data) {
+        String regex = "^data:(img|image)\\/([A-Za-z]+);base64,(.*)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(data);
         while (matcher.find()) {
-            if (matcher.groupCount() == 2) {
-                return new MutablePair<>(matcher.group(1), matcher.group(2));
+            if (matcher.groupCount() == 3) {
+                return new MutablePair<>(matcher.group(2), matcher.group(3));
             }
         }
         return new MutablePair<>("", "");
