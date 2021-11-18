@@ -98,15 +98,15 @@ public class NftGroupServiceImpl implements NftGroupService {
     /**
      * 根据分页查询盲盒
      *
-     * @param enabled
+     * @param offering
      * @param pageSize
      * @param pageNum
      * @return
      */
     @Override
-    public List<NftGroupDo> getListByPage(Boolean enabled, long pageSize, long pageNum, boolean predicateNextPage) {
+    public List<NftGroupDo> getListByPage(Boolean offering, long pageSize, long pageNum, boolean predicateNextPage) {
         Map<String, Object> paramMap = new HashMap<>();
-        Optional.ofNullable(enabled).filter(Objects::nonNull).ifPresent(data -> paramMap.put("enabled", enabled));
+        Optional.ofNullable(offering).filter(Objects::nonNull).ifPresent(data -> paramMap.put("offering", offering));
         paramMap.put("pageSize", pageSize);
         paramMap.put("offset", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
         paramMap.put("sort", "id");
