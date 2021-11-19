@@ -66,6 +66,16 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * @explain: 查询NftInfoDo对象
+     * @param: id
+     * @return: NftInfoDo
+     */
+    @Override
+    public NftInfoDo selectByIdWithImage(Long id) {
+        return nftInfoMapper.selectByPrimaryKeyWithBLOBs(id);
+    }
+
+    /**
+     * @explain: 查询NftInfoDo对象
      * @param: model 对象参数
      * @return: NftInfoDo 对象
      */

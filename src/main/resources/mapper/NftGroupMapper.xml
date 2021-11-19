@@ -344,8 +344,8 @@
   <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
     select * from nft_group
     where 1=1
-    <if test="enabled != null">
-      and enabled = #{enabled}
+    <if test="offering != null">
+      and offering = #{offering}
     </if>
     order by
     <if test="sort != null">

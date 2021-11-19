@@ -1,11 +1,8 @@
 package com.bixin.nft.core.service;
 
 import com.bixin.nft.bean.DO.NftInfoDo;
-import com.bixin.nft.bean.DO.NftKikoCatDo;
-import com.bixin.nft.bean.vo.NftInfoVo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @interface: NftInfoService
@@ -42,6 +39,13 @@ public interface NftInfoService {
      * @return: NftInfoDo
      */
     NftInfoDo selectById(Long id);
+
+    /**
+     * @explain: 查询NftInfoDo对象
+     * @param: id
+     * @return: NftInfoDo
+     */
+    NftInfoDo selectByIdWithImage(Long id);
 
     /**
      * @explain: 查询NftInfoDo对象

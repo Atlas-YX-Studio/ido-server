@@ -66,11 +66,11 @@ public interface NftGroupService {
     /**
      * 分页查询
      *
-     * @param enabled
+     * @param offering
      * @param pageSize
      * @param pageNum
      * @return
      */
-    List<NftGroupDo> getListByPage(Boolean enabled, long pageSize, long pageNum, boolean predicateNextPage);
+    List<NftGroupDo> getListByPage(Boolean offering, long pageSize, long pageNum, boolean predicateNextPage);
 
 }
