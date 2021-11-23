@@ -57,6 +57,6 @@ public interface NftMarketService {
 
     void deleteAll();
 
-    List<Map<String, Object>> selectByPage(boolean predicateNextPage, String type, long pageSize, long pageNum, int sort, long groupId, String currency, String open);
+    List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open);
 
 }

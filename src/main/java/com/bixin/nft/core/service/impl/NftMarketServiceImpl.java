@@ -98,7 +98,7 @@ public class NftMarketServiceImpl implements NftMarketService {
 
 
     @Override
-    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, String type, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
+    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
@@ -112,20 +112,14 @@ public class NftMarketServiceImpl implements NftMarketService {
             paramMap.put("groupId", groupId);
         }
 
-        if(StringUtils.isEmpty(type)){
+        if (sort == 0) {
             paramMap.put("sort", "mm.create_time desc");
-        } else if("sellPrice".equals(type)){
-           if (sort == 1) {
-                paramMap.put("sort", "mm.sell_price desc, mm.create_time desc");
-            } else if (sort == 2) {
-                paramMap.put("sort", "mm.sell_price asc, mm.create_time desc");
-            }
-        } else if("rare".equals(type)){
-            if (sort == 1) {
-                paramMap.put("sort", "ff.score desc, mm.create_time desc");
-            } else if (sort == 2) {
-                paramMap.put("sort", "ff.score asc, mm.create_time desc");
-            }
+        } else if (sort == 1) {
+            paramMap.put("sort", "mm.sell_price desc, mm.create_time desc");
+        } else if (sort == 2) {
+            paramMap.put("sort", "mm.sell_price asc, mm.create_time desc");
+        }else if (sort == 3) {
+            paramMap.put("sort", "ff.score desc, mm.create_time desc");
         }
 
         return nftMarketMapper.selectPages(paramMap);

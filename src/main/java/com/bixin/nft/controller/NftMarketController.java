@@ -2,12 +2,10 @@ package com.bixin.nft.controller;
 
 import com.bixin.ido.server.bean.vo.wrap.P;
 import com.bixin.nft.bean.DO.NftGroupDo;
-import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.bean.vo.NftSelfSellingVo;
 import com.bixin.nft.core.service.NftGroupService;
 import com.bixin.nft.core.service.NftMarketService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +37,6 @@ public class NftMarketController {
     public P getALlByPage(@RequestParam(value = "groupId", defaultValue = "0") long groupId,
                           @RequestParam(value = "currency", defaultValue = "all") String currency,
                           @RequestParam(value = "open", defaultValue = "all") String open,
-                          @RequestParam(value = "type", defaultValue = "") String type,
                           @RequestParam(value = "sort", defaultValue = "0") int sort,
                           @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "0") long pageNum) {
@@ -48,7 +45,7 @@ public class NftMarketController {
                 || StringUtils.isEmpty(open) || StringUtils.isEmpty(currency)) {
             return P.failed("parameter is invalid");
         }
-        List<Map<String, Object>> maps = nftMarketService.selectByPage(true, type, pageSize + 1, pageNum, sort, groupId, currency, open);
+        List<Map<String, Object>> maps = nftMarketService.selectByPage(true, pageSize + 1, pageNum, sort, groupId, currency, open);
         if (CollectionUtils.isEmpty(maps)) {
             return P.success(null, false);
         }
