@@ -52,6 +52,29 @@ public class NftContractController {
         return R.success(true);
     }
 
+    @GetMapping("/nft/createNoBox")
+    public R createNFTWithNoBox(@RequestParam String secretKey,
+                                @RequestParam Long groupId) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
+        }
+        nftContractService.createNFTWithNoBox(groupId);
+        return R.success(true);
+    }
+
+    @GetMapping("/nft/transferNft")
+    public R transferNft(@RequestParam String secretKey,
+                                @RequestParam Long groupId,
+                                @RequestParam Long startNftId,
+                                @RequestParam Long endNftId,
+                                @RequestParam String toAddress) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
+        }
+        nftContractService.transferNFT(groupId, startNftId, endNftId, toAddress);
+        return R.success(true);
+    }
+
     @GetMapping("/nft/buyback-init")
     public R initBuyBackNFT(@RequestParam(value = "secretKey") String secretKey,
                             @RequestParam(value = "groupId") Long groupId,
