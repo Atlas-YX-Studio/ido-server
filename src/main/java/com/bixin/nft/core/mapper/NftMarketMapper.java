@@ -47,4 +47,6 @@ public interface NftMarketMapper {
 
     List<NftMarketDo> selectByPage(Map<String, Object> paramMap);
 
+    List<Map<String, Object>> selectPages(Map<String, Object> paramMap);
+
 }

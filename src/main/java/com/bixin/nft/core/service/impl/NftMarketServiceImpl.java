@@ -98,12 +98,12 @@ public class NftMarketServiceImpl implements NftMarketService {
 
 
     @Override
-    public List<NftMarketDo> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
+    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, String type, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
         if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
-            paramMap.put("type", open);
+            paramMap.put("type", open.toLowerCase());
         }
         if (StringUtils.isNoneEmpty(currency) && !"all".equalsIgnoreCase(currency)) {
             paramMap.put("payToken", currency);
@@ -111,14 +111,24 @@ public class NftMarketServiceImpl implements NftMarketService {
         if (groupId > 0) {
             paramMap.put("groupId", groupId);
         }
-        if (sort == 0) {
-            paramMap.put("sort", "create_time desc");
-        } else if (sort == 1) {
-            paramMap.put("sort", "sell_price desc, create_time desc");
-        } else if (sort == 2) {
-            paramMap.put("sort", "sell_price asc, create_time desc");
+
+        if(StringUtils.isEmpty(type)){
+            paramMap.put("sort", "mm.create_time desc");
+        } else if("sellPrice".equals(type)){
+           if (sort == 1) {
+                paramMap.put("sort", "mm.sell_price desc, mm.create_time desc");
+            } else if (sort == 2) {
+                paramMap.put("sort", "mm.sell_price asc, mm.create_time desc");
+            }
+        } else if("rare".equals(type)){
+            if (sort == 1) {
+                paramMap.put("sort", "ff.score desc, mm.create_time desc");
+            } else if (sort == 2) {
+                paramMap.put("sort", "ff.score asc, mm.create_time desc");
+            }
         }
-        return nftMarketMapper.selectByPage(paramMap);
+
+        return nftMarketMapper.selectPages(paramMap);
     }
 
 }

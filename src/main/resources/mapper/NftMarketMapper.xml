@@ -28,21 +28,49 @@
     from nft_market
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+   <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from nft_market
-    where 1=1
+    <where>
+      <if test="groupId != null">
+         and group_id = #{groupId}
+      </if>
+      <if test="payToken != null">
+        and pay_token = #{payToken}
+      </if>
+      <if test="type != null">
+        and type = #{type}
+      </if>
+    </where>
+    order by
+    <if test="sort != null">
+      ${sort}
+    </if>
+    <if test="pageFrom != null and pageSize !=null">
+      limit #{pageFrom},#{pageSize}
+    </if>
+  </select>
+  <select id="selectPages" parameterType="map" resultType="map">
+    SELECT
+        mm.*,
+        ff.score
+    FROM
+        nft_market mm
+    LEFT JOIN
+        nft_info ff
+    ON mm.group_id = ff.group_id
+    AND mm.nft_box_id = ff.nft_id
     <if test="groupId != null">
-       and group_id = #{groupId}
+      AND mm.group_id = #{groupId}
     </if>
     <if test="payToken != null">
-      and pay_token = #{payToken}
+      AND mm.pay_token = #{payToken}
     </if>
     <if test="type != null">
-      and type = #{type}
+      AND mm.type = #{type}
     </if>
-    order by
+    ORDER BY
     <if test="sort != null">
       ${sort}
     </if>

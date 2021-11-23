@@ -3,6 +3,7 @@ package com.bixin.nft.core.service;
 import com.bixin.nft.bean.DO.NftMarketDo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @interface: NftMarketService
@@ -56,6 +57,6 @@ public interface NftMarketService {
 
     void deleteAll();
 
-    List<NftMarketDo> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open);
+    List<Map<String, Object>> selectByPage(boolean predicateNextPage, String type, long pageSize, long pageNum, int sort, long groupId, String currency, String open);
 
 }

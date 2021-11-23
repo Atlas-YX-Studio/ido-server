@@ -39,6 +39,7 @@ public class NftMarketController {
     public P getALlByPage(@RequestParam(value = "groupId", defaultValue = "0") long groupId,
                           @RequestParam(value = "currency", defaultValue = "all") String currency,
                           @RequestParam(value = "open", defaultValue = "all") String open,
+                          @RequestParam(value = "type", defaultValue = "") String type,
                           @RequestParam(value = "sort", defaultValue = "0") int sort,
                           @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "0") long pageNum) {
@@ -47,39 +48,37 @@ public class NftMarketController {
                 || StringUtils.isEmpty(open) || StringUtils.isEmpty(currency)) {
             return P.failed("parameter is invalid");
         }
-        List<NftMarketDo> nftMarketDos = nftMarketService.selectByPage(true, pageSize + 1, pageNum, sort, groupId, currency, open);
-        if (CollectionUtils.isEmpty(nftMarketDos)) {
+        List<Map<String, Object>> maps = nftMarketService.selectByPage(true, type, pageSize + 1, pageNum, sort, groupId, currency, open);
+        if (CollectionUtils.isEmpty(maps)) {
             return P.success(null, false);
         }
 
         boolean hasNext = false;
-        if (nftMarketDos.size() > pageSize) {
-            nftMarketDos = nftMarketDos.subList(0, nftMarketDos.size() - 1);
+        if (maps.size() > pageSize) {
+            maps = maps.subList(0, maps.size() - 1);
             hasNext = true;
         }
 
-        Set<Long> groupIds = nftMarketDos.stream().map(p -> p.getGroupId()).collect(Collectors.toSet());
+        List<NftSelfSellingVo> list = new ArrayList<>();
+        maps.stream().forEach(p -> list.add(NftSelfSellingVo.of(p)));
+
+        Set<Long> groupIds = list.stream().map(p -> p.getGroupId()).collect(Collectors.toSet());
         Map<Long, NftGroupDo> map = new HashMap<>();
         groupIds.forEach(id -> {
             NftGroupDo nftGroupDo = nftGroupService.selectById(id);
             map.put(id, nftGroupDo);
         });
 
-        List<NftSelfSellingVo> list = new ArrayList<>();
-        for (NftMarketDo p : nftMarketDos) {
-            NftSelfSellingVo.NftSelfSellingVoBuilder builder = NftSelfSellingVo.builder();
+        for (NftSelfSellingVo p : list) {
             NftGroupDo nftGroupDo = map.get(p.getGroupId());
             if (Objects.nonNull(nftGroupDo)) {
                 String boxToken = nftGroupDo.getBoxToken();
                 String nftMeta = nftGroupDo.getNftMeta();
                 String nftBody = nftGroupDo.getNftBody();
-                builder.boxToken(boxToken)
-                        .nftMeta(nftMeta)
-                        .nftBody(nftBody);
+                p.setBoxToken(boxToken);
+                p.setNftMeta(nftMeta);
+                p.setNftBody(nftBody);
             }
-            NftSelfSellingVo sellingVo = builder.build();
-            BeanUtils.copyProperties(p, sellingVo);
-            list.add(sellingVo);
         }
 
         return P.success(list, hasNext);
