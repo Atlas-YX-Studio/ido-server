@@ -28,21 +28,20 @@
     from nft_market
     where id = #{id,jdbcType=BIGINT}
   </select>
-   <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from nft_market
-    <where>
-      <if test="groupId != null">
-         and group_id = #{groupId}
-      </if>
-      <if test="payToken != null">
-        and pay_token = #{payToken}
-      </if>
-      <if test="type != null">
-        and type = #{type}
-      </if>
-    </where>
+    where 1=1
+    <if test="groupId != null">
+       and group_id = #{groupId}
+    </if>
+    <if test="payToken != null">
+      and pay_token = #{payToken}
+    </if>
+    <if test="type != null">
+      and type = #{type}
+    </if>
     order by
     <if test="sort != null">
       ${sort}
@@ -53,12 +52,12 @@
   </select>
   <select id="selectPages" parameterType="map" resultType="map">
     SELECT
-        mm.*,
-        ff.score
+    mm.*,
+    ff.score
     FROM
-        nft_market mm
+    nft_market mm
     LEFT JOIN
-        nft_info ff
+    nft_info ff
     ON mm.group_id = ff.group_id
     AND mm.nft_box_id = ff.id
     <where>
@@ -82,14 +81,14 @@
   </select>
   <select id="selectScoreByOwner" parameterType="map" resultType="map">
     SELECT
-    mm.*,
-    ff.score
+      mm.*,
+      ff.score
     FROM
-    nft_market mm
-    LEFT JOIN
-    nft_info ff
-    ON mm.group_id = ff.group_id
-    AND mm.nft_box_id = ff.id
+      nft_market mm
+        LEFT JOIN
+      nft_info ff
+      ON mm.group_id = ff.group_id
+        AND mm.nft_box_id = ff.id
     WHERE mm.owner =  #{owner}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

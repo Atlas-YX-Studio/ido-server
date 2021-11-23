@@ -39,6 +39,11 @@ public class NftGroupDo implements Serializable {
     private String name;
 
     /**
+     * 系列发售图片
+     */
+    private String seriesLogo;
+
+    /**
      * 系列总发售数量
      */
     private Integer seriesQuantity;
