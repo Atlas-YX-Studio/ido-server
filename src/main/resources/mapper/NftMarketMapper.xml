@@ -61,15 +61,17 @@
         nft_info ff
     ON mm.group_id = ff.group_id
     AND mm.nft_box_id = ff.nft_id
-    <if test="groupId != null">
-      AND mm.group_id = #{groupId}
-    </if>
-    <if test="payToken != null">
-      AND mm.pay_token = #{payToken}
-    </if>
-    <if test="type != null">
-      AND mm.type = #{type}
-    </if>
+    <where>
+      <if test="groupId != null">
+        AND mm.group_id = #{groupId}
+      </if>
+      <if test="payToken != null">
+        AND mm.pay_token = #{payToken}
+      </if>
+      <if test="type != null">
+        AND mm.type = #{type}
+      </if>
+    </where>
     ORDER BY
     <if test="sort != null">
       ${sort}
