@@ -125,4 +125,9 @@ public class NftMarketServiceImpl implements NftMarketService {
         return nftMarketMapper.selectPages(paramMap);
     }
 
+    @Override
+    public List<Map<String, Object>> selectScoreByOwner(String owner) {
+        return nftMarketMapper.selectScoreByOwner(owner);
+    }
+
 }

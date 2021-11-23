@@ -59,4 +59,6 @@ public interface NftMarketService {
 
     List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open);
 
+    List<Map<String, Object>> selectScoreByOwner(String owner);
+
 }

@@ -80,6 +80,18 @@
       limit #{pageFrom},#{pageSize}
     </if>
   </select>
+  <select id="selectScoreByOwner" parameterType="map" resultType="map">
+    SELECT
+    mm.*,
+    ff.score
+    FROM
+    nft_market mm
+    LEFT JOIN
+    nft_info ff
+    ON mm.group_id = ff.group_id
+    AND mm.nft_box_id = ff.id
+    WHERE mm.owner =  #{owner}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from nft_market
     where id = #{id,jdbcType=BIGINT}
