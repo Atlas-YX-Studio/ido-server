@@ -45,35 +45,32 @@ public class NftStoreController {
         if (StringUtils.isEmpty(userAddress)) {
             return R.failed("parameter is invalid");
         }
-        NftMarketDo marketDo = NftMarketDo.builder().owner(userAddress).build();
-        List<NftMarketDo> nftMarketDos = nftMarketService.listByObject(marketDo);
 
-        if (CollectionUtils.isEmpty(nftMarketDos)) {
+        List<Map<String, Object>> maps = nftMarketService.selectScoreByOwner(userAddress);
+        if (CollectionUtils.isEmpty(maps)) {
             return R.success(null);
         }
 
-        Set<Long> groupIds = nftMarketDos.stream().map(p -> p.getGroupId()).collect(Collectors.toSet());
+        List<NftSelfSellingVo> list = new ArrayList<>();
+        maps.stream().forEach(p -> list.add(NftSelfSellingVo.of(p)));
+
+        Set<Long> groupIds = list.stream().map(p -> p.getGroupId()).collect(Collectors.toSet());
         Map<Long, NftGroupDo> map = new HashMap<>();
         groupIds.forEach(id -> {
             NftGroupDo nftGroupDo = nftGroupService.selectById(id);
             map.put(id, nftGroupDo);
         });
 
-        List<NftSelfSellingVo> list = new ArrayList<>();
-        for (NftMarketDo p : nftMarketDos) {
-            NftSelfSellingVo.NftSelfSellingVoBuilder builder = NftSelfSellingVo.builder();
+        for (NftSelfSellingVo p : list) {
             NftGroupDo nftGroupDo = map.get(p.getGroupId());
             if (Objects.nonNull(nftGroupDo)) {
                 String boxToken = nftGroupDo.getBoxToken();
                 String nftMeta = nftGroupDo.getNftMeta();
                 String nftBody = nftGroupDo.getNftBody();
-                builder.boxToken(boxToken)
-                        .nftMeta(nftMeta)
-                        .nftBody(nftBody);
+                p.setBoxToken(boxToken);
+                p.setNftMeta(nftMeta);
+                p.setNftBody(nftBody);
             }
-            NftSelfSellingVo sellingVo = builder.build();
-            BeanUtils.copyProperties(p, sellingVo);
-            list.add(sellingVo);
         }
 
         return R.success(list);
