@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode()
 @NoArgsConstructor
 @AllArgsConstructor
-public class RewardVO {
+public class TradingMingRewardVO {
 
     /**
      * 待领取收益

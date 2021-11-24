@@ -19,6 +19,8 @@ public interface ISwapPathService {
 
     List<SwapPathServiceImpl.Pool> getPoolList();
 
+    Map<String, SwapPathServiceImpl.Pool> getLiquidityPoolMap();
+
     Map<String, BigDecimal> getCoinPriceInfos();
 
     List<CoinStatsInfoVO> coinInfos(int pageNum, int pageSize);

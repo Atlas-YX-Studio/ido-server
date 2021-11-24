@@ -4,10 +4,9 @@ import com.bixin.ido.server.bean.DO.MiningHarvestRecordDo;
 import com.bixin.ido.server.bean.DO.TradingPoolDo;
 import com.bixin.ido.server.bean.DO.TradingPoolUserDo;
 import com.bixin.ido.server.bean.DO.TradingRewardUserDo;
-import com.bixin.ido.server.bean.vo.RewardVO;
+import com.bixin.ido.server.bean.vo.TradingMingRewardVO;
 import com.bixin.ido.server.bean.vo.TradingMiningOverviewVO;
 import com.bixin.ido.server.bean.vo.TradingPoolVo;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,11 +31,11 @@ public interface ITradingMiningService {
 
     void harvestFreedRewardFailed(List<TradingRewardUserDo> tradingRewardUserDos, MiningHarvestRecordDo miningHarvestRecordDo);
 
-    void currentReward(Long blockId);
+    void computeReward(Long blockId);
 
     void unlockReward();
 
-    RewardVO reward(String address);
+    TradingMingRewardVO reward(String address);
 
     List<TradingPoolVo> poolList(String address);
 

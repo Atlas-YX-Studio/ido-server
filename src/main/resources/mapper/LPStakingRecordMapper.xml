@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.core.mapper.LPStakingRecordMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.LPStakingRecordDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pair_name" jdbcType="VARCHAR" property="pairName" />
+    <result column="token_a" jdbcType="VARCHAR" property="tokenA" />
+    <result column="token_b" jdbcType="VARCHAR" property="tokenB" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="seq_id" jdbcType="BIGINT" property="seqId" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pair_name, token_a, token_b, type, amount, seq_id, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from lp_staking_records
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from lp_staking_records
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.LPStakingRecordDo" useGeneratedKeys="true">
+    insert into lp_staking_records (id, pair_name, token_a, 
+      token_b, type, amount, 
+      seq_id, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{pairName,jdbcType=VARCHAR}, #{tokenA,jdbcType=VARCHAR}, 
+      #{tokenB,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
+      #{seqId,jdbcType=BIGINT}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPStakingRecordDo">
+    update lp_staking_records
+    <set>
+      <if test="pairName != null">
+        pair_name = #{pairName,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenA != null">
+        token_a = #{tokenA,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenB != null">
+        token_b = #{tokenB,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="seqId != null">
+        seq_id = #{seqId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != pairName">
+         and pair_name = #{pairName,jdbcType=VARCHAR}
+      </if>
+      <if test="null != tokenA">
+         and token_a = #{tokenA,jdbcType=VARCHAR}
+      </if>
+      <if test="null != tokenB">
+         and token_b = #{tokenB,jdbcType=VARCHAR}
+      </if>
+      <if test="null != type">
+         and type = #{type,jdbcType=VARCHAR}
+      </if>
+      <if test="null != amount">
+         and amount = #{amount,jdbcType=DECIMAL}
+      </if>
+      <if test="null != seqId">
+         and seq_id = #{seqId,jdbcType=BIGINT}
+      </if>
+      <if test="null != createTime">
+         and create_time = #{createTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != updateTime">
+         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPStakingRecordDo" resultMap="BaseResultMap">
+    select  * from lp_staking_records
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.LPStakingRecordDo" resultMap="BaseResultMap">
+    select  * from lp_staking_records
+    <include refid="baseQuery" />
+  </select>
+</mapper>

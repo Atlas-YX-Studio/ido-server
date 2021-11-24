@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.core.mapper.LPMiningPoolUserMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.LPMiningPoolUserDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="pool_id" jdbcType="BIGINT" property="poolId" />
+    <result column="staking_amount" jdbcType="DECIMAL" property="stakingAmount" />
+    <result column="reward" jdbcType="DECIMAL" property="reward" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, address, pool_id, staking_amount, reward, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from lp_mining_pool_users
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from lp_mining_pool_users
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolUserDo" useGeneratedKeys="true">
+    insert into lp_mining_pool_users (id, address, pool_id, 
+      staking_amount, reward, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{poolId,jdbcType=BIGINT}, 
+      #{stakingAmount,jdbcType=DECIMAL}, #{reward,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolUserDo">
+    update lp_mining_pool_users
+    <set>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="poolId != null">
+        pool_id = #{poolId,jdbcType=BIGINT},
+      </if>
+      <if test="stakingAmount != null">
+        staking_amount = #{stakingAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="reward != null">
+        reward = #{reward,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != address">
+         and address = #{address,jdbcType=VARCHAR}
+      </if>
+      <if test="null != poolId">
+         and pool_id = #{poolId,jdbcType=BIGINT}
+      </if>
+      <if test="null != stakingAmount">
+         and staking_amount = #{stakingAmount,jdbcType=DECIMAL}
+      </if>
+      <if test="null != reward">
+         and reward = #{reward,jdbcType=DECIMAL}
+      </if>
+      <if test="null != createTime">
+         and create_time = #{createTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != updateTime">
+         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolUserDo" resultMap="BaseResultMap">
+    select  * from lp_mining_pool_users
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolUserDo" resultMap="BaseResultMap">
+    select  * from lp_mining_pool_users
+    <include refid="baseQuery" />
+  </select>
+  <update id="computeReward" parameterType="map">
+    update lp_mining_pool_users a
+    INNER JOIN (select pool_id, sum(staking_amount) total FROM lp_mining_pool_users where pool_id = #{poolId,jdbcType=BIGINT} group by pool_id) b on a.pool_id = b.pool_id
+    <set>
+      a.reward = a.reward + #{rewardAmount,jdbcType=DECIMAL} * a.staking_amount/b.total,
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+  </update>
+
+  <update id="harvestReward" parameterType="map">
+    update lp_mining_pool_users
+    <set>
+      reward = reward - #{rewardAmount,jdbcType=DECIMAL},
+      pending_reward = pending_reward + #{rewardAmount,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="harvestSuccess" parameterType="map">
+    update lp_mining_pool_users
+    <set>
+      pending_reward = pending_reward - #{rewardAmount,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="harvestFailed" parameterType="map">
+    update lp_mining_pool_users
+    <set>
+      pending_reward = pending_reward - #{rewardAmount,jdbcType=DECIMAL},
+      reward = reward + #{rewardAmount,jdbcType=DECIMAL},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

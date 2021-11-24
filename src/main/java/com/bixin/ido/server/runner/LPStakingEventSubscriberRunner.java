@@ -1,11 +1,16 @@
 package com.bixin.ido.server.runner;
 
+import com.bixin.ido.server.bean.DO.LPStakingRecordDo;
+import com.bixin.ido.server.bean.dto.LPStakeEventEventDto;
+import com.bixin.ido.server.bean.dto.LPUnstakeEventEventDto;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
+import com.bixin.ido.server.core.mapper.LPStakingRecordMapper;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ILPMiningService;
 import com.bixin.ido.server.service.ITradingMiningService;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.nft.bean.dto.NftBuyEventDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +43,7 @@ import java.util.concurrent.locks.LockSupport;
 
 @Slf4j
 @Component
-public class BlockEventSubscriberRunner implements ApplicationRunner {
+public class LPStakingEventSubscriberRunner implements ApplicationRunner {
 
     @Resource
     StarConfig idoStarConfig;
@@ -60,12 +65,14 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
     @Resource
     private ITradingMiningService tradingMiningService;
     @Resource
+    private LPStakingRecordMapper lpStakingRecordMapper;
+    @Resource
     private ILPMiningService lpMiningService;
 
     @PostConstruct
     public void init() {
         poolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(), new NamedThreadFactory("BlockEventSubscriberRunner-", true));
+                new LinkedBlockingQueue<>(), new NamedThreadFactory("LPStakingEventSubscriberRunner-", true));
     }
 
     @PreDestroy
@@ -76,9 +83,9 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
             }
             poolExecutor.shutdown();
             poolExecutor.awaitTermination(1, TimeUnit.SECONDS);
-            log.info("BlockEventSubscriberRunner poolExecutor stopped");
+            log.info("LPStakingEventSubscriberRunner poolExecutor stopped");
         } catch (InterruptedException ex) {
-            log.error("BlockEventSubscriberRunner InterruptedException: ", ex);
+            log.error("LPStakingEventSubscriberRunner InterruptedException: ", ex);
             Thread.currentThread().interrupt();
         }
     }
@@ -90,7 +97,7 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
 
     public void process(ApplicationArguments args) {
         String[] sourceArgs = 0 == args.getSourceArgs().length ? new String[]{""} : args.getSourceArgs();
-        log.info("BlockEventSubscriberRunner start running [{}]", sourceArgs);
+        log.info("LPStakingEventSubscriberRunner start running [{}]", sourceArgs);
         try {
 
             WebSocketService service = new WebSocketService("ws://" + idoStarConfig.getSwap().getWebsocketHost() + ":" + idoStarConfig.getSwap().getWebsocketPort(), true);
@@ -103,30 +110,40 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
                 JsonNode data = eventResult.getData();
                 // 添加日志
                 try {
-                    log.info("BlockEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
+                    log.info("LPStakingEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
                 //去重
                 if (duplicateEvent(eventResult)) {
-                    log.info("BlockEventSubscriberRunner duplicate event data {}", eventResult);
+                    log.info("LPStakingEventSubscriberRunner duplicate event data {}", eventResult);
                     return;
                 }
                 String tagString = getEventName(eventResult.getTypeTag());
-                if ("NewBlockEvent".equals(tagString)) {
-                    // 新块产生事件
-                    // FIXME: 2021/11/8 区块id
-                    tradingMiningService.computeReward(12L);
-                    lpMiningService.computeReward(12L);
+                if ("LPStakeEvent".equals(tagString)) {
+                    // lp质押事件
+                    LPStakeEventEventDto dto = mapper.convertValue(data, LPStakeEventEventDto.class);
+                    lpMiningService.staking(dto);
+
+                    LPStakingRecordDo recordDo = LPStakeEventEventDto.of(dto);
+                    lpStakingRecordMapper.insert(recordDo);
+
+                } else if ("LPUnstakeEvent".equals(tagString)) {
+                    // lp解押事件
+                    LPUnstakeEventEventDto dto = mapper.convertValue(data, LPUnstakeEventEventDto.class);
+                    lpMiningService.unStaking(dto);
+
+                    LPStakingRecordDo recordDo = LPUnstakeEventEventDto.of(dto);
+                    lpStakingRecordMapper.insert(recordDo);
                 } else {
-                    log.error("BlockEventSubscriberRunner blockEventDo 为空");
+                    log.error("LPStakingEventSubscriberRunner lPStakingEventDo 为空");
                 }
             });
 
         } catch (Exception e) {
             long duration = initTime + (atomicSum.incrementAndGet() - 1) * initIntervalTime;
             duration = Math.min(duration, maxIntervalTime);
-            log.error("BlockEventSubscriberRunner run exception count {}, next retry {}, params {}",
+            log.error("LPStakingEventSubscriberRunner run exception count {}, next retry {}, params {}",
                     atomicSum.get(), duration, idoStarConfig.getSwap(), e);
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(duration));
             DefaultApplicationArguments applicationArguments = new DefaultApplicationArguments("retry " + atomicSum.get());
@@ -152,9 +169,9 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
         try {
             key = URLEncoder.encode(typeTag, "utf8") + seqNumber;
         } catch (UnsupportedEncodingException e) {
-            log.error("BlockEventSubscriberRunner exception ", e);
+            log.error("LPStakingEventSubscriberRunner exception ", e);
         }
-        log.info("BlockEventSubscriberRunner duplicate event redis key {}", key);
+        log.info("LPStakingEventSubscriberRunner duplicate event redis key {}", key);
         if (Objects.isNull(key)) {
             return true;
         }

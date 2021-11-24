@@ -18,6 +18,7 @@ import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.service.ISwapUserRecordService;
 import com.bixin.ido.server.utils.GrfAllEdge;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.beans.factory.annotation.Value;
@@ -263,6 +264,11 @@ public class SwapPathServiceImpl implements ISwapPathService {
         return List.of(liquidityPoolMap.values().toArray(new Pool[0]));
     }
 
+    @Override
+    public Map<String, Pool> getLiquidityPoolMap() {
+        return this.liquidityPoolMap;
+    }
+
     private Pool getPool(String tokenA, String tokenB) {
         return liquidityPoolMap.containsKey(toPair(tokenA, tokenB)) ? liquidityPoolMap.get(toPair(tokenA, tokenB)) : liquidityPoolMap.get(toPair(tokenB, tokenA));
     }
@@ -276,8 +282,8 @@ public class SwapPathServiceImpl implements ISwapPathService {
         // 获取区块高度
 
         // 有新块产生，更新数据
-        List<Pool> allChainPools = getAllChainPools();
-        liquidityPoolMap = allChainPools.stream().filter(x -> x.tokenAmountA.compareTo(BigDecimal.ZERO) > 0 || x.tokenAmountB.compareTo(BigDecimal.ZERO) > 0).collect(Collectors.toMap(x -> toPair(x.tokenA, x.tokenB), y -> y));
+        Map<String, Pool> allChainPoolMap = getAllChainPools();
+        liquidityPoolMap = allChainPoolMap.values().stream().filter(x -> x.tokenAmountA.compareTo(BigDecimal.ZERO) > 0 || x.tokenAmountB.compareTo(BigDecimal.ZERO) > 0).collect(Collectors.toMap(x -> toPair(x.tokenA, x.tokenB), y -> y));
         Set<String> nodes = new HashSet<>();
         liquidityPoolMap.values().forEach(x -> {
             nodes.add(x.tokenA);
@@ -300,10 +306,11 @@ public class SwapPathServiceImpl implements ISwapPathService {
         this.priceMap = tempPrice;
     }
 
-    private List<Pool> getAllChainPools() {
+    private Map<String, Pool> getAllChainPools() {
         List<SwapCoins> swapCoins = swapCoinsService.selectByDDL(SwapCoins.builder().build());
         Map<String, Short> coinMap = swapCoins.stream().collect(Collectors.toMap(SwapCoins::getAddress, SwapCoins::getExchangePrecision));
-        List<Pool> pools = Lists.newArrayList();
+        Map<String, Pool> poolMap = Maps.newHashMap();
+//        List<Pool> pools = Lists.newArrayList();
         try {
             MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getAllLPResp();
             ResponseEntity<String> resp = triple.getLeft();
@@ -316,37 +323,55 @@ public class SwapPathServiceImpl implements ISwapPathService {
                 if (!respMap.containsKey("result")) {
                     log.error("getChainPool result is empty {}, {}, {}",
                             JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
-                    return pools;
+                    return poolMap;
                 }
                 @SuppressWarnings("unchecked")
                 Map<String, Object> result = (Map<String, Object>) respMap.get("result");
                 if (!result.containsKey("resources")) {
                     log.error("getChainPool result value is empty {}, {}, {}",
                             JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
-                    return pools;
+                    return poolMap;
                 }
                 @SuppressWarnings("unchecked")
                 Map<String, Object> resourceMap = (Map<String, Object>) result.get("resources");
                 resourceMap.forEach((key, rs) -> {
-                    if (!key.startsWith(idoStarConfig.getSwap().getLpPoolResourceName())) {
-                        return;
-                    }
-                    String[] tokenArr = key.substring(key.indexOf("<") + 1, key.length() - 1).split(",");
-                    Pool pool = new Pool(tokenArr[0].trim(), tokenArr[1].trim(), BigDecimal.ZERO, BigDecimal.ZERO);
-                    if (!coinMap.containsKey(pool.tokenA) || !coinMap.containsKey(pool.tokenB)) {
-                        return;
-                    }
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> rsMap = (Map<String, Object>) ((Map<String, Object>) rs).get("json");
-
-                    rsMap.forEach((x, y) -> {
-                        if ("reserve_x".equalsIgnoreCase(x)) {
-                            pool.tokenAmountA = new BigDecimal(y.toString()).movePointLeft(coinMap.get(pool.tokenA));
-                        } else if ("reserve_y".equalsIgnoreCase(x)) {
-                            pool.tokenAmountB = new BigDecimal(y.toString()).movePointLeft(coinMap.get(pool.tokenB));
+                    if (key.startsWith(idoStarConfig.getSwap().getLpPoolResourceName())) {
+                        String[] tokenArr = key.substring(key.indexOf("<") + 1, key.length() - 1).split(",");
+                        String pairName = toPair(tokenArr[0].trim(), tokenArr[1].trim());
+                        Pool pool = poolMap.getOrDefault(pairName, new Pool(tokenArr[0].trim(), tokenArr[1].trim()));
+                        if (!coinMap.containsKey(pool.tokenA) || !coinMap.containsKey(pool.tokenB)) {
+                            return;
                         }
-                    });
-                    pools.add(pool);
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> rsMap = (Map<String, Object>) ((Map<String, Object>) rs).get("json");
+
+                        rsMap.forEach((x, y) -> {
+                            if ("reserve_x".equalsIgnoreCase(x)) {
+                                pool.tokenAmountA = new BigDecimal(y.toString()).movePointLeft(coinMap.get(pool.tokenA));
+                            } else if ("reserve_y".equalsIgnoreCase(x)) {
+                                pool.tokenAmountB = new BigDecimal(y.toString()).movePointLeft(coinMap.get(pool.tokenB));
+                            }
+                        });
+                        poolMap.put(pairName, pool);
+                    } else if (key.startsWith(idoStarConfig.getSwap().getLpTokenResourceName())) {
+                        String lpTokenStr = key.substring(key.indexOf("<") + 1, key.length() - 1);
+                        String[] tokenArr = lpTokenStr.substring(lpTokenStr.indexOf("<") + 1, lpTokenStr.length() - 1).split(",");
+                        String pairName = toPair(tokenArr[0].trim(), tokenArr[1].trim());
+                        Pool pool = poolMap.getOrDefault(pairName, new Pool(tokenArr[0].trim(), tokenArr[1].trim()));
+                        if (!coinMap.containsKey(pool.tokenA) || !coinMap.containsKey(pool.tokenB)) {
+                            return;
+                        }
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> rsMap = (Map<String, Object>) ((Map<String, Object>) rs).get("json");
+
+                        rsMap.forEach((x, y) -> {
+                            if ("total_value".equalsIgnoreCase(x)) {
+                                // todo lptoken没有存在coin表里，先写死9位
+                                pool.lpTokenAmount = new BigDecimal(y.toString()).movePointLeft(9);
+                            }
+                        });
+                        poolMap.put(pairName, pool);
+                    }
                 });
             } else {
                 log.error("getChainPool get remote result {}", JSON.toJSONString(resp));
@@ -358,11 +383,11 @@ public class SwapPathServiceImpl implements ISwapPathService {
             coinPrecisionMap = coinMap;
         }
 
-        return pools;
+        return poolMap;
     }
 
     private Pool getChainPool(String tokenA, String tokenB) {
-        Pool resPool = new Pool(tokenA, tokenB, BigDecimal.ZERO, BigDecimal.ZERO);
+        Pool resPool = new Pool(tokenA, tokenB);
         try {
             MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getLPResp(tokenA, tokenB);
             ResponseEntity<String> resp = triple.getLeft();
@@ -483,12 +508,14 @@ public class SwapPathServiceImpl implements ISwapPathService {
         public String tokenB;
         public BigDecimal tokenAmountA;
         public BigDecimal tokenAmountB;
+        public BigDecimal lpTokenAmount;
 
-        public Pool(String tokenA, String tokenB, BigDecimal tokenAmountA, BigDecimal tokenAmountB) {
+        public Pool(String tokenA, String tokenB) {
             this.tokenA = tokenA;
             this.tokenB = tokenB;
-            this.tokenAmountA = tokenAmountA;
-            this.tokenAmountB = tokenAmountB;
+            this.tokenAmountA = BigDecimal.ZERO;
+            this.tokenAmountB = BigDecimal.ZERO;
+            this.lpTokenAmount = BigDecimal.ZERO;
         }
     }
 

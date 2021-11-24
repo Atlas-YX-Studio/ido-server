@@ -99,6 +99,6 @@ public interface TradingPoolUserMapper {
      * @param updateTime
      * @return
      */
-    int currentReward(@Param("poolId") Long poolId, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
+    int computeReward(@Param("poolId") Long poolId, @Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
 
 }

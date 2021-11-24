@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.core.mapper.LPMiningPoolMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.LPMiningPoolDo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pair_name" jdbcType="VARCHAR" property="pairName" />
+    <result column="token_a" jdbcType="VARCHAR" property="tokenA" />
+    <result column="token_b" jdbcType="VARCHAR" property="tokenB" />
+    <result column="allocation_multiple" jdbcType="INTEGER" property="allocationMultiple" />
+    <result column="total_staking_amount" jdbcType="DECIMAL" property="totalStakingAmount" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="update_time" jdbcType="BIGINT" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pair_name, token_a, token_b, allocation_multiple, total_staking_amount, weight, 
+    create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from lp_mining_pools
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from lp_mining_pools
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolDo" useGeneratedKeys="true">
+    insert into lp_mining_pools (id, pair_name, token_a, 
+      token_b, allocation_multiple, total_staking_amount, 
+      weight, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{pairName,jdbcType=VARCHAR}, #{tokenA,jdbcType=VARCHAR}, 
+      #{tokenB,jdbcType=VARCHAR}, #{allocationMultiple,jdbcType=INTEGER}, #{totalStakingAmount,jdbcType=DECIMAL}, 
+      #{weight,jdbcType=INTEGER}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolDo">
+    update lp_mining_pools
+    <set>
+      <if test="pairName != null">
+        pair_name = #{pairName,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenA != null">
+        token_a = #{tokenA,jdbcType=VARCHAR},
+      </if>
+      <if test="tokenB != null">
+        token_b = #{tokenB,jdbcType=VARCHAR},
+      </if>
+      <if test="allocationMultiple != null">
+        allocation_multiple = #{allocationMultiple,jdbcType=INTEGER},
+      </if>
+      <if test="totalStakingAmount != null">
+        total_staking_amount = #{totalStakingAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <sql id="baseQuery">
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="null != id">
+         and id = #{id,jdbcType=BIGINT}
+      </if>
+      <if test="null != pairName">
+         and pair_name = #{pairName,jdbcType=VARCHAR}
+      </if>
+      <if test="null != tokenA">
+         and token_a = #{tokenA,jdbcType=VARCHAR}
+      </if>
+      <if test="null != tokenB">
+         and token_b = #{tokenB,jdbcType=VARCHAR}
+      </if>
+      <if test="null != allocationMultiple">
+         and allocation_multiple = #{allocationMultiple,jdbcType=INTEGER}
+      </if>
+      <if test="null != totalStakingAmount">
+         and total_staking_amount = #{totalStakingAmount,jdbcType=DECIMAL}
+      </if>
+      <if test="null != weight">
+         and weight = #{weight,jdbcType=INTEGER}
+      </if>
+      <if test="null != createTime">
+         and create_time = #{createTime,jdbcType=BIGINT}
+      </if>
+      <if test="null != updateTime">
+         and update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </trim>
+  </sql>
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolDo" resultMap="BaseResultMap">
+    select  * from lp_mining_pools
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolDo" resultMap="BaseResultMap">
+    select  * from lp_mining_pools
+    <include refid="baseQuery" />
+  </select>
+  <update id="updateStatistic" parameterType="map">
+    update trading_pools a
+    left join (select pool_id, sum(total_reward) total_reward, sum(current_trading_amount) current_trading_amount, sum(total_trading_amount) total_trading_amount from trading_pool_users GROUP BY pool_id) b on a.id = b.pool_id
+    <set>
+      a.allocated_reward_amount = b.total_reward,
+      a.current_trading_amount = b.current_trading_amount,
+      a.total_trading_amount = b.total_trading_amount,
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=BIGINT}
+      </if>
+    </set>
+  </update>
+</mapper>

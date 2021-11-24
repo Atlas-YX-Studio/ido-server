@@ -176,7 +176,7 @@
       </if>
     </set>
   </update>
-  <update id="currentReward" parameterType="map">
+  <update id="computeReward" parameterType="map">
     update trading_pool_users a
     INNER JOIN (select pool_id, sum(current_trading_amount) total FROM trading_pool_users where pool_id = #{poolId,jdbcType=BIGINT} group by pool_id) b on a.pool_id = b.pool_id
     <set>

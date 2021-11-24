@@ -2,7 +2,7 @@ package com.bixin.ido.server.service.impl;
 
 import com.bixin.ido.server.bean.DO.*;
 import com.bixin.ido.server.bean.dto.TradingPoolDto;
-import com.bixin.ido.server.bean.vo.RewardVO;
+import com.bixin.ido.server.bean.vo.TradingMingRewardVO;
 import com.bixin.ido.server.bean.vo.TradingMiningOverviewVO;
 import com.bixin.ido.server.bean.vo.TradingPoolVo;
 import com.bixin.ido.server.common.enums.HarvestStatusEnum;
@@ -70,7 +70,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
      * 计算当前收益（个人）
      */
     @Override
-    public void currentReward(Long blockId) {
+    public void computeReward(Long blockId) {
         List<TradingPoolDo> tradingPools = tradingPoolMapper.selectByPrimaryKeySelectiveList(TradingPoolDo.builder().build());
         Integer total = tradingPools.stream().map(TradingPoolDo::getAllocationMultiple).reduce(Integer::sum).orElse(0);
         Map<Long, TradingPoolDto> tradingPollMap = tradingPools.stream().collect(Collectors.toMap(TradingPoolDo::getId, y -> TradingPoolDto.convertToDto(y, total)));
@@ -79,7 +79,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
 
         tradingPollMap.values().parallelStream().forEach(pool -> {
             // 更新个人收益
-            tradingPoolUserMapper.currentReward(pool.getId(), blockTotalReward.multiply(pool.getAllocationRatio()), System.currentTimeMillis());
+            tradingPoolUserMapper.computeReward(pool.getId(), blockTotalReward.multiply(pool.getAllocationRatio()), System.currentTimeMillis());
         });
         tradingPoolMapper.updateStatistic(System.currentTimeMillis());
 
@@ -190,7 +190,7 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
             throw new IdoException(IdoErrorCode.REWARD_NOT_INSUFFICIENT);
         }
         // 扣减+当前交易额扣除+记录提取事件
-        BigDecimal freedReward = currentReward.subtract(BigDecimal.valueOf(0.5));
+        BigDecimal freedReward = currentReward.multiply(BigDecimal.valueOf(0.5));
 
         MiningHarvestRecordDo recordDo = MiningHarvestRecordDo.builder()
                 .address(userAddress)
@@ -404,16 +404,16 @@ public class TradingMiningServiceImpl implements ITradingMiningService {
     }
 
     @Override
-    public RewardVO reward(String address) {
+    public TradingMingRewardVO reward(String address) {
         if (StringUtils.isBlank(address)) {
-            return RewardVO.builder().build();
+            return TradingMingRewardVO.builder().build();
         }
         List<TradingPoolUserDo> userPools = tradingPoolUserMapper.selectByPrimaryKeySelectiveList(TradingPoolUserDo.builder().address(address).build());
         List<TradingRewardUserDo> userRewards = tradingRewardUserMapper.selectByPrimaryKeySelectiveList(TradingRewardUserDo.builder().address(address).build());
         BigDecimal currentReward = userPools.stream().map(TradingPoolUserDo::getCurrentReward).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
         BigDecimal lockedReward = userRewards.stream().filter(x->x.getLockedReward().compareTo(x.getUnlockRewardPerDay()) > 0).map(TradingRewardUserDo::getLockedReward).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
         BigDecimal freedReward = userRewards.stream().filter(x->x.getLockedReward().compareTo(x.getUnlockRewardPerDay()) > 0).map(TradingRewardUserDo::getFreedReward).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-        return RewardVO.builder()
+        return TradingMingRewardVO.builder()
                 .currentReward(currentReward.toPlainString())
                 .lockedReward(lockedReward.add(freedReward).toPlainString())
                 .freedReward(freedReward.toPlainString())
