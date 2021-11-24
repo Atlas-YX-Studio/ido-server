@@ -270,6 +270,7 @@ public class LPMiningServiceImpl implements ILPMiningService {
         return lpMiningPools.stream().map(pool -> {
             SwapPathServiceImpl.Pool liquidityPool = liquidityPoolMap.get(toPair(pool.getTokenA(), pool.getTokenB()));
             if (Objects.isNull(liquidityPool)) {
+                log.error("pair not found in liquidity pools, pairName={}, pools={}", toPair(pool.getTokenA(), pool.getTokenB()), liquidityPoolMap.keySet());
                 return BigDecimal.ZERO;
             }
             BigDecimal tokenRate = pool.getTotalStakingAmount().divide(liquidityPool.lpTokenAmount, 18, RoundingMode.DOWN);
