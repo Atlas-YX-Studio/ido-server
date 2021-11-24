@@ -27,6 +27,7 @@ import com.bixin.nft.core.service.ContractService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -68,6 +69,8 @@ public class LPMiningServiceImpl implements ILPMiningService {
     private StarConfig starConfig;
     @Resource
     private RedisCache redisCache;
+    @Value("${ido.star.swap.usdt-address}")
+    private String USDT_CODE;
 
     @Override
     public void computeReward(Long blockId) {
@@ -274,8 +277,8 @@ public class LPMiningServiceImpl implements ILPMiningService {
                 return BigDecimal.ZERO;
             }
             BigDecimal tokenRate = pool.getTotalStakingAmount().divide(liquidityPool.lpTokenAmount, 18, RoundingMode.DOWN);
-            BigDecimal usdtAmountA = tokenRate.multiply(liquidityPool.tokenAmountA).multiply(coinPriceInfos.getOrDefault(liquidityPool.tokenA, BigDecimal.ZERO));
-            BigDecimal usdtAmountB = tokenRate.multiply(liquidityPool.tokenAmountB).multiply(coinPriceInfos.getOrDefault(liquidityPool.tokenB, BigDecimal.ZERO));
+            BigDecimal usdtAmountA = tokenRate.multiply(liquidityPool.tokenAmountA).multiply(coinPriceInfos.getOrDefault(toPair(liquidityPool.tokenA, USDT_CODE), BigDecimal.ZERO));
+            BigDecimal usdtAmountB = tokenRate.multiply(liquidityPool.tokenAmountB).multiply(coinPriceInfos.getOrDefault(toPair(liquidityPool.tokenB, USDT_CODE), BigDecimal.ZERO));
             return usdtAmountA.add(usdtAmountB);
         }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
