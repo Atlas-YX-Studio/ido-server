@@ -81,3 +81,17 @@ CREATE TABLE `lp_mining_pool_users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_address_pool_id` (`address`,`pool_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='用户lp挖矿表';
+
+DROP TABLE IF EXISTS lp_staking_records;
+CREATE TABLE `lp_staking_records` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `pair_name` varchar(32) NOT NULL COMMENT '交易对名',
+  `token_a` varchar(128) NOT NULL COMMENT '币种A',
+  `token_b` varchar(128) NOT NULL COMMENT '币种B',
+  `type` varchar(32) NOT NULL COMMENT '操作类型: stake/unstake',
+  `amount` decimal(38,9) DEFAULT '0.000000000' COMMENT '额度',
+  `seq_id` bigint NOT NULL COMMENT '序列id',
+  `create_time` bigint NOT NULL COMMENT '创建时间',
+  `update_time` bigint NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='用户lp质押/解押记录表';
