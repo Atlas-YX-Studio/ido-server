@@ -45,6 +45,11 @@ public class LPMiningPoolUserDo implements Serializable {
     private BigDecimal reward;
 
     /**
+     * 冻结收益
+     */
+    private BigDecimal pendingReward;
+
+    /**
      * 创建时间
      */
     private Long createTime;

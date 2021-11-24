@@ -7,11 +7,12 @@
     <result column="pool_id" jdbcType="BIGINT" property="poolId" />
     <result column="staking_amount" jdbcType="DECIMAL" property="stakingAmount" />
     <result column="reward" jdbcType="DECIMAL" property="reward" />
+    <result column="pending_reward" jdbcType="DECIMAL" property="pendingReward" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, address, pool_id, staking_amount, reward, create_time, update_time
+    id, address, pool_id, staking_amount, reward, pending_reward, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -25,11 +26,11 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolUserDo" useGeneratedKeys="true">
     insert into lp_mining_pool_users (id, address, pool_id, 
-      staking_amount, reward, create_time, 
-      update_time)
+      staking_amount, reward, pending_reward,
+      create_time, update_time)
     values (#{id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{poolId,jdbcType=BIGINT}, 
-      #{stakingAmount,jdbcType=DECIMAL}, #{reward,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=BIGINT})
+      #{stakingAmount,jdbcType=DECIMAL}, #{reward,jdbcType=DECIMAL}, #{pendingReward,jdbcType=DECIMAL},
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolUserDo">
     update lp_mining_pool_users
@@ -45,6 +46,9 @@
       </if>
       <if test="reward != null">
         reward = #{reward,jdbcType=DECIMAL},
+      </if>
+      <if test="pendingReward != null">
+        pending_reward = #{pendingReward,jdbcType=DECIMAL},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -71,6 +75,9 @@
       </if>
       <if test="null != reward">
          and reward = #{reward,jdbcType=DECIMAL}
+      </if>
+      <if test="null != pendingReward">
+         and pending_reward = #{pendingReward,jdbcType=DECIMAL}
       </if>
       <if test="null != createTime">
          and create_time = #{createTime,jdbcType=BIGINT}
