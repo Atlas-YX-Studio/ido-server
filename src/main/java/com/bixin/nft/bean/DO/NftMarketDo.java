@@ -82,10 +82,8 @@ public class NftMarketDo implements Serializable {
      */
     private Long updateTime;
 
-    @Transient
     private String payToken;
 
-    @Transient
     private String nftName;
 
     private static final long serialVersionUID = 1L;
