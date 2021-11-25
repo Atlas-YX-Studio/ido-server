@@ -105,7 +105,7 @@ public class NftContractService {
      */
     public void createNFT() {
         // 同步上传图片
-        nftImagesUploadBiz.run();
+//        nftImagesUploadBiz.run();
 
         // 部署nft合约
         NftGroupDo selectNftGroupDo = new NftGroupDo();
@@ -210,7 +210,7 @@ public class NftContractService {
      */
     public void createNFTWithNoBox(long groupId) {
         // 同步上传图片
-        nftImagesUploadBiz.run();
+//        nftImagesUploadBiz.run();
 
         // 部署nft合约
         NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(groupId);
