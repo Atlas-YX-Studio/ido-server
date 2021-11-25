@@ -19,10 +19,7 @@ import com.bixin.ido.server.service.ILPMiningService;
 import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
 import com.bixin.ido.server.service.ITradingMiningService;
-import com.bixin.ido.server.utils.ApplicationContextUtils;
-import com.bixin.ido.server.utils.BeanCopyUtil;
-import com.bixin.ido.server.utils.BigDecimalUtil;
-import com.bixin.ido.server.utils.ThreadPoolUtil;
+import com.bixin.ido.server.utils.*;
 import com.bixin.nft.core.service.ContractService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +68,8 @@ public class LPMiningServiceImpl implements ILPMiningService {
     private RedisCache redisCache;
     @Value("${ido.star.swap.usdt-address}")
     private String USDT_CODE;
+    @Resource
+    private StarConfig idoStarConfig;
 
     @Override
     public void computeReward(Long blockId) {
@@ -196,6 +195,8 @@ public class LPMiningServiceImpl implements ILPMiningService {
         if (Objects.isNull(userLPMiningPool)) {
             throw new IdoException(IdoErrorCode.REWARD_NOT_INSUFFICIENT);
         }
+        LPMiningPoolDo lpMiningPool = lpMiningPoolMapper.selectByPrimaryKey(userLPMiningPool.getId());
+        Objects.requireNonNull(lpMiningPool, "pool not found");
         // stc 手续费兑换usdt
         BigDecimal stcFeePrice = (BigDecimal) redisCache.getValue(CommonConstant.STC_FEE_PRICE_KEY);
         BigDecimal kikoFee = starConfig.getMining().getStcFee().subtract(stcFeePrice);
@@ -227,7 +228,7 @@ public class LPMiningServiceImpl implements ILPMiningService {
         // 调取合约，返回hash，异步获取合约结果，成功后更新事件状态+50%进入锁仓，失败后恢复数据
         BigInteger amount = userLPMiningPool.getReward().subtract(BigDecimalUtil.addPrecision(userLPMiningPool.getReward(), swapPathService.getCoinPrecision(swapCoinsKIKO.getAddress()))).toBigInteger();
         BigInteger fee = BigDecimalUtil.addPrecision(kikoFee, swapPathService.getCoinPrecision(swapCoinsKIKO.getAddress())).toBigInteger();
-        String hash = harvestLPMiningReward(userAddress, amount, fee);
+        String hash = harvestLPMiningReward(userAddress, amount, fee, lpMiningPool);
         ThreadPoolUtil.execute(() -> {
             boolean success;
             try {
@@ -288,24 +289,25 @@ public class LPMiningServiceImpl implements ILPMiningService {
      *
      * @param userAddress
      * @param amount
+     * @param lpMiningPool
      * @return
      */
-    private String harvestLPMiningReward(String userAddress, BigInteger amount, BigInteger fee) {
+    private String harvestLPMiningReward(String userAddress, BigInteger amount, BigInteger fee, LPMiningPoolDo lpMiningPool) {
         log.info("harvestLPMiningReward  userAddress:{} amount:{} 提取收益中...", userAddress, amount);
+        TypeObj lp_token = TypeArgsUtil.parseTypeObj(idoStarConfig.getSwap().getLpTokenResourceName());
+        lp_token.setName(lp_token.getName() + "<" + lpMiningPool.getTokenA() + "," + lpMiningPool.getTokenB() + ">");
 
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(starConfig.getMining().getMiningAddress())
                 .moduleName(starConfig.getMining().getMiningModule())
                 .functionName("lp_harvest")
-//                fixme 添加type
-//                .tyArgs(Lists.newArrayList(TypeObj.))
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeAddressToBytes(AccountAddressUtils.create(userAddress)),
                         BcsSerializeHelper.serializeU128ToBytes(amount),
                         BcsSerializeHelper.serializeU128ToBytes(fee)
                 ))
-                .tyArgs(Lists.newArrayList())
+                .tyArgs(Lists.newArrayList(lp_token))
                 .build();
         return contractService.callFunctionAndGetHash(starConfig.getMining().getManagerAddress(), scriptFunctionObj);
     }

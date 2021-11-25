@@ -37,7 +37,7 @@ ido:
       websocket-contract-address: c9097c917625f3b01d59b375e0630b07
       contract-address: c9097c917625f3b01d59b375e0630b07
       lp-pool-resource-name: 0xc9097c917625f3b01d59b375e0630b07::SwapPair::SwapPair
-      lp-token-resource-name: 0x00000000000000000000000000000001::Token::TokenInfo<0xc9097c917625f3b01d59b375e0630b07::SwapPair::LPToken
+      lp-token-resource-name: 0xc9097c917625f3b01d59b375e0630b07::SwapPair::LPToken
       usdt-address: 0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::USDT
     runner:
       swap-consumer:

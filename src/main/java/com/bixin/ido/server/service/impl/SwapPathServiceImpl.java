@@ -310,7 +310,6 @@ public class SwapPathServiceImpl implements ISwapPathService {
         List<SwapCoins> swapCoins = swapCoinsService.selectByDDL(SwapCoins.builder().build());
         Map<String, Short> coinMap = swapCoins.stream().collect(Collectors.toMap(SwapCoins::getAddress, SwapCoins::getExchangePrecision));
         Map<String, Pool> poolMap = Maps.newHashMap();
-//        List<Pool> pools = Lists.newArrayList();
         try {
             MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getAllLPResp();
             ResponseEntity<String> resp = triple.getLeft();
@@ -353,7 +352,7 @@ public class SwapPathServiceImpl implements ISwapPathService {
                             }
                         });
                         poolMap.put(pairName, pool);
-                    } else if (key.startsWith(idoStarConfig.getSwap().getLpTokenResourceName())) {
+                    } else if (key.startsWith("0x00000000000000000000000000000001::Token::TokenInfo<" + idoStarConfig.getSwap().getLpTokenResourceName())) {
                         String lpTokenStr = key.substring(key.indexOf("<") + 1, key.length() - 1);
                         String[] tokenArr = lpTokenStr.substring(lpTokenStr.indexOf("<") + 1, lpTokenStr.length() - 1).split(",");
                         String pairName = toPair(tokenArr[0].trim(), tokenArr[1].trim());
