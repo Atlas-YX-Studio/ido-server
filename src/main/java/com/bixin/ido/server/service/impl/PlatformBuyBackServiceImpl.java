@@ -160,6 +160,9 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         Comparator<BuyBackOrder> comparator = Comparator.comparing(o -> o.buyPrice);
         if (sort == 1) {
             comparator = comparator.reversed();
+        } else if (sort == 3) {
+            comparator = Comparator.comparing(o -> o.score);
+            comparator = comparator.reversed();
         }
 
         List<BuyBackOrder> list;
