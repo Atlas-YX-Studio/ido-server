@@ -139,13 +139,22 @@ public class ScheduleNftMarket {
 
         log.info("nftBox market infos: " + list);
 
-        List<NftMarketDo> oldList = nftMarketService.listByObject(new NftMarketDo());
-        validAndUpdate(oldList, list);
+        validAndUpdate(list);
 
     }
 
     @Transactional
-    public void validAndUpdate(List<NftMarketDo> oldList, List<NftMarketDo> newList) {
+    public void validAndUpdate(List<NftMarketDo> newList) {
+        if (CollectionUtils.isEmpty(newList)) {
+            nftMarketService.deleteAll();
+            return;
+        }
+        List<NftMarketDo> oldList = nftMarketService.listByObject(new NftMarketDo());
+        if (CollectionUtils.isEmpty(oldList)) {
+            newList.forEach(p -> nftMarketService.insert(p));
+            return;
+        }
+
         Map<Long, Map<String, List<NftMarketDo>>> oldGroup = oldList.stream().collect(
                 Collectors.groupingBy(NftMarketDo::getGroupId, Collectors.groupingBy(NftMarketDo::getType)));
         Map<Long, Map<String, List<NftMarketDo>>> newGroup = newList.stream().collect(
@@ -221,7 +230,7 @@ public class ScheduleNftMarket {
         nftMarketService.deleteAllByGroupIds(delGroupIds);
         nftMarketService.deleteAllByIds(delIds);
         delTypes.forEach((groupId, type) -> {
-            nftMarketService.deleteAllByGroupIdTypes(new HashMap<Long, Object>() {{
+            nftMarketService.deleteAllByGroupIdTypes(new HashMap<>() {{
                 put(groupId, type);
             }});
         });
