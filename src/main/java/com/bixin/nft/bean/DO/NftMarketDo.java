@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -81,8 +82,10 @@ public class NftMarketDo implements Serializable {
      */
     private Long updateTime;
 
+    @Transient
     private String payToken;
 
+    @Transient
     private String nftName;
 
     private static final long serialVersionUID = 1L;
