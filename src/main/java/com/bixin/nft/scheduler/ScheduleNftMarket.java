@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangcheng
@@ -62,7 +64,7 @@ public class ScheduleNftMarket {
     private static final String GET_NFT_MARKET_LOCK = "get_nft_market_lock";
 
     //        @Scheduled(cron = "0/10 * * * * ?")
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 10000)
     public void getNftMarketList() {
         redisCache.tryGetDistributedLock(
                 GET_NFT_MARKET_LOCK,
@@ -137,9 +139,95 @@ public class ScheduleNftMarket {
 
         log.info("nftBox market infos: " + list);
 
-        nftMarketService.deleteAll();
+        List<NftMarketDo> oldList = nftMarketService.listByObject(new NftMarketDo());
+        validAndUpdate(oldList, list);
 
-        list.forEach(so -> nftMarketService.insert(so));
+    }
+
+    @Transactional
+    public void validAndUpdate(List<NftMarketDo> oldList, List<NftMarketDo> newList) {
+        Map<Long, Map<String, List<NftMarketDo>>> oldGroup = oldList.stream().collect(
+                Collectors.groupingBy(NftMarketDo::getGroupId, Collectors.groupingBy(NftMarketDo::getType)));
+        Map<Long, Map<String, List<NftMarketDo>>> newGroup = newList.stream().collect(
+                Collectors.groupingBy(NftMarketDo::getGroupId, Collectors.groupingBy(NftMarketDo::getType)));
+
+        List<Long> delGroupIds = new ArrayList<>();
+        Map<Long, List<String>> delTypes = new HashMap<>();
+        List<Long> delIds = new ArrayList<>();
+        List<NftMarketDo> updateList = new ArrayList<>();
+        List<NftMarketDo> insertList = new ArrayList<>();
+
+        oldGroup.entrySet().forEach(entry -> {
+            Long oldGroupId = entry.getKey();
+            Map<String, List<NftMarketDo>> oldTypeMap = entry.getValue();
+            Map<String, List<NftMarketDo>> newTypeMap = newGroup.get(oldGroupId);
+            if (Objects.isNull(newTypeMap)) {
+                delGroupIds.add(oldGroupId);
+            } else {
+                oldTypeMap.entrySet().forEach(te -> {
+                    String oldType = te.getKey();
+                    List<NftMarketDo> oldNfts = te.getValue();
+                    List<NftMarketDo> newNfts = newTypeMap.get(oldType);
+                    if (CollectionUtils.isEmpty(newNfts)) {
+                        delTypes.computeIfAbsent(oldGroupId, k -> new ArrayList<>());
+                        delTypes.get(oldGroupId).add(oldType);
+                    } else {
+                        Map<Long, List<NftMarketDo>> oldIdMap = oldNfts.stream().collect(Collectors.groupingBy(NftMarketDo::getChainId));
+                        Map<Long, List<NftMarketDo>> newIdMap = newNfts.stream().collect(Collectors.groupingBy(NftMarketDo::getChainId));
+                        oldIdMap.entrySet().forEach(ne -> {
+                            Long oldChainId = ne.getKey();
+                            NftMarketDo oldNft = ne.getValue().get(0);
+                            List<NftMarketDo> newNftList = newIdMap.get(oldChainId);
+                            if (CollectionUtils.isEmpty(newNftList)) {
+                                delIds.add(oldNft.getId());
+                            } else {
+                                NftMarketDo newNft = newNftList.get(0);
+                                newNft.setId(oldNft.getId());
+                                updateList.add(newNft);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        newGroup.entrySet().forEach(entry -> {
+            Long newGroupId = entry.getKey();
+            Map<String, List<NftMarketDo>> newTypeMap = entry.getValue();
+            Map<String, List<NftMarketDo>> oldTypeMap = oldGroup.get(newGroupId);
+            if (Objects.isNull(oldTypeMap)) {
+                newTypeMap.values().forEach(p -> insertList.addAll(p));
+            } else {
+                newTypeMap.entrySet().forEach(te -> {
+                    String newType = te.getKey();
+                    List<NftMarketDo> newNfts = te.getValue();
+                    List<NftMarketDo> oldNfts = oldTypeMap.get(newType);
+                    if (CollectionUtils.isEmpty(oldNfts)) {
+                        insertList.addAll(newNfts);
+                    } else {
+                        Map<Long, List<NftMarketDo>> newIdMap = newNfts.stream().collect(Collectors.groupingBy(NftMarketDo::getChainId));
+                        Map<Long, List<NftMarketDo>> oldIdMap = oldNfts.stream().collect(Collectors.groupingBy(NftMarketDo::getChainId));
+                        newIdMap.entrySet().forEach(ne -> {
+                            Long newChainId = ne.getKey();
+                            List<NftMarketDo> oldNftList = oldIdMap.get(newChainId);
+                            if (CollectionUtils.isEmpty(oldNftList)) {
+                                insertList.addAll(ne.getValue());
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        nftMarketService.deleteAllByGroupIds(delGroupIds);
+        nftMarketService.deleteAllByIds(delIds);
+        delTypes.forEach((groupId, type) -> {
+            nftMarketService.deleteAllByGroupIdTypes(new HashMap<Long, Object>() {{
+                put(groupId, type);
+            }});
+        });
+        updateList.forEach(p -> nftMarketService.update(p));
+        insertList.forEach(p -> nftMarketService.insert(p));
+
     }
 
 

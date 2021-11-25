@@ -98,6 +98,24 @@
   <delete id="deleteAll" >
     delete from nft_market
   </delete>
+  <delete id="deleteAllByGroupIds" >
+    delete from nft_market
+    where group_id in
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+  <delete id="deleteAllByGroupIdTypes" parameterType="map">
+    delete from nft_market
+    where group_id = #{groupId} and type = #{type}
+  </delete>
+  <delete id="deleteAllByIds" >
+    delete from nft_market
+    where id in
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftMarketDo" useGeneratedKeys="true">
     insert into nft_market (id, chain_id, nft_box_id, group_id,
       type, name, owner, pay_token, nft_name,

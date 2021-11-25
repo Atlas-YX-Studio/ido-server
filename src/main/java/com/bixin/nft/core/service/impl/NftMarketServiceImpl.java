@@ -98,6 +98,21 @@ public class NftMarketServiceImpl implements NftMarketService {
 
 
     @Override
+    public void deleteAllByGroupIds(List<Long> groupIds) {
+        nftMarketMapper.deleteAllByGroupIds(groupIds);
+    }
+
+    @Override
+    public void deleteAllByGroupIdTypes(Map<Long, Object> groupIdTypeMap) {
+        nftMarketMapper.deleteAllByGroupIdTypes(groupIdTypeMap);
+    }
+
+    @Override
+    public void deleteAllByIds(List<Long> ids) {
+        nftMarketMapper.deleteAllByIds(ids);
+    }
+
+    @Override
     public List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageSize", pageSize);

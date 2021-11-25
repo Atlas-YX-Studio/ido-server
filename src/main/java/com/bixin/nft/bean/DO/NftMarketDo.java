@@ -1,7 +1,6 @@
 package com.bixin.nft.bean.DO;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -10,11 +9,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
-* @Class: NftMarketDo
-* @Description: NFT/box市场销售列表
-* @author: 系统
-* @created: 2021-09-18
-*/
+ * @Class: NftMarketDo
+ * @Description: NFT/box市场销售列表
+ * @author: 系统
+ * @created: 2021-09-18
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -87,4 +86,5 @@ public class NftMarketDo implements Serializable {
     private String nftName;
 
     private static final long serialVersionUID = 1L;
+
 }
