@@ -102,7 +102,7 @@
     delete from nft_market
     where group_id in
     <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-      #{item}
+       #{item}
     </foreach>
   </delete>
   <delete id="deleteAllByGroupIdTypes" parameterType="map">
