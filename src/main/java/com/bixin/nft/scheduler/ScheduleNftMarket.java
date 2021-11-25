@@ -230,7 +230,7 @@ public class ScheduleNftMarket {
             nftMarketService.deleteAllByGroupIds(delGroupIds);
         }
         if (!CollectionUtils.isEmpty(delIds)) {
-            nftMarketService.deleteAllByIds(delI¬ds);
+            nftMarketService.deleteAllByIds(delIds);
         }
         delTypes.forEach((groupId, type) -> {
             nftMarketService.deleteAllByGroupIdTypes(new HashMap<>() {{
