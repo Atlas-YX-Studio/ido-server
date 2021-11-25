@@ -139,6 +139,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                                 order.name = nftInfo.getName();
                                 order.fullCurrency = groupDo.getPayToken();
                                 order.icon = nftInfo.getImageLink();
+                                order.score = nftInfo.getScore();
                             }
                             orders.add(order);
                         });
@@ -158,6 +159,9 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
     public List<BuyBackOrder> getOrders(Long groupId, String currency, int sort, int pageNum, int pageSize) {
         Comparator<BuyBackOrder> comparator = Comparator.comparing(o -> o.buyPrice);
         if (sort == 1) {
+            comparator = comparator.reversed();
+        } else if (sort == 3) {
+            comparator = Comparator.comparing(o -> o.score);
             comparator = comparator.reversed();
         }
 
@@ -195,6 +199,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         public BigDecimal buyPrice;
         public String fullCurrency;
         public String icon;
+        public BigDecimal score;
 
         public String getCurrency() {
             if (StringUtils.isBlank(this.fullCurrency)) {
