@@ -226,9 +226,12 @@ public class ScheduleNftMarket {
                 });
             }
         });
-
-        nftMarketService.deleteAllByGroupIds(delGroupIds);
-        nftMarketService.deleteAllByIds(delIds);
+        if (!CollectionUtils.isEmpty(delGroupIds)) {
+            nftMarketService.deleteAllByGroupIds(delGroupIds);
+        }
+        if (!CollectionUtils.isEmpty(delIds)) {
+            nftMarketService.deleteAllByIds(delI¬ds);
+        }
         delTypes.forEach((groupId, type) -> {
             nftMarketService.deleteAllByGroupIdTypes(new HashMap<>() {{
                 put(groupId, type);
