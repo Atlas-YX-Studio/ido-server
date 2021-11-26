@@ -123,6 +123,7 @@ public class LPStakingEventSubscriberRunner implements ApplicationRunner {
                 if ("LPStakeEvent".equals(tagString)) {
                     // lp质押事件
                     LPStakeEventEventDto dto = mapper.convertValue(data, LPStakeEventEventDto.class);
+                    dto.setSeq_id(Long.valueOf(eventResult.getEventSeqNumber()));
                     lpMiningService.staking(dto);
 
                     LPStakingRecordDo recordDo = LPStakeEventEventDto.of(dto);
@@ -131,6 +132,7 @@ public class LPStakingEventSubscriberRunner implements ApplicationRunner {
                 } else if ("LPUnstakeEvent".equals(tagString)) {
                     // lp解押事件
                     LPUnstakeEventEventDto dto = mapper.convertValue(data, LPUnstakeEventEventDto.class);
+                    dto.setSeq_id(Long.valueOf(eventResult.getEventSeqNumber()));
                     lpMiningService.unStaking(dto);
 
                     LPStakingRecordDo recordDo = LPUnstakeEventEventDto.of(dto);

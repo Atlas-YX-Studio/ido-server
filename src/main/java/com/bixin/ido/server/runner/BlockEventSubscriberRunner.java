@@ -115,9 +115,8 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
                 String tagString = getEventName(eventResult.getTypeTag());
                 if ("NewBlockEvent".equals(tagString)) {
                     // 新块产生事件
-                    // FIXME: 2021/11/8 区块id
-                    tradingMiningService.computeReward(12L);
-                    lpMiningService.computeReward(12L);
+                    tradingMiningService.computeReward(Long.valueOf(eventResult.getBlockNumber()));
+                    lpMiningService.computeReward(Long.valueOf(eventResult.getBlockNumber()));
                 } else {
                     log.error("BlockEventSubscriberRunner blockEventDo 为空");
                 }

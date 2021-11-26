@@ -28,7 +28,7 @@ public class LPUnstakeEventEventDto {
 
     private BigDecimal amount;
 
-    private Long record_id;
+    private Long seq_id;
 
     @Data
     @Builder
@@ -52,7 +52,7 @@ public class LPUnstakeEventEventDto {
                 .tokenB(dto.getTokenCodeStr())
                 .type("stake")
                 .amount(dto.getAmount())
-                .seqId(dto.getRecord_id())
+                .seqId(dto.getSeq_id())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
 
