@@ -103,7 +103,7 @@ public class LPStakingEventSubscriberRunner implements ApplicationRunner {
             WebSocketService service = new WebSocketService("ws://" + idoStarConfig.getSwap().getWebsocketHost() + ":" + idoStarConfig.getSwap().getWebsocketPort(), true);
             service.connect();
             StarcoinSubscriber subscriber = new StarcoinSubscriber(service);
-            EventFilter eventFilter = new EventFilter(Collections.singletonList("0x1"));
+            EventFilter eventFilter = new EventFilter(Collections.singletonList(idoStarConfig.getMining().getMiningAddress()));
             Flowable<EventNotification> notificationFlowable = subscriber.newTxnSendRecvEventNotifications(eventFilter);
             notificationFlowable.blockingIterable().forEach(b -> {
                 EventNotificationResult eventResult = b.getParams().getResult();
