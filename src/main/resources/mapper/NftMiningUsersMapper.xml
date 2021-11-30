@@ -7,4 +7,19 @@
         id, address, score, reward, pending_reward, create_time, update_time
     </sql>
 
+    <update id="computeReward" parameterType="map">
+        update nft_mining_users a
+        INNER JOIN (select sum(score) total FROM nft_mining_users) b
+        <set>
+            a.reward = a.reward + #{rewardAmount,jdbcType=DECIMAL} * a.score/b.total,
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=BIGINT}
+            </if>
+        </set>
+    </update>
+
+    <select id="totalScore" resultType="java.math.BigDecimal">
+        select sum(score) from nft_mining_users
+    </select>
+
 </mapper>
