@@ -9,7 +9,7 @@ import lombok.*;
 import java.io.Serializable;
 
 /**
- * NFT质押表
+ * NFT质押事件表
  *
  * @author Xiang Feihan
  * @since 2021-11-29
@@ -19,8 +19,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@TableName("nft_staking_users")
-public class NftStakingUsers implements Serializable {
+@TableName("nft_mining_record")
+public class NftMiningRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,10 +31,28 @@ public class NftStakingUsers implements Serializable {
     private Long id;
 
     /**
+     * 事件类型
+     */
+    @TableField("type")
+    private String type;
+
+    /**
+     * group id
+     */
+    @TableField("group_id")
+    private Long groupId;
+
+    /**
+     * 事件序号
+     */
+    @TableField("seq_number")
+    private String seqNumber;
+
+    /**
      * 用户地址
      */
-    @TableField("address")
-    private String address;
+    @TableField("sender")
+    private String sender;
 
     /**
      * NFT info id
@@ -47,12 +65,6 @@ public class NftStakingUsers implements Serializable {
      */
     @TableField("order")
     private Long order;
-
-    /**
-     * 分数
-     */
-    @TableField("score")
-    private Long score;
 
     /**
      * 创建时间

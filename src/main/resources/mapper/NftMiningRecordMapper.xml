@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.ido.server.mapper.NftMiningRecordMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id as d
+        ,type as ype
+        ,group_id as roupId
+        ,sequence_number as equenceNumber
+        ,sender as ender
+        ,nft_id as ftId
+        ,order as rder
+        ,create_time as reateTime
+        ,update_time as pdateTime
+    </sql>
+
+</mapper>

@@ -1,9 +1,25 @@
 package com.bixin.ido.server.runner;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.bixin.ido.server.bean.dto.NftStakeEventDto;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.redis.RedisCache;
+import com.bixin.ido.server.entity.NftMiningRecord;
+import com.bixin.ido.server.entity.NftMiningUsers;
+import com.bixin.ido.server.entity.NftStakingUsers;
+import com.bixin.ido.server.enums.NFTMiningEventType;
+import com.bixin.ido.server.service.NftMiningRecordService;
+import com.bixin.ido.server.service.NftMiningUsersService;
+import com.bixin.ido.server.service.NftStakingUsersService;
+import com.bixin.ido.server.utils.ApplicationContextUtils;
 import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.nft.bean.DO.NftGroupDo;
+import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.core.service.NftGroupService;
+import com.bixin.nft.core.service.NftInfoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +29,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.DefaultApplicationArguments;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.starcoin.api.StarcoinSubscriber;
 import org.starcoin.bean.EventFilter;
 import org.starcoin.bean.EventNotification;
@@ -42,6 +59,16 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
     private StarConfig idoStarConfig;
     @Resource
     private RedisCache redisCache;
+    @Resource
+    private NftMiningRecordService nftMiningRecordService;
+    @Resource
+    private NftMiningUsersService nftMiningUsersService;
+    @Resource
+    private NftStakingUsersService nftStakingUsersService;
+    @Resource
+    private NftGroupService nftGroupService;
+    @Resource
+    private NftInfoService nftInfoService;
 
     AtomicLong atomicSum = new AtomicLong(0);
     static final long initTime = 2000L;
@@ -106,16 +133,11 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
                     log.info("NftMiningEventSubscriberRunner duplicate event data {}", eventResult);
                     return;
                 }
-                String tagString = getEventName(eventResult.getTypeTag());
-                if ("NFTStakeEvent".equals(tagString)) {
-                    // 质押事件
-
-
-                } else if ("NFTUnstakeEvent".equals(tagString)) {
-                    // 解押事件
-
-                } else {
-                    log.error("NftMiningEventSubscriberRunner lPStakingEventDo 为空");
+                // 处理事件
+                try {
+                    handleNftStakeEvent(data, eventResult.getTypeTag(), eventResult.getEventSeqNumber());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 
@@ -128,6 +150,107 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
             DefaultApplicationArguments applicationArguments = new DefaultApplicationArguments("retry " + atomicSum.get());
             this.process(applicationArguments);
         }
+    }
+
+    public void handleNftStakeEvent(JsonNode data, String typeTag, String seqNumber) {
+        log.info("NftMiningEventSubscriberRunner 质押NFT");
+        NftStakeEventDto dto = mapper.convertValue(data, NftStakeEventDto.class);
+        String meta = getMeta(typeTag);
+        String body = getBody(typeTag);
+        NftGroupDo nftGroupParam = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParam);
+        if (nftGroupDo == null) {
+            log.error("NftMiningEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+            return;
+        }
+        NftInfoDo NftInfoParam = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(dto.getNftId()).build();
+        NftInfoDo nftInfoDo = nftInfoService.selectByObject(NftInfoParam);
+        if (nftInfoDo == null) {
+            log.error("NftMiningEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), dto.getNftId());
+            return;
+        }
+        // insert record
+        String tagString = getEventName(typeTag);
+        NftMiningRecord nftMiningRecord = NftMiningRecord.builder()
+                .type(tagString)
+                .groupId(nftGroupDo.getId())
+                .seqNumber(seqNumber)
+                .sender(dto.getSender())
+                .infoId(nftInfoDo.getId())
+                .order(dto.getOrder())
+                .createTime(System.currentTimeMillis())
+                .updateTime(System.currentTimeMillis())
+                .build();
+        nftMiningRecordService.save(nftMiningRecord);
+        NftMiningEventSubscriberRunner runner = ApplicationContextUtils.getBean(this.getClass());
+        if (NFTMiningEventType.STAKE_EVENT.getDesc().equals(tagString)) {
+            // 质押事件
+            runner.nftStake(nftMiningRecord);
+        } else if (NFTMiningEventType.UNSTAKE_EVENT.getDesc().equals(tagString)) {
+            // 解押事件
+            runner.nftUnstake(nftMiningRecord);
+        }
+    }
+
+    /**
+     * 更新NFT质押表 更新质押分数
+     * @param nftMiningRecord
+     */
+    @Transactional
+    public void nftStake(NftMiningRecord nftMiningRecord) {
+        LambdaQueryWrapper<NftStakingUsers> wrapper = Wrappers.<NftStakingUsers>lambdaQuery()
+                .eq(NftStakingUsers::getAddress, nftMiningRecord.getSender())
+                .eq(NftStakingUsers::getInfoId, nftMiningRecord.getInfoId());
+        NftStakingUsers nftStakingUsers = nftStakingUsersService.getOne(wrapper, false);
+        if (nftStakingUsers != null) {
+            log.info("NftMiningEventSubscriberRunner nft质押已存在，recordId = {}，infoId = {}", nftMiningRecord.getId(), nftMiningRecord.getInfoId());
+            return;
+        }
+        // 当前order是否存在其他nft
+        wrapper = Wrappers.<NftStakingUsers>lambdaQuery()
+                .eq(NftStakingUsers::getAddress, nftMiningRecord.getSender())
+                .eq(NftStakingUsers::getOrder, nftMiningRecord.getOrder());
+        nftStakingUsers = nftStakingUsersService.getOne(wrapper, false);
+        if (nftStakingUsers != null) {
+            // 解押已存在nft
+            LambdaUpdateWrapper<NftMiningUsers> updateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
+                    .setSql("score = score - " + nftStakingUsers.getScore());
+            nftMiningUsersService.update(updateWrapper);
+            nftStakingUsersService.removeById(nftStakingUsers.getId());
+        }
+        // 质押nft
+        nftStakingUsers = NftStakingUsers.builder()
+                .address(nftMiningRecord.getSender())
+                .infoId(nftMiningRecord.getInfoId())
+                .order(nftMiningRecord.getOrder())
+                .createTime(System.currentTimeMillis())
+                .updateTime(System.currentTimeMillis())
+                .build();
+        nftStakingUsersService.save(nftStakingUsers);
+        LambdaUpdateWrapper<NftMiningUsers> updateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
+                .setSql("score = score + " + nftStakingUsers.getScore());
+        nftMiningUsersService.update(updateWrapper);
+    }
+
+    /**
+     * 更新NFT质押表 更新质押分数
+     * @param nftMiningRecord
+     */
+    @Transactional
+    public void nftUnstake(NftMiningRecord nftMiningRecord) {
+        LambdaQueryWrapper<NftStakingUsers> wrapper = Wrappers.<NftStakingUsers>lambdaQuery()
+                .eq(NftStakingUsers::getAddress, nftMiningRecord.getSender())
+                .eq(NftStakingUsers::getInfoId, nftMiningRecord.getInfoId());
+        NftStakingUsers nftStakingUsers = nftStakingUsersService.getOne(wrapper, false);
+        if (nftStakingUsers == null) {
+            log.info("NftMiningEventSubscriberRunner nft已解押，recordId = {}，infoId = {}", nftMiningRecord.getId(), nftMiningRecord.getInfoId());
+            return;
+        }
+        // 解押nft
+        LambdaUpdateWrapper<NftMiningUsers> updateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
+                .setSql("score = score - " + nftStakingUsers.getScore());
+        nftMiningUsersService.update(updateWrapper);
+        nftStakingUsersService.removeById(nftStakingUsers.getId());
     }
 
     private String getEventName(String typeTag) {

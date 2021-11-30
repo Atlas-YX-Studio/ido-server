@@ -11,4 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NftStakeEventDto {
 
+    private String sender;
+
+    private Long nftId;
+
+    private Long order;
+
 }
