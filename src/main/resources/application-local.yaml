@@ -33,8 +33,8 @@ ido:
       resourceUrl: https://barnard-seed.starcoin.org
       moduleName: 0x64c66296d98d6ab08579b14487157e05::Offering
     swap:
-      websocket-host: 60.205.3.84
-      websocket-port: 8970
+      websocket-host: 13.229.71.62
+      websocket-port: 9870
       websocket-contract-address: 64c66296d98d6ab08579b14487157e05
       contract-address: c9cf2dd64e30c9b587c4f818adcc0eef
       lp-pool-resource-name: 0xc9cf2dd64e30c9b587c4f818adcc0eef::SwapPair::SwapPair
@@ -47,8 +47,8 @@ ido:
       url: https://main-seed.starcoin.org
       chain-id: 1
     nft:
-      websocket-host: 60.205.3.84
-      websocket-port: 8970
+      websocket-host: 13.229.71.62
+      websocket-port: 9870
       market: "0xa85291039ddad8845d5097624c81c3fd"
       scripts: "0x290c7b35320a4dd26f651fd184373fe7"
       catadd: "0x69f1e543a3bef043b63bed825fcd2cf6"
@@ -58,3 +58,7 @@ ido:
       image-base-path: "/Users/bixin/Documents/pics/nft/"
       image-info-api: "https://test.kikoswap.com/v1/nft/image/info/"
       image-group-api: "https://test.kikoswap.com/v1/nft/image/group/"
+    mining:
+        nft-mining-day-reward: 10
+        nft-mining-block-reward: 10
+        nft-unit-price: 10

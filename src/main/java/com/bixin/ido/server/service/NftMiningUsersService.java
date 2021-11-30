@@ -1,6 +1,7 @@
 package com.bixin.ido.server.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bixin.ido.server.bean.vo.NftMiningOverviewVO;
 import com.bixin.ido.server.entity.NftMiningUsers;
 
 /**
@@ -11,4 +12,7 @@ import com.bixin.ido.server.entity.NftMiningUsers;
  */
 public interface NftMiningUsersService extends IService<NftMiningUsers> {
 
+    void computeReward(Long blockId);
+
+    NftMiningOverviewVO market(String userAddress);
 }
