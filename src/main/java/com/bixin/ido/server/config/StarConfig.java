@@ -105,6 +105,9 @@ public class StarConfig {
         private BigDecimal nftMiningDayReward;
         private BigDecimal nftMiningBlockReward;
         private BigDecimal nftUnitPrice;
+        private String nftMiningAddress;
+        private String nftMiningModule;
+        private BigDecimal stcFee;
     }
 
 }

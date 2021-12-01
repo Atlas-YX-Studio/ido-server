@@ -25,4 +25,14 @@ public class BigDecimalUtil {
         return number.divide(BigDecimalUtil.getPrecisionFactor(precision), 18, RoundingMode.HALF_UP);
     }
 
+    public static BigDecimal addPrecision(BigDecimal number, Integer precision) {
+        if (number == null) {
+            return BigDecimal.ZERO;
+        }
+        if (precision == null || precision == 0) {
+            return BigDecimal.ZERO;
+        }
+        return number.subtract(BigDecimalUtil.getPrecisionFactor(precision));
+    }
+
 }

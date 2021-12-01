@@ -15,4 +15,6 @@ public interface NftMiningUsersService extends IService<NftMiningUsers> {
     void computeReward(Long blockId);
 
     NftMiningOverviewVO market(String userAddress);
+
+    String harvestReward(String userAddress);
 }

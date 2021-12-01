@@ -68,6 +68,16 @@ public enum IdoErrorCode implements ErrorCode {
      */
     TOKEN_VERIFY_FAILURE(100011, "token verify failure"),
 
+    /**
+     * 可提取收益不足
+     */
+    REWARD_NOT_INSUFFICIENT(100012, "reward not insufficient"),
+
+    /**
+     * 存在待处理提取记录
+     */
+    PENDING_HARVEST_RECORD_EXISTS(100013, "pending harvest record exists"),
+
     ;
 
     private final int code;
