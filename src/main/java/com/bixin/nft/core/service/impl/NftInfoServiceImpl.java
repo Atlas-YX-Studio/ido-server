@@ -146,7 +146,7 @@ public class NftInfoServiceImpl implements NftInfoService {
             nftInfoVos.addAll(nftInfoVoList);
         });
 
-        return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore)).collect(Collectors.toList());
+        return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
     }
 
     /**

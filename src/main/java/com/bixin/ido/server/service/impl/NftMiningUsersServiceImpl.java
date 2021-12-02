@@ -83,7 +83,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                 .build();
 
         if (StringUtils.isNotBlank(userAddress)) {
-            NftMiningUsers userMining = this.query().eq("address", userAddress).getEntity();
+            NftMiningUsers userMining = this.query().eq("address", userAddress).one();
             if (Objects.nonNull(userMining)) {
                 BigDecimal userApr = userMining.getScore()
                         .multiply(NftMiningUsersServiceImpl.this.starConfig.getMining().getNftMiningDayReward())
