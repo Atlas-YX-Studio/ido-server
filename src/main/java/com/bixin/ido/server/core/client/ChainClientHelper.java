@@ -93,4 +93,9 @@ public class ChainClientHelper {
         List<String> addressArray = Arrays.asList(idoStarConfig.getNft().getMarket(), idoStarConfig.getNft().getMarket() + "::" + idoStarConfig.getNft().getMarketModule() + "::NFTBuyBack<" + meta + ", " + body + ", " + payToken + ">");
         return getPostResp(addressArray);
     }
+
+    public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getNftListResp(String userAddress, String meta, String body) {
+        List<String> addressArray = Arrays.asList(userAddress, "0x00000000000000000000000000000001::NFTGallery::NFTGallery<" + meta + ", " + body + ">");
+        return getPostResp(addressArray);
+    }
 }
