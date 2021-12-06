@@ -37,6 +37,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -71,7 +72,11 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
     @Override
     public NftMiningOverviewVO market(String userAddress) {
         QueryWrapper<NftStakingUsers> usersQueryWrapper = Wrappers.<NftStakingUsers>query().select("sum(score) as score");
-        BigDecimal totalScore = this.nftStakingUsersService.getOne(usersQueryWrapper).getScore();
+        Map<String, Object> map = this.nftStakingUsersService.getMap(usersQueryWrapper);
+        BigDecimal totalScore = BigDecimal.ZERO;
+        if (map != null) {
+            totalScore = new BigDecimal(map.get("score").toString());
+        }
         int totalNftAmount = this.nftStakingUsersService.count();
         BigDecimal avgApr = NftMiningUsersServiceImpl.this.starConfig.getMining().getNftMiningDayReward()
                 .multiply(BigDecimal.valueOf(365L))

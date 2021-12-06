@@ -7,7 +7,7 @@
         id, address, score, reward, pending_reward, create_time, update_time
     </sql>
 
-    <update id="computeReward" parameterType="map">
+    <update id="computeReward">
         update nft_mining_users a
         INNER JOIN (select sum(score) total FROM nft_mining_users) b
         <set>
