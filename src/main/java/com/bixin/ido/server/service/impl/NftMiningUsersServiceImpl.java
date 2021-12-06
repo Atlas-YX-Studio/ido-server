@@ -71,32 +71,38 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
 
     @Override
     public NftMiningOverviewVO market(String userAddress) {
-        QueryWrapper<NftStakingUsers> usersQueryWrapper = Wrappers.<NftStakingUsers>query().select("sum(score) as score");
-        Map<String, Object> map = this.nftStakingUsersService.getMap(usersQueryWrapper);
+        QueryWrapper<NftMiningUsers> usersQueryWrapper = Wrappers.<NftMiningUsers>query().select("sum(score) as score");
+        Map<String, Object> map = this.getMap(usersQueryWrapper);
         BigDecimal totalScore = BigDecimal.ZERO;
         if (map != null) {
             totalScore = new BigDecimal(map.get("score").toString());
         }
-        int totalNftAmount = this.nftStakingUsersService.count();
-        BigDecimal avgApr = NftMiningUsersServiceImpl.this.starConfig.getMining().getNftMiningDayReward()
-                .multiply(BigDecimal.valueOf(365L))
-                .divide(NftMiningUsersServiceImpl.this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount)), 18, RoundingMode.DOWN);
+
         NftMiningOverviewVO vo = NftMiningOverviewVO.builder()
-                .dailyTotalOutput(NftMiningUsersServiceImpl.this.starConfig.getMining().getNftMiningDayReward().toPlainString())
+                .dailyTotalOutput(this.starConfig.getMining().getNftMiningDayReward().toPlainString())
                 .currentReward(BigDecimal.ZERO.toPlainString())
                 .totalScore(totalScore.toPlainString())
                 .userScore(BigDecimal.ZERO.toPlainString())
-                .avgApr(avgApr.toPlainString())
+                .avgApr("999999")
                 .userApr(BigDecimal.ZERO.toPlainString())
                 .build();
+        if (totalScore.compareTo(BigDecimal.ZERO) <= 0) {
+            return vo;
+        }
+
+        int totalNftAmount = this.nftStakingUsersService.count();
+        BigDecimal avgApr = this.starConfig.getMining().getNftMiningDayReward()
+                .multiply(BigDecimal.valueOf(365L))
+                .divide(this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount)), 18, RoundingMode.DOWN);
+        vo.setAvgApr(avgApr.toPlainString());
 
         if (StringUtils.isNotBlank(userAddress)) {
             NftMiningUsers userMining = this.query().eq("address", userAddress).one();
             if (Objects.nonNull(userMining)) {
                 BigDecimal userApr = userMining.getScore()
-                        .multiply(NftMiningUsersServiceImpl.this.starConfig.getMining().getNftMiningDayReward())
+                        .multiply(this.starConfig.getMining().getNftMiningDayReward())
                         .multiply(BigDecimal.valueOf(365L))
-                        .divide(totalScore.multiply(NftMiningUsersServiceImpl.this.starConfig.getMining().getNftUnitPrice()).multiply(BigDecimal.valueOf(totalNftAmount)), 18, RoundingMode.DOWN);
+                        .divide(totalScore.multiply(this.starConfig.getMining().getNftUnitPrice()).multiply(BigDecimal.valueOf(totalNftAmount)), 18, RoundingMode.DOWN);
                 vo.setCurrentReward(userMining.getReward().toPlainString());
                 vo.setUserScore(userMining.getScore().toPlainString());
                 vo.setUserApr(userApr.toPlainString());
