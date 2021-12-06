@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * NFT质押表
@@ -52,7 +53,7 @@ public class NftStakingUsers implements Serializable {
      * 分数
      */
     @TableField("score")
-    private Long score;
+    private BigDecimal score;
 
     /**
      * 创建时间

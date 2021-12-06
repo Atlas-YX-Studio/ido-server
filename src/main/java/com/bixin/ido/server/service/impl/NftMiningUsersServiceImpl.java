@@ -1,6 +1,7 @@
 package com.bixin.ido.server.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,6 +16,7 @@ import com.bixin.ido.server.core.mapper.NftMiningUsersMapper;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.entity.MiningHarvestRecords;
 import com.bixin.ido.server.entity.NftMiningUsers;
+import com.bixin.ido.server.entity.NftStakingUsers;
 import com.bixin.ido.server.service.MiningHarvestRecordsService;
 import com.bixin.ido.server.service.NftMiningUsersService;
 import com.bixin.ido.server.service.NftStakingUsersService;
@@ -68,7 +70,8 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
 
     @Override
     public NftMiningOverviewVO market(String userAddress) {
-        BigDecimal totalScore = this.baseMapper.totalScore();
+        QueryWrapper<NftStakingUsers> usersQueryWrapper = Wrappers.<NftStakingUsers>query().select("sum(score) as score");
+        BigDecimal totalScore = this.nftStakingUsersService.getOne(usersQueryWrapper).getScore();
         int totalNftAmount = this.nftStakingUsersService.count();
         BigDecimal avgApr = NftMiningUsersServiceImpl.this.starConfig.getMining().getNftMiningDayReward()
                 .multiply(BigDecimal.valueOf(365L))

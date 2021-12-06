@@ -18,8 +18,4 @@
         </set>
     </update>
 
-    <select id="totalScore" resultType="java.math.BigDecimal">
-        select sum(score) from nft_mining_users
-    </select>
-
 </mapper>
