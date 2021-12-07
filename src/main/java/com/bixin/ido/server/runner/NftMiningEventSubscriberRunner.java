@@ -186,7 +186,7 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
         NftMiningEventSubscriberRunner runner = ApplicationContextUtils.getBean(this.getClass());
         if (NFTMiningEventType.STAKE_EVENT.getDesc().equals(tagString)) {
             // 质押事件
-            runner.nftStake(nftMiningRecord);
+            runner.nftStake(nftMiningRecord, nftInfoDo);
         } else if (NFTMiningEventType.UNSTAKE_EVENT.getDesc().equals(tagString)) {
             // 解押事件
             runner.nftUnstake(nftMiningRecord);
@@ -198,7 +198,7 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
      * @param nftMiningRecord
      */
     @Transactional
-    public void nftStake(NftMiningRecord nftMiningRecord) {
+    public void nftStake(NftMiningRecord nftMiningRecord, NftInfoDo nftInfoDo) {
         LambdaQueryWrapper<NftStakingUsers> wrapper = Wrappers.<NftStakingUsers>lambdaQuery()
                 .eq(NftStakingUsers::getAddress, nftMiningRecord.getSender())
                 .eq(NftStakingUsers::getInfoId, nftMiningRecord.getInfoId());
@@ -224,6 +224,7 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
                 .address(nftMiningRecord.getSender())
                 .infoId(nftMiningRecord.getInfoId())
                 .order(nftMiningRecord.getOrder())
+                .score(nftInfoDo.getScore())
                 .createTime(System.currentTimeMillis())
                 .updateTime(System.currentTimeMillis())
                 .build();
