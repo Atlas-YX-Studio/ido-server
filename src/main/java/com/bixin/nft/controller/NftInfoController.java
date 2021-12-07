@@ -266,7 +266,7 @@ public class NftInfoController {
     }
 
     @GetMapping("/unused/list")
-    public R unusedList(@RequestParam(required = false, value = "address") String address) {
+    public R unusedList(@RequestParam String address) {
         return R.success(nftInfoService.getUserNftList(address));
     }
 
