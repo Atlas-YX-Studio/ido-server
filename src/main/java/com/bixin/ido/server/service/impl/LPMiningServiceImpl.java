@@ -18,12 +18,12 @@ import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.ILPMiningService;
 import com.bixin.ido.server.service.ISwapCoinsService;
 import com.bixin.ido.server.service.ISwapPathService;
-import com.bixin.ido.server.service.ITradingMiningService;
 import com.bixin.ido.server.utils.*;
 import com.bixin.nft.core.service.ContractService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,16 +52,12 @@ public class LPMiningServiceImpl implements ILPMiningService {
     private LPMiningPoolMapper lpMiningPoolMapper;
     @Resource
     private ISwapPathService swapPathService;
-    //    @Resource
-//    private TradingRewardUserMapper tradingRewardUserMapper;
     @Resource
     private MiningHarvestRecordMapper miningHarvestRecordMapper;
     @Resource
     private ContractService contractService;
     @Resource
     private ISwapCoinsService swapCoinsService;
-    //    @Resource
-//    private ISwapPathService swapPathService;
     @Resource
     private StarConfig starConfig;
     @Resource
@@ -124,13 +120,19 @@ public class LPMiningServiceImpl implements ILPMiningService {
         }
         Map<Long, LPMiningPoolUserDo> userLPMiningPoolMap = lpMiningUserPools.stream().collect(Collectors.toMap(LPMiningPoolUserDo::getPoolId, y -> y));
 
+        Map<String, SwapPathServiceImpl.Pool> liquidityPoolMap = swapPathService.getLiquidityPoolMap();
+        Map<String, BigDecimal> coinPriceInfos = swapPathService.getCoinPriceInfos();
         List<LPMingPoolVo> lpMiningPoolList = tradingPollMap.values().stream().map(lpMiningPool -> BeanCopyUtil.copyProperties(lpMiningPool, () -> {
             LPMingPoolVo vo = new LPMingPoolVo();
             BigDecimal dayReward = lpMiningPool.getAllocationRatio().multiply(dayTotalReward);
             vo.setDailyTotalOutput(dayReward.toPlainString());
-            if (lpMiningPool.getTotalStakingAmount().compareTo(BigDecimal.ZERO) > 0) {
-                vo.setApy(dayReward.multiply(BigDecimal.valueOf(365L)).divide(lpMiningPool.getTotalStakingAmount(), 18, RoundingMode.DOWN).setScale(18, RoundingMode.DOWN).toPlainString());
-                vo.setCompoundApy(BigDecimal.ONE.add(dayReward.divide(lpMiningPool.getTotalStakingAmount(), 18, RoundingMode.DOWN)).pow(365).setScale(18, RoundingMode.DOWN).toPlainString());
+
+            BigDecimal dayRewardUsdt = dayReward.multiply(coinPriceInfos.getOrDefault(toPair(starConfig.getMining().getKikoAddress(), USDT_CODE), BigDecimal.ZERO));
+            BigDecimal totalStakingUsdt = convertLPToUsdt(liquidityPoolMap, coinPriceInfos, toPair(lpMiningPool.getTokenA(), lpMiningPool.getTokenB()), lpMiningPool.getTotalStakingAmount());
+            vo.setTotalStakingAmount(totalStakingUsdt.toPlainString());
+            if (totalStakingUsdt.compareTo(BigDecimal.ZERO) > 0) {
+                vo.setApy(dayRewardUsdt.multiply(BigDecimal.valueOf(365L)).divide(totalStakingUsdt, 18, RoundingMode.DOWN).setScale(18, RoundingMode.DOWN).toPlainString());
+                vo.setCompoundApy(BigDecimal.ONE.add(dayRewardUsdt.divide(totalStakingUsdt, 18, RoundingMode.DOWN)).pow(365).setScale(18, RoundingMode.DOWN).toPlainString());
             } else {
                 vo.setApy("999999");
                 vo.setCompoundApy("999999");
@@ -138,7 +140,7 @@ public class LPMiningServiceImpl implements ILPMiningService {
 
             if (userLPMiningPoolMap.containsKey(lpMiningPool.getId())) {
                 LPMiningPoolUserDo tempUserLPMiningPool = userLPMiningPoolMap.get(lpMiningPool.getId());
-                vo.setUserStakingAmount(tempUserLPMiningPool.getStakingAmount().toPlainString());
+                vo.setUserStakingAmount(convertLPToUsdt(liquidityPoolMap, coinPriceInfos, toPair(lpMiningPool.getTokenA(), lpMiningPool.getTokenB()), tempUserLPMiningPool.getStakingAmount()).toPlainString());
                 vo.setUserReward(tempUserLPMiningPool.getReward().toPlainString());
             }
             if (coinMap.containsKey(lpMiningPool.getTokenA())) {
@@ -271,18 +273,22 @@ public class LPMiningServiceImpl implements ILPMiningService {
         Map<String, SwapPathServiceImpl.Pool> liquidityPoolMap = swapPathService.getLiquidityPoolMap();
         Map<String, BigDecimal> coinPriceInfos = swapPathService.getCoinPriceInfos();
 
-        return lpMiningPools.stream().map(pool -> {
-            SwapPathServiceImpl.Pool liquidityPool = liquidityPoolMap.get(toPair(pool.getTokenA(), pool.getTokenB()));
-            if (Objects.isNull(liquidityPool)) {
-                log.error("pair not found in liquidity pools, pairName={}, pools={}", toPair(pool.getTokenA(), pool.getTokenB()), liquidityPoolMap.keySet());
-                return BigDecimal.ZERO;
-            }
-            BigDecimal tokenRate = pool.getTotalStakingAmount().divide(liquidityPool.lpTokenAmount, 18, RoundingMode.DOWN);
-            BigDecimal usdtAmountA = tokenRate.multiply(liquidityPool.tokenAmountA).multiply(coinPriceInfos.getOrDefault(toPair(liquidityPool.tokenA, USDT_CODE), BigDecimal.ZERO));
-            BigDecimal usdtAmountB = tokenRate.multiply(liquidityPool.tokenAmountB).multiply(coinPriceInfos.getOrDefault(toPair(liquidityPool.tokenB, USDT_CODE), BigDecimal.ZERO));
-            return usdtAmountA.add(usdtAmountB);
-        }).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        return lpMiningPools.stream().map(pool -> convertLPToUsdt(liquidityPoolMap, coinPriceInfos, toPair(pool.getTokenA(), pool.getTokenB()), pool.getTotalStakingAmount())).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
+
+    @NotNull
+    private BigDecimal convertLPToUsdt(Map<String, SwapPathServiceImpl.Pool> liquidityPoolMap, Map<String, BigDecimal> coinPriceInfos, String pairName, BigDecimal lpAmount) {
+        SwapPathServiceImpl.Pool liquidityPool = liquidityPoolMap.get(pairName);
+        if (Objects.isNull(liquidityPool)) {
+            log.error("pair not found in liquidity pools, pairName={}, pools={}", pairName, liquidityPoolMap.keySet());
+            return BigDecimal.ZERO;
+        }
+        BigDecimal tokenRate = lpAmount.divide(liquidityPool.lpTokenAmount, 18, RoundingMode.DOWN);
+        BigDecimal usdtAmountA = tokenRate.multiply(liquidityPool.tokenAmountA).multiply(coinPriceInfos.getOrDefault(toPair(liquidityPool.tokenA, USDT_CODE), BigDecimal.ZERO));
+        BigDecimal usdtAmountB = tokenRate.multiply(liquidityPool.tokenAmountB).multiply(coinPriceInfos.getOrDefault(toPair(liquidityPool.tokenB, USDT_CODE), BigDecimal.ZERO));
+        return usdtAmountA.add(usdtAmountB);
+    }
+
 
     /**
      * 执行合约领取交易挖矿收益
