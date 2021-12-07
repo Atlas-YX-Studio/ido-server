@@ -2,6 +2,7 @@ package com.bixin.ido.server.controller;
 
 
 import com.bixin.ido.server.bean.vo.wrap.R;
+import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.entity.NftStakingUsers;
 import com.bixin.ido.server.service.NftMiningUsersService;
 import com.bixin.ido.server.service.NftStakingUsersService;
@@ -24,6 +25,8 @@ public class NftMiningUsersController {
     private NftMiningUsersService nftMiningUsersService;
     @Resource
     private NftStakingUsersService nftStakingUsersService;
+    @Resource
+    private StarConfig starConfig;
 
     @GetMapping("/market")
     public R market(@RequestParam(required = false, value = "address") String address) {
@@ -39,10 +42,14 @@ public class NftMiningUsersController {
         return R.success(nftStakingUsers);
     }
 
-    // todo
     @PostMapping("/reward/harvest")
     public R rewardHarvest(@RequestParam String address) {
         return R.success(nftMiningUsersService.harvestReward(address));
+    }
+
+    @GetMapping("/fee")
+    public R reward() {
+        return R.success(starConfig.getMining().getNftMiningStcFee());
     }
 
 }

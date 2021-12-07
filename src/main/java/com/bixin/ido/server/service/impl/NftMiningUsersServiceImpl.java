@@ -16,7 +16,6 @@ import com.bixin.ido.server.core.mapper.NftMiningUsersMapper;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.entity.MiningHarvestRecords;
 import com.bixin.ido.server.entity.NftMiningUsers;
-import com.bixin.ido.server.entity.NftStakingUsers;
 import com.bixin.ido.server.service.MiningHarvestRecordsService;
 import com.bixin.ido.server.service.NftMiningUsersService;
 import com.bixin.ido.server.service.NftStakingUsersService;
@@ -140,7 +139,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
             throw new IdoException(IdoErrorCode.REWARD_NOT_INSUFFICIENT);
         }
         // stc 手续费兑换usdt
-        BigDecimal stcFee = starConfig.getMining().getStcFee();
+        BigDecimal stcFee = starConfig.getMining().getNftMiningStcFee();
         if (nftMiningUsers.getReward().compareTo(stcFee) <= 0) {
             log.info("harvestCurrentReward 可提取收益不足 {}", nftMiningUsers.getReward().toPlainString());
             throw new IdoException(IdoErrorCode.REWARD_NOT_INSUFFICIENT);
