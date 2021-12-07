@@ -48,7 +48,7 @@ public class NftMiningUsersController {
     }
 
     @GetMapping("/fee")
-    public R reward() {
+    public R fee() {
         return R.success(starConfig.getMining().getNftMiningStcFee());
     }
 

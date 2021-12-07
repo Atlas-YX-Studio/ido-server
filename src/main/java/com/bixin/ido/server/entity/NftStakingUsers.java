@@ -46,7 +46,7 @@ public class NftStakingUsers implements Serializable {
     /**
      * 序号
      */
-    @TableField("order")
+    @TableField("`order`")
     private Long order;
 
     /**
