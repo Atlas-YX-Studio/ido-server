@@ -63,4 +63,4 @@ ido:
       nft-unit-price: 10
       nft-mining-address: "0x7ed4261b68ddb20158109794bbab3ae7"
       nft-mining-module: "NFTMining"
-      stc-fee: 0.01
+      nft-mining-stc-fee: 0.01
