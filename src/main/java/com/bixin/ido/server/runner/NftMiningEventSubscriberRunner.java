@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.bixin.ido.server.bean.dto.NftStakeEventDto;
 import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.entity.NftMiningRecord;
@@ -278,7 +279,7 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
         String seqNumber = eventResult.getEventSeqNumber();
         String key = null;
         try {
-            key = URLEncoder.encode(typeTag, "utf8") + seqNumber;
+            key = CommonConstant.NFT_MINING_SEQ_PREFIX_KEY + URLEncoder.encode(typeTag, "utf8") + seqNumber;
         } catch (UnsupportedEncodingException e) {
             log.error("NftMiningEventSubscriberRunner exception ", e);
         }

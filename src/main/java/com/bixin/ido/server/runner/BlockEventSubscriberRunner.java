@@ -1,6 +1,7 @@
 package com.bixin.ido.server.runner;
 
 import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.constants.CommonConstant;
 import com.bixin.ido.server.core.factory.NamedThreadFactory;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.service.NftMiningUsersService;
@@ -145,7 +146,7 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
         String seqNumber = eventResult.getEventSeqNumber();
         String key = null;
         try {
-            key = URLEncoder.encode(typeTag, "utf8") + seqNumber;
+            key = CommonConstant.NEW_BLOCK_SEQ_PREFIX_KEY + URLEncoder.encode(typeTag, "utf8") + seqNumber;
         } catch (UnsupportedEncodingException e) {
             log.error("BlockEventSubscriberRunner exception ", e);
         }
