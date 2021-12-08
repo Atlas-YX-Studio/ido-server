@@ -16,6 +16,7 @@ import com.bixin.ido.server.core.mapper.NftMiningUsersMapper;
 import com.bixin.ido.server.core.redis.RedisCache;
 import com.bixin.ido.server.entity.MiningHarvestRecords;
 import com.bixin.ido.server.entity.NftMiningUsers;
+import com.bixin.ido.server.entity.NftStakingUsers;
 import com.bixin.ido.server.service.MiningHarvestRecordsService;
 import com.bixin.ido.server.service.NftMiningUsersService;
 import com.bixin.ido.server.service.NftStakingUsersService;
@@ -98,10 +99,13 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
         if (StringUtils.isNotBlank(userAddress)) {
             NftMiningUsers userMining = this.query().eq("address", userAddress).one();
             if (Objects.nonNull(userMining)) {
+                int userTotalNftAmount = nftStakingUsersService.lambdaQuery().eq(NftStakingUsers::getAddress, userAddress).count();
+                // （（用户NFT算力 / 总算力）* 日产量 * 365）/【当前用户质押在平台的NFT数量 * NFT单价（可配置项，单位KIKO）】
                 BigDecimal userApr = userMining.getScore()
                         .multiply(this.starConfig.getMining().getNftMiningDayReward())
                         .multiply(BigDecimal.valueOf(365L))
-                        .divide(totalScore.multiply(this.starConfig.getMining().getNftUnitPrice()).multiply(BigDecimal.valueOf(totalNftAmount)), 18, RoundingMode.DOWN);
+                        .divide(totalScore.multiply(BigDecimal.valueOf(userTotalNftAmount))
+                                .multiply(this.starConfig.getMining().getNftUnitPrice()), 18, RoundingMode.HALF_UP);
                 vo.setCurrentReward(userMining.getReward().add(userMining.getPendingReward()).toPlainString());
                 vo.setUserScore(userMining.getScore().toPlainString());
                 vo.setUserApr(userApr.toPlainString());
