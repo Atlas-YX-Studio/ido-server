@@ -102,7 +102,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                         .multiply(this.starConfig.getMining().getNftMiningDayReward())
                         .multiply(BigDecimal.valueOf(365L))
                         .divide(totalScore.multiply(this.starConfig.getMining().getNftUnitPrice()).multiply(BigDecimal.valueOf(totalNftAmount)), 18, RoundingMode.DOWN);
-                vo.setCurrentReward(userMining.getReward().toPlainString());
+                vo.setCurrentReward(userMining.getReward().add(userMining.getPendingReward()).toPlainString());
                 vo.setUserScore(userMining.getScore().toPlainString());
                 vo.setUserApr(userApr.toPlainString());
             }
