@@ -1,14 +1,22 @@
 package com.bixin.ido.server.controller;
 
 
+import com.bixin.ido.server.bean.vo.NftStakingVO;
 import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.config.StarConfig;
 import com.bixin.ido.server.entity.NftStakingUsers;
 import com.bixin.ido.server.service.NftMiningUsersService;
 import com.bixin.ido.server.service.NftStakingUsersService;
+import com.bixin.ido.server.utils.BeanCopyUtil;
+import com.bixin.nft.bean.DO.NftGroupDo;
+import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.core.service.NftGroupService;
+import com.bixin.nft.core.service.NftInfoService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +34,10 @@ public class NftMiningUsersController {
     @Resource
     private NftStakingUsersService nftStakingUsersService;
     @Resource
+    private NftInfoService nftInfoService;
+    @Resource
+    private NftGroupService nftGroupService;
+    @Resource
     private StarConfig starConfig;
 
     @GetMapping("/market")
@@ -35,11 +47,27 @@ public class NftMiningUsersController {
 
     @GetMapping("/staking/list")
     public R stakingList(@RequestParam String address) {
-        List<NftStakingUsers> nftStakingUsers = nftStakingUsersService.lambdaQuery()
+        List<NftStakingUsers> nftStakingUserList = nftStakingUsersService.lambdaQuery()
                 .eq(NftStakingUsers::getAddress, address)
                 .orderByAsc(NftStakingUsers::getOrder)
                 .list();
-        return R.success(nftStakingUsers);
+        if (CollectionUtils.isEmpty(nftStakingUserList)) {
+            return R.success(List.of());
+        }
+        List<NftStakingVO> nftInfoVoList = new ArrayList<>();
+        nftStakingUserList.forEach(nftStakingUser -> {
+            NftStakingVO nftStakingVO = BeanCopyUtil.copyProperties(nftStakingUser, NftStakingVO::new);
+            // nft info
+            NftInfoDo nftInfoDo = nftInfoService.selectById(nftStakingUser.getInfoId());
+            nftStakingVO.setName(nftInfoDo.getName());
+            nftStakingVO.setImageLink(nftInfoDo.getImageLink());
+            // group info
+            NftGroupDo nftGroupDo = nftGroupService.selectById(nftInfoDo.getGroupId());
+            nftStakingVO.setNftMeta(nftGroupDo.getNftMeta());
+            nftStakingVO.setNftBody(nftGroupDo.getNftBody());
+            nftInfoVoList.add(nftStakingVO);
+        });
+        return R.success(nftInfoVoList);
     }
 
     @PostMapping("/reward/harvest")
