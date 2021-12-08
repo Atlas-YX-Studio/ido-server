@@ -151,6 +151,8 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                 .miningType(MiningTypeEnum.LP_STAKING.name())
                 .rewardType(RewardTypeEnum.CURRENT.name())
                 .status(HarvestStatusEnum.PENDING.name())
+                .createTime(System.currentTimeMillis())
+                .updateTime(System.currentTimeMillis())
                 .build();
         miningHarvestRecordsService.save(harvestRecords);
         // 扣除收益
@@ -161,8 +163,8 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                 .eq(NftMiningUsers::getId, nftMiningUsers.getId());
         update(nftMiningUsersUpdateWrapper);
         // 调取合约，返回hash，异步获取合约结果，成功后更新事件状态+50%进入锁仓，失败后恢复数据
-        BigInteger amount = nftMiningUsers.getReward().subtract(BigDecimalUtil.addPrecision(nftMiningUsers.getReward(), 18)).toBigInteger();
-        BigInteger fee = BigDecimalUtil.addPrecision(stcFee, 18).toBigInteger();
+        BigInteger amount = nftMiningUsers.getReward().subtract(BigDecimalUtil.addPrecision(nftMiningUsers.getReward(), 9)).toBigInteger();
+        BigInteger fee = BigDecimalUtil.addPrecision(stcFee, 9).toBigInteger();
         String hash = harvestTradingReward(userAddress, amount, fee);
         ThreadPoolUtil.execute(() -> {
             boolean success;
