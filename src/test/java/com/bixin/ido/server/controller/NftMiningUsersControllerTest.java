@@ -21,7 +21,7 @@ class NftMiningUsersControllerTest {
 
     @Test
     void market() {
-        nftMiningUsersController.market("");
+        nftMiningUsersController.market("0x290C7B35320A4Dd26f651fD184373fE7");
     }
 
     @Test

@@ -92,7 +92,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
         // 计算总年化
         int totalNftAmount = this.nftStakingUsersService.count();
         BigDecimal denominator = this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount));
-        if (!BigDecimal.ZERO.equals(denominator)) {
+        if (denominator.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal avgApr = this.starConfig.getMining().getNftMiningDayReward()
                     .multiply(BigDecimal.valueOf(365L))
                     .divide(denominator, 18, RoundingMode.DOWN);
@@ -106,7 +106,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                 // （（用户NFT算力 / 总算力）* 日产量 * 365）/【当前用户质押在平台的NFT数量 * NFT单价（可配置项，单位KIKO）】
                 denominator = totalScore.multiply(BigDecimal.valueOf(userTotalNftAmount))
                         .multiply(this.starConfig.getMining().getNftUnitPrice());
-                if (!BigDecimal.ZERO.equals(denominator)) {
+                if (denominator.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal userApr = userMining.getScore()
                             .multiply(this.starConfig.getMining().getNftMiningDayReward())
                             .multiply(BigDecimal.valueOf(365L))

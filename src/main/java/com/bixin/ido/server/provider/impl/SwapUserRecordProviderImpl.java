@@ -39,7 +39,7 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
         String tokenX = idoSwapUserRecord.getTokenCodeX();
         String tokenY = idoSwapUserRecord.getTokenCodeY();
         // tokenX
-        if (BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenInX()) && !BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenOutX())) {
+        if (BigDecimal.ZERO.compareTo(idoSwapUserRecord.getTokenInX()) == 0 && BigDecimal.ZERO.compareTo(idoSwapUserRecord.getTokenOutX()) != 0) {
             cacheSymbolTick(tokenX, tokenY, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutX(), idoSwapUserRecord.getTokenInY(), idoSwapUserRecord.getSwapTime());
             cacheTokenTick(tokenX, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutX(), idoSwapUserRecord.getSwapTime());
         } else {
@@ -47,7 +47,7 @@ public class SwapUserRecordProviderImpl implements IStarSwapProvider<SwapUserRec
             cacheTokenTick(tokenX, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInX(), idoSwapUserRecord.getSwapTime());
         }
         // tokenY
-        if (BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenInY()) && !BigDecimal.ZERO.equals(idoSwapUserRecord.getTokenOutY())) {
+        if (BigDecimal.ZERO.compareTo(idoSwapUserRecord.getTokenInY()) == 0 && BigDecimal.ZERO.compareTo(idoSwapUserRecord.getTokenOutY()) != 0) {
             cacheTokenTick(tokenY, DirectionType.LONG.name(), idoSwapUserRecord.getTokenOutY(), idoSwapUserRecord.getSwapTime());
         } else {
             cacheTokenTick(tokenY, DirectionType.SHORT.name(), idoSwapUserRecord.getTokenInY(), idoSwapUserRecord.getSwapTime());
