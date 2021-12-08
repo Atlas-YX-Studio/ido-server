@@ -236,6 +236,8 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
             nftMiningUsers = NftMiningUsers.builder()
                     .address(userAddress)
                     .score(nftInfoDo.getScore())
+                    .createTime(System.currentTimeMillis())
+                    .updateTime(System.currentTimeMillis())
                     .build();
             nftMiningUsersService.save(nftMiningUsers);
         } else {
