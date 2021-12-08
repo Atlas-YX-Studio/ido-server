@@ -89,26 +89,32 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
         if (totalScore.compareTo(BigDecimal.ZERO) <= 0) {
             return vo;
         }
-
+        // 计算总年化
         int totalNftAmount = this.nftStakingUsersService.count();
-        BigDecimal avgApr = this.starConfig.getMining().getNftMiningDayReward()
-                .multiply(BigDecimal.valueOf(365L))
-                .divide(this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount)), 18, RoundingMode.DOWN);
-        vo.setAvgApr(avgApr.toPlainString());
-
+        BigDecimal denominator = this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount));
+        if (!BigDecimal.ZERO.equals(denominator)) {
+            BigDecimal avgApr = this.starConfig.getMining().getNftMiningDayReward()
+                    .multiply(BigDecimal.valueOf(365L))
+                    .divide(denominator, 18, RoundingMode.DOWN);
+            vo.setAvgApr(avgApr.toPlainString());
+        }
+        // 计算用户年化
         if (StringUtils.isNotBlank(userAddress)) {
             NftMiningUsers userMining = this.query().eq("address", userAddress).one();
             if (Objects.nonNull(userMining)) {
                 int userTotalNftAmount = nftStakingUsersService.lambdaQuery().eq(NftStakingUsers::getAddress, userAddress).count();
                 // （（用户NFT算力 / 总算力）* 日产量 * 365）/【当前用户质押在平台的NFT数量 * NFT单价（可配置项，单位KIKO）】
-                BigDecimal userApr = userMining.getScore()
-                        .multiply(this.starConfig.getMining().getNftMiningDayReward())
-                        .multiply(BigDecimal.valueOf(365L))
-                        .divide(totalScore.multiply(BigDecimal.valueOf(userTotalNftAmount))
-                                .multiply(this.starConfig.getMining().getNftUnitPrice()), 18, RoundingMode.HALF_UP);
+                denominator = totalScore.multiply(BigDecimal.valueOf(userTotalNftAmount))
+                        .multiply(this.starConfig.getMining().getNftUnitPrice());
+                if (!BigDecimal.ZERO.equals(denominator)) {
+                    BigDecimal userApr = userMining.getScore()
+                            .multiply(this.starConfig.getMining().getNftMiningDayReward())
+                            .multiply(BigDecimal.valueOf(365L))
+                            .divide(denominator, 18, RoundingMode.HALF_UP);
+                    vo.setUserApr(userApr.toPlainString());
+                }
                 vo.setCurrentReward(userMining.getReward().add(userMining.getPendingReward()).toPlainString());
                 vo.setUserScore(userMining.getScore().toPlainString());
-                vo.setUserApr(userApr.toPlainString());
             }
 
         }
