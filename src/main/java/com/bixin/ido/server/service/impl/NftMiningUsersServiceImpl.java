@@ -83,7 +83,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                 .currentReward(BigDecimal.ZERO.toPlainString())
                 .totalScore(totalScore.toPlainString())
                 .userScore(BigDecimal.ZERO.toPlainString())
-                .avgApr("999999")
+                .avgApr("0")
                 .userApr(BigDecimal.ZERO.toPlainString())
                 .build();
         if (totalScore.compareTo(BigDecimal.ZERO) <= 0) {
@@ -178,6 +178,8 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
             BigInteger amount = BigDecimalUtil.addPrecision(nftMiningUsers.getReward(), 9).toBigInteger();
             BigInteger fee = BigDecimalUtil.addPrecision(stcFee, 9).toBigInteger();
             String hash = harvestTradingReward(userAddress, amount, fee);
+            harvestRecords.setHash(hash);
+            miningHarvestRecordsService.updateById(harvestRecords);
             ThreadPoolUtil.execute(() -> {
                 boolean success;
                 try {
@@ -196,7 +198,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
         } catch (Exception e) {
             log.error("harvestReward 提取收益失败:", e);
             nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, harvestRecords);
-            throw new IdoException(IdoErrorCode.REWARD_HARVEST_FAILED);
+            throw e;
         }
     }
 
