@@ -124,7 +124,7 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
                 JsonNode data = eventResult.getData();
                 // 添加日志
                 try {
-                    log.info("NftMiningEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
+                    log.info("NftMiningEventSubscriberRunner info: {}", mapper.writeValueAsString(eventResult));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
@@ -135,7 +135,12 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
                 }
                 // 处理事件
                 try {
-                    handleNftStakeEvent(data, eventResult.getTypeTag(), eventResult.getEventSeqNumber());
+                    String tagString = getEventName(eventResult.getTypeTag());
+                    if (NFTMiningEventType.STAKE_EVENT.getDesc().equals(tagString) || NFTMiningEventType.UNSTAKE_EVENT.getDesc().equals(tagString)) {
+                        handleNftStakeEvent(data, eventResult.getTypeTag(), eventResult.getEventSeqNumber());
+                    } else {
+                        log.info("NftMiningEventSubscriberRunner {} 不做处理 ", tagString);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -78,6 +78,12 @@ public enum IdoErrorCode implements ErrorCode {
      */
     PENDING_HARVEST_RECORD_EXISTS(100013, "pending harvest record exists"),
 
+
+    /**
+     * 提取收益失败
+     */
+    REWARD_HARVEST_FAILED(100014, "reward harvest failed"),
+
     ;
 
     private final int code;

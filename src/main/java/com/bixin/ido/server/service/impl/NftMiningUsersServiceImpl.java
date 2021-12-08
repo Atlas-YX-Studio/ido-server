@@ -148,40 +148,46 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
         MiningHarvestRecords harvestRecords = MiningHarvestRecords.builder()
                 .address(userAddress)
                 .amount(nftMiningUsers.getReward())
-                .miningType(MiningTypeEnum.LP_STAKING.name())
+                .miningType(MiningTypeEnum.NFT_STAKING.name())
                 .rewardType(RewardTypeEnum.CURRENT.name())
                 .status(HarvestStatusEnum.PENDING.name())
                 .createTime(System.currentTimeMillis())
                 .updateTime(System.currentTimeMillis())
                 .build();
         miningHarvestRecordsService.save(harvestRecords);
-        // 扣除收益
-        LambdaUpdateWrapper<NftMiningUsers> nftMiningUsersUpdateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
-                .setSql("reward = reward - " + nftMiningUsers.getReward())
-                .setSql("pending_reward = pending_reward + " + nftMiningUsers.getReward())
-                .set(NftMiningUsers::getUpdateTime, System.currentTimeMillis())
-                .eq(NftMiningUsers::getId, nftMiningUsers.getId());
-        update(nftMiningUsersUpdateWrapper);
-        // 调取合约，返回hash，异步获取合约结果，成功后更新事件状态+50%进入锁仓，失败后恢复数据
-        BigInteger amount = nftMiningUsers.getReward().subtract(BigDecimalUtil.addPrecision(nftMiningUsers.getReward(), 9)).toBigInteger();
-        BigInteger fee = BigDecimalUtil.addPrecision(stcFee, 9).toBigInteger();
-        String hash = harvestTradingReward(userAddress, amount, fee);
-        ThreadPoolUtil.execute(() -> {
-            boolean success;
-            try {
-                success = contractService.checkTxt(hash);
-            } catch (Exception e) {
-                log.error("harvestReward 合约执行超时 hash:{}", hash);
-                return;
-            }
-            NftMiningUsersServiceImpl nftMiningUsersServiceImpl = ApplicationContextUtils.getBean(this.getClass());
-            if (success) {
-                nftMiningUsersServiceImpl.harvestRewardSuccess(nftMiningUsers, harvestRecords);
-            } else {
-                nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, harvestRecords);
-            }
-        });
-        return hash;
+        NftMiningUsersServiceImpl nftMiningUsersServiceImpl = ApplicationContextUtils.getBean(this.getClass());
+        try {
+            // 扣除收益
+            LambdaUpdateWrapper<NftMiningUsers> nftMiningUsersUpdateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
+                    .setSql("reward = reward - " + nftMiningUsers.getReward())
+                    .setSql("pending_reward = pending_reward + " + nftMiningUsers.getReward())
+                    .set(NftMiningUsers::getUpdateTime, System.currentTimeMillis())
+                    .eq(NftMiningUsers::getId, nftMiningUsers.getId());
+            update(nftMiningUsersUpdateWrapper);
+            // 调取合约，返回hash，异步获取合约结果，成功后更新事件状态+50%进入锁仓，失败后恢复数据
+            BigInteger amount = BigDecimalUtil.addPrecision(nftMiningUsers.getReward(), 9).toBigInteger();
+            BigInteger fee = BigDecimalUtil.addPrecision(stcFee, 9).toBigInteger();
+            String hash = harvestTradingReward(userAddress, amount, fee);
+            ThreadPoolUtil.execute(() -> {
+                boolean success;
+                try {
+                    success = contractService.checkTxt(hash);
+                } catch (Exception e) {
+                    log.error("harvestReward 合约执行超时 hash:{}", hash);
+                    return;
+                }
+                if (success) {
+                    nftMiningUsersServiceImpl.harvestRewardSuccess(nftMiningUsers, harvestRecords);
+                } else {
+                    nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, harvestRecords);
+                }
+            });
+            return hash;
+        } catch (Exception e) {
+            log.error("harvestReward 提取收益失败:", e);
+            nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, harvestRecords);
+            throw new IdoException(IdoErrorCode.REWARD_HARVEST_FAILED);
+        }
     }
 
     /**
@@ -191,18 +197,17 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
      * @return
      */
     private String harvestTradingReward(String userAddress, BigInteger amount, BigInteger fee) {
-        log.info("harvestTradingReward  userAddress:{} amount:{} 提取收益中...", userAddress, amount);
+        log.info("harvestTradingReward  userAddress:{} amount:{} fee:{} 提取收益中...", userAddress, amount, fee);
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(starConfig.getMining().getNftMiningAddress())
                 .moduleName(starConfig.getMining().getNftMiningModule())
-                .functionName("nft_mining_harvest_stc")
+                .functionName("harvest_stc")
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeAddressToBytes(AccountAddressUtils.create(userAddress)),
                         BcsSerializeHelper.serializeU128ToBytes(amount),
                         BcsSerializeHelper.serializeU128ToBytes(fee)
                 ))
-                .tyArgs(Lists.newArrayList())
                 .build();
         return contractService.callFunctionAndGetHash(starConfig.getMining().getNftMiningAddress(), scriptFunctionObj);
     }

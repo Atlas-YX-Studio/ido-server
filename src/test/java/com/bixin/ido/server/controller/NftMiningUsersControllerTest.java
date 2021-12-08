@@ -1,7 +1,7 @@
 package com.bixin.ido.server.controller;
 
 import com.bixin.IdoServerApplication;
-import com.bixin.ido.server.service.NftStakingUsersService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +16,9 @@ class NftMiningUsersControllerTest {
 
     @Resource
     private NftMiningUsersController nftMiningUsersController;
-    @Resource
-    private NftStakingUsersService nftStakingUsersService;
 
     private static final String userAddress = "0x3Cf910D97c98947277BE21D6b7625cfe";
+
     @Test
     void market() {
         nftMiningUsersController.market("");
@@ -31,8 +30,10 @@ class NftMiningUsersControllerTest {
     }
 
     @Test
+    @SneakyThrows
     void rewardHarvest() {
-        nftMiningUsersController.rewardHarvest(userAddress);
+        log.info(nftMiningUsersController.rewardHarvest(userAddress).toString());
+        Thread.sleep(30000L);
     }
 
     @Test
