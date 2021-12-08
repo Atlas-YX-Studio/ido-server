@@ -1,7 +1,6 @@
 package com.bixin.ido.server.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.bixin.ido.server.bean.dto.NftStakeEventDto;
 import com.bixin.ido.server.config.StarConfig;
@@ -199,8 +198,9 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
      */
     @Transactional
     public void nftStake(NftMiningRecord nftMiningRecord, NftInfoDo nftInfoDo) {
+        String userAddress = nftMiningRecord.getSender();
         LambdaQueryWrapper<NftStakingUsers> wrapper = Wrappers.<NftStakingUsers>lambdaQuery()
-                .eq(NftStakingUsers::getAddress, nftMiningRecord.getSender())
+                .eq(NftStakingUsers::getAddress, userAddress)
                 .eq(NftStakingUsers::getInfoId, nftMiningRecord.getInfoId());
         NftStakingUsers nftStakingUsers = nftStakingUsersService.getOne(wrapper, false);
         if (nftStakingUsers != null) {
@@ -214,14 +214,15 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
         nftStakingUsers = nftStakingUsersService.getOne(wrapper, false);
         if (nftStakingUsers != null) {
             // 解押已存在nft
-            LambdaUpdateWrapper<NftMiningUsers> updateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
-                    .setSql("score = score - " + nftStakingUsers.getScore());
-            nftMiningUsersService.update(updateWrapper);
+            nftMiningUsersService.lambdaUpdate()
+                    .eq(NftMiningUsers::getAddress, userAddress)
+                    .setSql("score = score - " + nftStakingUsers.getScore())
+                    .update();
             nftStakingUsersService.removeById(nftStakingUsers.getId());
         }
         // 质押nft
         nftStakingUsers = NftStakingUsers.builder()
-                .address(nftMiningRecord.getSender())
+                .address(userAddress)
                 .infoId(nftMiningRecord.getInfoId())
                 .order(nftMiningRecord.getOrder())
                 .score(nftInfoDo.getScore())
@@ -229,9 +230,20 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
                 .updateTime(System.currentTimeMillis())
                 .build();
         nftStakingUsersService.save(nftStakingUsers);
-        LambdaUpdateWrapper<NftMiningUsers> updateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
-                .setSql("score = score + " + nftStakingUsers.getScore());
-        nftMiningUsersService.update(updateWrapper);
+
+        NftMiningUsers nftMiningUsers = nftMiningUsersService.lambdaQuery().eq(NftMiningUsers::getAddress, userAddress).one();
+        if (nftMiningUsers == null) {
+            nftMiningUsers = NftMiningUsers.builder()
+                    .address(userAddress)
+                    .score(nftInfoDo.getScore())
+                    .build();
+            nftMiningUsersService.save(nftMiningUsers);
+        } else {
+            nftMiningUsersService.lambdaUpdate()
+                    .eq(NftMiningUsers::getAddress, userAddress)
+                    .setSql("score = score + " + nftStakingUsers.getScore())
+                    .update();
+        }
     }
 
     /**
@@ -240,8 +252,10 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
      */
     @Transactional
     public void nftUnstake(NftMiningRecord nftMiningRecord) {
+        String userAddress = nftMiningRecord.getSender();
+
         LambdaQueryWrapper<NftStakingUsers> wrapper = Wrappers.<NftStakingUsers>lambdaQuery()
-                .eq(NftStakingUsers::getAddress, nftMiningRecord.getSender())
+                .eq(NftStakingUsers::getAddress, userAddress)
                 .eq(NftStakingUsers::getInfoId, nftMiningRecord.getInfoId());
         NftStakingUsers nftStakingUsers = nftStakingUsersService.getOne(wrapper, false);
         if (nftStakingUsers == null) {
@@ -249,9 +263,10 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
             return;
         }
         // 解押nft
-        LambdaUpdateWrapper<NftMiningUsers> updateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
-                .setSql("score = score - " + nftStakingUsers.getScore());
-        nftMiningUsersService.update(updateWrapper);
+        nftMiningUsersService.lambdaUpdate()
+                .eq(NftMiningUsers::getAddress, userAddress)
+                .setSql("score = score - " + nftStakingUsers.getScore())
+                .update();
         nftStakingUsersService.removeById(nftStakingUsers.getId());
     }
 

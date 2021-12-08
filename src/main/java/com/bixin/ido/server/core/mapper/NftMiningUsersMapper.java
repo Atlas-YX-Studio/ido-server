@@ -3,8 +3,9 @@ package com.bixin.ido.server.core.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.bixin.ido.server.entity.NftMiningUsers;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-import java.util.Map;
+import java.math.BigDecimal;
 
 /**
  * 用户NFT挖矿表 Mapper 接口
@@ -20,6 +21,6 @@ public interface NftMiningUsersMapper extends BaseMapper<NftMiningUsers> {
      *
      * @return
      */
-    int computeReward(Map<String, Object> map);
+    int computeReward(@Param("rewardAmount") BigDecimal rewardAmount, @Param("updateTime") Long updateTime);
 
 }

@@ -36,7 +36,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -66,10 +65,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
 
     @Override
     public void computeReward(Long blockId) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("rewardAmount", starConfig.getMining().getNftMiningBlockReward());
-        paramMap.put("updateTime", System.currentTimeMillis());
-        this.baseMapper.computeReward(paramMap);
+        this.baseMapper.computeReward(starConfig.getMining().getNftMiningBlockReward(), System.currentTimeMillis());
     }
 
     @Override
