@@ -66,7 +66,9 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
 
     @Override
     public void computeReward(Long blockId) {
-        this.baseMapper.computeReward(starConfig.getMining().getNftMiningBlockReward(), System.currentTimeMillis());
+        if (starConfig.getMining().getNftMiningBlockReward() != null) {
+            this.baseMapper.computeReward(starConfig.getMining().getNftMiningBlockReward(), System.currentTimeMillis());
+        }
     }
 
     @Override
