@@ -8,6 +8,7 @@ import com.bixin.ido.server.entity.NftStakingUsers;
 import com.bixin.ido.server.service.NftMiningUsersService;
 import com.bixin.ido.server.service.NftStakingUsersService;
 import com.bixin.ido.server.utils.BeanCopyUtil;
+import com.bixin.ido.server.utils.StcSignatureUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.core.service.NftGroupService;
@@ -71,7 +72,8 @@ public class NftMiningUsersController {
     }
 
     @PostMapping("/reward/harvest")
-    public R rewardHarvest(@RequestParam String address) {
+    public R rewardHarvest(@RequestParam String signature) {
+        String address = StcSignatureUtil.getAddress(signature);
         return R.success(nftMiningUsersService.harvestReward(address));
     }
 

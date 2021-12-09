@@ -84,6 +84,11 @@ public enum IdoErrorCode implements ErrorCode {
      */
     REWARD_HARVEST_FAILED(100014, "reward harvest failed"),
 
+    /**
+     * 校验失败
+     */
+    SIGNATURE_VERIFY_FAILED(100015, "signature verify failed"),
+
     ;
 
     private final int code;
