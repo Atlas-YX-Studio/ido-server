@@ -66,5 +66,7 @@ public interface NftInfoService {
     List<NftInfoDo> selectByPage(boolean predicateNextPage, long pageNum, long pageSize, String order, String sort);
 
 
+    List<NftInfoVo> getUnStakingNftList(String userAddress);
+
     List<NftInfoVo> getUserNftList(String userAddress);
 }

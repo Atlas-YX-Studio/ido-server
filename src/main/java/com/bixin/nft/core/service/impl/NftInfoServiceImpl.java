@@ -132,6 +132,24 @@ public class NftInfoServiceImpl implements NftInfoService {
     }
 
     /**
+     * 获取待质押NFT
+     * @param userAddress
+     */
+    public List<NftInfoVo> getUnStakingNftList(String userAddress) {
+        List<NftInfoVo> nftInfoVos = Lists.newArrayList();
+
+        List<NftGroupDo> nftGroups = nftGroupService.listByObject(NftGroupDo.builder().mining(true).build());
+        nftGroups.forEach(nftGroupDo -> {
+            List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
+            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain,
+                    () -> BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new));
+            nftInfoVos.addAll(nftInfoVoList);
+        });
+
+        return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
+    }
+
+    /**
      * 获取我的NFT
      * @param userAddress
      */

@@ -34,9 +34,10 @@ public class StcSignatureUtil {
             log.info("STC签名校验失败, signature: {}", signature);
             throw new IdoException(IdoErrorCode.SIGNATURE_VERIFY_FAILED);
         }
-        String message = new String(messageBytes.content());
-        if (Long.parseLong(message) < DateUtils.addMinutes(new Date(), -30).getTime()) {
-            log.info("STC签名校验失败, message: {}", message);
+        String signTime = new String(messageBytes.content());
+        long startTime = DateUtils.addMinutes(new Date(), -30).getTime();
+        if (Long.parseLong(signTime) < DateUtils.addMinutes(new Date(), -30).getTime()) {
+            log.info("STC签名校验失败, signTime: {}, startTime:{}", signTime, startTime);
             throw new IdoException(IdoErrorCode.SIGNATURE_VERIFY_FAILED);
         }
 
