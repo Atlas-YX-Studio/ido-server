@@ -16,6 +16,7 @@
                 , a.update_time = #{updateTime,jdbcType=BIGINT}
             </if>
         </set>
+        where b.total > 0
     </update>
 
 </mapper>
