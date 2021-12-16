@@ -6,12 +6,14 @@ import com.bixin.ido.server.bean.vo.wrap.R;
 import com.bixin.ido.server.constants.PathConstant;
 import com.bixin.ido.server.enums.ProductState;
 import com.bixin.ido.server.service.IDxProductService;
+import com.google.common.collect.Lists;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +40,17 @@ public class DxProductController {
                 ProductState.PROCESSING.getDesc(), processingProducts,
                 ProductState.FINISH.getDesc(), finishProducts
         ));
+
+    }
+
+    @GetMapping("/kgStarter")
+    public R kgStarter() {
+
+        List<HomeProductVO> initProducts = idoDxProductService.getHomeProducts(ProductState.INIT);
+        List<HomeProductVO> processingProducts = idoDxProductService.getHomeProducts(ProductState.PROCESSING);
+        initProducts.addAll(processingProducts);
+        initProducts.sort(Comparator.comparingInt(IdoDxProduct::getWeight));
+        return R.success(initProducts);
 
     }
 

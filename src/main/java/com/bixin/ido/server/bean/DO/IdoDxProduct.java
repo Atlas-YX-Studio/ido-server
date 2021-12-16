@@ -44,6 +44,8 @@ public class IdoDxProduct {
 
     private String icon;
 
+    private String prdImg;
+
     private String state;
 
     private String prdDesc;
@@ -78,4 +80,5 @@ public class IdoDxProduct {
 
     private Long assignmentEndTime;
 
+    private Integer weight;
 }
