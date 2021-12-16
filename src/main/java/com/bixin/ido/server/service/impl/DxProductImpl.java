@@ -55,13 +55,19 @@ public class DxProductImpl implements IDxProductService {
 
         Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
 
-        if (ProductState.INIT == productState) {
-            criteria.andStartTimeGreaterThan(currentTime);
+        if (ProductState.PREVIEW == productState) {
+            criteria.andStartTimeEqualTo(0L);
+        } else if (ProductState.INIT == productState) {
+            criteria.andStartTimeGreaterThan(0L)
+                    .andStartTimeGreaterThan(currentTime);
         } else if (ProductState.PROCESSING == productState) {
-            criteria.andStartTimeLessThanOrEqualTo(currentTime)
+            criteria.andStartTimeGreaterThan(0L)
+                    .andStartTimeLessThanOrEqualTo(currentTime)
                     .andEndTimeGreaterThan(currentTime);
         } else if (ProductState.FINISH == productState) {
-            criteria.andEndTimeLessThanOrEqualTo(currentTime);
+            criteria.andStartTimeGreaterThan(0L)
+                    .andEndTimeGreaterThan(0L)
+                    .andEndTimeLessThanOrEqualTo(currentTime);
         }
         dxProductDDL.setOrderByClause("createTime desc");
 

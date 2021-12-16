@@ -11,6 +11,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ProductState {
 
+    PREVIEW(0, "preview"),
+
     INIT(1, "init"),
 
     PROCESSING(2, "processing"),
