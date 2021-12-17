@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.TradingRewardUserMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.TradingRewardUserDo">
+<mapper namespace="com.bixin.ido.core.mapper.TradingRewardUserMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.TradingRewardUserDo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="locked_reward" jdbcType="DECIMAL" property="lockedReward" />
@@ -26,7 +26,7 @@
     delete from trading_reward_users
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.TradingRewardUserDo" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.bean.DO.TradingRewardUserDo" useGeneratedKeys="true">
     insert into trading_reward_users (id, address, locked_reward, 
       freed_reward, unlock_reward_per_day, pending_reward,
       next_unlock_time, create_time, update_time
@@ -36,7 +36,7 @@
       #{nextUnlockTime,jdbcType=BIGINT}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.TradingRewardUserDo">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.TradingRewardUserDo">
     update trading_reward_users
     <set>
       <if test="address != null">
@@ -97,11 +97,11 @@
       </if>
     </trim>
   </sql>
-  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.TradingRewardUserDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.TradingRewardUserDo" resultMap="BaseResultMap">
     select  * from trading_reward_users
     <include refid="baseQuery" />
   </select>
-  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.TradingRewardUserDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.bean.DO.TradingRewardUserDo" resultMap="BaseResultMap">
     select  * from trading_reward_users
     <include refid="baseQuery" />
   </select>

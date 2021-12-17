@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.LiquidityUserRecordMapper">
-    <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.LiquidityUserRecord">
+<mapper namespace="com.bixin.ido.core.mapper.LiquidityUserRecordMapper">
+    <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.LiquidityUserRecord">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="userAddress" jdbcType="VARCHAR" property="userAddress"/>
         <result column="tokenCodeX" jdbcType="VARCHAR" property="tokenCodeX"/>
@@ -79,7 +79,7 @@
         , userAddress, tokenCodeX, tokenCodeY, direction, amountX, amountY, reserveAmountX,
     reserveAmountY, liquidityTime, createTime
     </sql>
-    <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.LiquidityUserRecordDDL"
+    <select id="selectByDDL" parameterType="com.bixin.ido.core.wrapDDL.LiquidityUserRecordDDL"
             resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -130,13 +130,13 @@
         from liquidity_user_record
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.LiquidityUserRecordDDL">
+    <delete id="deleteByDDL" parameterType="com.bixin.ido.core.wrapDDL.LiquidityUserRecordDDL">
         delete from liquidity_user_record
         <if test="_parameter != null">
             <include refid="DDL_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.LiquidityUserRecord" useGeneratedKeys="true"
+    <insert id="insert" parameterType="com.bixin.ido.bean.DO.LiquidityUserRecord" useGeneratedKeys="true"
             keyProperty="id">
         insert into liquidity_user_record (userAddress, tokenCodeX,
                                            tokenCodeY, direction, amountX,
@@ -147,7 +147,7 @@
                 #{amountY,jdbcType=DECIMAL}, #{reserveAmountX,jdbcType=DECIMAL}, #{reserveAmountY,jdbcType=DECIMAL},
                 #{liquidityTime,jdbcType=BIGINT}, #{createTime,jdbcType=BIGINT})
     </insert>
-    <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.LiquidityUserRecord">
+    <insert id="insertSelective" parameterType="com.bixin.ido.bean.DO.LiquidityUserRecord">
         insert into liquidity_user_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -220,7 +220,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.LiquidityUserRecordDDL"
+    <select id="countByDDL" parameterType="com.bixin.ido.core.wrapDDL.LiquidityUserRecordDDL"
             resultType="java.lang.Long">
         select count(*) from liquidity_user_record
         <if test="_parameter != null">
@@ -285,7 +285,7 @@
             <include refid="Update_By_DDL_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LiquidityUserRecord">
+    <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.LiquidityUserRecord">
         update liquidity_user_record
         <set>
             <if test="userAddress != null">
@@ -321,7 +321,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.LiquidityUserRecord">
+    <update id="updateByPrimaryKey" parameterType="com.bixin.ido.bean.DO.LiquidityUserRecord">
         update liquidity_user_record
         set userAddress    = #{userAddress,jdbcType=VARCHAR},
             tokenCodeX     = #{tokenCodeX,jdbcType=VARCHAR},

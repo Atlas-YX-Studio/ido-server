@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.IdoDxProductMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxProduct">
+<mapper namespace="com.bixin.ido.core.mapper.IdoDxProductMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.IdoDxProduct">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="prdName" jdbcType="VARCHAR" property="prdName" />
     <result column="pledgeCurrency" jdbcType="VARCHAR" property="pledgeCurrency" />
@@ -103,7 +103,7 @@
     updateTime, startTime, endTime, pledgeStartTime, pledgeEndTime, lockStartTime, lockEndTime,
     payStartTime, payEndTime, assignmentStartTime, assignmentEndTime, weight
   </sql>
-  <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL" resultMap="BaseResultMap">
+  <select id="selectByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxProductDDL" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -127,13 +127,13 @@
     delete from ido_dx_product
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL">
+  <delete id="deleteByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxProductDDL">
     delete from ido_dx_product
     <if test="_parameter != null">
       <include refid="DDL_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insert" parameterType="com.bixin.ido.bean.DO.IdoDxProduct" useGeneratedKeys="true" keyProperty="id">
     insert into ido_dx_product (prdName, pledgeCurrency,
       pledgePrecision, pledgeAddress, payCurrency, 
       payPrecision, payAddress, assignCurrency, 
@@ -159,7 +159,7 @@
       #{payStartTime,jdbcType=BIGINT}, #{payEndTime,jdbcType=BIGINT}, #{assignmentStartTime,jdbcType=BIGINT},
       #{assignmentEndTime,jdbcType=BIGINT}, #{weight,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+  <insert id="insertSelective" parameterType="com.bixin.ido.bean.DO.IdoDxProduct">
     insert into ido_dx_product
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -376,7 +376,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL" resultType="java.lang.Long">
+  <select id="countByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxProductDDL" resultType="java.lang.Long">
     select count(*) from ido_dx_product
     <if test="_parameter != null">
       <include refid="DDL_Where_Clause" />
@@ -536,7 +536,7 @@
       <include refid="Update_By_DDL_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.IdoDxProduct">
     update ido_dx_product
     <set>
       <if test="prdName != null">
@@ -644,7 +644,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.bean.DO.IdoDxProduct">
     update ido_dx_product
     set prdName = #{prdName,jdbcType=VARCHAR},
       pledgeCurrency = #{pledgeCurrency,jdbcType=VARCHAR},

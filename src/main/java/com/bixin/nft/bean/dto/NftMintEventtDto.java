@@ -1,8 +1,8 @@
 package com.bixin.nft.bean.dto;
 
-import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.common.utils.LocalDateTimeUtil;
 import com.bixin.nft.bean.DO.NftEventDo;
-import com.bixin.nft.enums.NftEventType;
+import com.bixin.nft.common.enums.NftEventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

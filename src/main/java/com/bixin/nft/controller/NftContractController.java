@@ -1,9 +1,9 @@
 package com.bixin.nft.controller;
 
-import com.bixin.ido.server.bean.vo.wrap.R;
-import com.bixin.nft.core.service.NftContractService;
-import com.bixin.nft.core.service.NftGroupService;
-import com.bixin.nft.core.service.NftInfoService;
+import com.bixin.common.response.R;
+import com.bixin.nft.biz.NftContractBiz;
+import com.bixin.nft.service.NftGroupService;
+import com.bixin.nft.service.NftInfoService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,13 +13,13 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
+import static com.bixin.common.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
 
 @RestController
 @RequestMapping(NFT_REQUEST_PATH_PREFIX + "/contract")
 public class NftContractController {
     @Resource
-    private NftContractService nftContractService;
+    private NftContractBiz nftContractService;
     @Resource
     private NftGroupService nftGroupService;
     @Resource

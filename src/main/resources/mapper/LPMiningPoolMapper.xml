@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.LPMiningPoolMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.LPMiningPoolDo">
+<mapper namespace="com.bixin.ido.core.mapper.LPMiningPoolMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.LPMiningPoolDo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="pair_name" jdbcType="VARCHAR" property="pairName" />
     <result column="token_a" jdbcType="VARCHAR" property="tokenA" />
@@ -26,7 +26,7 @@
     delete from lp_mining_pools
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolDo" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.bean.DO.LPMiningPoolDo" useGeneratedKeys="true">
     insert into lp_mining_pools (id, pair_name, token_a, 
       token_b, allocation_multiple, total_staking_amount, 
       weight, create_time, update_time
@@ -36,7 +36,7 @@
       #{weight,jdbcType=INTEGER}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolDo">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.LPMiningPoolDo">
     update lp_mining_pools
     <set>
       <if test="pairName != null">
@@ -97,11 +97,11 @@
       </if>
     </trim>
   </sql>
-  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.LPMiningPoolDo" resultMap="BaseResultMap">
     select  * from lp_mining_pools
     <include refid="baseQuery" />
   </select>
-  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.LPMiningPoolDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.bean.DO.LPMiningPoolDo" resultMap="BaseResultMap">
     select  * from lp_mining_pools
     <include refid="baseQuery" />
   </select>

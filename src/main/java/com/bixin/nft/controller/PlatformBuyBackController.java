@@ -1,10 +1,10 @@
 package com.bixin.nft.controller;
 
-import com.bixin.ido.server.bean.vo.wrap.P;
-import com.bixin.ido.server.bean.vo.wrap.R;
-import com.bixin.ido.server.constants.PathConstant;
-import com.bixin.ido.server.service.IPlatformBuyBackService;
-import com.bixin.ido.server.service.impl.PlatformBuyBackServiceImpl;
+import com.bixin.common.response.P;
+import com.bixin.common.response.R;
+import com.bixin.common.constants.PathConstant;
+import com.bixin.ido.service.IPlatformBuyBackService;
+import com.bixin.ido.service.impl.PlatformBuyBackServiceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

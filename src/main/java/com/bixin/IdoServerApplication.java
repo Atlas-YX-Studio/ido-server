@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @EnableConfigurationProperties
 @SpringBootApplication
-@MapperScan({"com.bixin.ido.server.core.mapper", "com.bixin.nft.core.mapper"})
+@MapperScan({"com.bixin.ido.core.mapper", "com.bixin.nft.core.mapper"})
 public class IdoServerApplication {
 
     public static void main(String[] args) {

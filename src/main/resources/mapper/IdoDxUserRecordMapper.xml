@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.IdoDxUserRecordMapper">
-    <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
+<mapper namespace="com.bixin.ido.core.mapper.IdoDxUserRecordMapper">
+    <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.IdoDxUserRecord">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="prdAddress" jdbcType="VARCHAR" property="prdAddress"/>
         <result column="userAddress" jdbcType="VARCHAR" property="userAddress"/>
@@ -138,7 +138,7 @@
             limit #{from},#{pageSize}
         </if>
     </select>
-    <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL"
+    <select id="selectByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxUserRecordDDL"
             resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -164,13 +164,13 @@
         from ido_dx_user_record
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL">
+    <delete id="deleteByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxUserRecordDDL">
         delete from ido_dx_user_record
         <if test="_parameter != null">
             <include refid="DDL_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord" useGeneratedKeys="true"
+    <insert id="insert" parameterType="com.bixin.ido.bean.DO.IdoDxUserRecord" useGeneratedKeys="true"
             keyProperty="id">
         insert into ido_dx_user_record (prdAddress, userAddress,
                                         amount, gasCost, tokenAmount,
@@ -181,7 +181,7 @@
                 #{currency,jdbcType=VARCHAR}, #{extInfo,jdbcType=VARCHAR}, #{tokenVersion,jdbcType=SMALLINT},
                 #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
     </insert>
-    <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
+    <insert id="insertSelective" parameterType="com.bixin.ido.bean.DO.IdoDxUserRecord">
         insert into ido_dx_user_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -254,7 +254,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxUserRecordDDL"
+    <select id="countByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxUserRecordDDL"
             resultType="java.lang.Long">
         select count(*) from ido_dx_user_record
         <if test="_parameter != null">
@@ -319,7 +319,7 @@
             <include refid="Update_By_DDL_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
+    <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.IdoDxUserRecord">
         update ido_dx_user_record
         <set>
             <if test="prdAddress != null">
@@ -355,7 +355,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxUserRecord">
+    <update id="updateByPrimaryKey" parameterType="com.bixin.ido.bean.DO.IdoDxUserRecord">
         update ido_dx_user_record
         set prdAddress   = #{prdAddress,jdbcType=VARCHAR},
             userAddress  = #{userAddress,jdbcType=VARCHAR},

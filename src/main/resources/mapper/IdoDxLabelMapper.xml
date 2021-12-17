@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.IdoDxLabelMapper">
-    <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxLabel">
+<mapper namespace="com.bixin.ido.core.mapper.IdoDxLabelMapper">
+    <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.IdoDxLabel">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="prdId" jdbcType="BIGINT" property="prdId"/>
         <result column="label" jdbcType="VARCHAR" property="label"/>
@@ -72,7 +72,7 @@
         id
         , prdId, label, createTime, updateTime
     </sql>
-    <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxLabelDDL" resultMap="BaseResultMap">
+    <select id="selectByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxLabelDDL" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct
@@ -97,20 +97,20 @@
         from ido_dx_label
         where id = #{id,jdbcType=BIGINT}
     </delete>
-    <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxLabelDDL">
+    <delete id="deleteByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxLabelDDL">
         delete from ido_dx_label
         <if test="_parameter != null">
             <include refid="DDL_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxLabel" useGeneratedKeys="true"
+    <insert id="insert" parameterType="com.bixin.ido.bean.DO.IdoDxLabel" useGeneratedKeys="true"
             keyProperty="id">
         insert into ido_dx_label (prdId, label,
                                   createTime, updateTime)
         values (#{prdId,jdbcType=BIGINT}, #{label,jdbcType=VARCHAR},
                 #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
     </insert>
-    <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxLabel">
+    <insert id="insertSelective" parameterType="com.bixin.ido.bean.DO.IdoDxLabel">
         insert into ido_dx_label
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -147,7 +147,7 @@
             </if>
         </trim>
     </insert>
-    <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxLabelDDL" resultType="java.lang.Long">
+    <select id="countByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxLabelDDL" resultType="java.lang.Long">
         select count(*) from ido_dx_label
         <if test="_parameter != null">
             <include refid="DDL_Where_Clause"/>
@@ -187,7 +187,7 @@
             <include refid="Update_By_DDL_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxLabel">
+    <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.IdoDxLabel">
         update ido_dx_label
         <set>
             <if test="prdId != null">
@@ -205,7 +205,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxLabel">
+    <update id="updateByPrimaryKey" parameterType="com.bixin.ido.bean.DO.IdoDxLabel">
         update ido_dx_label
         set prdId      = #{prdId,jdbcType=BIGINT},
             label      = #{label,jdbcType=VARCHAR},

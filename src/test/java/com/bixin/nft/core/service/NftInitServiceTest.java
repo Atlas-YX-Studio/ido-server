@@ -1,6 +1,8 @@
 package com.bixin.nft.core.service;
 
 import com.bixin.IdoServerApplication;
+import com.bixin.nft.service.ContractService;
+import com.bixin.nft.biz.NftContractBiz;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +16,7 @@ import java.math.BigInteger;
 @SpringBootTest(classes = IdoServerApplication.class)
 class NftInitServiceTest {
     @Resource
-    private NftContractService nftInitService;
+    private NftContractBiz nftInitService;
     @Resource
     private ContractService contractService;
 
