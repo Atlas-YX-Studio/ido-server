@@ -1,13 +1,13 @@
 package com.bixin.nft.controller;
 
-import com.bixin.ido.server.bean.vo.wrap.P;
-import com.bixin.ido.server.bean.vo.wrap.R;
+import com.bixin.common.response.P;
+import com.bixin.common.response.R;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.TradingRecordDo;
 import com.bixin.nft.bean.vo.NftSelfSellingVo;
-import com.bixin.nft.core.service.NftGroupService;
-import com.bixin.nft.core.service.NftMarketService;
-import com.bixin.nft.core.service.TradingRecordService;
+import com.bixin.nft.service.NftGroupService;
+import com.bixin.nft.service.NftMarketService;
+import com.bixin.nft.service.TradingRecordService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
+import static com.bixin.common.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
 
 /**
  * @author zhangcheng

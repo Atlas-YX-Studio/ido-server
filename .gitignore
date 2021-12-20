@@ -24,3 +24,5 @@ hs_err_pid*
 /.idea/
 /mybatis-generator/
 **/target
+.DS_Store
+/.DS_Store

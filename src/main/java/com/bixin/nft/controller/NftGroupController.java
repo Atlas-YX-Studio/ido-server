@@ -1,6 +1,6 @@
 package com.bixin.nft.controller;
 
-import com.bixin.nft.core.service.NftGroupService;
+import com.bixin.nft.service.NftGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

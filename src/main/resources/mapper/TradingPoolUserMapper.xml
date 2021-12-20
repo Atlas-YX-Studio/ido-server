@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.TradingPoolUserMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.TradingPoolUserDo">
+<mapper namespace="com.bixin.ido.core.mapper.TradingPoolUserMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.TradingPoolUserDo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="pool_id" jdbcType="BIGINT" property="poolId" />
@@ -28,7 +28,7 @@
     delete from trading_pool_users
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.bean.DO.TradingPoolUserDo" useGeneratedKeys="true">
     insert into trading_pool_users (id, address, pool_id, 
       current_trading_amount, total_trading_amount, 
       current_reward, total_reward, create_time, 
@@ -38,7 +38,7 @@
       #{currentReward,jdbcType=DECIMAL}, #{totalReward,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, 
       #{updateTime,jdbcType=BIGINT})
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.TradingPoolUserDo">
     update trading_pool_users
     <set>
       <if test="address != null">
@@ -111,11 +111,11 @@
       </if>
     </trim>
   </sql>
-  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
     select  * from trading_pool_users
     <include refid="baseQuery" />
   </select>
-  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.bean.DO.TradingPoolUserDo" resultMap="BaseResultMap">
     select  * from trading_pool_users
     <include refid="baseQuery" />
   </select>

@@ -7,7 +7,7 @@ spring:
 ## application name
 spring:
   application:
-    name: ido-server-server
+    name: ido-server
 
 server:
   port: 8999
@@ -44,7 +44,7 @@ spring:
 # MyBatis
 mybatis:
   # 搜索指定包别名
-  type-aliases-package: com.bixin.ido.server.bean
+  type-aliases-package: com.bixin.*.*.bean.DO
   # 加载全局的配置文件
   config_location: classpath:mybatis/mybatis-config.xml
   mapper_locations: classpath:mapper/*.xml

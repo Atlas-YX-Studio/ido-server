@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.IdoDxProductMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.IdoDxProduct">
+<mapper namespace="com.bixin.ido.core.mapper.IdoDxProductMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.IdoDxProduct">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="prdName" jdbcType="VARCHAR" property="prdName" />
     <result column="pledgeCurrency" jdbcType="VARCHAR" property="pledgeCurrency" />
@@ -15,9 +15,10 @@
     <result column="assignAddress" jdbcType="VARCHAR" property="assignAddress" />
     <result column="rate" jdbcType="DECIMAL" property="rate" />
     <result column="raiseTotal" jdbcType="DECIMAL" property="raiseTotal" />
-    <result column="currencyTotal" jdbcType="DECIMAL" property="currencyTotal" />
     <result column="saleTotal" jdbcType="DECIMAL" property="saleTotal" />
+    <result column="currencyTotal" jdbcType="DECIMAL" property="currencyTotal" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="prdImg" jdbcType="VARCHAR" property="prdImg" />
     <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="prdDesc" jdbcType="VARCHAR" property="prdDesc" />
     <result column="prdDescEn" jdbcType="VARCHAR" property="prdDescEn" />
@@ -35,6 +36,7 @@
     <result column="payEndTime" jdbcType="BIGINT" property="payEndTime" />
     <result column="assignmentStartTime" jdbcType="BIGINT" property="assignmentStartTime" />
     <result column="assignmentEndTime" jdbcType="BIGINT" property="assignmentEndTime" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
   </resultMap>
   <sql id="DDL_Where_Clause">
     <where>
@@ -96,12 +98,12 @@
   </sql>
   <sql id="Base_Column_List">
     id, prdName, pledgeCurrency, pledgePrecision, pledgeAddress, payCurrency, payPrecision, 
-    payAddress, assignCurrency, assignPrecision, assignAddress, rate, raiseTotal, currencyTotal, 
-    saleTotal, icon, state, prdDesc, prdDescEn, ruleDesc, ruleDescEn, createTime, updateTime, 
-    startTime, endTime, pledgeStartTime, pledgeEndTime, lockStartTime, lockEndTime, payStartTime, 
-    payEndTime, assignmentStartTime, assignmentEndTime
+    payAddress, assignCurrency, assignPrecision, assignAddress, rate, raiseTotal, saleTotal,
+    currencyTotal, icon, prdImg, state, prdDesc, prdDescEn, ruleDesc, ruleDescEn, createTime,
+    updateTime, startTime, endTime, pledgeStartTime, pledgeEndTime, lockStartTime, lockEndTime,
+    payStartTime, payEndTime, assignmentStartTime, assignmentEndTime, weight
   </sql>
-  <select id="selectByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL" resultMap="BaseResultMap">
+  <select id="selectByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxProductDDL" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -125,39 +127,39 @@
     delete from ido_dx_product
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL">
+  <delete id="deleteByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxProductDDL">
     delete from ido_dx_product
     <if test="_parameter != null">
       <include refid="DDL_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insert" parameterType="com.bixin.ido.bean.DO.IdoDxProduct" useGeneratedKeys="true" keyProperty="id">
     insert into ido_dx_product (prdName, pledgeCurrency,
       pledgePrecision, pledgeAddress, payCurrency, 
       payPrecision, payAddress, assignCurrency, 
       assignPrecision, assignAddress, rate, 
-      raiseTotal, currencyTotal, saleTotal, 
-      icon, state, prdDesc, 
-      prdDescEn, ruleDesc, ruleDescEn, 
-      createTime, updateTime, startTime, 
-      endTime, pledgeStartTime, pledgeEndTime, 
-      lockStartTime, lockEndTime, payStartTime, 
-      payEndTime, assignmentStartTime, assignmentEndTime
-      )
+      raiseTotal, saleTotal, currencyTotal,
+      icon, prdImg, state,
+      prdDesc, prdDescEn, ruleDesc,
+      ruleDescEn, createTime, updateTime,
+      startTime, endTime, pledgeStartTime,
+      pledgeEndTime, lockStartTime, lockEndTime,
+      payStartTime, payEndTime, assignmentStartTime,
+      assignmentEndTime, weight)
     values (#{prdName,jdbcType=VARCHAR}, #{pledgeCurrency,jdbcType=VARCHAR},
       #{pledgePrecision,jdbcType=SMALLINT}, #{pledgeAddress,jdbcType=VARCHAR}, #{payCurrency,jdbcType=VARCHAR}, 
       #{payPrecision,jdbcType=SMALLINT}, #{payAddress,jdbcType=VARCHAR}, #{assignCurrency,jdbcType=VARCHAR}, 
       #{assignPrecision,jdbcType=SMALLINT}, #{assignAddress,jdbcType=VARCHAR}, #{rate,jdbcType=DECIMAL}, 
-      #{raiseTotal,jdbcType=DECIMAL}, #{currencyTotal,jdbcType=DECIMAL}, #{saleTotal,jdbcType=DECIMAL}, 
-      #{icon,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{prdDesc,jdbcType=VARCHAR}, 
-      #{prdDescEn,jdbcType=VARCHAR}, #{ruleDesc,jdbcType=VARCHAR}, #{ruleDescEn,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{startTime,jdbcType=BIGINT}, 
-      #{endTime,jdbcType=BIGINT}, #{pledgeStartTime,jdbcType=BIGINT}, #{pledgeEndTime,jdbcType=BIGINT}, 
-      #{lockStartTime,jdbcType=BIGINT}, #{lockEndTime,jdbcType=BIGINT}, #{payStartTime,jdbcType=BIGINT}, 
-      #{payEndTime,jdbcType=BIGINT}, #{assignmentStartTime,jdbcType=BIGINT}, #{assignmentEndTime,jdbcType=BIGINT}
-      )
+      #{raiseTotal,jdbcType=DECIMAL}, #{saleTotal,jdbcType=DECIMAL}, #{currencyTotal,jdbcType=DECIMAL},
+      #{icon,jdbcType=VARCHAR}, #{prdImg,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR},
+      #{prdDesc,jdbcType=VARCHAR}, #{prdDescEn,jdbcType=VARCHAR}, #{ruleDesc,jdbcType=VARCHAR},
+      #{ruleDescEn,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT},
+      #{startTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{pledgeStartTime,jdbcType=BIGINT},
+      #{pledgeEndTime,jdbcType=BIGINT}, #{lockStartTime,jdbcType=BIGINT}, #{lockEndTime,jdbcType=BIGINT},
+      #{payStartTime,jdbcType=BIGINT}, #{payEndTime,jdbcType=BIGINT}, #{assignmentStartTime,jdbcType=BIGINT},
+      #{assignmentEndTime,jdbcType=BIGINT}, #{weight,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+  <insert id="insertSelective" parameterType="com.bixin.ido.bean.DO.IdoDxProduct">
     insert into ido_dx_product
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -199,14 +201,17 @@
       <if test="raiseTotal != null">
         raiseTotal,
       </if>
-      <if test="currencyTotal != null">
-        currencyTotal,
-      </if>
       <if test="saleTotal != null">
         saleTotal,
       </if>
+      <if test="currencyTotal != null">
+        currencyTotal,
+      </if>
       <if test="icon != null">
         icon,
+      </if>
+      <if test="prdImg != null">
+        prdImg,
       </if>
       <if test="state != null">
         state,
@@ -259,6 +264,9 @@
       <if test="assignmentEndTime != null">
         assignmentEndTime,
       </if>
+      <if test="weight != null">
+        weight,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -300,14 +308,17 @@
       <if test="raiseTotal != null">
         #{raiseTotal,jdbcType=DECIMAL},
       </if>
-      <if test="currencyTotal != null">
-        #{currencyTotal,jdbcType=DECIMAL},
-      </if>
       <if test="saleTotal != null">
         #{saleTotal,jdbcType=DECIMAL},
       </if>
+      <if test="currencyTotal != null">
+        #{currencyTotal,jdbcType=DECIMAL},
+      </if>
       <if test="icon != null">
         #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="prdImg != null">
+        #{prdImg,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         #{state,jdbcType=VARCHAR},
@@ -360,9 +371,12 @@
       <if test="assignmentEndTime != null">
         #{assignmentEndTime,jdbcType=BIGINT},
       </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
-  <select id="countByDDL" parameterType="com.bixin.ido.server.core.wrapDDL.IdoDxProductDDL" resultType="java.lang.Long">
+  <select id="countByDDL" parameterType="com.bixin.ido.core.wrapDDL.IdoDxProductDDL" resultType="java.lang.Long">
     select count(*) from ido_dx_product
     <if test="_parameter != null">
       <include refid="DDL_Where_Clause" />
@@ -410,14 +424,17 @@
       <if test="record.raiseTotal != null">
         raiseTotal = #{record.raiseTotal,jdbcType=DECIMAL},
       </if>
-      <if test="record.currencyTotal != null">
-        currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
-      </if>
       <if test="record.saleTotal != null">
         saleTotal = #{record.saleTotal,jdbcType=DECIMAL},
       </if>
+      <if test="record.currencyTotal != null">
+        currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
+      </if>
       <if test="record.icon != null">
         icon = #{record.icon,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prdImg != null">
+        prdImg = #{record.prdImg,jdbcType=VARCHAR},
       </if>
       <if test="record.state != null">
         state = #{record.state,jdbcType=VARCHAR},
@@ -470,6 +487,9 @@
       <if test="record.assignmentEndTime != null">
         assignmentEndTime = #{record.assignmentEndTime,jdbcType=BIGINT},
       </if>
+      <if test="record.weight != null">
+        weight = #{record.weight,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_DDL_Where_Clause" />
@@ -490,9 +510,10 @@
       assignAddress = #{record.assignAddress,jdbcType=VARCHAR},
       rate = #{record.rate,jdbcType=DECIMAL},
       raiseTotal = #{record.raiseTotal,jdbcType=DECIMAL},
-      currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
       saleTotal = #{record.saleTotal,jdbcType=DECIMAL},
+      currencyTotal = #{record.currencyTotal,jdbcType=DECIMAL},
       icon = #{record.icon,jdbcType=VARCHAR},
+      prdImg = #{record.prdImg,jdbcType=VARCHAR},
       state = #{record.state,jdbcType=VARCHAR},
       prdDesc = #{record.prdDesc,jdbcType=VARCHAR},
       prdDescEn = #{record.prdDescEn,jdbcType=VARCHAR},
@@ -509,12 +530,13 @@
       payStartTime = #{record.payStartTime,jdbcType=BIGINT},
       payEndTime = #{record.payEndTime,jdbcType=BIGINT},
       assignmentStartTime = #{record.assignmentStartTime,jdbcType=BIGINT},
-      assignmentEndTime = #{record.assignmentEndTime,jdbcType=BIGINT}
+      assignmentEndTime = #{record.assignmentEndTime,jdbcType=BIGINT},
+      weight = #{record.weight,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_DDL_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.IdoDxProduct">
     update ido_dx_product
     <set>
       <if test="prdName != null">
@@ -553,14 +575,17 @@
       <if test="raiseTotal != null">
         raiseTotal = #{raiseTotal,jdbcType=DECIMAL},
       </if>
-      <if test="currencyTotal != null">
-        currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
-      </if>
       <if test="saleTotal != null">
         saleTotal = #{saleTotal,jdbcType=DECIMAL},
       </if>
+      <if test="currencyTotal != null">
+        currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
+      </if>
       <if test="icon != null">
         icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="prdImg != null">
+        prdImg = #{prdImg,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         state = #{state,jdbcType=VARCHAR},
@@ -613,10 +638,13 @@
       <if test="assignmentEndTime != null">
         assignmentEndTime = #{assignmentEndTime,jdbcType=BIGINT},
       </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.server.bean.DO.IdoDxProduct">
+  <update id="updateByPrimaryKey" parameterType="com.bixin.ido.bean.DO.IdoDxProduct">
     update ido_dx_product
     set prdName = #{prdName,jdbcType=VARCHAR},
       pledgeCurrency = #{pledgeCurrency,jdbcType=VARCHAR},
@@ -630,9 +658,10 @@
       assignAddress = #{assignAddress,jdbcType=VARCHAR},
       rate = #{rate,jdbcType=DECIMAL},
       raiseTotal = #{raiseTotal,jdbcType=DECIMAL},
-      currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
       saleTotal = #{saleTotal,jdbcType=DECIMAL},
+      currencyTotal = #{currencyTotal,jdbcType=DECIMAL},
       icon = #{icon,jdbcType=VARCHAR},
+      prdImg = #{prdImg,jdbcType=VARCHAR},
       state = #{state,jdbcType=VARCHAR},
       prdDesc = #{prdDesc,jdbcType=VARCHAR},
       prdDescEn = #{prdDescEn,jdbcType=VARCHAR},
@@ -649,7 +678,8 @@
       payStartTime = #{payStartTime,jdbcType=BIGINT},
       payEndTime = #{payEndTime,jdbcType=BIGINT},
       assignmentStartTime = #{assignmentStartTime,jdbcType=BIGINT},
-      assignmentEndTime = #{assignmentEndTime,jdbcType=BIGINT}
+      assignmentEndTime = #{assignmentEndTime,jdbcType=BIGINT},
+      weight = #{weight,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

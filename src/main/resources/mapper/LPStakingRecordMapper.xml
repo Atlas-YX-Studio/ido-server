@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bixin.ido.server.core.mapper.LPStakingRecordMapper">
-  <resultMap id="BaseResultMap" type="com.bixin.ido.server.bean.DO.LPStakingRecordDo">
+<mapper namespace="com.bixin.ido.core.mapper.LPStakingRecordMapper">
+  <resultMap id="BaseResultMap" type="com.bixin.ido.bean.DO.LPStakingRecordDo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="pair_name" jdbcType="VARCHAR" property="pairName" />
     <result column="token_a" jdbcType="VARCHAR" property="tokenA" />
@@ -25,7 +25,7 @@
     delete from lp_staking_records
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.server.bean.DO.LPStakingRecordDo" useGeneratedKeys="true">
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.ido.bean.DO.LPStakingRecordDo" useGeneratedKeys="true">
     insert into lp_staking_records (id, pair_name, token_a, 
       token_b, type, amount, 
       seq_id, create_time, update_time
@@ -35,7 +35,7 @@
       #{seqId,jdbcType=BIGINT}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
       )
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPStakingRecordDo">
+  <update id="updateByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.LPStakingRecordDo">
     update lp_staking_records
     <set>
       <if test="pairName != null">
@@ -96,11 +96,11 @@
       </if>
     </trim>
   </sql>
-  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.server.bean.DO.LPStakingRecordDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelective" parameterType="com.bixin.ido.bean.DO.LPStakingRecordDo" resultMap="BaseResultMap">
     select  * from lp_staking_records
     <include refid="baseQuery" />
   </select>
-  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.server.bean.DO.LPStakingRecordDo" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.ido.bean.DO.LPStakingRecordDo" resultMap="BaseResultMap">
     select  * from lp_staking_records
     <include refid="baseQuery" />
   </select>

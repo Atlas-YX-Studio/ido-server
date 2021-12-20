@@ -1,18 +1,18 @@
 package com.bixin.nft.scheduler;
 
-import com.bixin.ido.server.config.StarConfig;
-import com.bixin.ido.server.core.redis.RedisCache;
-import com.bixin.ido.server.utils.JacksonUtil;
-import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.common.config.StarConfig;
+import com.bixin.common.utils.JacksonUtil;
+import com.bixin.common.utils.LocalDateTimeUtil;
+import com.bixin.core.redis.RedisCache;
 import com.bixin.nft.bean.DO.NftEventDo;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.bean.dto.ChainResourceDto;
 import com.bixin.nft.bean.dto.NFTBoxDto;
-import com.bixin.nft.core.service.*;
-import com.bixin.nft.enums.NftBoxType;
-import com.bixin.nft.enums.NftEventType;
+import com.bixin.nft.common.enums.NftBoxType;
+import com.bixin.nft.common.enums.NftEventType;
+import com.bixin.nft.service.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

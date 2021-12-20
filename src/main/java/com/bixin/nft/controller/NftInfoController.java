@@ -1,17 +1,17 @@
 package com.bixin.nft.controller;
 
-import com.bixin.ido.server.bean.vo.wrap.P;
-import com.bixin.ido.server.bean.vo.wrap.R;
-import com.bixin.ido.server.constants.CommonConstant;
-import com.bixin.ido.server.utils.BeanCopyUtil;
+import com.bixin.common.constants.CommonConstant;
+import com.bixin.common.response.P;
+import com.bixin.common.response.R;
+import com.bixin.common.utils.BeanCopyUtil;
 import com.bixin.nft.bean.DO.*;
 import com.bixin.nft.bean.dto.TokenDto;
 import com.bixin.nft.bean.vo.NftGroupVo;
 import com.bixin.nft.bean.vo.NftInfoVo;
 import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
-import com.bixin.nft.core.service.*;
-import com.bixin.nft.enums.NftEventType;
+import com.bixin.nft.common.enums.NftEventType;
+import com.bixin.nft.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;

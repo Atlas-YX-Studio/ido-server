@@ -158,3 +158,7 @@ CREATE TABLE swap_coins (
 ) Engine=INNODB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT 'swap币种列表';
 
 
+
+alter table ido_dx_product add prdImg VARCHAR(500) DEFAULT NULL COMMENT '产品图片' after icon;
+
+alter table ido_dx_product add weight INT(9) DEFAULT 0 COMMENT '权重，用于排序' after assignmentEndTime;

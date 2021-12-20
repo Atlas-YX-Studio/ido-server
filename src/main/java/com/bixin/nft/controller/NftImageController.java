@@ -1,16 +1,16 @@
 package com.bixin.nft.controller;
 
-import com.bixin.ido.server.bean.vo.wrap.R;
-import com.bixin.ido.server.common.errorcode.IdoErrorCode;
-import com.bixin.ido.server.common.exception.IdoException;
-import com.bixin.ido.server.config.StarConfig;
-import com.bixin.ido.server.constants.CommonConstant;
-import com.bixin.ido.server.core.redis.RedisCache;
+import com.bixin.common.response.R;
+import com.bixin.common.code.IdoErrorCode;
+import com.bixin.common.exception.IdoException;
+import com.bixin.common.config.StarConfig;
+import com.bixin.common.constants.CommonConstant;
+import com.bixin.core.redis.RedisCache;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.biz.NftImagesUploadBiz;
-import com.bixin.nft.core.service.NftGroupService;
-import com.bixin.nft.core.service.NftInfoService;
+import com.bixin.nft.service.NftGroupService;
+import com.bixin.nft.service.NftInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.bixin.ido.server.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
+import static com.bixin.common.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
 
 /**
  * @author zhangcheng
