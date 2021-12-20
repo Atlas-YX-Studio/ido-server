@@ -1,4 +1,4 @@
-package com.bixin.ido.common.enums;
+package com.bixin.ido.server.common.enums;
 
 public enum HarvestStatusEnum {
     PENDING,

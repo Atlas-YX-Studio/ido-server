@@ -265,6 +265,11 @@ public class NftInfoController {
         return R.success(nftGroupVo);
     }
 
+    @GetMapping("/unused/list")
+    public R unusedList(@RequestParam String address) {
+        return R.success(nftInfoService.getUnStakingNftList(address));
+    }
+
     /**
      * 获取NFT详情，从我的收藏进入
      *

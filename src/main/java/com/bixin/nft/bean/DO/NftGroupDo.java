@@ -134,6 +134,11 @@ public class NftGroupDo implements Serializable {
     private Boolean offering;
 
     /**
+     * 能否挖矿
+     */
+    private Boolean mining;
+
+    /**
      * 状态：APPENDING/INITIALIZED/CREATED
      */
     private String status;

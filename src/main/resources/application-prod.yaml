@@ -58,3 +58,10 @@ ido:
       image-base-path: "/data/images/bixin-ido-server/nft/"
       image-info-api: "https://kikoswap.com/v1/nft/image/info/"
       image-group-api: "https://kikoswap.com/v1/nft/image/group/"
+    mining:
+      nft-mining-day-reward: 10
+      nft-mining-block-reward: 10
+      nft-unit-price: 10
+      nft-mining-address: "0x7ed4261b68ddb20158109794bbab3ae7"
+      nft-mining-module: "NFTMining"
+      nft-mining-stc-fee: 0.01

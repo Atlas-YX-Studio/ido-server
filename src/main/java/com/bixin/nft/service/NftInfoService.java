@@ -1,6 +1,7 @@
 package com.bixin.nft.service;
 
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.bean.vo.NftInfoVo;
 
 import java.util.List;
 
@@ -64,4 +65,8 @@ public interface NftInfoService {
 
     List<NftInfoDo> selectByPage(boolean predicateNextPage, long pageNum, long pageSize, String order, String sort);
 
+
+    List<NftInfoVo> getUnStakingNftList(String userAddress);
+
+    List<NftInfoVo> getUserNftList(String userAddress);
 }

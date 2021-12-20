@@ -32,7 +32,7 @@ public class BigDecimalUtil {
         if (precision == null || precision == 0) {
             return BigDecimal.ZERO;
         }
-        return number.subtract(BigDecimalUtil.getPrecisionFactor(precision));
+        return number.multiply(BigDecimalUtil.getPrecisionFactor(precision));
     }
 
 }

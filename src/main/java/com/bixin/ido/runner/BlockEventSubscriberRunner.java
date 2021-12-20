@@ -1,11 +1,11 @@
-package com.bixin.ido.runner;
+package com.bixin.ido.server.runner;
 
-import com.bixin.common.config.StarConfig;
-import com.bixin.common.factory.NamedThreadFactory;
-import com.bixin.core.redis.RedisCache;
-import com.bixin.ido.service.ILPMiningService;
-import com.bixin.ido.service.ITradingMiningService;
-import com.bixin.common.utils.LocalDateTimeUtil;
+import com.bixin.ido.server.config.StarConfig;
+import com.bixin.ido.server.constants.CommonConstant;
+import com.bixin.ido.server.core.factory.NamedThreadFactory;
+import com.bixin.ido.server.core.redis.RedisCache;
+import com.bixin.ido.server.service.NftMiningUsersService;
+import com.bixin.ido.server.utils.LocalDateTimeUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,9 +58,7 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
     ThreadPoolExecutor poolExecutor;
 
     @Resource
-    private ITradingMiningService tradingMiningService;
-    @Resource
-    private ILPMiningService lpMiningService;
+    private NftMiningUsersService nftMiningUsersService;
 
     @PostConstruct
     public void init() {
@@ -115,8 +113,7 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
                 String tagString = getEventName(eventResult.getTypeTag());
                 if ("NewBlockEvent".equals(tagString)) {
                     // 新块产生事件
-                    tradingMiningService.computeReward(Long.valueOf(eventResult.getBlockNumber()));
-                    lpMiningService.computeReward(Long.valueOf(eventResult.getBlockNumber()));
+                    nftMiningUsersService.computeReward(Long.valueOf(eventResult.getBlockNumber()));
                 } else {
                     log.error("BlockEventSubscriberRunner blockEventDo 为空");
                 }
@@ -149,7 +146,7 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
         String seqNumber = eventResult.getEventSeqNumber();
         String key = null;
         try {
-            key = URLEncoder.encode(typeTag, "utf8") + seqNumber;
+            key = CommonConstant.NEW_BLOCK_SEQ_PREFIX_KEY + URLEncoder.encode(typeTag, "utf8") + seqNumber;
         } catch (UnsupportedEncodingException e) {
             log.error("BlockEventSubscriberRunner exception ", e);
         }
