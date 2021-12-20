@@ -62,6 +62,19 @@ public class NftContractController {
         return R.success(true);
     }
 
+    @GetMapping("/nft/createBatch")
+    public R createBatchNFT(@RequestParam String secretKey,
+                                @RequestParam Long groupId,
+                                @RequestParam Integer batch,
+                                @RequestParam Integer count,
+                                @RequestParam Long gas) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
+        }
+        nftContractService.createBatchNFT(groupId, batch, count, gas);
+        return R.success(true);
+    }
+
     @GetMapping("/nft/transferNft")
     public R transferNft(@RequestParam String secretKey,
                                 @RequestParam Long groupId,

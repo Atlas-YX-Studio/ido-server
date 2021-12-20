@@ -208,6 +208,122 @@ public class NftContractService {
      *
      * @return
      */
+    public void createBatchNFT(long groupId, int batch, int count, long gas) {
+        // 同步上传图片
+//        nftImagesUploadBiz.run();
+
+        // 部署nft合约
+        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(groupId);
+        if (nftGroupDo == null) {
+            return;
+        }
+        if (NftGroupStatus.APPENDING.name().equals(nftGroupDo.getStatus())) {
+            if (!deployNFTContractWithImage(nftGroupDo)) {
+                log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
+                throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
+            }
+            nftGroupDo.setStatus(NftGroupStatus.INITIALIZED.name());
+            nftGroupDo.setUpdateTime(System.currentTimeMillis());
+            log.info("NFT合约 {} 部署成功", nftGroupDo.getName());
+            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+        }
+        // mint nft + 盲盒
+        if (NftGroupStatus.INITIALIZED.name().equals(nftGroupDo.getStatus())) {
+            NftInfoDo selectNftInfoDo = new NftInfoDo();
+            selectNftInfoDo.setGroupId(nftGroupDo.getId());
+            selectNftInfoDo.setCreated(false);
+            // 取出该组下所有待铸造NFT
+            List<NftInfoDo> nftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
+            if (CollectionUtils.isEmpty(nftInfoDos)) {
+                return;
+            }
+            MutableInt nftId = new MutableInt(1);
+            // 获取该组最后一个id
+            selectNftInfoDo = new NftInfoDo();
+            selectNftInfoDo.setGroupId(nftGroupDo.getId());
+            selectNftInfoDo.setCreated(true);
+            List<NftInfoDo> createdNftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
+            if (!CollectionUtils.isEmpty(createdNftInfoDos)) {
+                createdNftInfoDos.sort(Comparator.comparingLong(NftInfoDo::getNftId).reversed());
+                nftId.setValue(createdNftInfoDos.get(0).getNftId() + 1);
+            }
+            List<NftInfoDo> collect = nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).collect(Collectors.toList());
+            boolean starMint = true;
+            int i = 0;
+            int remain = collect.size();
+//            int count = 50;
+            int sum = 0;
+            for (NftInfoDo nftInfoDo : collect) {
+                nftInfoDo.setNftId(nftId.longValue());
+                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+                // 铸造NFT，存放图片url
+                if (starMint) {
+                    if (batch > remain) {
+                        batch = remain;
+                    }
+                    if (!mintBatchNFT(nftGroupDo, nftInfoDo, batch, gas)) {
+                        log.error("NFT {} mint失败", nftInfoDo.getName());
+                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                    }
+                    log.info("NFT {} mint成功, batch: {}", nftInfoDo.getName(), batch);
+                    starMint = false;
+                    remain = remain - batch;
+                }
+                nftInfoDo.setOwner("");
+                nftInfoDo.setCreated(true);
+                nftInfoDo.setUpdateTime(System.currentTimeMillis());
+                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+                nftId.add(1);
+                i++;
+                sum++;
+                if (i >= batch) {
+                    i = 0;
+                    starMint = true;
+                }
+                if (sum >= count) {
+                    break;
+                }
+            }
+            // 全部铸造完成，修改
+            nftGroupDo.setStatus(NftGroupStatus.CREATED.name());
+            nftGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+        }
+
+        // 市场创建resource + 盲盒发售
+        if (NftGroupStatus.CREATED.name().equals(nftGroupDo.getStatus())) {
+            List<TokenDto> supportTokenList = JSON.parseObject(nftGroupDo.getSupportToken(),
+                    new TypeReference<>() {
+                    });
+            supportTokenList.forEach(tokenDto -> {
+                if (!initMarket(nftGroupDo, tokenDto.getAddress())) {
+                    log.error("NFT {} 市场初始化失败, 设置币种:{}", nftGroupDo.getName(), tokenDto.getAddress());
+                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                }
+            });
+            if (!transferBox(nftGroupDo)) {
+                log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
+                throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+            }
+            if (!initBoxOffering(nftGroupDo)) {
+                log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
+                throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+            }
+            // 发售成功
+            log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
+            nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
+            nftGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+        }
+    }
+
+    /**
+     * 1.部署NFT合约
+     * 2.mint所有NFT
+     * 3.盲盒首发
+     *
+     * @return
+     */
     public void createNFTWithNoBox(long groupId) {
         // 同步上传图片
 //        nftImagesUploadBiz.run();
@@ -404,6 +520,28 @@ public class NftContractService {
                 ))
                 .build();
         return contractService.callFunction(address, scriptFunctionObj);
+    }
+
+    /**
+     * mint NFT，存放图片url
+     */
+    private boolean mintBatchNFT(NftGroupDo nftGroupDo, NftInfoDo nftInfoDo, long count, long gas) {
+        TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta());
+        String address = typeObj.getModuleAddress();
+
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(address)
+                .moduleName(typeObj.getModuleName())
+                .functionName("mint_with_image")
+                .args(Lists.newArrayList(
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(imageInfoApi + nftInfoDo.getId())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
+                        BcsSerializeHelper.serializeU64ToBytes(count)
+                ))
+                .build();
+        return contractService.callFunctionV2(address, scriptFunctionObj, gas);
     }
 
     /**
