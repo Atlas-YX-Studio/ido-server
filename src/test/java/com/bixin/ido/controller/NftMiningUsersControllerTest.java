@@ -1,4 +1,4 @@
-package com.bixin.ido.server.controller;
+package com.bixin.ido.controller;
 
 import com.bixin.IdoServerApplication;
 import lombok.SneakyThrows;

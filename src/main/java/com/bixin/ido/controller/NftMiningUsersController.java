@@ -1,18 +1,18 @@
-package com.bixin.ido.server.controller;
+package com.bixin.ido.controller;
 
 
-import com.bixin.ido.server.bean.vo.NftStakingVO;
-import com.bixin.ido.server.bean.vo.wrap.R;
-import com.bixin.ido.server.config.StarConfig;
-import com.bixin.ido.server.entity.NftStakingUsers;
-import com.bixin.ido.server.service.NftMiningUsersService;
-import com.bixin.ido.server.service.NftStakingUsersService;
-import com.bixin.ido.server.utils.BeanCopyUtil;
-import com.bixin.ido.server.utils.StcSignatureUtil;
+import com.bixin.ido.bean.vo.NftStakingVO;
+import com.bixin.common.response.R;
+import com.bixin.common.config.StarConfig;
+import com.bixin.ido.entity.NftStakingUsers;
+import com.bixin.ido.service.NftMiningUsersService;
+import com.bixin.ido.service.NftStakingUsersService;
+import com.bixin.common.utils.BeanCopyUtil;
+import com.bixin.common.utils.StcSignatureUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
-import com.bixin.nft.core.service.NftGroupService;
-import com.bixin.nft.core.service.NftInfoService;
+import com.bixin.nft.service.NftGroupService;
+import com.bixin.nft.service.NftInfoService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 

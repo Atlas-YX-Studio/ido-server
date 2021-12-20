@@ -1,4 +1,4 @@
-package com.bixin.nft.core.service;
+package com.bixin.nft.service;
 
 import com.alibaba.fastjson.JSON;
 import com.bixin.IdoServerApplication;

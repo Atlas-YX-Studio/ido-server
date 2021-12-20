@@ -1,4 +1,4 @@
-package com.bixin.ido.server.bean.vo;
+package com.bixin.ido.bean.vo;
 
 import lombok.Data;
 

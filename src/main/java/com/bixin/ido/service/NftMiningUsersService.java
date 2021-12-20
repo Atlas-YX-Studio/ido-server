@@ -1,8 +1,8 @@
-package com.bixin.ido.server.service;
+package com.bixin.ido.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.bixin.ido.server.bean.vo.NftMiningOverviewVO;
-import com.bixin.ido.server.entity.NftMiningUsers;
+import com.bixin.ido.bean.vo.NftMiningOverviewVO;
+import com.bixin.ido.entity.NftMiningUsers;
 
 /**
  * 用户NFT挖矿表 服务类

@@ -1,7 +1,7 @@
-package com.bixin.ido.server.utils;
+package com.bixin.common.utils;
 
-import com.bixin.ido.server.common.errorcode.IdoErrorCode;
-import com.bixin.ido.server.common.exception.IdoException;
+import com.bixin.common.code.IdoErrorCode;
+import com.bixin.common.exception.IdoException;
 import com.novi.bcs.BcsDeserializer;
 import com.novi.serde.Bytes;
 import lombok.SneakyThrows;

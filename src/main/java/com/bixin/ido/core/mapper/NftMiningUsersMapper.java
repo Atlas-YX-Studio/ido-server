@@ -1,7 +1,7 @@
-package com.bixin.ido.server.core.mapper;
+package com.bixin.ido.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.bixin.ido.server.entity.NftMiningUsers;
+import com.bixin.ido.entity.NftMiningUsers;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

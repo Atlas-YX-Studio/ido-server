@@ -1,6 +1,4 @@
-package com.bixin.ido.server.common.errorcode;
-
-import com.bixin.ido.server.common.code.ErrorCode;
+package com.bixin.common.code;
 
 /**
  * @Description: 业务错误码，错误信息在messages中配置

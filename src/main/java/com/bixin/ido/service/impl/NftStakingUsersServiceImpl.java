@@ -1,9 +1,9 @@
-package com.bixin.ido.server.service.impl;
+package com.bixin.ido.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.bixin.ido.server.core.mapper.NftStakingUsersMapper;
-import com.bixin.ido.server.entity.NftStakingUsers;
-import com.bixin.ido.server.service.NftStakingUsersService;
+import com.bixin.ido.core.mapper.NftStakingUsersMapper;
+import com.bixin.ido.entity.NftStakingUsers;
+import com.bixin.ido.service.NftStakingUsersService;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,9 +1,9 @@
-package com.bixin.ido.server.service.impl;
+package com.bixin.ido.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.bixin.ido.server.core.mapper.NftMiningRecordMapper;
-import com.bixin.ido.server.entity.NftMiningRecord;
-import com.bixin.ido.server.service.NftMiningRecordService;
+import com.bixin.ido.core.mapper.NftMiningRecordMapper;
+import com.bixin.ido.entity.NftMiningRecord;
+import com.bixin.ido.service.NftMiningRecordService;
 import org.springframework.stereotype.Service;
 
 /**

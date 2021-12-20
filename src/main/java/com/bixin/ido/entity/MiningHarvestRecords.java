@@ -1,4 +1,4 @@
-package com.bixin.ido.server.entity;
+package com.bixin.ido.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

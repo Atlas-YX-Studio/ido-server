@@ -29,7 +29,7 @@ java -jar E:\work\mybatis-generator-core-1.3.2\lib\mybatis-generator-core-1.3.2.
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="com.bixin.ido.server.core.wrapDDL"
+        <javaModelGenerator targetPackage="com.bixin.ido.core.wrapDDL"
                             targetProject="mybatis-generator">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
@@ -40,7 +40,7 @@ java -jar E:\work\mybatis-generator-core-1.3.2\lib\mybatis-generator-core-1.3.2.
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.bixin.ido.server.core.mapper"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.bixin.ido.core.mapper"
                              targetProject="mybatis-generator">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>

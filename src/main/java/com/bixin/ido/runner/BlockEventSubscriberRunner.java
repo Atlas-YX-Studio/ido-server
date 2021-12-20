@@ -1,11 +1,11 @@
-package com.bixin.ido.server.runner;
+package com.bixin.ido.runner;
 
-import com.bixin.ido.server.config.StarConfig;
-import com.bixin.ido.server.constants.CommonConstant;
-import com.bixin.ido.server.core.factory.NamedThreadFactory;
-import com.bixin.ido.server.core.redis.RedisCache;
-import com.bixin.ido.server.service.NftMiningUsersService;
-import com.bixin.ido.server.utils.LocalDateTimeUtil;
+import com.bixin.common.config.StarConfig;
+import com.bixin.common.constants.CommonConstant;
+import com.bixin.common.factory.NamedThreadFactory;
+import com.bixin.core.redis.RedisCache;
+import com.bixin.ido.service.NftMiningUsersService;
+import com.bixin.common.utils.LocalDateTimeUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package com.bixin.ido.server.service;
+package com.bixin.ido.service;
 
 import com.bixin.IdoServerApplication;
 import lombok.extern.slf4j.Slf4j;

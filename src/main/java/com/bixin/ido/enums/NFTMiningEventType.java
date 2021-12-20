@@ -1,4 +1,4 @@
-package com.bixin.ido.server.enums;
+package com.bixin.ido.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

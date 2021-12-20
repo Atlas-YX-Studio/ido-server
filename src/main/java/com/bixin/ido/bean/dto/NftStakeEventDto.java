@@ -1,4 +1,4 @@
-package com.bixin.ido.server.bean.dto;
+package com.bixin.ido.bean.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
-package com.bixin.ido.server.service;
+package com.bixin.ido.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.bixin.ido.server.entity.NftMiningRecord;
+import com.bixin.ido.entity.NftMiningRecord;
 
 /**
  * NFT质押事件表 服务类
