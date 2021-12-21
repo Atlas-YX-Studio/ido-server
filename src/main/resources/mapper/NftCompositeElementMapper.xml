@@ -4,13 +4,13 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id as d
-        ,info_id as nfoId
-        ,type as ype
-        ,property as roperty
-        ,score as core
-        ,create_time as reateTime
-        ,update_time as pdateTime
+        id as id
+        ,info_id as info_id
+        ,type as type
+        ,property as property
+        ,score as score
+        ,create_time as create_time
+        ,update_time as update_time
     </sql>
 
 </mapper>

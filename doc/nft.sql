@@ -5,6 +5,7 @@ CREATE TABLE `nft_group`
     `series`              varchar(32)  NOT NULL COMMENT '系列',
     `series_name`         varchar(128) NOT NULL COMMENT '系列名',
     `name`                varchar(32)  NOT NULL COMMENT '组名',
+    `type`                varchar(32)  NOT NULL COMMENT '类型',
     `series_quantity`     int(11) NOT NULL COMMENT '系列总发售数量',
     `quantity`            int(11) NOT NULL COMMENT '发售数量',
     `offering_quantity`   int(11) NOT NULL COMMENT '发售数量',
@@ -44,6 +45,7 @@ CREATE TABLE `nft_info`
     `id`          bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
     `nft_id`      bigint(20) NOT NULL COMMENT 'NFT id',
     `group_id`    bigint(20) NOT NULL COMMENT '所属分组',
+    `type`        varchar(32)    NOT NULL COMMENT '类型',
     `name`        varchar(128)   NOT NULL COMMENT '名称',
     `owner`       varchar(128)   NOT NULL COMMENT '所有者',
     `image_link`  varchar(256)   NOT NULL COMMENT '图片链接',
@@ -151,3 +153,42 @@ CREATE TABLE `nft_kiko_cat`
     PRIMARY KEY (`id`),
     KEY                       `idx_info_id` (`info_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='NFT Kiko猫信息表';
+
+CREATE TABLE `nft_composite_card`
+(
+    `id`                      bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+    `info_id`                 bigint(20) NOT NULL COMMENT 'nft_Info id',
+    `occupation`              varchar(64)    NOT NULL DEFAULT '' COMMENT '职业',
+    `background_id`           bigint(20) NOT NULL DEFAULT 0 COMMENT '背景id',
+    `background`              varchar(64)    NOT NULL DEFAULT '' COMMENT '背景',
+    `background_score`        decimal(18, 9) unsigned NOT NULL DEFAULT '0.000000000' COMMENT '背景分',
+    `fur_id`                  bigint(20) NOT NULL DEFAULT 0 COMMENT '皮毛id',
+    `fur`                     varchar(64)    NOT NULL DEFAULT '' COMMENT '皮毛',
+    `fur_score`               decimal(18, 9) unsigned NOT NULL DEFAULT '0.000000000' COMMENT '皮毛分',
+    `clothes_id`              bigint(20) NOT NULL DEFAULT 0 COMMENT '衣服id',
+    `clothes`                 varchar(64)    NOT NULL DEFAULT '' COMMENT '衣服',
+    `clothes_score`           decimal(18, 9) NOT NULL DEFAULT '0.000000000' COMMENT '衣服分',
+    `facial_expression_id`    bigint(20) NOT NULL DEFAULT 0 COMMENT '表情id',
+    `facial_expression`       varchar(64)    NOT NULL DEFAULT '' COMMENT '表情',
+    `facial_expression_score` decimal(18, 9) NOT NULL DEFAULT '0.000000000' COMMENT '表情分',
+    `head_expression_id`      bigint(20) NOT NULL DEFAULT 0 COMMENT '头部id',
+    `head`                    varchar(64)    NOT NULL DEFAULT '' COMMENT '头部',
+    `head_score`              decimal(18, 9) NOT NULL DEFAULT '0.000000000' COMMENT '头部分',
+    `create_time`             bigint(20) DEFAULT 0,
+    `update_time`             bigint(20) DEFAULT 0,
+    PRIMARY KEY (`id`),
+    KEY                       `idx_info_id` (`info_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='NFT 卡牌';
+
+CREATE TABLE `nft_composite_element`
+(
+    `id`          bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+    `info_id`     bigint(20) NOT NULL COMMENT 'nft_Info id',
+    `type`        varchar(64) NOT NULL DEFAULT '' COMMENT '元素类型',
+    `property`    varchar(64) NOT NULL DEFAULT '' COMMENT '属性值',
+    `score`       decimal(18, 9) unsigned NOT NULL DEFAULT '0.000000000' COMMENT '稀有值',
+    `create_time` bigint(20) DEFAULT 0,
+    `update_time` bigint(20) DEFAULT 0,
+    PRIMARY KEY (`id`),
+    KEY           `idx_info_id` (`info_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='NFT 元素';

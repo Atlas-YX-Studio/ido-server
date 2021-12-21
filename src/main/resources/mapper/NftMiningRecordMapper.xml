@@ -5,14 +5,14 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id as d
-        ,type as ype
-        ,group_id as roupId
-        ,sequence_number as equenceNumber
-        ,sender as ender
-        ,nft_id as ftId
-        ,order as rder
-        ,create_time as reateTime
-        ,update_time as pdateTime
+        ,type as type
+        ,group_id as groupId
+        ,sequence_number as sequenceNumber
+        ,sender as sender
+        ,nft_id as nftId
+        ,order as order
+        ,create_time as createTime
+        ,update_time as updateTime
     </sql>
 
 </mapper>
