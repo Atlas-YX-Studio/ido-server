@@ -27,10 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -118,7 +115,7 @@ public class ContractService {
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
         return RetryingUtil.retry(
                 () -> {
-                    String result = starcoinClient.callScriptFunction(sender, privateKey, scriptFunctionObj);
+                    String result = callFunction(sender, privateKey, scriptFunctionObj, 10000000L);
                     log.info("合约请求 result: {}", result);
                     String txn = JSON.parseObject(result).getString("result");
                     if (StringUtils.isBlank(txn)) {
@@ -133,6 +130,53 @@ public class ContractService {
                 5,
                 4000,
                 SequenceException.class);
+    }
+
+    /**
+     * 签名并请求合约
+     *
+     * @param senderAddress
+     * @param scriptFunctionObj
+     * @return
+     */
+    public boolean callFunctionV2(String senderAddress, ScriptFunctionObj scriptFunctionObj, long gas) {
+        log.info("合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
+        AccountAddress sender = AccountAddressUtils.create(senderAddress);
+        Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
+        return RetryingUtil.retry(
+                () -> {
+                    String result = callFunction(sender, privateKey, scriptFunctionObj, gas);
+                    log.info("合约请求 result: {}", result);
+                    String txn = JSON.parseObject(result).getString("result");
+                    if (StringUtils.isBlank(txn)) {
+                        log.info("合约请求失败");
+                        if (result.contains("SEQUENCE_NUMBER_TOO_OLD")) {
+                            throw new SequenceException();
+                        }
+                        return false;
+                    }
+                    return checkTxt(txn);
+                },
+                5,
+                4000,
+                SequenceException.class);
+    }
+
+    private String callFunction(AccountAddress sender, Ed25519PrivateKey privateKey,
+                                ScriptFunctionObj scriptFunctionObj, long gas) {
+        TransactionPayload.ScriptFunction scriptFunction = new TransactionPayload.ScriptFunction(scriptFunctionObj.toScriptFunction());
+        long sequenceNumber = starcoinClient.getAccountSequenceNumber(sender);
+        ChainId chainId = new ChainId(starConfig.getClient().getChainId().byteValue());
+        RawUserTransaction rawUserTransaction = new RawUserTransaction(sender, sequenceNumber, scriptFunction, gas, 1L,
+                "0x1::STC::STC", getExpirationTimestampSecs(), chainId);
+        return starcoinClient.submitHexTransaction(privateKey, rawUserTransaction);
+    }
+
+    private long getExpirationTimestampSecs() {
+        //return System.currentTimeMillis() / 1000 + TimeUnit.HOURS.toSeconds(1);
+        String resultStr = starcoinClient.call("node.info", Collections.emptyList());
+        JSONObject jsonObject = JSON.parseObject(resultStr);
+        return jsonObject.getJSONObject("result").getLong("now_seconds") + (2 * 60 * 60);
     }
 
     /**

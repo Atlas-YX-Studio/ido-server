@@ -52,7 +52,7 @@ public class DxProductController {
         List<HomeProductVO> initProducts = idoDxProductService.getHomeProducts(ProductState.INIT);
         List<HomeProductVO> processingProducts = idoDxProductService.getHomeProducts(ProductState.PROCESSING);
         ArrayList<HomeProductVO> homeProductVOS = Lists.newArrayList(Iterables.concat(previewProducts, initProducts, processingProducts));
-        homeProductVOS.sort(Comparator.comparingInt(IdoDxProduct::getWeight));
+        homeProductVOS.sort(Comparator.comparingInt(IdoDxProduct::getWeight).reversed());
         return R.success(homeProductVOS);
 
     }

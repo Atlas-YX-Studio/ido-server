@@ -2,12 +2,6 @@ package com.bixin.common.utils;
 
 import java.util.concurrent.*;
 
-/**
- * @author xiangfeihan
- *
- * 线程池工具类
- * 支持子线程traceId
- */
 public class ThreadPoolUtil {
     private final static int THREAD_NUMS = Runtime.getRuntime().availableProcessors() + 1;
 
@@ -44,5 +38,4 @@ public class ThreadPoolUtil {
     public static void executeRetry(Runnable runnable, Class<? extends Throwable> exceptionClass) {
         executorService.execute(() -> RetryingUtil.retry(runnable, 3, 1000, exceptionClass));
     }
-
 }

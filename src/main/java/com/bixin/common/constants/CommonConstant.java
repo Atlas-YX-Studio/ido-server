@@ -31,6 +31,9 @@ public interface CommonConstant {
     String VOLUME_INFO_KEY = "volume_info";
     String STC_FEE_PRICE_KEY = "stc_fee_price";
 
+    String NEW_BLOCK_SEQ_PREFIX_KEY = "new_block_seq_";
+    String NFT_MINING_SEQ_PREFIX_KEY = "nft_mining_seq_";
+
     // http header
     String HTTP_X_REQUESTED_WITH = "X-Request-With";
     String HTTP_X_TOKEN = "X-Token";

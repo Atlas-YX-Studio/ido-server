@@ -56,12 +56,8 @@ public class NftImageController {
                 throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
             }
             url = nftGroupDo.getNftTypeImageLink();
-            if (StringUtils.isNoneEmpty(url) && url.startsWith(starConfig.getNft().getImagePrefix())) {
-                if (!nftImagesUploadBiz.uploadImage(nftGroupDo)) {
-                    log.error("nft图片上传失败, id:{}", id);
-                    throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
-                }
-                url = nftGroupDo.getNftTypeImageLink();
+            if (StringUtils.isBlank(url)) {
+                throw new IdoException(IdoErrorCode.IMAGE_UPLOAD_FAILURE);
             }
             redisCache.setValue(CommonConstant.IMAGE_GROUP_URL_PREFIX_KEY + id, url, 1, TimeUnit.HOURS);
         }
@@ -86,12 +82,8 @@ public class NftImageController {
                 throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
             }
             url = nftInfoDo.getImageLink();
-            if (StringUtils.isNoneEmpty(url) && url.startsWith(starConfig.getNft().getImagePrefix())) {
-                if (!nftImagesUploadBiz.uploadImage(nftInfoDo)) {
-                    log.error("nft图片上传失败, id:{}", id);
-                    throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
-                }
-                url = nftInfoDo.getImageLink();
+            if (StringUtils.isBlank(url)) {
+                throw new IdoException(IdoErrorCode.IMAGE_UPLOAD_FAILURE);
             }
             redisCache.setValue(CommonConstant.IMAGE_INFO_URL_PREFIX_KEY + id, url, 1, TimeUnit.HOURS);
         }

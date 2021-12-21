@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.nft.core.mapper.NftCompositeElementMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id as d
+        ,info_id as nfoId
+        ,type as ype
+        ,property as roperty
+        ,score as core
+        ,create_time as reateTime
+        ,update_time as pdateTime
+    </sql>
+
+</mapper>

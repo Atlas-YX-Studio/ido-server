@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bixin.nft.core.mapper.NftCompositeCardMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id as d
+        ,info_id as nfoId
+        ,occupation as ccupation
+        ,background_id as ackgroundId
+        ,background as ackground
+        ,background_score as ackgroundScore
+        ,fur_id as urId
+        ,fur as ur
+        ,fur_score as urScore
+        ,clothes_id as lothesId
+        ,clothes as lothes
+        ,clothes_score as lothesScore
+        ,facial_expression_id as acialExpressionId
+        ,facial_expression as acialExpression
+        ,facial_expression_score as acialExpressionScore
+        ,head_expression_id as eadExpressionId
+        ,head as ead
+        ,head_score as eadScore
+        ,create_time as reateTime
+        ,update_time as pdateTime
+    </sql>
+
+</mapper>

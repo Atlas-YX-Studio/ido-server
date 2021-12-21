@@ -56,8 +56,7 @@ public class StarConfig {
         private String websocketContractAddress;
         private String contractAddress;
         private String lpPoolResourceName;
-        private String lpTokenResourceName;
-        private String usdtAddress;
+        private String LpTokenResourceName;
 
         //starCoin-sdk 需要去掉合约地址的前缀 "0x"
         public String getWebsocketContractAddress() {
@@ -88,7 +87,7 @@ public class StarConfig {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Nft {
+    public static class Nft{
         private String websocketHost;
         private String websocketPort;
         private String market;
@@ -110,6 +109,11 @@ public class StarConfig {
         private String kikoAddress;
         private String kikoModule;
         private BigDecimal stcFee;
+        private BigDecimal nftMiningDayReward;
+        private BigDecimal nftMiningBlockReward;
+        private BigDecimal nftUnitPrice;
+        private String nftMiningAddress;
+        private String nftMiningModule;
+        private BigDecimal nftMiningStcFee;
     }
-
 }

@@ -1,7 +1,5 @@
 package com.bixin.common.code;
 
-import com.bixin.common.code.ErrorCode;
-
 /**
  * @Description: 业务错误码，错误信息在messages中配置
  * @author: 系统
@@ -77,6 +75,17 @@ public enum IdoErrorCode implements ErrorCode {
      * 存在待处理提取记录
      */
     PENDING_HARVEST_RECORD_EXISTS(100013, "pending harvest record exists"),
+
+
+    /**
+     * 提取收益失败
+     */
+    REWARD_HARVEST_FAILED(100014, "reward harvest failed"),
+
+    /**
+     * 校验失败
+     */
+    SIGNATURE_VERIFY_FAILED(100015, "signature verify failed"),
 
     ;
 

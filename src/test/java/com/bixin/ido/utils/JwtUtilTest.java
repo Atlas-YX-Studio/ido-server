@@ -1,4 +1,4 @@
-package com.bixin.ido.utils;
+package com.bixin.common.utils;
 
 import com.bixin.common.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;

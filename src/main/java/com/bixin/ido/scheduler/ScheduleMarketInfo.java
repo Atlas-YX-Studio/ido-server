@@ -87,7 +87,7 @@ public class ScheduleMarketInfo {
                         // 获取token 24H价格变化率，百分之x
                         BigDecimal firstPrice = swapTicks.get(0).getUsdtExRate();
                         BigDecimal lastPrice = swapTicks.get(swapTicks.size() - 1).getUsdtExRate();
-                        BigDecimal priceRate = BigDecimal.ZERO.equals(firstPrice) ? BigDecimal.ZERO :
+                        BigDecimal priceRate = BigDecimal.ZERO.compareTo(firstPrice) == 0 ? BigDecimal.ZERO :
                                 lastPrice.subtract(firstPrice).divide(firstPrice, 18, RoundingMode.HALF_UP).multiply(new BigDecimal(2));
                         // 获取token 24H总交易额，以USDT计价
                         BigDecimal usdtSwapAmount = swapTicks.stream().map(SwapTokenTickDto::getUsdtAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -187,7 +187,7 @@ public class ScheduleMarketInfo {
                             BigDecimal swapVolume = BigDecimal.ZERO;
                             BigDecimal priceX = coinPriceInfos.getOrDefault(swapUserRecord.getTokenCodeX() + "_" + usdtAddress, BigDecimal.ZERO);
                             BigDecimal priceY = coinPriceInfos.getOrDefault(swapUserRecord.getTokenCodeY() + "_" + usdtAddress, BigDecimal.ZERO);
-                            if (!BigDecimal.ZERO.equals(swapUserRecord.getTokenInX())) {
+                            if (BigDecimal.ZERO.compareTo(swapUserRecord.getTokenInX()) != 0) {
                                 swapVolume = swapVolume.add(swapUserRecord.getTokenInX().multiply(priceX));
                                 swapVolume = swapVolume.add(swapUserRecord.getTokenOutY().multiply(priceY));
                             } else {
