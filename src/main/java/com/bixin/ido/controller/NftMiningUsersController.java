@@ -26,7 +26,7 @@ import java.util.List;
  * @author Xiang Feihan
  * @since 2021-11-26
  */
-@RestController
+//@RestController
 @RequestMapping("/v1/mining/nft")
 public class NftMiningUsersController {
 
