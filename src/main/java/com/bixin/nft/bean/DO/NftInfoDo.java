@@ -35,6 +35,11 @@ public class NftInfoDo implements Serializable {
     private Long groupId;
 
     /**
+     * 类型
+     */
+    private String type;
+
+    /**
      * 所有者
      */
     private String owner;
