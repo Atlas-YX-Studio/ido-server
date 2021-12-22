@@ -70,6 +70,7 @@ CREATE TABLE nft_market
     type        varchar(64)    DEFAULT NULL COMMENT '类型：nft/box',
     name        varchar(128)   DEFAULT NULL COMMENT 'ndf/box 分组全称',
     nft_name    varchar(128)   DEFAULT NULL COMMENT ' nft名称',
+    nft_type    varchar(32) DEFAULT NULL COMMENT 'nft类型：qshow卡牌,qshow元素',
     owner       varchar(128)   DEFAULT NULL COMMENT '当前持有者',
     pay_token   varchar(255)   DEFAULT NULL COMMENT '链上支付币种',
     address     varchar(128)   DEFAULT NULL COMMENT '合约地址',
