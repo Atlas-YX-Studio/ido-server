@@ -36,16 +36,16 @@ public class NftMarketController {
     @GetMapping("/getALL")
     public P getALlByPage(@RequestParam(value = "groupId", defaultValue = "0") long groupId,
                           @RequestParam(value = "currency", defaultValue = "all") String currency,
-                          @RequestParam(value = "open", defaultValue = "all") String open,
+                          @RequestParam(value = "nftType", defaultValue = "0") int nftType,
                           @RequestParam(value = "sort", defaultValue = "0") int sort,
                           @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "0") long pageNum) {
 
         if (pageNum < 0 || pageSize <= 0 || groupId < 0
-                || StringUtils.isEmpty(open) || StringUtils.isEmpty(currency)) {
+                || nftType < 0 || StringUtils.isEmpty(currency)) {
             return P.failed("parameter is invalid");
         }
-        List<Map<String, Object>> maps = nftMarketService.selectByPage(true, pageSize + 1, pageNum, sort, groupId, currency, open);
+        List<Map<String, Object>> maps = nftMarketService.selectByPage(true, pageSize + 1, pageNum, sort, groupId, currency, nftType);
         if (CollectionUtils.isEmpty(maps)) {
             return P.success(null, false);
         }

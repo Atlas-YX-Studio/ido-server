@@ -1,6 +1,6 @@
 package com.bixin.nft.service;
 
-import com.bixin.nft.entity.NftCompositeCard;
+import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

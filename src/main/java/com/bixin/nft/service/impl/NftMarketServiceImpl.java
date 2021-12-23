@@ -112,14 +112,36 @@ public class NftMarketServiceImpl implements NftMarketService {
         nftMarketMapper.deleteAllByIds(ids);
     }
 
+    /**
+     * @param predicateNextPage
+     * @param pageSize
+     * @param pageNum
+     * @param sort
+     * @param groupId
+     * @param currency
+     * @param nftType           1原生nft ,2重组nft，3盲盒，4零件(元素)
+     * @return
+     */
     @Override
-    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
+    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, int nftType) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
-        if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
-            paramMap.put("type", open.toLowerCase());
+//        if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
+//            paramMap.put("type", open.toLowerCase());
+//        }
+        // TODO: 2021/12/23 待定
+        paramMap.put("type", "nft");
+        if (1 == nftType) {
+//            paramMap.put("nftType", "init");
+        } else if (2 == nftType) {
+            paramMap.put("nftType", "chongzu");
+        } else if (3 == nftType) {
+            paramMap.put("type", "box");
+        }else if (4 == nftType) {
+            paramMap.put("nftType", "lingjian");
         }
+
         if (StringUtils.isNoneEmpty(currency) && !"all".equalsIgnoreCase(currency)) {
             paramMap.put("payToken", currency);
         }
@@ -133,7 +155,7 @@ public class NftMarketServiceImpl implements NftMarketService {
             paramMap.put("sort", "mm.sell_price desc, mm.create_time desc");
         } else if (sort == 2) {
             paramMap.put("sort", "mm.sell_price asc, mm.create_time desc");
-        }else if (sort == 3) {
+        } else if (sort == 3) {
             paramMap.put("sort", "ff.score desc, mm.create_time desc");
         }
 

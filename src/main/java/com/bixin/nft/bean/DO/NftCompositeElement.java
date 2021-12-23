@@ -1,4 +1,4 @@
-package com.bixin.nft.entity;
+package com.bixin.nft.bean.DO;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

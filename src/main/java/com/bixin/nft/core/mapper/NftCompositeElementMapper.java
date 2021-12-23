@@ -1,6 +1,6 @@
 package com.bixin.nft.core.mapper;
 
-import com.bixin.nft.entity.NftCompositeElement;
+import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -71,6 +71,9 @@
       <if test="type != null">
         AND mm.type = #{type}
       </if>
+      <if test="nftType != null">
+        AND mm.nft_type = #{nftType}
+      </if>
     </where>
     ORDER BY
     <if test="sort != null">
