@@ -43,6 +43,8 @@ public class ContractService {
             put("0x290c7b35320a4dd26f651fd184373fe7", "98e6ded54f698a49365a0a4217d2d5d3cfc516b03c6198b81e47ce0067035c34");
             put("0xa85291039ddad8845d5097624c81c3fd", "67f9969b23ce51050ac2419b1afb1273b949573bb4159db965002ab999b0cba4");
             put("0x69f1e543a3bef043b63bed825fcd2cf6", "b90943e6bd2d69872e86cedcf33c9290d7213e484b1af7d07ea6b719754341ec");
+//            test ido
+            put("0xf9079064690b07e9826a4fa3d713aecb", "f00d4d28de6c1c7955ac4a573e04f8bfd41ffebda893463a06a113e4e490ad91");
         }
     };
 
