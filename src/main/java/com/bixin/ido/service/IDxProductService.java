@@ -18,7 +18,7 @@ public interface IDxProductService {
 
     List<IdoDxProduct> getLastFinishProducts(long intervalTime);
 
-    IdoDxProduct getProduct(long pId);
+    HomeProductVO getProduct(long pId);
 
     int updateProduct(IdoDxProduct product);
 
