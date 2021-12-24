@@ -1,16 +1,13 @@
 package com.bixin.nft.bean.DO;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.*;
+
 import java.io.Serializable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
 /**
  * NFT 卡牌
@@ -45,6 +42,12 @@ public class NftCompositeCard implements Serializable {
      */
     @TableField("occupation")
     private String occupation;
+
+    /**
+     * 是否初始卡牌
+     */
+    @TableField("original")
+    private Boolean original;
 
     /**
      * 背景id
