@@ -136,6 +136,18 @@ public class NftCompositeCard implements Serializable {
     @TableField("head_score")
     private BigDecimal headScore;
 
+    /**
+     * 自定义组合卡牌名称
+     */
+    @TableField("custom_name")
+    private  String customName;
+
+    /**
+     * 自定义组合卡牌用户地址
+     */
+    @TableField("user_address")
+    private  String userAddress;
+
     @TableField("create_time")
     private Long createTime;
 
