@@ -11,7 +11,7 @@ public interface NftMetareverseService {
 
     List<Map<String, Object>> getSumByOccupationGroup();
 
-    String compositeCard(String customName, String userAddress, List<Long> elementIds)
+    String compositeCard(String customName, String userAddress, List<Long> elementIds);
 
 
 }
