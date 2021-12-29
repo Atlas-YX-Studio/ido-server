@@ -232,6 +232,8 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                     success = contractService.checkTxt(record.getHash());
                 } catch (Exception e) {
                     log.error("harvestReward 合约执行超时 hash:{}", record.getHash());
+                    // hash 查不到只能认为失败了吧？
+                    nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, record);
                     return;
                 }
                 if (success) {
