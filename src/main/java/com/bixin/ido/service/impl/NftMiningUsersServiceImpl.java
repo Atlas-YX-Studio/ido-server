@@ -88,25 +88,25 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                 .avgApr("0")
                 .userApr(BigDecimal.ZERO.toPlainString())
                 .build();
-        if (totalScore.compareTo(BigDecimal.ZERO) <= 0) {
-            return vo;
+        if (totalScore.compareTo(BigDecimal.ZERO) > 0) {
+            // 计算总年化
+            int totalNftAmount = this.nftStakingUsersService.count();
+            BigDecimal denominator = this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount));
+            if (denominator.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal avgApr = this.starConfig.getMining().getNftMiningDayReward()
+                        .multiply(BigDecimal.valueOf(365L))
+                        .divide(denominator, 18, RoundingMode.DOWN);
+                vo.setAvgApr(avgApr.toPlainString());
+            }
         }
-        // 计算总年化
-        int totalNftAmount = this.nftStakingUsersService.count();
-        BigDecimal denominator = this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount));
-        if (denominator.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal avgApr = this.starConfig.getMining().getNftMiningDayReward()
-                    .multiply(BigDecimal.valueOf(365L))
-                    .divide(denominator, 18, RoundingMode.DOWN);
-            vo.setAvgApr(avgApr.toPlainString());
-        }
+
         // 计算用户年化
         if (StringUtils.isNotBlank(userAddress)) {
             NftMiningUsers userMining = this.query().eq("address", userAddress).one();
             if (Objects.nonNull(userMining)) {
                 int userTotalNftAmount = nftStakingUsersService.lambdaQuery().eq(NftStakingUsers::getAddress, userAddress).count();
                 // （（用户NFT算力 / 总算力）* 日产量 * 365）/【当前用户质押在平台的NFT数量 * NFT单价（可配置项，单位KIKO）】
-                denominator = totalScore.multiply(BigDecimal.valueOf(userTotalNftAmount))
+                BigDecimal denominator = totalScore.multiply(BigDecimal.valueOf(userTotalNftAmount))
                         .multiply(this.starConfig.getMining().getNftUnitPrice());
                 if (denominator.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal userApr = userMining.getScore()
