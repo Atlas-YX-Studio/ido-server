@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Xiang Feihan
  * @since 2021-12-20
  */
-@RestController
+//@RestController
 @RequestMapping("/nft-composite-element")
 public class NftCompositeElementController {
 

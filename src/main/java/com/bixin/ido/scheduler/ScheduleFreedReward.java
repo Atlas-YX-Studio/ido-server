@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 import java.util.UUID;
 
 @Slf4j
-@Component
+//@Component
 public class ScheduleFreedReward {
 
     private static final long PROCESSING_EXPIRE_TIME = 30 * 1000L;

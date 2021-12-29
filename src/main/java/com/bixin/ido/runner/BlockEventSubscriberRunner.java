@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 
 @Slf4j
-@Component
+//@Component
 public class BlockEventSubscriberRunner implements ApplicationRunner {
 
     @Resource
