@@ -6,11 +6,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
-* @Class: NftKikoCatDo
-* @Description: NFT Kiko猫信息表
-* @author: 系统
-* @created: 2021-11-17
-*/
+ * @Class: NftKikoCatDo
+ * @Description: NFT Kiko猫信息表
+ * @author: 系统
+ * @created: 2021-12-30
+ */
 @Data
 public class NftKikoCatDo implements Serializable {
     /**
@@ -424,12 +424,112 @@ public class NftKikoCatDo implements Serializable {
     private BigDecimal outfitScore;
 
     /**
-     * 
+     * 五官
+     */
+    private String face;
+
+    /**
+     * 五官分
+     */
+    private BigDecimal faceScore;
+
+    /**
+     * 手臂
+     */
+    private String arm;
+
+    /**
+     * 手臂分
+     */
+    private BigDecimal armScore;
+
+    /**
+     * 腿部
+     */
+    private String leg;
+
+    /**
+     * 腿部分
+     */
+    private BigDecimal legScore;
+
+    /**
+     * 脚
+     */
+    private String foot;
+
+    /**
+     * 脚分
+     */
+    private BigDecimal footScore;
+
+    /**
+     * 武器
+     */
+    private String weapon;
+
+    /**
+     * 武器分
+     */
+    private BigDecimal weaponScore;
+
+    /**
+     * 头盔
+     */
+    private String helmet;
+
+    /**
+     * 头盔分
+     */
+    private BigDecimal helmetScore;
+
+    /**
+     * 盔甲
+     */
+    private String armor;
+
+    /**
+     * 盔甲分
+     */
+    private BigDecimal armorScore;
+
+    /**
+     * 机甲
+     */
+    private String mecha;
+
+    /**
+     * 机甲分
+     */
+    private BigDecimal mechaScore;
+
+    /**
+     * 裤子
+     */
+    private String pants;
+
+    /**
+     * 裤子分
+     */
+    private BigDecimal pantsScore;
+
+    /**
+     * 裙子
+     */
+    private String skirt;
+
+    /**
+     * 裙子分
+     */
+    private BigDecimal skirtScore;
+
+    /**
+     *
      */
     private Long createTime;
 
     /**
-     * 
+     *
      */
     private Long updateTime;
 
