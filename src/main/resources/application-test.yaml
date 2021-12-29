@@ -59,8 +59,8 @@ ido:
       image-info-api: "https://test.kikoswap.com/v1/nft/image/info/"
       image-group-api: "https://test.kikoswap.com/v1/nft/image/group/"
     mining:
-      nft-mining-day-reward: 288
-      nft-mining-block-reward: 0.02
+      nft-mining-day-reward: 144
+      nft-mining-block-reward: 0.01
       nft-unit-price: 100
       nft-mining-address: "0xa85291039ddad8845d5097624c81c3fd"
       nft-mining-module: "NFTMining"
