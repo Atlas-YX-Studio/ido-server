@@ -26,6 +26,7 @@ import com.bixin.common.utils.ThreadPoolUtil;
 import com.bixin.nft.service.ContractService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -201,6 +203,43 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
             log.error("harvestReward 提取收益失败:", e);
             nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, harvestRecords);
             throw e;
+        }
+    }
+
+    @Override
+    public void compensateNftMiningHarvest() {
+        Wrapper<MiningHarvestRecords> miningHarvestRecordsWrapper = Wrappers.<MiningHarvestRecords>lambdaQuery()
+                .eq(MiningHarvestRecords::getMiningType, MiningTypeEnum.NFT_STAKING.name())
+                .eq(MiningHarvestRecords::getRewardType, RewardTypeEnum.CURRENT.name())
+                .eq(MiningHarvestRecords::getStatus, HarvestStatusEnum.PENDING.name())
+                .ge(MiningHarvestRecords::getUpdateTime, System.currentTimeMillis()-60000);
+        List<MiningHarvestRecords> pendingHarvestRecords = miningHarvestRecordsService.list(miningHarvestRecordsWrapper);
+
+        if (CollectionUtils.isEmpty(pendingHarvestRecords)) {
+            log.info("nft mining harvest no pending records");
+            return;
+        }
+        NftMiningUsersServiceImpl nftMiningUsersServiceImpl = ApplicationContextUtils.getBean(this.getClass());
+
+        for (MiningHarvestRecords record : pendingHarvestRecords) {
+            Wrapper<NftMiningUsers> nftMiningUsersWrapper = Wrappers.<NftMiningUsers>lambdaQuery()
+                    .eq(NftMiningUsers::getAddress, record.getAddress());
+            NftMiningUsers nftMiningUsers = getOne(nftMiningUsersWrapper, false);
+
+            ThreadPoolUtil.execute(() -> {
+                boolean success;
+                try {
+                    success = contractService.checkTxt(record.getHash());
+                } catch (Exception e) {
+                    log.error("harvestReward 合约执行超时 hash:{}", record.getHash());
+                    return;
+                }
+                if (success) {
+                    nftMiningUsersServiceImpl.harvestRewardSuccess(nftMiningUsers, record);
+                } else {
+                    nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, record);
+                }
+            });
         }
     }
 
