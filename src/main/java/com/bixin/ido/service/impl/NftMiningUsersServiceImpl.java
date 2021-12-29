@@ -212,6 +212,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                 .eq(MiningHarvestRecords::getMiningType, MiningTypeEnum.NFT_STAKING.name())
                 .eq(MiningHarvestRecords::getRewardType, RewardTypeEnum.CURRENT.name())
                 .eq(MiningHarvestRecords::getStatus, HarvestStatusEnum.PENDING.name())
+                .isNotNull(MiningHarvestRecords::getHash)
                 .le(MiningHarvestRecords::getUpdateTime, System.currentTimeMillis()-60000);
         List<MiningHarvestRecords> pendingHarvestRecords = miningHarvestRecordsService.list(miningHarvestRecordsWrapper);
 
