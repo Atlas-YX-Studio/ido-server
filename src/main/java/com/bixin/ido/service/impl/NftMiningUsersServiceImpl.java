@@ -282,8 +282,8 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
     @Transactional
     public void harvestRewardFailed(NftMiningUsers nftMiningUsers, MiningHarvestRecords miningHarvestRecordDo) {
         LambdaUpdateWrapper<NftMiningUsers> nftMiningUsersUpdateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
-                .setSql("reward = reward + " + nftMiningUsers.getReward())
-                .setSql("pending_reward = pending_reward - " + nftMiningUsers.getReward())
+                .setSql("reward = reward + " + nftMiningUsers.getPendingReward())
+                .setSql("pending_reward = pending_reward - " + nftMiningUsers.getPendingReward())
                 .set(NftMiningUsers::getUpdateTime, System.currentTimeMillis())
                 .eq(NftMiningUsers::getId, nftMiningUsers.getId());
         nftMiningUsersService.update(nftMiningUsersUpdateWrapper);
