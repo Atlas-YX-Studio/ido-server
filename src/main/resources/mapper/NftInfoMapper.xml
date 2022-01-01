@@ -12,6 +12,7 @@
     <result column="score" jdbcType="DECIMAL" property="score" />
     <result column="rank" jdbcType="INTEGER" property="rank" />
     <result column="created" jdbcType="BIT" property="created" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>

@@ -27,8 +27,7 @@ import static com.bixin.common.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
  */
 @RestController
 @RequestMapping(NFT_REQUEST_PATH_PREFIX + "/store")
-public class NftStoreController {
-
+public class  NftStoreController {
 
     @Resource
     public NftMarketService nftMarketService;

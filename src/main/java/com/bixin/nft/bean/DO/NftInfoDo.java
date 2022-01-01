@@ -9,11 +9,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
-* @Class: NftInfoDo
-* @Description: NFT信息记录表
-* @author: 系统
-* @created: 2021-09-17
-*/
+ * @Class: NftInfoDo
+ * @Description: NFT信息记录表
+ * @author: 系统
+ * @created: 2021-09-17
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -78,6 +78,12 @@ public class NftInfoDo implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+
+    /**
+     * 组合卡牌初始状态 init
+     * 组合卡牌成功状态 success
+     */
+    private String state;
 
     /**
      * 图片数据
