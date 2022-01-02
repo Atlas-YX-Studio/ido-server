@@ -109,7 +109,7 @@ public class NftContractBiz {
 
         // 部署nft合约
         NftGroupDo selectNftGroupDo = new NftGroupDo();
-        selectNftGroupDo.setStatus(NftGroupStatus.APPENDING.name());
+        selectNftGroupDo.setStatus(NftGroupStatus.PENDING.name());
         List<NftGroupDo> nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (!CollectionUtils.isEmpty(nftGroupDos)) {
             nftGroupDos.forEach(nftGroupDo -> {
@@ -170,7 +170,7 @@ public class NftContractBiz {
             });
         }
 
-        // 市场创建resource + 盲盒发售
+        // 市场创建resource + 盲盒支付
         selectNftGroupDo.setStatus(NftGroupStatus.CREATED.name());
         nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (!CollectionUtils.isEmpty(nftGroupDos)) {
@@ -188,11 +188,22 @@ public class NftContractBiz {
                     log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                 }
+                log.info("NFT {} 盲盒转账成功", nftGroupDo.getName());
+                nftGroupDo.setStatus(NftGroupStatus.TRANSFER.name());
+                nftGroupDo.setUpdateTime(System.currentTimeMillis());
+                nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+            });
+        }
+
+        // 发售盲盒
+        selectNftGroupDo.setStatus(NftGroupStatus.TRANSFER.name());
+        nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
+        if (!CollectionUtils.isEmpty(nftGroupDos)) {
+            nftGroupDos.forEach(nftGroupDo -> {
                 if (!initBoxOffering(nftGroupDo)) {
                     log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                 }
-                // 发售成功
                 log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
                 nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
                 nftGroupDo.setUpdateTime(System.currentTimeMillis());
@@ -208,6 +219,7 @@ public class NftContractBiz {
      *
      * @return
      */
+    @Deprecated
     public void createBatchNFT(long groupId, int batch, int count, long gas) {
         // 同步上传图片
 //        nftImagesUploadBiz.run();
@@ -217,7 +229,7 @@ public class NftContractBiz {
         if (nftGroupDo == null) {
             return;
         }
-        if (NftGroupStatus.APPENDING.name().equals(nftGroupDo.getStatus())) {
+        if (NftGroupStatus.PENDING.name().equals(nftGroupDo.getStatus())) {
             if (!deployNFTContractWithImage(nftGroupDo)) {
                 log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
                 throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
@@ -333,7 +345,7 @@ public class NftContractBiz {
         if (nftGroupDo == null) {
             return;
         }
-        if (NftGroupStatus.APPENDING.name().equals(nftGroupDo.getStatus())) {
+        if (NftGroupStatus.PENDING.name().equals(nftGroupDo.getStatus())) {
             if (!deployNFTContractWithImage(nftGroupDo)) {
                 log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
                 throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
@@ -440,7 +452,7 @@ public class NftContractBiz {
      *
      * @return
      */
-    private boolean deployNFTContractWithImage(NftGroupDo nftGroupDo) {
+    public boolean deployNFTContractWithImage(NftGroupDo nftGroupDo) {
         String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
         String path = "contract/nft/" + moduleName + ".mv";
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
@@ -699,7 +711,7 @@ public class NftContractBiz {
     /**
      * 初始化市场
      */
-    private boolean initMarket(NftGroupDo nftGroupDo, String payToken) {
+    public boolean initMarket(NftGroupDo nftGroupDo, String payToken) {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)

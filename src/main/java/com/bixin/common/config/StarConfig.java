@@ -97,6 +97,8 @@ public class StarConfig {
         private String scripts;
         private String imagePrefix;
         private String imageBasePath;
+        private String imageInfoApi;
+        private String imageGroupApi;
     }
 
     @Data

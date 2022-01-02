@@ -800,6 +800,11 @@ public class NftCompositeCard implements Serializable {
     private Boolean state;
 
     /**
+     * 是否初始卡牌
+     */
+    private Boolean original;
+
+    /**
      * 创建时间
      */
     private Long createTime;

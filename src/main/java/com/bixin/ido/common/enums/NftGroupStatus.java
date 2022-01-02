@@ -4,7 +4,7 @@ public enum NftGroupStatus {
     /**
      * 等待初始化
      */
-    APPENDING,
+    PENDING,
     /**
      * 初始化完成
      */
@@ -13,6 +13,10 @@ public enum NftGroupStatus {
      * 创建完成
      */
     CREATED,
+    /**
+     * 已转盲盒
+     */
+    TRANSFER,
     /**
      * 发售中
      */
