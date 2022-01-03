@@ -11,4 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface NftCompositeCardService extends IService<NftCompositeCard> {
 
+    void createCompositeNFT(long cardGroupId);
+
 }

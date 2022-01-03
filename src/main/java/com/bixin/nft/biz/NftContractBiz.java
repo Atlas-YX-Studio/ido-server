@@ -649,7 +649,7 @@ public class NftContractBiz {
      * @param nftGroupDo
      * @return
      */
-    private boolean transferBox(NftGroupDo nftGroupDo) {
+    public boolean transferBox(NftGroupDo nftGroupDo) {
         double boxTokenDecimal = nftGroupDo.getOfferingQuantity() * Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken());
         return contractService.transfer(nftGroupDo.getCreator(), market, typeObj, BigInteger.valueOf((long) boxTokenDecimal));

@@ -1,11 +1,13 @@
 package com.bixin.nft.bean.DO;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * NFT 卡牌
@@ -32,6 +34,7 @@ public class NftCompositeCard implements Serializable {
     /**
      * nft_Info id
      */
+    @TableField("info_id")
     private Long infoId;
 
     /**
@@ -297,502 +300,502 @@ public class NftCompositeCard implements Serializable {
     /**
      * 背景
      */
-    private Long background;
+    private String background;
 
     /**
      * 皮毛
      */
-    private Long fur;
+    private String fur;
 
     /**
      * 表情
      */
-    private Long facial;
+    private String facial;
 
     /**
      * 头部
      */
-    private Long head;
+    private String head;
 
     /**
      * 配饰
      */
-    private Long accessories;
+    private String accessories;
 
     /**
      * 眼部
      */
-    private Long eyes;
+    private String eyes;
 
     /**
      * 衣服
      */
-    private Long clothes;
+    private String clothes;
 
     /**
      * 帽子
      */
-    private Long hat;
+    private String hat;
 
     /**
      * 服装
      */
-    private Long costume;
+    private String costume;
 
     /**
      * 妆容
      */
-    private Long makeup;
+    private String makeup;
 
     /**
      * 鞋子
      */
-    private Long shoes;
+    private String shoes;
 
     /**
      * 嘴
      */
-    private Long mouth;
+    private String mouth;
 
     /**
      * 耳环
      */
-    private Long earring;
+    private String earring;
 
     /**
      * 项链
      */
-    private Long necklace;
+    private String necklace;
 
     /**
      * 颈部
      */
-    private Long neck;
+    private String neck;
 
     /**
      * 头发
      */
-    private Long hair;
+    private String hair;
 
     /**
      * 角
      */
-    private Long horn;
+    private String horn;
 
     /**
      * 手
      */
-    private Long hands;
+    private String hands;
 
     /**
      * 身体
      */
-    private Long body;
+    private String body;
 
     /**
      * 皮肤
      */
-    private Long skin;
+    private String skin;
 
     /**
      * 纹身
      */
-    private Long tattoo;
+    private String tattoo;
 
     /**
      * 人物
      */
-    private Long people;
+    private String people;
 
     /**
      * 性格
      */
-    private Long characteristic;
+    private String characteristic;
 
     /**
      * 爱好
      */
-    private Long hobby;
+    private String hobby;
 
     /**
      * 星座
      */
-    private Long zodiac;
+    private String zodiac;
 
     /**
      * 动作
      */
-    private Long action;
+    private String action;
 
     /**
      * 玩具
      */
-    private Long toys;
+    private String toys;
 
     /**
      * 水果
      */
-    private Long fruits;
+    private String fruits;
 
     /**
      * 蔬菜
      */
-    private Long vegetables;
+    private String vegetables;
 
     /**
      * 肉类
      */
-    private Long meat;
+    private String meat;
 
     /**
      * 饮料
      */
-    private Long beverages;
+    private String beverages;
 
     /**
      * 食物
      */
-    private Long food;
+    private String food;
 
     /**
      * 交通工具
      */
-    private Long vehicle;
+    private String vehicle;
 
     /**
      * 天气
      */
-    private Long weather;
+    private String weather;
 
     /**
      * 月份
      */
-    private Long month;
+    private String month;
 
     /**
      * 运动
      */
-    private Long sports;
+    private String sports;
 
     /**
      * 音乐
      */
-    private Long music;
+    private String music;
 
     /**
      * 电影
      */
-    private Long movies;
+    private String movies;
 
     /**
      * 季节
      */
-    private Long season;
+    private String season;
 
     /**
      * 搭配
      */
-    private Long outfit;
+    private String outfit;
 
     /**
      * 五官
      */
-    private Long face;
+    private String face;
 
     /**
      * 手臂
      */
-    private Long arm;
+    private String arm;
 
     /**
      * 腿部
      */
-    private Long leg;
+    private String leg;
 
     /**
      * 脚
      */
-    private Long foot;
+    private String foot;
 
     /**
      * 武器
      */
-    private Long weapon;
+    private String weapon;
 
     /**
      * 头盔
      */
-    private Long helmet;
+    private String helmet;
 
     /**
      * 盔甲
      */
-    private Long armor;
+    private String armor;
 
     /**
      * 机甲
      */
-    private Long mecha;
+    private String mecha;
 
     /**
      * 裤子
      */
-    private Long pants;
+    private String pants;
 
     /**
      * 裙子
      */
-    private Long skirt;
+    private String skirt;
 
     /**
      * 背景score
      */
-    private Long backgroundScore;
+    private BigDecimal backgroundScore;
 
     /**
      * 皮毛score
      */
-    private Long furScore;
+    private BigDecimal furScore;
 
     /**
      * 表情score
      */
-    private Long facialScore;
+    private BigDecimal facialScore;
 
     /**
      * 头部score
      */
-    private Long headScore;
+    private BigDecimal headScore;
 
     /**
      * 配饰score
      */
-    private Long accessoriesScore;
+    private BigDecimal accessoriesScore;
 
     /**
      * 眼部score
      */
-    private Long eyesScore;
+    private BigDecimal eyesScore;
 
     /**
      * 衣服score
      */
-    private Long clothesScore;
+    private BigDecimal clothesScore;
 
     /**
      * 帽子score
      */
-    private Long hatScore;
+    private BigDecimal hatScore;
 
     /**
      * 服装score
      */
-    private Long costumeScore;
+    private BigDecimal costumeScore;
 
     /**
      * 妆容score
      */
-    private Long makeupScore;
+    private BigDecimal makeupScore;
 
     /**
      * 鞋子score
      */
-    private Long shoesScore;
+    private BigDecimal shoesScore;
 
     /**
      * 嘴score
      */
-    private Long mouthScore;
+    private BigDecimal mouthScore;
 
     /**
      * 耳环score
      */
-    private Long earringScore;
+    private BigDecimal earringScore;
 
     /**
      * 项链score
      */
-    private Long necklaceScore;
+    private BigDecimal necklaceScore;
 
     /**
      * 颈部score
      */
-    private Long neckScore;
+    private BigDecimal neckScore;
 
     /**
      * 头发score
      */
-    private Long hairScore;
+    private BigDecimal hairScore;
 
     /**
      * 角score
      */
-    private Long hornScore;
+    private BigDecimal hornScore;
 
     /**
      * 手score
      */
-    private Long handsScore;
+    private BigDecimal handsScore;
 
     /**
      * 身体score
      */
-    private Long bodyScore;
+    private BigDecimal bodyScore;
 
     /**
      * 皮肤score
      */
-    private Long skinScore;
+    private BigDecimal skinScore;
 
     /**
      * 纹身score
      */
-    private Long tattooScore;
+    private BigDecimal tattooScore;
 
     /**
      * 人物score
      */
-    private Long peopleScore;
+    private BigDecimal peopleScore;
 
     /**
      * 性格score
      */
-    private Long characteristicScore;
+    private BigDecimal characteristicScore;
 
     /**
      * 爱好score
      */
-    private Long hobbyScore;
+    private BigDecimal hobbyScore;
 
     /**
      * 星座score
      */
-    private Long zodiacScore;
+    private BigDecimal zodiacScore;
 
     /**
      * 动作score
      */
-    private Long actionScore;
+    private BigDecimal actionScore;
 
     /**
      * 玩具score
      */
-    private Long toysScore;
+    private BigDecimal toysScore;
 
     /**
      * 水果score
      */
-    private Long fruitsScore;
+    private BigDecimal fruitsScore;
 
     /**
      * 蔬菜score
      */
-    private Long vegetablesScore;
+    private BigDecimal vegetablesScore;
 
     /**
      * 肉类score
      */
-    private Long meatScore;
+    private BigDecimal meatScore;
 
     /**
      * 饮料score
      */
-    private Long beveragesScore;
+    private BigDecimal beveragesScore;
 
     /**
      * 食物score
      */
-    private Long foodScore;
+    private BigDecimal foodScore;
 
     /**
      * 交通工具score
      */
-    private Long vehicleScore;
+    private BigDecimal vehicleScore;
 
     /**
      * 天气score
      */
-    private Long weatherScore;
+    private BigDecimal weatherScore;
 
     /**
      * 月份score
      */
-    private Long monthScore;
+    private BigDecimal monthScore;
 
     /**
      * 运动score
      */
-    private Long sportsScore;
+    private BigDecimal sportsScore;
 
     /**
      * 音乐score
      */
-    private Long musicScore;
+    private BigDecimal musicScore;
 
     /**
      * 电影score
      */
-    private Long moviesScore;
+    private BigDecimal moviesScore;
 
     /**
      * 季节score
      */
-    private Long seasonScore;
+    private BigDecimal seasonScore;
 
     /**
      * 搭配score
      */
-    private Long outfitScore;
+    private BigDecimal outfitScore;
 
     /**
      * 五官score
      */
-    private Long faceScore;
+    private BigDecimal faceScore;
 
     /**
      * 手臂score
      */
-    private Long armScore;
+    private BigDecimal armScore;
 
     /**
      * 腿部score
      */
-    private Long legScore;
+    private BigDecimal legScore;
 
     /**
      * 脚score
      */
-    private Long footScore;
+    private BigDecimal footScore;
 
     /**
      * 武器score
      */
-    private Long weaponScore;
+    private BigDecimal weaponScore;
 
     /**
      * 头盔score
      */
-    private Long helmetScore;
+    private BigDecimal helmetScore;
 
     /**
      * 盔甲score
      */
-    private Long armorScore;
+    private BigDecimal armorScore;
 
     /**
      * 机甲score
      */
-    private Long mechaScore;
+    private BigDecimal mechaScore;
 
     /**
      * 裤子score
      */
-    private Long pantsScore;
+    private BigDecimal pantsScore;
 
     /**
      * 裙子score
      */
-    private Long skirtScore;
+    private BigDecimal skirtScore;
 
     /**
      * 状态 0有效，1无效
