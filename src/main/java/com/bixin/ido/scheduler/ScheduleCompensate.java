@@ -15,7 +15,7 @@ import java.util.UUID;
 @Component
 public class ScheduleCompensate {
 
-    private static final long PROCESSING_EXPIRE_TIME = 30 * 1000L;
+    private static final long PROCESSING_EXPIRE_TIME = 290 * 1000L;
     private static final long LOCK_EXPIRE_TIME = 0L;
     private static final String NFT_MINING_COMPENSATE_LOCK = "nft_mining_compensate_lock";
 
