@@ -26,6 +26,7 @@ import com.bixin.common.utils.ThreadPoolUtil;
 import com.bixin.nft.service.ContractService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -88,25 +90,25 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                 .avgApr("0")
                 .userApr(BigDecimal.ZERO.toPlainString())
                 .build();
-        if (totalScore.compareTo(BigDecimal.ZERO) <= 0) {
-            return vo;
+        if (totalScore.compareTo(BigDecimal.ZERO) > 0) {
+            // 计算总年化
+            int totalNftAmount = this.nftStakingUsersService.count();
+            BigDecimal denominator = this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount));
+            if (denominator.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal avgApr = this.starConfig.getMining().getNftMiningDayReward()
+                        .multiply(BigDecimal.valueOf(365L))
+                        .divide(denominator, 18, RoundingMode.DOWN);
+                vo.setAvgApr(avgApr.toPlainString());
+            }
         }
-        // 计算总年化
-        int totalNftAmount = this.nftStakingUsersService.count();
-        BigDecimal denominator = this.starConfig.getMining().getNftUnitPrice().multiply(BigDecimal.valueOf(totalNftAmount));
-        if (denominator.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal avgApr = this.starConfig.getMining().getNftMiningDayReward()
-                    .multiply(BigDecimal.valueOf(365L))
-                    .divide(denominator, 18, RoundingMode.DOWN);
-            vo.setAvgApr(avgApr.toPlainString());
-        }
+
         // 计算用户年化
         if (StringUtils.isNotBlank(userAddress)) {
             NftMiningUsers userMining = this.query().eq("address", userAddress).one();
             if (Objects.nonNull(userMining)) {
                 int userTotalNftAmount = nftStakingUsersService.lambdaQuery().eq(NftStakingUsers::getAddress, userAddress).count();
                 // （（用户NFT算力 / 总算力）* 日产量 * 365）/【当前用户质押在平台的NFT数量 * NFT单价（可配置项，单位KIKO）】
-                denominator = totalScore.multiply(BigDecimal.valueOf(userTotalNftAmount))
+                BigDecimal denominator = totalScore.multiply(BigDecimal.valueOf(userTotalNftAmount))
                         .multiply(this.starConfig.getMining().getNftUnitPrice());
                 if (denominator.compareTo(BigDecimal.ZERO) > 0) {
                     BigDecimal userApr = userMining.getScore()
@@ -204,6 +206,46 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
         }
     }
 
+    @Override
+    public void compensateNftMiningHarvest() {
+        Wrapper<MiningHarvestRecords> miningHarvestRecordsWrapper = Wrappers.<MiningHarvestRecords>lambdaQuery()
+                .eq(MiningHarvestRecords::getMiningType, MiningTypeEnum.NFT_STAKING.name())
+                .eq(MiningHarvestRecords::getRewardType, RewardTypeEnum.CURRENT.name())
+                .eq(MiningHarvestRecords::getStatus, HarvestStatusEnum.PENDING.name())
+                .isNotNull(MiningHarvestRecords::getHash)
+                .le(MiningHarvestRecords::getUpdateTime, System.currentTimeMillis()-60000);
+        List<MiningHarvestRecords> pendingHarvestRecords = miningHarvestRecordsService.list(miningHarvestRecordsWrapper);
+
+        if (CollectionUtils.isEmpty(pendingHarvestRecords)) {
+            log.info("nft mining harvest no pending records");
+            return;
+        }
+        NftMiningUsersServiceImpl nftMiningUsersServiceImpl = ApplicationContextUtils.getBean(this.getClass());
+
+        for (MiningHarvestRecords record : pendingHarvestRecords) {
+            Wrapper<NftMiningUsers> nftMiningUsersWrapper = Wrappers.<NftMiningUsers>lambdaQuery()
+                    .eq(NftMiningUsers::getAddress, record.getAddress());
+            NftMiningUsers nftMiningUsers = getOne(nftMiningUsersWrapper, false);
+
+            ThreadPoolUtil.execute(() -> {
+                boolean success;
+                try {
+                    success = contractService.checkTxt(record.getHash());
+                } catch (Exception e) {
+                    log.error("harvestReward 合约执行超时 hash:{}", record.getHash());
+                    // hash 查不到只能认为失败了吧？
+                    nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, record);
+                    return;
+                }
+                if (success) {
+                    nftMiningUsersServiceImpl.harvestRewardSuccess(nftMiningUsers, record);
+                } else {
+                    nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, record);
+                }
+            });
+        }
+    }
+
     /**
      * 执行合约领取交易挖矿收益
      * @param userAddress
@@ -229,7 +271,7 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
     @Transactional
     public void harvestRewardSuccess(NftMiningUsers nftMiningUsers, MiningHarvestRecords miningHarvestRecordDo) {
         LambdaUpdateWrapper<NftMiningUsers> nftMiningUsersUpdateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
-                .setSql("pending_reward = pending_reward - " + nftMiningUsers.getReward())
+                .setSql("pending_reward = pending_reward - " + miningHarvestRecordDo.getAmount())
                 .set(NftMiningUsers::getUpdateTime, System.currentTimeMillis())
                 .eq(NftMiningUsers::getId, nftMiningUsers.getId());
         nftMiningUsersService.update(nftMiningUsersUpdateWrapper);
@@ -241,8 +283,8 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
     @Transactional
     public void harvestRewardFailed(NftMiningUsers nftMiningUsers, MiningHarvestRecords miningHarvestRecordDo) {
         LambdaUpdateWrapper<NftMiningUsers> nftMiningUsersUpdateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
-                .setSql("reward = reward + " + nftMiningUsers.getReward())
-                .setSql("pending_reward = pending_reward - " + nftMiningUsers.getReward())
+                .setSql("reward = reward + " + miningHarvestRecordDo.getAmount())
+                .setSql("pending_reward = pending_reward - " + miningHarvestRecordDo.getAmount())
                 .set(NftMiningUsers::getUpdateTime, System.currentTimeMillis())
                 .eq(NftMiningUsers::getId, nftMiningUsers.getId());
         nftMiningUsersService.update(nftMiningUsersUpdateWrapper);
