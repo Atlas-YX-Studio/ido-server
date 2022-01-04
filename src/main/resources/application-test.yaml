@@ -30,7 +30,7 @@ ido:
   star:
     dx:
       resourceUrl: https://main-seed.starcoin.org
-      moduleName: 0x64c66296d98d6ab08579b14487157e05::Offering
+      moduleName: 0xf9079064690b07e9826a4fa3d713aecb::Offering
     swap:
       websocket-host: 10.13.22.40
       websocket-port: 9870
