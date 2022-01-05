@@ -243,6 +243,11 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                     nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, record);
                 }
             });
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
