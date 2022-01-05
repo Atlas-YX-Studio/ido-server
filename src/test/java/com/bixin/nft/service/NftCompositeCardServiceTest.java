@@ -21,6 +21,11 @@ class NftCompositeCardServiceTest {
 
     @Test
     void resolve_card() {
-        nftCompositeCardService.resolve_card("0xa85291039ddad8845d5097624c81c3fd", "KikoCatCard04", 1L);
+        assert nftCompositeCardService.resolve_card("0xa85291039ddad8845d5097624c81c3fd", "KikoCatCard04", 1L);
+    }
+
+    @Test
+    void mintCustomCardNFT() {
+        assert nftCompositeCardService.mintCustomCardNFT("0xa85291039ddad8845d5097624c81c3fd", 10004L);
     }
 }

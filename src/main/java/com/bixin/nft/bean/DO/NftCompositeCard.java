@@ -61,6 +61,12 @@ public class NftCompositeCard implements Serializable {
     private Boolean original;
 
     /**
+     * 性别 0女 1男
+     */
+    @TableField("sex")
+    private Byte sex;
+
+    /**
      * 背景id
      */
     @TableField("background_id")

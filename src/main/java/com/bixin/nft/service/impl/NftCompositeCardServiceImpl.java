@@ -311,7 +311,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
 
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
-                .moduleAddress(address)
+                .moduleAddress(starConfig.getNft().getCatadd())
                 .moduleName(typeObj.getModuleName())
                 .functionName("composite_original_card")
                 .args(Lists.newArrayList(
@@ -320,6 +320,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(card.getOccupation())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(card.getCustomName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeU8(card.getSex())),
                         BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getBackgroundId())),
                         BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFurId())),
                         BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getClothesId())),
@@ -381,6 +382,79 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             return nftInfoDo.getNftId();
         }
         return 0;
+    }
+
+    public boolean mintCustomCardNFT(String address, Long infoId) {
+        NftInfoDo nftInfoDo = nftInfoMapper.selectByPrimaryKey(infoId);
+
+        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(nftInfoDo.getGroupId());
+        NftCompositeCard card = this.lambdaQuery().eq(NftCompositeCard::getInfoId, nftInfoDo.getId()).one();
+        TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta());
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(starConfig.getNft().getCatadd())
+                .moduleName(typeObj.getModuleName())
+                .functionName("composite_custom_card")
+                .args(Lists.newArrayList(
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(starConfig.getNft().getImageInfoApi() + nftInfoDo.getId())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(card.getOccupation())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(card.getCustomName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeU8(card.getSex())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getBackgroundId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFurId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getClothesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getExpressionId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHeadId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getAccessoriesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getEyesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHatId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getCostumeId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMakeupId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getShoesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMouthId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getEarringId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getNecklaceId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getNeckId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHairId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHornId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHandsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getBodyId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSkinId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getTattooId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getPeopleId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getCharacteristicId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHobbyId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getZodiacId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getActionId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getToysId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFruitsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getVegetablesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMeatId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getBeveragesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFoodId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getVehicleId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getWeatherId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMonthId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSportsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMusicId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMoviesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSeasonId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getOutfitId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFaceId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getArmId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getLegId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFoodId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getWeaponId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHelmetId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getArmorId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMechaId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getPantsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSkirtId()))
+                ))
+                .build();
+        return contractService.callFunction(address, scriptFunctionObj);
     }
 
     public boolean resolve_card(String address, String module, Long nftId) {
