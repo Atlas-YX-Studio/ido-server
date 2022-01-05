@@ -3,6 +3,7 @@ package com.bixin.nft.biz;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.bixin.common.code.IdoErrorCode;
+import com.bixin.common.config.StarConfig;
 import com.bixin.common.exception.IdoException;
 import com.bixin.ido.common.enums.NftGroupStatus;
 import com.bixin.common.utils.BigDecimalUtil;
@@ -50,6 +51,8 @@ public class NftContractBiz {
     private ContractService contractService;
     @Resource
     private NftImagesUploadBiz nftImagesUploadBiz;
+    @Resource
+    private StarConfig starConfig;
 
     @Value("${ido.star.nft.market}")
     private String market;
@@ -453,6 +456,8 @@ public class NftContractBiz {
      * @return
      */
     public boolean deployNFTContractWithImage(NftGroupDo nftGroupDo) {
+        double payTokenDecimal = Math.pow(10, nftGroupDo.getPayTokenPrecision());
+        BigInteger compositePrice = BigInteger.valueOf(nftGroupDo.getCompositePrice() * (long) payTokenDecimal);
         String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
         String path = "contract/nft/" + moduleName + ".mv";
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
@@ -464,7 +469,8 @@ public class NftContractBiz {
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getName())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(imageGroupApi + nftGroupDo.getId())),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription()))
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
+                        BcsSerializeHelper.serializeU128ToBytes(compositePrice)
                 ))
                 .build();
         return contractService.deployContract(nftGroupDo.getCreator(), path, scriptFunctionObj);
@@ -682,7 +688,7 @@ public class NftContractBiz {
     /**
      * 创建盲盒发售
      */
-    private boolean initBoxOffering(NftGroupDo nftGroupDo) {
+    public boolean initBoxOffering(NftGroupDo nftGroupDo) {
         double boxTokenDecimal = Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         double payTokenDecimal = Math.pow(10, nftGroupDo.getPayTokenPrecision());
         BigInteger boxAmount = BigInteger.valueOf(nftGroupDo.getOfferingQuantity() * (long) boxTokenDecimal);
@@ -843,7 +849,7 @@ public class NftContractBiz {
                         BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(1))
                 ))
                 .tyArgs(Lists.newArrayList(
-                        TypeArgsUtil.parseTypeObj("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCat09::KikoCatBox"),
+                        TypeArgsUtil.parseTypeObj("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCatCard04::KikoCatBox"),
                         TypeArgsUtil.parseTypeObj("0x1::STC::STC")
                 ))
                 .build();
@@ -853,12 +859,12 @@ public class NftContractBiz {
     public boolean open_box(String address, String module) {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
-                .moduleAddress(address)
+                .moduleAddress(starConfig.getNft().getCatadd())
                 .moduleName(module)
                 .functionName("open_box")
                 .args(Lists.newArrayList())
                 .build();
-        return contractService.callFunction(market, scriptFunctionObj);
+        return contractService.callFunction(address, scriptFunctionObj);
     }
 
     public boolean sellNFT() {

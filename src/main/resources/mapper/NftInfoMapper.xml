@@ -20,8 +20,7 @@
     <result column="image_data" jdbcType="LONGVARCHAR" property="imageData" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, nft_id, group_id, name, type, owner, image_link, score, rank, created, create_time,
-    update_time
+    id, nft_id, group_id, name, type, owner, image_link, score, `rank`, created, state, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
     image_data
@@ -55,12 +54,12 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftInfoDo" useGeneratedKeys="true">
     insert into nft_info (id, nft_id, group_id,
                           name, type, owner, image_link,
-                          score, rank, created, create_time,
+                          score, rank, created, state, create_time,
                           update_time, image_data)
     values (#{id,jdbcType=BIGINT}, #{nftId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
             #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, #{imageLink,jdbcType=VARCHAR},
-            #{score,jdbcType=DECIMAL}, #{rank,jdbcType=INTEGER}, #{created,jdbcType=BIT}, #{createTime,jdbcType=BIGINT},
-            #{updateTime,jdbcType=BIGINT}, #{imageData,jdbcType=LONGVARCHAR})
+            #{score,jdbcType=DECIMAL}, #{rank,jdbcType=INTEGER}, #{created,jdbcType=BIT}, #{state,jdbcType=VARCHAR},
+            #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{imageData,jdbcType=LONGVARCHAR})
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftInfoDo">
     update nft_info
@@ -87,10 +86,13 @@
         score = #{score,jdbcType=DECIMAL},
       </if>
       <if test="rank != null">
-        rank = #{rank,jdbcType=INTEGER},
+        `rank` = #{rank,jdbcType=INTEGER},
       </if>
       <if test="created != null">
         created = #{created,jdbcType=BIT},
+      </if>
+      <if test="null != state">
+        state = #{state,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -113,7 +115,7 @@
         owner = #{owner,jdbcType=VARCHAR},
         image_link = #{imageLink,jdbcType=VARCHAR},
         score = #{score,jdbcType=DECIMAL},
-        rank = #{rank,jdbcType=INTEGER},
+        `rank` = #{rank,jdbcType=INTEGER},
         created = #{created,jdbcType=BIT},
         create_time = #{createTime,jdbcType=BIGINT},
         update_time = #{updateTime,jdbcType=BIGINT},
@@ -134,8 +136,8 @@
       <if test="null != name">
         and name = #{name,jdbcType=VARCHAR}
       </if>
-      <if test="type != null">
-        type = #{type,jdbcType=VARCHAR},
+      <if test="null != type">
+        and `type` = #{type,jdbcType=VARCHAR}
       </if>
       <if test="null != owner">
         and owner = #{owner,jdbcType=VARCHAR}
@@ -151,6 +153,9 @@
       </if>
       <if test="null != created">
         and created = #{created,jdbcType=BIT}
+      </if>
+      <if test="null != state">
+        and `state` = #{state,jdbcType=VARCHAR}
       </if>
       <if test="null != createTime">
         and create_time = #{createTime,jdbcType=BIGINT}

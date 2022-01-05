@@ -7,9 +7,12 @@ spring:
 #    url: jdbc:mysql://101.201.46.114:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
 #    username: crypto_rw
 #    password: crypto_rw_password
-    url: jdbc:mysql://52.77.131.111:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    username: admin
-    password: OdeWzZNalcTPk2LAo0Lg
+#    url: jdbc:mysql://52.77.131.111:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
+#    username: admin
+#    password: OdeWzZNalcTPk2LAo0Lg
+    url: jdbc:mysql://localhost:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: password
 
 ---
 ## redis config
