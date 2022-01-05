@@ -24,7 +24,7 @@ public class ScheduleCompensate {
     @Resource
     private NftMiningUsersService nftMiningUsersService;
 
-    @Scheduled(cron = "0 */5 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void nftMiningCompensate() {
         redisCache.tryGetDistributedLock(
                 NFT_MINING_COMPENSATE_LOCK,
