@@ -28,17 +28,17 @@ public class IdoInitServiceTest {
 
     @Test
     void stateChange() {
-        idoContractBiz.stateChange((byte) 4);
+        idoContractBiz.stateChange((byte) 2);
     }
 
     @Test
     void initToken() {
-        idoContractBiz.initToken("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::DUMMY");
+        idoContractBiz.initToken("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::AAA");
     }
 
     @Test
     void mintToken() {
-        idoContractBiz.mintToken("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::DUMMY", BigInteger.valueOf(1000000000000000000L));
+        idoContractBiz.mintToken("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::AAA", BigInteger.valueOf(1000000000000000000L));
     }
 
 }

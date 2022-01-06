@@ -73,58 +73,6 @@ public class NftImageController {
         }
     }
 
-    @GetMapping("/info/{id}.json")
-    public String getImage() {
-
-        return "{\n" +
-                "    \"attributes\": [\n" +
-                "        {\n" +
-                "            \"trait_type\": \"base\",\n" +
-                "            \"value\": \"narwhal\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"trait_type\": \"eyes\",\n" +
-                "            \"value\": \"sleepy\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"trait_type\": \"mouth\",\n" +
-                "            \"value\": \"cute\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"trait_type\": \"level\",\n" +
-                "            \"value\": 4\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"trait_type\": \"stamina\",\n" +
-                "            \"value\": 90.2\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"trait_type\": \"personality\",\n" +
-                "            \"value\": \"boring\"\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"display_type\": \"boost_number\",\n" +
-                "            \"trait_type\": \"aqua_power\",\n" +
-                "            \"value\": 10\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"display_type\": \"boost_percentage\",\n" +
-                "            \"trait_type\": \"stamina_increase\",\n" +
-                "            \"value\": 5\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"display_type\": \"number\",\n" +
-                "            \"trait_type\": \"generation\",\n" +
-                "            \"value\": 1\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"description\": \"Friendly OpenSea Creature that enjoys long swims in the ocean.\",\n" +
-                "    \"external_url\": \"https://example.com/?token_id=3\",\n" +
-                "    \"image\": \"https://storage.googleapis.com/opensea-prod.appspot.com/creature/3.png\",\n" +
-                "    \"name\": \"Dave Starbelly\"\n" +
-                "}";
-    }
-
     @GetMapping("/info/{id}")
     public R getInfoImage(@PathVariable("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         String url = (String) redisCache.getValue(CommonConstant.IMAGE_INFO_URL_PREFIX_KEY + id);

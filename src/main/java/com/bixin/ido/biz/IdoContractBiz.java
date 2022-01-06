@@ -65,12 +65,12 @@ public class IdoContractBiz {
                 .tyArgs(Lists.newArrayList(
                         TypeArgsUtil.parseTypeObj("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::STC"),
                         TypeArgsUtil.parseTypeObj("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::USDT"),
-                        TypeArgsUtil.parseTypeObj("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::DUMMY")
+                        TypeArgsUtil.parseTypeObj("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::AAA")
                 ))
                 .args(Lists.newArrayList(
                         BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(10000000000000L)),
                         BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(1000000000L)),
-                        BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(100000000000L)),
+                        BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(10000000000000L)),
                         BcsSerializeHelper.serializeAddressToBytes(AccountAddressUtils.create("0x5b876a58b0e1cff855b6489cd8cf3bec"))
                 ))
                 .build();
@@ -90,7 +90,7 @@ public class IdoContractBiz {
                 .tyArgs(Lists.newArrayList(
                         TypeArgsUtil.parseTypeObj("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::STC"),
                         TypeArgsUtil.parseTypeObj("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::USDT"),
-                        TypeArgsUtil.parseTypeObj("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::ETH")
+                        TypeArgsUtil.parseTypeObj("0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::AAA")
                 ))
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeU8(state))
