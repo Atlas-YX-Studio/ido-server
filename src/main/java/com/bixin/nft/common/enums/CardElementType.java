@@ -63,6 +63,11 @@ public enum CardElementType {
     MECHA("mecha", 48),
     PANTS("pants", 49),
     SKIRT("skirt", 50),
+    LEFT_HAND("left_hand", 51),
+    RIGHT_HAND("right_hand", 52),
+    PETS("pets", 53),
+    GIFTS("gifts", 54),
+    TAIL("tail", 55),
     ;
 
     private String desc;

@@ -370,7 +370,12 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                         BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getArmorId())),
                         BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMechaId())),
                         BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getPantsId())),
-                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSkirtId()))
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSkirtId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getLeftHandId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getRightHandId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getPetsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getGiftsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getTailId()))
                 ))
                 .build();
         return contractService.callFunction(address, scriptFunctionObj);
