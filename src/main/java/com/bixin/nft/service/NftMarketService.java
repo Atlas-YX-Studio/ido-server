@@ -63,7 +63,7 @@ public interface NftMarketService {
 
     void deleteAllByIds(List<Long> ids);
 
-    List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, int nftType);
+    List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String sortRule, int nftType);
 
     List<Map<String, Object>> selectScoreByOwner(String owner);
 
