@@ -118,46 +118,39 @@ public class NftMarketServiceImpl implements NftMarketService {
      * @param pageNum
      * @param sort
      * @param groupId
-     * @param currency
-     * @param nftType           1原生nft ,2重组nft，3盲盒，4零件(元素)
+     * @param nftType
      * @return
      */
     @Override
-    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, int nftType) {
+    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String sortRule, int nftType) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
-//        if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
-//            paramMap.put("type", open.toLowerCase());
-//        }
-        // TODO: 2021/12/23 待定
-        paramMap.put("type", "nft");
-        if (1 == nftType) {
-//            paramMap.put("nftType", "init");
-        } else if (2 == nftType) {
-            paramMap.put("nftType", "chongzu");
-        } else if (3 == nftType) {
-            paramMap.put("type", "box");
-        }else if (4 == nftType) {
-            paramMap.put("nftType", "lingjian");
-        }
-
-        if (StringUtils.isNoneEmpty(currency) && !"all".equalsIgnoreCase(currency)) {
-            paramMap.put("payToken", currency);
-        }
+        paramMap.put("type", nftType);
         if (groupId > 0) {
             paramMap.put("groupId", groupId);
         }
 
-        if (sort == 0) {
-            paramMap.put("sort", "mm.create_time desc");
-        } else if (sort == 1) {
-            paramMap.put("sort", "mm.sell_price desc, mm.create_time desc");
-        } else if (sort == 2) {
-            paramMap.put("sort", "mm.sell_price asc, mm.create_time desc");
-        } else if (sort == 3) {
-            paramMap.put("sort", "ff.score desc, mm.create_time desc");
+        String sortValue = "";
+        if ("price".equalsIgnoreCase(sortRule.trim())) {
+            sortValue = "mm.sell_price ";
+        } else if ("rarity".equalsIgnoreCase(sortRule.trim())) {
+            sortValue = "ff.score ";
+        } else if ("ctime".equalsIgnoreCase(sortRule.trim())) {
+            sortValue = "mm.create_time ";
         }
+        if (0 == sort || 1 == sort) {
+            sortValue += " desc";
+            if(!"ctime".equalsIgnoreCase(sortRule.trim())){
+                sortValue += " desc, mm.create_time desc";
+            }
+        } else if (2 == sort) {
+            sortValue += " asc";
+            if(!"ctime".equalsIgnoreCase(sortRule.trim())){
+                sortValue += " asc, mm.create_time desc";
+            }
+        }
+        paramMap.put("sort", sortValue);
 
         return nftMarketMapper.selectPages(paramMap);
     }

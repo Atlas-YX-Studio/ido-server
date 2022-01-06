@@ -86,8 +86,6 @@ public class NftMarketDo implements Serializable {
 
     private String nftName;
 
-    private String nftType;
-
     private static final long serialVersionUID = 1L;
 
 }

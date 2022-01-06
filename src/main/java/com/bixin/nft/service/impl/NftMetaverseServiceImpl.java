@@ -1,16 +1,20 @@
 package com.bixin.nft.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.bixin.common.response.R;
 import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftCompositeElement;
+import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.core.mapper.NftCompositeCardMapper;
 import com.bixin.nft.core.mapper.NftCompositeElementMapper;
+import com.bixin.nft.core.mapper.NftInfoMapper;
 import com.bixin.nft.service.NftMetareverseService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author zhangcheng
@@ -19,10 +23,13 @@ import java.util.Map;
 @Service
 public class NftMetaverseServiceImpl implements NftMetareverseService {
 
+
     @Resource
     NftCompositeCardMapper compositeCardMapper;
     @Resource
     NftCompositeElementMapper compositeElementMapper;
+    @Resource
+    NftInfoMapper nftInfoMapper;
 
     @Override
     public List<Map<String, Object>> getSumByOccupationGroup() {
@@ -33,7 +40,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     }
 
 
-    public String compositeCard(String customName,String userAddress,List<Long> elementIds){
+    public String compositeCard(String customName, String userAddress, List<Long> elementIds) {
         List<NftCompositeElement> elementList = compositeElementMapper.selectBatchIds(elementIds);
 
         //校验 需要组合的卡牌是否已经存在，如果存在则直接反悔原有的图片链接，如果不存在，继续下一步
@@ -45,6 +52,23 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         //返回 卡牌的 url
 
         return null;
+    }
+
+
+    @Override
+    public R analysisCard(String userAddress, long cardId) {
+        NftInfoDo nftInfoDo = nftInfoMapper.selectByPrimaryKey(cardId);
+        if (Objects.isNull(nftInfoDo)) {
+            return R.failed("cardId is invalid");
+        }
+        if (!userAddress.equalsIgnoreCase(nftInfoDo.getOwner())) {
+            return R.failed("userAddress is invalid");
+        }
+
+
+
+
+        return R.success();
     }
 
 

@@ -17,10 +17,22 @@ import java.util.List;
 @NoArgsConstructor
 public class CompositeCardBean {
 
+    //用户地址
     private String userAddress;
-
+    //自定义卡牌名称
     private String customName;
 
-    private List<Long> elementIds;
+    private List<CustomCardElement> elementList;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CustomCardElement {
+        //素材 id
+        private long id;
+        //素材名称
+        private String eleName;
+    }
 
 }
