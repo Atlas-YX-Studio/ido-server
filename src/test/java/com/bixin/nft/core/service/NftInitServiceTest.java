@@ -1,4 +1,4 @@
-package com.bixin.nft.service;
+package com.bixin.nft.core.service;
 
 import com.bixin.IdoServerApplication;
 import com.bixin.nft.service.ContractService;
@@ -49,7 +49,7 @@ class NftInitServiceTest {
 
     @Test
     void open_box() {
-        assert nftInitService.open_box("0x69f1e543a3bef043b63bed825fcd2cf6", "KikoCat09");
+        assert nftInitService.open_box("0xa85291039ddad8845d5097624c81c3fd", "KikoCatCard04");
     }
 
     @Test

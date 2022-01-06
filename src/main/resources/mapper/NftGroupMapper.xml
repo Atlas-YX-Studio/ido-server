@@ -24,10 +24,12 @@
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="selling_price" jdbcType="INTEGER" property="sellingPrice" />
     <result column="selling_time" jdbcType="BIGINT" property="sellingTime" />
+    <result column="composite_price" jdbcType="INTEGER" property="compositePrice" />
     <result column="enabled" jdbcType="BIT" property="enabled" />
     <result column="offering" jdbcType="BIT" property="offering" />
     <result column="mining" jdbcType="BIT" property="mining" />
     <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="element_id" jdbcType="BIGINT" property="elementId" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
@@ -44,8 +46,8 @@
   <sql id="Base_Column_List">
     id, series, series_name, name, series_logo, series_quantity, quantity, offering_quantity, box_token,
     box_token_precision, box_token_logo, pay_token, pay_token_precision, nft_meta, nft_body,
-    nft_type_info, nft_type_image_link, creator, owner, selling_price, selling_time,
-    enabled, offering, mining, status, type, create_time, update_time
+    nft_type_info, nft_type_image_link, creator, owner, selling_price, selling_time, composite_price,
+    enabled, offering, mining, status, type, element_id, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
     support_token, nft_type_image_data, cn_description, en_description, cn_rule_desc,
@@ -70,8 +72,8 @@
                            box_token_logo, pay_token, pay_token_precision,
                            nft_meta, nft_body, nft_type_info,
                            nft_type_image_link, creator, owner,
-                           selling_price, selling_time, enabled,
-                           offering, mining, status, type, create_time,
+                           selling_price, selling_time, enabled, composite_price,
+                           offering, mining, status, type, element_id, create_time,
                            update_time, support_token, nft_type_image_data,
                            cn_description, en_description, cn_rule_desc,
                            en_rule_desc, cn_creator_desc, en_creator_desc
@@ -82,9 +84,9 @@
             #{boxTokenLogo,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR}, #{payTokenPrecision,jdbcType=INTEGER},
             #{nftMeta,jdbcType=VARCHAR}, #{nftBody,jdbcType=VARCHAR}, #{nftTypeInfo,jdbcType=VARCHAR},
             #{nftTypeImageLink,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR},
-            #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT},
-            #{offering,jdbcType=BIT}, #{mining,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT},
-            #{updateTime,jdbcType=BIGINT}, #{supportToken,jdbcType=LONGVARCHAR}, #{nftTypeImageData,jdbcType=LONGVARCHAR},
+            #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT}, #{compositePrice,jdbcType=INTEGER},
+            #{offering,jdbcType=BIT}, #{mining,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{elementId,jdbcType=BIGINT},
+            #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{supportToken,jdbcType=LONGVARCHAR}, #{nftTypeImageData,jdbcType=LONGVARCHAR},
             #{cnDescription,jdbcType=LONGVARCHAR}, #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR},
             #{enRuleDesc,jdbcType=LONGVARCHAR}, #{cnCreatorDesc,jdbcType=LONGVARCHAR}, #{enCreatorDesc,jdbcType=LONGVARCHAR}
            )
@@ -152,6 +154,9 @@
       <if test="sellingTime != null">
         selling_time = #{sellingTime,jdbcType=BIGINT},
       </if>
+      <if test="compositePrice != null">
+        composite_price = #{compositePrice,jdbcType=INTEGER},
+      </if>
       <if test="enabled != null">
         enabled = #{enabled,jdbcType=BIT},
       </if>
@@ -166,6 +171,9 @@
       </if>
       <if test="type != null">
         type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="elementId != null">
+        element_id = #{elementId,jdbcType=BIGINT},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -222,11 +230,13 @@
         owner = #{owner,jdbcType=VARCHAR},
         selling_price = #{sellingPrice,jdbcType=INTEGER},
         selling_time = #{sellingTime,jdbcType=BIGINT},
+        composite_price = #{compositePrice,jdbcType=INTEGER},
         enabled = #{enabled,jdbcType=BIT},
         offering = #{offering,jdbcType=BIT},
         mining = #{mining,jdbcType=BIT},
         status = #{status,jdbcType=VARCHAR},
         type = #{type,jdbcType=VARCHAR},
+        element_id = #{elementId,jdbcType=BIGINT},
         create_time = #{createTime,jdbcType=BIGINT},
         update_time = #{updateTime,jdbcType=BIGINT},
         support_token = #{supportToken,jdbcType=LONGVARCHAR},
@@ -304,6 +314,9 @@
       <if test="null != sellingTime">
         and selling_time = #{sellingTime,jdbcType=BIGINT}
       </if>
+      <if test="null != compositePrice">
+        and composite_price = #{compositePrice,jdbcType=INTEGER}
+      </if>
       <if test="null != enabled">
         and enabled = #{enabled,jdbcType=BIT}
       </if>
@@ -317,7 +330,10 @@
         and status = #{status,jdbcType=VARCHAR}
       </if>
       <if test="type != null">
-        type = #{type,jdbcType=VARCHAR},
+        and type = #{type,jdbcType=VARCHAR}
+      </if>
+      <if test="null != elementId">
+        and element_id = #{elementId,jdbcType=BIGINT}
       </if>
       <if test="null != createTime">
         and create_time = #{createTime,jdbcType=BIGINT}

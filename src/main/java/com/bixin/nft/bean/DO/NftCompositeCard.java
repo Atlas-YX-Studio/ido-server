@@ -1,17 +1,18 @@
 package com.bixin.nft.bean.DO;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * NFT 卡牌
  *
- * @author cheng.zhang
- * @since 2021-12-28
+ * @since 2022-01-04
  */
 @Data
 @Builder
@@ -32,781 +33,943 @@ public class NftCompositeCard implements Serializable {
     /**
      * nft_Info id
      */
+    @TableField("info_id")
     private Long infoId;
 
     /**
      * 职业
      */
+    @TableField("occupation")
     private String occupation;
 
     /**
      * 自定义组合卡牌名称
      */
+    @TableField("custom_name")
     private String customName;
+
+    /**
+     * 状态 0有效，1无效
+     */
+    @TableField("state")
+    private Boolean state;
+
+    /**
+     * 是否初始卡牌
+     */
+    @TableField("original")
+    private Boolean original;
 
     /**
      * 背景id
      */
+    @TableField("background_id")
     private Long backgroundId;
 
     /**
      * 皮毛id
      */
+    @TableField("fur_id")
     private Long furId;
 
     /**
      * 表情id
      */
-    private Long facialId;
+    @TableField("expression_id")
+    private Long expressionId;
 
     /**
      * 头部id
      */
+    @TableField("head_id")
     private Long headId;
 
     /**
      * 配饰id
      */
+    @TableField("accessories_id")
     private Long accessoriesId;
 
     /**
      * 眼部id
      */
+    @TableField("eyes_id")
     private Long eyesId;
 
     /**
      * 衣服id
      */
+    @TableField("clothes_id")
     private Long clothesId;
 
     /**
      * 帽子id
      */
+    @TableField("hat_id")
     private Long hatId;
 
     /**
      * 服装id
      */
+    @TableField("costume_id")
     private Long costumeId;
 
     /**
      * 妆容id
      */
+    @TableField("makeup_id")
     private Long makeupId;
 
     /**
      * 鞋子id
      */
+    @TableField("shoes_id")
     private Long shoesId;
 
     /**
      * 嘴id
      */
+    @TableField("mouth_id")
     private Long mouthId;
 
     /**
      * 耳环id
      */
+    @TableField("earring_id")
     private Long earringId;
 
     /**
      * 项链id
      */
+    @TableField("necklace_id")
     private Long necklaceId;
 
     /**
      * 颈部id
      */
+    @TableField("neck_id")
     private Long neckId;
 
     /**
      * 头发id
      */
+    @TableField("hair_id")
     private Long hairId;
 
     /**
      * 角id
      */
+    @TableField("horn_id")
     private Long hornId;
 
     /**
      * 手id
      */
+    @TableField("hands_id")
     private Long handsId;
 
     /**
      * 身体id
      */
+    @TableField("body_id")
     private Long bodyId;
 
     /**
      * 皮肤id
      */
+    @TableField("skin_id")
     private Long skinId;
 
     /**
      * 纹身id
      */
+    @TableField("tattoo_id")
     private Long tattooId;
 
     /**
      * 人物id
      */
+    @TableField("people_id")
     private Long peopleId;
 
     /**
      * 性格id
      */
+    @TableField("characteristic_id")
     private Long characteristicId;
 
     /**
      * 爱好id
      */
+    @TableField("hobby_id")
     private Long hobbyId;
 
     /**
      * 星座id
      */
+    @TableField("zodiac_id")
     private Long zodiacId;
 
     /**
      * 动作id
      */
+    @TableField("action_id")
     private Long actionId;
 
     /**
      * 玩具id
      */
+    @TableField("toys_id")
     private Long toysId;
 
     /**
      * 水果id
      */
+    @TableField("fruits_id")
     private Long fruitsId;
 
     /**
      * 蔬菜id
      */
+    @TableField("vegetables_id")
     private Long vegetablesId;
 
     /**
      * 肉类id
      */
+    @TableField("meat_id")
     private Long meatId;
 
     /**
      * 饮料id
      */
+    @TableField("beverages_id")
     private Long beveragesId;
 
     /**
      * 食物id
      */
+    @TableField("food_id")
     private Long foodId;
 
     /**
      * 交通工具id
      */
+    @TableField("vehicle_id")
     private Long vehicleId;
 
     /**
      * 天气id
      */
+    @TableField("weather_id")
     private Long weatherId;
 
     /**
      * 月份id
      */
+    @TableField("month_id")
     private Long monthId;
 
     /**
      * 运动id
      */
+    @TableField("sports_id")
     private Long sportsId;
 
     /**
      * 音乐id
      */
+    @TableField("music_id")
     private Long musicId;
 
     /**
      * 电影id
      */
+    @TableField("movies_id")
     private Long moviesId;
 
     /**
      * 季节id
      */
+    @TableField("season_id")
     private Long seasonId;
 
     /**
      * 搭配id
      */
+    @TableField("outfit_id")
     private Long outfitId;
 
     /**
      * 五官id
      */
+    @TableField("face_id")
     private Long faceId;
 
     /**
      * 手臂id
      */
+    @TableField("arm_id")
     private Long armId;
 
     /**
      * 腿部id
      */
+    @TableField("leg_id")
     private Long legId;
 
     /**
      * 脚id
      */
+    @TableField("foot_id")
     private Long footId;
 
     /**
      * 武器id
      */
+    @TableField("weapon_id")
     private Long weaponId;
 
     /**
      * 头盔id
      */
+    @TableField("helmet_id")
     private Long helmetId;
 
     /**
      * 盔甲id
      */
+    @TableField("armor_id")
     private Long armorId;
 
     /**
      * 机甲id
      */
+    @TableField("mecha_id")
     private Long mechaId;
 
     /**
      * 裤子id
      */
+    @TableField("pants_id")
     private Long pantsId;
 
     /**
      * 裙子id
      */
+    @TableField("skirt_id")
     private Long skirtId;
 
     /**
      * 背景
      */
-    private Long background;
+    @TableField("background")
+    private String background;
 
     /**
      * 皮毛
      */
-    private Long fur;
+    @TableField("fur")
+    private String fur;
 
     /**
      * 表情
      */
-    private Long facial;
+    @TableField("expression")
+    private String expression;
 
     /**
      * 头部
      */
-    private Long head;
+    @TableField("head")
+    private String head;
 
     /**
      * 配饰
      */
-    private Long accessories;
+    @TableField("accessories")
+    private String accessories;
 
     /**
      * 眼部
      */
-    private Long eyes;
+    @TableField("eyes")
+    private String eyes;
 
     /**
      * 衣服
      */
-    private Long clothes;
+    @TableField("clothes")
+    private String clothes;
 
     /**
      * 帽子
      */
-    private Long hat;
+    @TableField("hat")
+    private String hat;
 
     /**
      * 服装
      */
-    private Long costume;
+    @TableField("costume")
+    private String costume;
 
     /**
      * 妆容
      */
-    private Long makeup;
+    @TableField("makeup")
+    private String makeup;
 
     /**
      * 鞋子
      */
-    private Long shoes;
+    @TableField("shoes")
+    private String shoes;
 
     /**
      * 嘴
      */
-    private Long mouth;
+    @TableField("mouth")
+    private String mouth;
 
     /**
      * 耳环
      */
-    private Long earring;
+    @TableField("earring")
+    private String earring;
 
     /**
      * 项链
      */
-    private Long necklace;
+    @TableField("necklace")
+    private String necklace;
 
     /**
      * 颈部
      */
-    private Long neck;
+    @TableField("neck")
+    private String neck;
 
     /**
      * 头发
      */
-    private Long hair;
+    @TableField("hair")
+    private String hair;
 
     /**
      * 角
      */
-    private Long horn;
+    @TableField("horn")
+    private String horn;
 
     /**
      * 手
      */
-    private Long hands;
+    @TableField("hands")
+    private String hands;
 
     /**
      * 身体
      */
-    private Long body;
+    @TableField("body")
+    private String body;
 
     /**
      * 皮肤
      */
-    private Long skin;
+    @TableField("skin")
+    private String skin;
 
     /**
      * 纹身
      */
-    private Long tattoo;
+    @TableField("tattoo")
+    private String tattoo;
 
     /**
      * 人物
      */
-    private Long people;
+    @TableField("people")
+    private String people;
 
     /**
      * 性格
      */
-    private Long characteristic;
+    @TableField("characteristic")
+    private String characteristic;
 
     /**
      * 爱好
      */
-    private Long hobby;
+    @TableField("hobby")
+    private String hobby;
 
     /**
      * 星座
      */
-    private Long zodiac;
+    @TableField("zodiac")
+    private String zodiac;
 
     /**
      * 动作
      */
-    private Long action;
+    @TableField("action")
+    private String action;
 
     /**
      * 玩具
      */
-    private Long toys;
+    @TableField("toys")
+    private String toys;
 
     /**
      * 水果
      */
-    private Long fruits;
+    @TableField("fruits")
+    private String fruits;
 
     /**
      * 蔬菜
      */
-    private Long vegetables;
+    @TableField("vegetables")
+    private String vegetables;
 
     /**
      * 肉类
      */
-    private Long meat;
+    @TableField("meat")
+    private String meat;
 
     /**
      * 饮料
      */
-    private Long beverages;
+    @TableField("beverages")
+    private String beverages;
 
     /**
      * 食物
      */
-    private Long food;
+    @TableField("food")
+    private String food;
 
     /**
      * 交通工具
      */
-    private Long vehicle;
+    @TableField("vehicle")
+    private String vehicle;
 
     /**
      * 天气
      */
-    private Long weather;
+    @TableField("weather")
+    private String weather;
 
     /**
      * 月份
      */
-    private Long month;
+    @TableField("month")
+    private String month;
 
     /**
      * 运动
      */
-    private Long sports;
+    @TableField("sports")
+    private String sports;
 
     /**
      * 音乐
      */
-    private Long music;
+    @TableField("music")
+    private String music;
 
     /**
      * 电影
      */
-    private Long movies;
+    @TableField("movies")
+    private String movies;
 
     /**
      * 季节
      */
-    private Long season;
+    @TableField("season")
+    private String season;
 
     /**
      * 搭配
      */
-    private Long outfit;
+    @TableField("outfit")
+    private String outfit;
 
     /**
      * 五官
      */
-    private Long face;
+    @TableField("face")
+    private String face;
 
     /**
      * 手臂
      */
-    private Long arm;
+    @TableField("arm")
+    private String arm;
 
     /**
      * 腿部
      */
-    private Long leg;
+    @TableField("leg")
+    private String leg;
 
     /**
      * 脚
      */
-    private Long foot;
+    @TableField("foot")
+    private String foot;
 
     /**
      * 武器
      */
-    private Long weapon;
+    @TableField("weapon")
+    private String weapon;
 
     /**
      * 头盔
      */
-    private Long helmet;
+    @TableField("helmet")
+    private String helmet;
 
     /**
      * 盔甲
      */
-    private Long armor;
+    @TableField("armor")
+    private String armor;
 
     /**
      * 机甲
      */
-    private Long mecha;
+    @TableField("mecha")
+    private String mecha;
 
     /**
      * 裤子
      */
-    private Long pants;
+    @TableField("pants")
+    private String pants;
 
     /**
      * 裙子
      */
-    private Long skirt;
+    @TableField("skirt")
+    private String skirt;
 
     /**
      * 背景score
      */
-    private Long backgroundScore;
+    @TableField("background_score")
+    private BigDecimal backgroundScore;
 
     /**
      * 皮毛score
      */
-    private Long furScore;
+    @TableField("fur_score")
+    private BigDecimal furScore;
 
     /**
      * 表情score
      */
-    private Long facialScore;
+    @TableField("expression_score")
+    private BigDecimal expressionScore;
 
     /**
      * 头部score
      */
-    private Long headScore;
+    @TableField("head_score")
+    private BigDecimal headScore;
 
     /**
      * 配饰score
      */
-    private Long accessoriesScore;
+    @TableField("accessories_score")
+    private BigDecimal accessoriesScore;
 
     /**
      * 眼部score
      */
-    private Long eyesScore;
+    @TableField("eyes_score")
+    private BigDecimal eyesScore;
 
     /**
      * 衣服score
      */
-    private Long clothesScore;
+    @TableField("clothes_score")
+    private BigDecimal clothesScore;
 
     /**
      * 帽子score
      */
-    private Long hatScore;
+    @TableField("hat_score")
+    private BigDecimal hatScore;
 
     /**
      * 服装score
      */
-    private Long costumeScore;
+    @TableField("costume_score")
+    private BigDecimal costumeScore;
 
     /**
      * 妆容score
      */
-    private Long makeupScore;
+    @TableField("makeup_score")
+    private BigDecimal makeupScore;
 
     /**
      * 鞋子score
      */
-    private Long shoesScore;
+    @TableField("shoes_score")
+    private BigDecimal shoesScore;
 
     /**
      * 嘴score
      */
-    private Long mouthScore;
+    @TableField("mouth_score")
+    private BigDecimal mouthScore;
 
     /**
      * 耳环score
      */
-    private Long earringScore;
+    @TableField("earring_score")
+    private BigDecimal earringScore;
 
     /**
      * 项链score
      */
-    private Long necklaceScore;
+    @TableField("necklace_score")
+    private BigDecimal necklaceScore;
 
     /**
      * 颈部score
      */
-    private Long neckScore;
+    @TableField("neck_score")
+    private BigDecimal neckScore;
 
     /**
      * 头发score
      */
-    private Long hairScore;
+    @TableField("hair_score")
+    private BigDecimal hairScore;
 
     /**
      * 角score
      */
-    private Long hornScore;
+    @TableField("horn_score")
+    private BigDecimal hornScore;
 
     /**
      * 手score
      */
-    private Long handsScore;
+    @TableField("hands_score")
+    private BigDecimal handsScore;
 
     /**
      * 身体score
      */
-    private Long bodyScore;
+    @TableField("body_score")
+    private BigDecimal bodyScore;
 
     /**
      * 皮肤score
      */
-    private Long skinScore;
+    @TableField("skin_score")
+    private BigDecimal skinScore;
 
     /**
      * 纹身score
      */
-    private Long tattooScore;
+    @TableField("tattoo_score")
+    private BigDecimal tattooScore;
 
     /**
      * 人物score
      */
-    private Long peopleScore;
+    @TableField("people_score")
+    private BigDecimal peopleScore;
 
     /**
      * 性格score
      */
-    private Long characteristicScore;
+    @TableField("characteristic_score")
+    private BigDecimal characteristicScore;
 
     /**
      * 爱好score
      */
-    private Long hobbyScore;
+    @TableField("hobby_score")
+    private BigDecimal hobbyScore;
 
     /**
      * 星座score
      */
-    private Long zodiacScore;
+    @TableField("zodiac_score")
+    private BigDecimal zodiacScore;
 
     /**
      * 动作score
      */
-    private Long actionScore;
+    @TableField("action_score")
+    private BigDecimal actionScore;
 
     /**
      * 玩具score
      */
-    private Long toysScore;
+    @TableField("toys_score")
+    private BigDecimal toysScore;
 
     /**
      * 水果score
      */
-    private Long fruitsScore;
+    @TableField("fruits_score")
+    private BigDecimal fruitsScore;
 
     /**
      * 蔬菜score
      */
-    private Long vegetablesScore;
+    @TableField("vegetables_score")
+    private BigDecimal vegetablesScore;
 
     /**
      * 肉类score
      */
-    private Long meatScore;
+    @TableField("meat_score")
+    private BigDecimal meatScore;
 
     /**
      * 饮料score
      */
-    private Long beveragesScore;
+    @TableField("beverages_score")
+    private BigDecimal beveragesScore;
 
     /**
      * 食物score
      */
-    private Long foodScore;
+    @TableField("food_score")
+    private BigDecimal foodScore;
 
     /**
      * 交通工具score
      */
-    private Long vehicleScore;
+    @TableField("vehicle_score")
+    private BigDecimal vehicleScore;
 
     /**
      * 天气score
      */
-    private Long weatherScore;
+    @TableField("weather_score")
+    private BigDecimal weatherScore;
 
     /**
      * 月份score
      */
-    private Long monthScore;
+    @TableField("month_score")
+    private BigDecimal monthScore;
 
     /**
      * 运动score
      */
-    private Long sportsScore;
+    @TableField("sports_score")
+    private BigDecimal sportsScore;
 
     /**
      * 音乐score
      */
-    private Long musicScore;
+    @TableField("music_score")
+    private BigDecimal musicScore;
 
     /**
      * 电影score
      */
-    private Long moviesScore;
+    @TableField("movies_score")
+    private BigDecimal moviesScore;
 
     /**
      * 季节score
      */
-    private Long seasonScore;
+    @TableField("season_score")
+    private BigDecimal seasonScore;
 
     /**
      * 搭配score
      */
-    private Long outfitScore;
+    @TableField("outfit_score")
+    private BigDecimal outfitScore;
 
     /**
      * 五官score
      */
-    private Long faceScore;
+    @TableField("face_score")
+    private BigDecimal faceScore;
 
     /**
      * 手臂score
      */
-    private Long armScore;
+    @TableField("arm_score")
+    private BigDecimal armScore;
 
     /**
      * 腿部score
      */
-    private Long legScore;
+    @TableField("leg_score")
+    private BigDecimal legScore;
 
     /**
      * 脚score
      */
-    private Long footScore;
+    @TableField("foot_score")
+    private BigDecimal footScore;
 
     /**
      * 武器score
      */
-    private Long weaponScore;
+    @TableField("weapon_score")
+    private BigDecimal weaponScore;
 
     /**
      * 头盔score
      */
-    private Long helmetScore;
+    @TableField("helmet_score")
+    private BigDecimal helmetScore;
 
     /**
      * 盔甲score
      */
-    private Long armorScore;
+    @TableField("armor_score")
+    private BigDecimal armorScore;
 
     /**
      * 机甲score
      */
-    private Long mechaScore;
+    @TableField("mecha_score")
+    private BigDecimal mechaScore;
 
     /**
      * 裤子score
      */
-    private Long pantsScore;
+    @TableField("pants_score")
+    private BigDecimal pantsScore;
 
     /**
      * 裙子score
      */
-    private Long skirtScore;
-
-    /**
-     * 状态 0有效，1无效
-     */
-    private Boolean state;
+    @TableField("skirt_score")
+    private BigDecimal skirtScore;
 
     /**
      * 创建时间
      */
+    @TableField("create_time")
     private Long createTime;
 
     /**
      * 更新时间
      */
+    @TableField("update_time")
     private Long updateTime;
 
 

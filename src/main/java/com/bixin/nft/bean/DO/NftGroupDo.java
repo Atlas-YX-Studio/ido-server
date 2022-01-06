@@ -129,6 +129,11 @@ public class NftGroupDo implements Serializable {
     private Long sellingTime;
 
     /**
+     * 发售价格
+     */
+    private Integer compositePrice;
+
+    /**
      * 是否激活
      */
     private Boolean enabled;
@@ -197,6 +202,11 @@ public class NftGroupDo implements Serializable {
      * 创作者英文描述
      */
     private String enCreatorDesc;
+
+    /**
+     * 元素id
+     */
+    private Long elementId;
 
     private static final long serialVersionUID = 1L;
 }
