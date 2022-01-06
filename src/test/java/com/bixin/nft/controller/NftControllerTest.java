@@ -28,4 +28,9 @@ class NftControllerTest {
         log.info("groupList:" + JSON.toJSONString(nftInfoController.offeringList(10, 1)));
     }
 
+    @Test
+    void meta() {
+        log.info("meta:" + JSON.toJSONString(nftInfoController.meta()));
+    }
+
 }

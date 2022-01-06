@@ -31,7 +31,7 @@ public class NftMetaverseController {
 
     @PostMapping("/compositeCard")
     public R compositeCard(CompositeCardBean bean) {
-        if (StringUtils.isBlank(bean.getUserAddress()) || bean.getElementIds().size() == 0) {
+        if (StringUtils.isBlank(bean.getUserAddress()) || bean.getElementList().size() == 0) {
             return R.failed("parameter is invalid");
         }
         List<Map<String, Object>> group = nftMetareverseService.getSumByOccupationGroup();

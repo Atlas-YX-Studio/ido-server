@@ -1,5 +1,6 @@
 package com.bixin.nft.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bixin.common.constants.CommonConstant;
 import com.bixin.common.response.P;
 import com.bixin.common.response.R;
@@ -10,7 +11,9 @@ import com.bixin.nft.bean.vo.NftGroupVo;
 import com.bixin.nft.bean.vo.NftInfoVo;
 import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
+import com.bixin.nft.common.enums.CardElementType;
 import com.bixin.nft.common.enums.NftEventType;
+import com.bixin.nft.common.enums.OccupationType;
 import com.bixin.nft.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -19,7 +22,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @class: NftInfoController
@@ -41,6 +48,28 @@ public class NftInfoController {
     private NftMarketService nftMarketService;
     @Autowired
     private NftEventService nftEventService;
+
+    /**
+     * 元数据
+     *
+     * @return
+     */
+    @GetMapping("/meta")
+    public R meta() {
+        Map<String, Object> result = new HashMap<>();
+        // 属性
+        List<JSONObject> elements = Stream.of(CardElementType.values()).filter(CardElementType::isEnable)
+                .map(type -> {
+                    JSONObject json = new JSONObject();
+                    json.put(type.name(), type.getId());
+                    return json;
+                }).collect(Collectors.toList());
+        result.put("elements", elements);
+        // 职业
+        result.put("occupations", List.of(OccupationType.values()));
+
+        return R.success(result);
+    }
 
     /**
      * 获取系列列表
