@@ -41,6 +41,9 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 用户NFT挖矿表 服务实现类
@@ -222,12 +225,13 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
         }
         NftMiningUsersServiceImpl nftMiningUsersServiceImpl = ApplicationContextUtils.getBean(this.getClass());
 
+        List<Future<Object>> futures = Lists.newArrayList();
         for (MiningHarvestRecords record : pendingHarvestRecords) {
             Wrapper<NftMiningUsers> nftMiningUsersWrapper = Wrappers.<NftMiningUsers>lambdaQuery()
                     .eq(NftMiningUsers::getAddress, record.getAddress());
             NftMiningUsers nftMiningUsers = getOne(nftMiningUsersWrapper, false);
 
-            ThreadPoolUtil.execute(() -> {
+            Future<Object> future = ThreadPoolUtil.submit(() -> {
                 boolean success;
                 try {
                     success = contractService.checkTxt(record.getHash());
@@ -235,15 +239,24 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
                     log.error("harvestReward 合约执行超时 hash:{}", record.getHash());
                     // hash 查不到只能认为失败了吧？
                     nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, record);
-                    return;
+                    return null;
                 }
                 if (success) {
                     nftMiningUsersServiceImpl.harvestRewardSuccess(nftMiningUsers, record);
                 } else {
                     nftMiningUsersServiceImpl.harvestRewardFailed(nftMiningUsers, record);
                 }
+                return null;
             });
+            futures.add(future);
         }
+        futures.forEach(x-> {
+            try {
+                x.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
