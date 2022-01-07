@@ -13,6 +13,7 @@ import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
 import com.bixin.nft.common.enums.CardElementType;
 import com.bixin.nft.common.enums.NftEventType;
+import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.common.enums.OccupationType;
 import com.bixin.nft.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,12 +62,22 @@ public class NftInfoController {
         List<JSONObject> elements = Stream.of(CardElementType.values()).filter(CardElementType::isEnable)
                 .map(type -> {
                     JSONObject json = new JSONObject();
-                    json.put(type.name(), type.getId());
+                    json.put("desc", type.getDesc());
+                    json.put("cnDesc", type.getCnDesc());
+                    json.put("id", type.getId());
+                    json.put("maskOrder", type.getMaskOrder());
                     return json;
                 }).collect(Collectors.toList());
         result.put("elements", elements);
         // 职业
-        result.put("occupations", List.of(OccupationType.values()));
+        List<JSONObject> occupations = Stream.of(OccupationType.values())
+                .map(type -> {
+                    JSONObject json = new JSONObject();
+                    json.put("desc", type.getDesc());
+                    json.put("cnDesc", type.getCnDesc());
+                    return json;
+                }).collect(Collectors.toList());
+        result.put("occupations", List.of(occupations));
 
         return R.success(result);
     }
@@ -104,6 +115,11 @@ public class NftInfoController {
         List<NftGroupVo> nftGroupVoLis = BeanCopyUtil.copyListProperties(nftGroupDoList, nftGroupDo -> {
             NftGroupVo nftGroupVo = new NftGroupVo();
             nftGroupVo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
+            if (NftType.COMPOSITE_CARD.getType().equals(nftGroupDo.getType()) && nftGroupDo.getElementId() != 0) {
+                NftGroupDo elementGroupDo = nftGroupService.selectById(nftGroupDo.getElementId());
+                NftGroupVo elementGroupVo = BeanCopyUtil.copyProperties(elementGroupDo, NftGroupVo::new);
+                nftGroupVo.setElement(elementGroupVo);
+            }
             return nftGroupVo;
         });
         return R.success(nftGroupVoLis);

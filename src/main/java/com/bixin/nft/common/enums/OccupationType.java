@@ -7,14 +7,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum OccupationType {
 
-    ADVENTURER("adventurer"),
-    EXTREME_PLAYER("extreme player"),
-    ATHLETES("athletes"),
-    NONE("none"),
+    ADVENTURER("Adventurer", "冒险家"),
+    EXTREME_PLAYER("Extreme Player", "极限玩家"),
+    ATHLETES("Athletes", "运动员"),
+    NONE("None", "无"),
 
     ;
 
     private String desc;
+    private String cnDesc;
 
     public static CardState of(int code) {
         if (code < 0) {

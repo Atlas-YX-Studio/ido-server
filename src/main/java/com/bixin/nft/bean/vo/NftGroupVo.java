@@ -174,4 +174,9 @@ public class NftGroupVo implements Serializable {
      * 元素id
      */
     private Long elementId;
+
+    /**
+     * 元素
+     */
+    private NftGroupVo element;
 }
