@@ -155,7 +155,7 @@
         and created = #{created,jdbcType=BIT}
       </if>
       <if test="null != state">
-        and `state` = #{state,jdbcType=VARCHAR}
+        and state = #{state,jdbcType=VARCHAR}
       </if>
       <if test="null != createTime">
         and create_time = #{createTime,jdbcType=BIGINT}

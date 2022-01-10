@@ -31,19 +31,28 @@ public class NftMetaverseController {
 
     @PostMapping("/compositeCard")
     public R compositeCard(CompositeCardBean bean) {
-        if (StringUtils.isBlank(bean.getUserAddress()) || bean.getElementIds().size() == 0) {
+        if (StringUtils.isBlank(bean.getUserAddress())) {
             return R.failed("parameter is invalid");
         }
-        List<Map<String, Object>> group = nftMetareverseService.getSumByOccupationGroup();
-
-        return R.success(group);
+        return R.success(nftMetareverseService.getSumByOccupationGroup());
     }
-
 
     @GetMapping("/analysisCard")
     public R analysisCard(@RequestParam(value = "userAddress", defaultValue = "") String userAddress,
                           @RequestParam(value = "cardId", defaultValue = "0") long cardId) {
         if (StringUtils.isBlank(userAddress) || cardId <= 0) {
+            return R.failed("parameter is invalid");
+        }
+
+
+        return R.success();
+    }
+
+    @GetMapping("/selfResource")
+    public R selfResource(@RequestParam(value = "userAddress", defaultValue = "") String userAddress,
+                          @RequestParam(value = "groupId", defaultValue = "0") long groupId,
+                          @RequestParam(value = "nftType", defaultValue = "") String nftType) {
+        if (StringUtils.isBlank(userAddress) || groupId <= 0) {
             return R.failed("parameter is invalid");
         }
 

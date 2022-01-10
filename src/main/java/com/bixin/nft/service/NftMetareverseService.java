@@ -17,4 +17,6 @@ public interface NftMetareverseService {
 
     R analysisCard(String userAddress, long cardId);
 
+    R selfResource(String userAddress, String nftType, long groupId);
+
 }

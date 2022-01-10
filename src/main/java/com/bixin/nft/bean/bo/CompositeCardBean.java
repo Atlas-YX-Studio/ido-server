@@ -21,6 +21,8 @@ public class CompositeCardBean {
     private String userAddress;
     //自定义卡牌名称
     private String customName;
+    //0女 1男
+    private Integer sex;
 
     private List<CustomCardElement> elementList;
 
@@ -30,7 +32,7 @@ public class CompositeCardBean {
     @NoArgsConstructor
     public static class CustomCardElement {
         //素材 id
-        private long id;
+        private Long id;
         //素材名称
         private String eleName;
     }

@@ -21,6 +21,20 @@ public class StarCoinJsonUtil {
         return target;
     }
 
+
+    public static String toHexValue(Object value){
+        return HexStringUtil.toStringHex(String.valueOf(value).replaceAll("0x", ""));
+    }
+
+
+    public static JSONArray parseStruct2Array(Object obj) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> valueMap = (Map<String, Object>) obj;
+        @SuppressWarnings("unchecked")
+        JSONArray arr = (JSONArray) valueMap.get("value");
+        return arr;
+    }
+
     public static List<JSONArray> parseStructObj(Object obj) {
         @SuppressWarnings("unchecked")
         Map<String, Object> valueMap = (Map<String, Object>) obj;
