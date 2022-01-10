@@ -36,6 +36,11 @@ public class NftGroupVo implements Serializable {
     private String name;
 
     /**
+     * 类型
+     */
+    private String type;
+
+    /**
      * 系列发售图片
      */
     private String seriesLogo;
@@ -159,4 +164,19 @@ public class NftGroupVo implements Serializable {
      * 支持币种
      */
     private List<TokenDto> supportToken;
+
+    /**
+     * 组合手续费
+     */
+    private Integer compositePrice;
+
+    /**
+     * 元素id
+     */
+    private Long elementId;
+
+    /**
+     * 元素
+     */
+    private NftGroupVo element;
 }
