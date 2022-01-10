@@ -81,18 +81,19 @@ public class ScheduleMarketInfo {
                         redisCache.zRemoveRangeByScore(CommonConstant.SWAP_TOKEN_TICKS_PREFIX_KEY + tokenAddress, 0, yesterday.getTime());
                         // 获取交易数据
                         List<SwapTokenTickDto> swapTicks = redisCache.zRange(CommonConstant.SWAP_TOKEN_TICKS_PREFIX_KEY + tokenAddress, 0, -1, SwapTokenTickDto.class);
-                        if (CollectionUtils.isEmpty(swapTicks)) {
-                            return;
-                        }
-                        // 获取token 24H价格变化率，百分之x
-                        BigDecimal firstPrice = swapTicks.get(0).getUsdtExRate();
-                        BigDecimal lastPrice = swapTicks.get(swapTicks.size() - 1).getUsdtExRate();
-                        BigDecimal priceRate = BigDecimal.ZERO.compareTo(firstPrice) == 0 ? BigDecimal.ZERO :
-                                lastPrice.subtract(firstPrice).divide(firstPrice, 18, RoundingMode.HALF_UP).multiply(new BigDecimal(2));
-                        // 获取token 24H总交易额，以USDT计价
-                        BigDecimal usdtSwapAmount = swapTicks.stream().map(SwapTokenTickDto::getUsdtAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-                        usdtSwapAmount = BigDecimalUtil.removePrecision(usdtSwapAmount, swapPathService.getCoinPrecision(usdtAddress));
 
+                        BigDecimal priceRate = BigDecimal.ZERO;
+                        BigDecimal usdtSwapAmount = BigDecimal.ZERO;
+                        if (!CollectionUtils.isEmpty(swapTicks)) {
+                            // 获取token 24H价格变化率，百分之x
+                            BigDecimal firstPrice = swapTicks.get(0).getUsdtExRate();
+                            BigDecimal lastPrice = swapTicks.get(swapTicks.size() - 1).getUsdtExRate();
+                            priceRate = BigDecimal.ZERO.compareTo(firstPrice) == 0 ? BigDecimal.ZERO :
+                                    lastPrice.subtract(firstPrice).divide(firstPrice, 18, RoundingMode.HALF_UP).multiply(new BigDecimal(2));
+                            // 获取token 24H总交易额，以USDT计价
+                            usdtSwapAmount = swapTicks.stream().map(SwapTokenTickDto::getUsdtAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+                            usdtSwapAmount = BigDecimalUtil.removePrecision(usdtSwapAmount, swapPathService.getCoinPrecision(usdtAddress));
+                        }
                         // 存入redis
                         SwapTokenMarketDto swapTokenMarketDto = new SwapTokenMarketDto();
                         swapTokenMarketDto.setPriceRate(priceRate);

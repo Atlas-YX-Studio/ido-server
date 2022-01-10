@@ -30,7 +30,7 @@ ido:
   star:
     dx:
       resourceUrl: https://main-seed.starcoin.org
-      moduleName: 0x64c66296d98d6ab08579b14487157e05::Offering
+      moduleName: 0xf9079064690b07e9826a4fa3d713aecb::Offering
     swap:
       websocket-host: 10.13.22.40
       websocket-port: 9870
@@ -59,8 +59,8 @@ ido:
       image-info-api: "https://test.kikoswap.com/v1/nft/image/info/"
       image-group-api: "https://test.kikoswap.com/v1/nft/image/group/"
     mining:
-      nft-mining-day-reward: 144
-      nft-mining-block-reward: 0.01
+      nft-mining-day-reward: 288
+      nft-mining-block-reward: 0.02
       nft-unit-price: 100
       nft-mining-address: "0xa85291039ddad8845d5097624c81c3fd"
       nft-mining-module: "NFTMining"
