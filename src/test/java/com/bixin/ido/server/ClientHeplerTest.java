@@ -8,9 +8,11 @@ import com.bixin.common.utils.BigDecimalUtil;
 import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.ido.core.client.ChainClientHelper;
 import com.bixin.nft.bean.DO.NftGroupDo;
+import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.dto.NftSelfResourceDto;
 import com.bixin.nft.bean.vo.NftSelfResourceVo;
 import com.bixin.nft.service.NftInfoService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -23,13 +25,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author zhangcheng
@@ -117,7 +118,6 @@ public class ClientHeplerTest {
             if ("items".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
                 List<JSONObject> vector = StarCoinJsonUtil.parseVectorObj(stcResult[1]);
                 vector.forEach(el -> {
-                    MutableLong nftId = new MutableLong(0);
                     List<JSONArray> structValue = StarCoinJsonUtil.parseStructObj(el);
                     structValue.forEach(v -> {
                         Object[] info = v.toArray();
@@ -137,9 +137,10 @@ public class ClientHeplerTest {
                                 String imageLink = "";
                                 if ("name".equalsIgnoreCase(jsonName)) {
                                     eleName = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
-                                }
-                                if ("image".equalsIgnoreCase(jsonName)) {
+                                } else if ("image".equalsIgnoreCase(jsonName)) {
                                     imageLink = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
+                                } else {
+                                    log.error("nftMetaverse unknown element base_meta field {}, {}", jsonName, jsonObject);
                                 }
                                 if (StringUtils.isBlank(imgMap.get(eleName)) && StringUtils.isNotBlank(imageLink)) {
                                     imgMap.put(eleName, imageLink);
@@ -155,34 +156,28 @@ public class ClientHeplerTest {
                                 return;
                             }
                             JSONArray structs = StarCoinJsonUtil.parseStruct2Array(structObj);
-                            String eleName = "", property = "";
-                            long id = 0, score = 0;
-                            int count = 0;
+                            NftSelfResourceDto dto = null;
                             for (Object s : structs) {
                                 JSONArray sv = (JSONArray) s;
                                 String jsonName = (String) sv.get(0);
                                 JSONObject jsonObject = (JSONObject) sv.get(1);
                                 if ("type".equalsIgnoreCase(jsonName)) {
-                                    eleName = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
-                                }
-                                if ("type_id".equalsIgnoreCase(jsonName)) {
-                                    id = NumberUtils.toLong(String.valueOf(jsonObject.get("U64")), -1);
-                                }
-                                if ("property".equalsIgnoreCase(jsonName)) {
-                                    property = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
-                                }
-                                if ("score".equalsIgnoreCase(jsonName)) {
-                                    score = NumberUtils.toLong(String.valueOf(jsonObject.get("U128")), -1);
-                                }
-                                ++count;
-                                if (4 == count) {
-                                    NftSelfResourceDto selfDto = NftSelfResourceDto.builder()
-                                            .id(id)
-                                            .property(property)
-                                            .score(BigDecimalUtil.div(BigDecimal.valueOf(score), BigDecimal.valueOf(1000000000), 2))
-                                            .build();
-                                    propMap.put(eleName, selfDto);
-                                    count = 0;
+                                    String eleName = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
+                                    dto = propMap.get(eleName);
+                                    if (Objects.isNull(dto)) {
+                                        dto = new NftSelfResourceDto();
+                                    }
+                                } else if ("type_id".equalsIgnoreCase(jsonName)) {
+                                    long id = NumberUtils.toLong(String.valueOf(jsonObject.get("U64")), -1);
+                                    dto.setId(id);
+                                } else if ("property".equalsIgnoreCase(jsonName)) {
+                                    String property = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
+                                    dto.setProperty(property);
+                                } else if ("score".equalsIgnoreCase(jsonName)) {
+                                    long score = NumberUtils.toLong(String.valueOf(jsonObject.get("U128")), -1);
+                                    dto.setScore(BigDecimalUtil.div(BigDecimal.valueOf(score), BigDecimal.valueOf(1000000000), 2));
+                                } else {
+                                    log.error("nftMetaverse unknown element type_meta field {}, {}", jsonName, jsonObject);
                                 }
                             }
                         }
@@ -229,8 +224,7 @@ public class ClientHeplerTest {
         if (CollectionUtils.isEmpty(values)) {
             return;
         }
-        Map<String, String> imgMap = new HashMap<>();
-        Map<String, NftSelfResourceDto> propMap = new HashMap<>();
+        List<NftInfoDo> nftInfoDos = Lists.newArrayList();
         values.forEach(value -> {
             Object[] stcResult = value.toArray();
             if ("items".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
@@ -240,95 +234,34 @@ public class ClientHeplerTest {
                     List<JSONArray> structValue = StarCoinJsonUtil.parseStructObj(el);
                     structValue.forEach(v -> {
                         Object[] info = v.toArray();
-                        if ("base_meta".equals(String.valueOf(info[0]))) {
-                            Map<String, JSONObject> valueMap = (Map<String, JSONObject>) info[1];
-                            JSONObject structObj = valueMap.get("Struct");
-                            if (Objects.isNull(structObj)) {
-                                log.error("nftMetaverse struct is null 1");
-                                return;
-                            }
-                            JSONArray structs = StarCoinJsonUtil.parseStruct2Array(structObj);
-                            String eleName = "";
-                            for (Object s : structs) {
-                                JSONArray sv = (JSONArray) s;
-                                String jsonName = (String) sv.get(0);
-                                JSONObject jsonObject = (JSONObject) sv.get(1);
-                                String imageLink = "";
-                                if ("name".equalsIgnoreCase(jsonName)) {
-                                    eleName = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
-                                }
-                                if ("image".equalsIgnoreCase(jsonName)) {
-                                    imageLink = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
-                                }
-                                if (StringUtils.isBlank(imgMap.get(eleName)) && StringUtils.isNotBlank(imageLink)) {
-                                    imgMap.put(eleName, imageLink);
-                                    break;
-                                }
-                            }
-                        }
-                        if ("type_meta".equals(String.valueOf(info[0]))) {
-                            Map<String, JSONObject> valueMap = (Map<String, JSONObject>) info[1];
-                            JSONObject structObj = valueMap.get("Struct");
-                            if (Objects.isNull(structObj)) {
-                                log.error("nftMetaverse struct is null 2");
-                                return;
-                            }
-                            JSONArray structs = StarCoinJsonUtil.parseStruct2Array(structObj);
-                            String eleName = "", property = "";
-                            long id = 0, score = 0;
-                            int count = 0;
-                            for (Object s : structs) {
-                                JSONArray sv = (JSONArray) s;
-                                String jsonName = (String) sv.get(0);
-                                JSONObject jsonObject = (JSONObject) sv.get(1);
-                                if ("type".equalsIgnoreCase(jsonName)) {
-                                    eleName = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
-                                }
-                                if ("type_id".equalsIgnoreCase(jsonName)) {
-                                    id = NumberUtils.toLong(String.valueOf(jsonObject.get("U64")), -1);
-                                }
-                                if ("property".equalsIgnoreCase(jsonName)) {
-                                    property = StarCoinJsonUtil.toHexValue(jsonObject.get("Bytes"));
-                                }
-                                if ("score".equalsIgnoreCase(jsonName)) {
-                                    score = NumberUtils.toLong(String.valueOf(jsonObject.get("U128")), -1);
-                                }
-                                ++count;
-                                if (4 == count) {
-                                    NftSelfResourceDto selfDto = NftSelfResourceDto.builder()
-                                            .id(id)
-                                            .property(property)
-                                            .score(BigDecimalUtil.div(BigDecimal.valueOf(score), BigDecimal.valueOf(1000000000), 2))
-                                            .build();
-                                    propMap.put(eleName, selfDto);
-                                    count = 0;
-                                }
-                            }
+                        if ("id".equals(String.valueOf(info[0]))) {
+                            Map<String, Object> valueMap = (Map<String, Object>) info[1];
+                            nftId.setValue(Long.valueOf((String) valueMap.get("U64")));
                         }
                     });
+                    if (nftId.getValue() <= 0) {
+                        log.error("NFTId解析错误, groupId:{}，nftId:{}, struct:{}", nftGroupDo.getId(), nftId.getValue(), el);
+                        return;
+                    }
+                    NftInfoDo selectNftInfoDo = new NftInfoDo();
+                    selectNftInfoDo.setGroupId(nftGroupDo.getId());
+                    selectNftInfoDo.setNftId(nftId.getValue());
+                    NftInfoDo nftInfoDo = nftInfoService.selectByObject(selectNftInfoDo);
+                    if (ObjectUtils.isEmpty(nftInfoDo)) {
+                        log.error("NFTInfo不存在, groupId:{}，nftId:{}", nftGroupDo.getId(), nftId.getValue());
+                        return;
+                    }
+                    // 以链上为准，更新当前owner
+                    if (!StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())) {
+                        nftInfoDo.setOwner(userAddress);
+                        nftInfoService.update(nftInfoDo);
+                    }
+                    nftInfoDos.add(nftInfoDo);
                 });
             }
         });
 
-        log.info("nftMetaverse nft list {}, {}", userAddress, propMap);
-        Map<String, NftSelfResourceVo.ElementVo> map = new HashMap<>();
-        propMap.forEach((key, value) -> {
-            String imgLink = imgMap.get(key);
-            NftSelfResourceVo.ElementVo vo = map.get(key);
-            long tmpSum = 0;
-            if (Objects.nonNull(vo)) {
-                tmpSum = vo.getSum();
-            }
-            NftSelfResourceVo.ElementVo tmpVo = NftSelfResourceVo.ElementVo.builder()
-                    .image(imgLink)
-                    .sum(tmpSum + 1L)
-                    .property(value.getProperty())
-                    .score(value.getScore())
-                    .build();
-            map.put(key, tmpVo);
-        });
-
-        log.info("sssss: " + map);
+        log.info("fffffff: " + nftInfoDos);
     }
 
 }

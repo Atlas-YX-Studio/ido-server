@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
-import java.util.List;
-import java.util.Map;
-
 import static com.bixin.common.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
 
 /**
@@ -50,14 +47,11 @@ public class NftMetaverseController {
 
     @GetMapping("/selfResource")
     public R selfResource(@RequestParam(value = "userAddress", defaultValue = "") String userAddress,
-                          @RequestParam(value = "groupId", defaultValue = "0") long groupId,
-                          @RequestParam(value = "nftType", defaultValue = "") String nftType) {
-        if (StringUtils.isBlank(userAddress) || groupId <= 0) {
+                          @RequestParam(value = "nftType", defaultValue = "All") String nftType) {
+        if (StringUtils.isBlank(userAddress) || StringUtils.isBlank(nftType)) {
             return R.failed("parameter is invalid");
         }
-
-
-        return R.success();
+        return R.success(nftMetareverseService.selfResource(userAddress, nftType));
     }
 
 }
