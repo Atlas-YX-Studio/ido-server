@@ -98,4 +98,5 @@ public class ChainClientHelper {
         List<String> addressArray = Arrays.asList(userAddress, "0x00000000000000000000000000000001::NFTGallery::NFTGallery<" + meta + ", " + body + ">");
         return getPostResp(addressArray);
     }
+
 }

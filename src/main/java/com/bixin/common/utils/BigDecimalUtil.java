@@ -35,4 +35,18 @@ public class BigDecimalUtil {
         return number.multiply(BigDecimalUtil.getPrecisionFactor(precision));
     }
 
+
+    // 除法,默认精度
+    public static BigDecimal div(BigDecimal v1, BigDecimal v2) {
+        return div(v1, v2, 18);
+    }
+
+    // 除法,自定义精度
+    public static BigDecimal div(BigDecimal v1, BigDecimal v2, int scale) {
+        if (scale < 0) {
+            new IllegalArgumentException("The scale must be a positive integer or zero");
+        }
+        return v1.divide(v2, scale, BigDecimal.ROUND_DOWN);
+    }
+
 }

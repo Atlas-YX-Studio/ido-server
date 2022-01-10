@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Service
 public class NftInfoServiceImpl implements NftInfoService {
 
-    @Autowired
+    @Resource
     private NftInfoMapper nftInfoMapper;
     @Resource
     private ChainClientHelper chainClientHelper;

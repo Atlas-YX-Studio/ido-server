@@ -41,9 +41,9 @@ public class HexTest {
   */
     public static void main(String[] args) {
 //        String hex = "0x454f53";
-        String hex = "0x454f53".replaceAll("0x", "");
+        String hex = "0x6d696e6572".replaceAll("0x", "");
 //        String hex1 = "0x55534454";
-        String hex1 = "0x55534454".replaceAll("0x", "");
+        String hex1 = "0x68747470733a2f2f746573742e6b696b6f737761702e636f6d2f76312f6e66742f696d6167652f696e666f2f3130303033".replaceAll("0x", "");
         String s = HexStringUtil.toStringHex(hex);
         String s1 = HexStringUtil.toStringHex(hex1);
 
