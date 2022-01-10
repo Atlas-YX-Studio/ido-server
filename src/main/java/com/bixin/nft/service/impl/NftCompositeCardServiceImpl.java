@@ -35,6 +35,7 @@ import org.starcoin.utils.BcsSerializeHelper;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.List;
 
@@ -185,7 +186,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
         }
 
         if (NftGroupStatus.PENDING.name().equals(nftGroupDo.getStatus())) {
-            if (!nftContractBiz.deployNFTContractWithImage(nftGroupDo)) {
+            if (!deployCompositeCardContract(nftGroupDo)) {
                 log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
                 throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
             }
@@ -298,6 +299,32 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                 ))
                 .build();
         return contractService.callFunction(address, scriptFunctionObj);
+    }
+
+    /**
+     * 部署NFT Token，封面为图片url
+     *
+     * @return
+     */
+    private boolean deployCompositeCardContract(NftGroupDo nftGroupDo) {
+        double payTokenDecimal = Math.pow(10, nftGroupDo.getPayTokenPrecision());
+        BigInteger compositePrice = BigInteger.valueOf(nftGroupDo.getCompositePrice() * (long) payTokenDecimal);
+        String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
+        String path = "contract/nft/" + moduleName + ".mv";
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(nftGroupDo.getCreator())
+                .moduleName(moduleName)
+                .functionName("init_with_image")
+                .tyArgs(Lists.newArrayList())
+                .args(Lists.newArrayList(
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(starConfig.getNft().getImageGroupApi() + nftGroupDo.getId())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
+                        BcsSerializeHelper.serializeU128ToBytes(compositePrice)
+                ))
+                .build();
+        return contractService.deployContract(nftGroupDo.getCreator(), path, scriptFunctionObj);
     }
 
     /**

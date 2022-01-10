@@ -469,8 +469,7 @@ public class NftContractBiz {
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getName())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(imageGroupApi + nftGroupDo.getId())),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
-                        BcsSerializeHelper.serializeU128ToBytes(compositePrice)
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription()))
                 ))
                 .build();
         return contractService.deployContract(nftGroupDo.getCreator(), path, scriptFunctionObj);
