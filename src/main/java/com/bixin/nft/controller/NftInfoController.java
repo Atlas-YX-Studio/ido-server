@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -231,6 +232,7 @@ public class NftInfoController {
             nftGroupVo.setSellingPrice(new BigDecimal(nftGroupDo.getSellingPrice()));
             return nftGroupVo;
         });
+        nftGroupVoLis.sort(Comparator.comparingLong(NftGroupVo::getSellingTime).reversed());
         return P.success(nftGroupVoLis, hasNext);
     }
 

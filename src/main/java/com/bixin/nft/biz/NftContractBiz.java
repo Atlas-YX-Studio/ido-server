@@ -469,8 +469,7 @@ public class NftContractBiz {
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getName())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(imageGroupApi + nftGroupDo.getId())),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
-                        BcsSerializeHelper.serializeU128ToBytes(compositePrice)
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription()))
                 ))
                 .build();
         return contractService.deployContract(nftGroupDo.getCreator(), path, scriptFunctionObj);
@@ -534,7 +533,17 @@ public class NftContractBiz {
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getMusic())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getMovies())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getSeason())),
-                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getOutfit()))
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getOutfit())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getFace())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getArm())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getLeg())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getFoot())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getWeapon())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getHelmet())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getArmor())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getMecha())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getPants())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getSkirt()))
                 ))
                 .build();
         return contractService.callFunction(address, scriptFunctionObj);

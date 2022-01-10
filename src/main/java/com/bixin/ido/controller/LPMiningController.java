@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @author: 系统
  * @created: 2021-11-08
  */
-@RestController
+//@RestController
 @RequestMapping(PathConstant.MINING_REQUEST_PATH_PREFIX + "/lp")
 public class LPMiningController {
 

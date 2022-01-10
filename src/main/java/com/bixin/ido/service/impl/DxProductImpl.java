@@ -22,10 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -162,8 +159,37 @@ public class DxProductImpl implements IDxProductService {
 
 
     @Override
-    public IdoDxProduct getProduct(long pId) {
-        return idoDxProductMapper.selectByPrimaryKey(pId);
+    public HomeProductVO getProduct(long pId) {
+        IdoDxProduct idoDxProduct = idoDxProductMapper.selectByPrimaryKey(pId);
+        if (Objects.isNull(idoDxProduct)) {
+            return null;
+        }
+
+        //属性
+        IdoDxAttributeDDL dxAttributeDDL = new IdoDxAttributeDDL();
+        IdoDxAttributeDDL.Criteria attributeCriteria = dxAttributeDDL.createCriteria();
+        attributeCriteria.andPrdIdEqualTo(pId);
+        List<IdoDxAttribute> idoDxAttributes = idoDxAttributeMapper.selectByDDL(dxAttributeDDL);
+
+        //快捷链接
+        IdoDxLinkDDL dxLinkDDL = new IdoDxLinkDDL();
+        IdoDxLinkDDL.Criteria linkCriteria = dxLinkDDL.createCriteria();
+        linkCriteria.andPrdIdEqualTo(pId);
+        List<IdoDxLink> idoDxLinks = idoDxLinkMapper.selectByDDL(dxLinkDDL);
+
+        //标签
+        IdoDxLabelDDL dxLabelDDL = new IdoDxLabelDDL();
+        IdoDxLabelDDL.Criteria labelCriteria = dxLabelDDL.createCriteria();
+        labelCriteria.andPrdIdEqualTo(pId);
+        List<IdoDxLabel> idoDxLabels = idoDxLabelMapper.selectByDDL(dxLabelDDL);
+
+        HomeProductVO homeProductVO = HomeProductVO.builder()
+                .attributes(idoDxAttributes)
+                .labels(idoDxLabels)
+                .links(idoDxLinks)
+                .build();
+        BeanUtils.copyProperties(idoDxProduct, homeProductVO);
+        return homeProductVO;
     }
 
     @Override
