@@ -2,6 +2,7 @@ package com.bixin.nft.service;
 
 import com.bixin.common.response.R;
 import com.bixin.nft.bean.bo.CompositeCardBean;
+import com.bixin.nft.bean.vo.NftSelfResourceVo;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,6 @@ public interface NftMetareverseService {
 
     R analysisCard(String userAddress, long cardId);
 
-    R selfResource(String userAddress, String nftType);
+    NftSelfResourceVo selfResource(String userAddress, String nftType);
 
 }
