@@ -182,6 +182,10 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             if(CollectionUtils.isEmpty(eleInfoIds)){
                 R.success();
             }
+            // TODO: 2022/1/11
+            else{
+                log.info("nftMetaverse eleInfoIds {}",eleInfoIds);
+            }
 
             QueryWrapper<NftCompositeElement> wrapper = new QueryWrapper<>();
             wrapper.lambda().in(NftCompositeElement::getInfoId,eleInfoIds);
@@ -239,6 +243,10 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             if(CollectionUtils.isEmpty(cardInfoIds)){
                 R.success();
+            }
+            // TODO: 2022/1/11
+            else{
+                log.info("nftMetaverse cardInfoIds {}",cardInfoIds);
             }
 
             QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();
