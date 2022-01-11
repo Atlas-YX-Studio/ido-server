@@ -229,7 +229,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 Map<String, List<Long>> nftIdMap = nftIdsMap.get(key);
                 value.forEach(p -> {
                     p.setSum(propertyMap.get(p.getProperty()));
-                    p.setNftIds(nftIdMap.get(p.getProperty()));
+                    p.setChainIds(nftIdMap.get(p.getProperty()));
                 });
             });
         } else if ("split".equalsIgnoreCase(nftType)) {
@@ -271,7 +271,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .sex(p.getSex())
                         .image(infoDo.getImageLink())
                         .groupId(infoDo.getGroupId())
-                        .nftId(infoDo.getNftId())
+                        .chainId(infoDo.getNftId())
                         .name(infoDo.getName())
                         .build();
                 cardList.add(cardVo);
