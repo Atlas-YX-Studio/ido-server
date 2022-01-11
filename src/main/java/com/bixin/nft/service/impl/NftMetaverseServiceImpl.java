@@ -94,7 +94,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         NftInfoDo nftInfoDo = list.get(list.size() - 1);
         String name = nftInfoDo.getName();
         String[] nameArray = name.split("#");
-        String newName = nameArray[0] + " # " + (NumberUtils.toInt(nameArray[1], -1));
+        String newName = nameArray[0] + " # " + (NumberUtils.toInt(nameArray[1].trim(), -1));
 
         List<Long> elementIds = bean.getElementList().stream()
                 .map(CompositeCardBean.CustomCardElement::getId)
@@ -118,7 +118,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .rank(100)
                 .build();
         //插入新的 nftInfo
-        nftInfoService.insert(newNftInfo);
+//        nftInfoService.insert(newNftInfo);
 
         //元素排序 key=order,value=elementId
         Map<Long, Long> orderMap = new TreeMap<>();
