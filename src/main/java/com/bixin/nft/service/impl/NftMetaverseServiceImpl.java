@@ -159,7 +159,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
      * @return
      */
     @Override
-    public R selfResource(String userAddress, String nftType, long groupId) {
+    public R selfResource(String userAddress, String nftType) {
         Map<String, Set<NftSelfResourceVo.ElementVo>> elementMap = new HashMap<>();
         List<NftSelfResourceVo.CardVo> cardList = new ArrayList<>();
 
@@ -168,18 +168,16 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         String nftMeta_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatMeta";
         String nftBody_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatBody";
 
-        NftGroupDo nftGroup = groupId > 0 ? nftGroupMapper.selectByPrimaryKey(groupId) : null;
-
-        if ("all".equalsIgnoreCase(nftType) || "element".equalsIgnoreCase(nftType)) {
-            if (Objects.nonNull(nftGroup)) {
-                nftMeta_element = nftGroup.getNftMeta();
-                nftBody_element = nftGroup.getNftBody();
-            }
-            NftGroupDo nftGroupDo = NftGroupDo.builder()
+        if ( "element".equalsIgnoreCase(nftType)) {
+            NftGroupDo groupParam = NftGroupDo.builder()
                     .nftMeta(nftMeta_element)
                     .nftBody(nftBody_element)
                     .build();
-            List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, nftGroupDo);
+            NftGroupDo groupDo = nftGroupService.selectByObject(groupParam);
+            if (Objects.isNull(groupDo)) {
+                R.success();
+            }
+            List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> eleInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             List<NftCompositeElement> compositeElements = compositeElementMapper.selectBatchIds(eleInfoIds);
             if (CollectionUtils.isEmpty(compositeElements)) {
@@ -222,17 +220,16 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 Map<String, Long> propertyMap = sumMap.get(key);
                 value.forEach(p -> p.setSum(propertyMap.get(p.getProperty())));
             });
-        }
-        if ("all".equalsIgnoreCase(nftType) || "split".equalsIgnoreCase(nftType)) {
-            if (Objects.nonNull(nftGroup)) {
-                nftMeta_card = nftGroup.getNftMeta();
-                nftBody_card = nftGroup.getNftBody();
-            }
-            NftGroupDo nftGroupDo = NftGroupDo.builder()
+        } else if ( "split".equalsIgnoreCase(nftType)) {
+            NftGroupDo groupParam = NftGroupDo.builder()
                     .nftMeta(nftMeta_card)
                     .nftBody(nftBody_card)
                     .build();
-            List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, nftGroupDo);
+            NftGroupDo groupDo = nftGroupService.selectByObject(groupParam);
+            if (Objects.isNull(groupDo)) {
+                R.success();
+            }
+            List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             List<NftCompositeCard> compositeCards = compositeCardMapper.selectBatchIds(cardInfoIds);
             if (CollectionUtils.isEmpty(compositeCards)) {

@@ -26,9 +26,12 @@ public class MetaControllerTest {
     @Test
     void testSelfResource() {
         R all = metaverseController.selfResource("0xa85291039ddad8845d5097624c81c3fd",
-                10012L,
-                "all");
-        log.info("self resource info: {}", all);
+                "element");
+        log.info("self resource element info : {}", all);
+
+        R all2 = metaverseController.selfResource("0xa85291039ddad8845d5097624c81c3fd",
+                "split");
+        log.info("self resource split info: {}", all2);
 
     }
 }

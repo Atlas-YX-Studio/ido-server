@@ -72,12 +72,11 @@ public class NftMetaverseController {
 
     @GetMapping("/selfResource")
     public R selfResource(@RequestParam(value = "userAddress", defaultValue = "") String userAddress,
-                          @RequestParam(value = "groupId", defaultValue = "0") long groupId,
                           @RequestParam(value = "nftType", defaultValue = "All") String nftType) {
         if (StringUtils.isBlank(userAddress) || StringUtils.isBlank(nftType)) {
             return R.failed("parameter is invalid");
         }
-        return R.success(nftMetareverseService.selfResource(userAddress, nftType, groupId));
+        return R.success(nftMetareverseService.selfResource(userAddress, nftType));
     }
 
 }

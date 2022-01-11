@@ -108,7 +108,12 @@ public class NftInfoServiceImpl implements NftInfoService {
      */
     @Override
     public NftInfoDo selectByObject(NftInfoDo model) {
-        return nftInfoMapper.selectByPrimaryKeySelective(model);
+        try {
+            return nftInfoMapper.selectByPrimaryKeySelective(model);
+        } catch (Exception e) {
+            log.error("nft info selectByObject exception {}", model, e);
+        }
+        return null;
     }
 
     /**
@@ -133,6 +138,7 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * 获取待质押NFT
+     *
      * @param userAddress
      */
     public List<NftInfoVo> getUnStakingNftList(String userAddress) {
@@ -151,6 +157,7 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * 获取我的NFT
+     *
      * @param userAddress
      */
     public List<NftInfoVo> getUserNftList(String userAddress) {
@@ -169,6 +176,7 @@ public class NftInfoServiceImpl implements NftInfoService {
 
     /**
      * 从链上获取当前用户NFT
+     *
      * @param userAddress
      * @param nftGroupDo
      * @return
