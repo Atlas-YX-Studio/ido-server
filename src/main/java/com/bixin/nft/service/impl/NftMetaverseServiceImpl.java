@@ -74,26 +74,10 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         return compositeCardMapper.selectMaps(wrapper);
     }
 
-
     public String compositeCard(CompositeCardBean bean) {
-        long groupId = 0;
-        if (bean.getGroupId() <= 0) {
-            String likeValue = idoStarConfig.getNft().getCatadd() + "::KikoCatCard";
-            List<NftGroupDo> groupDos = nftGroupService.getListByEnabled(true);
-            for (NftGroupDo p : groupDos) {
-                if (p.getNftMeta().startsWith(likeValue) && p.getNftBody().startsWith(likeValue)) {
-                    groupId = p.getId();
-                    break;
-                }
-            }
-        } else {
-            groupId = bean.getGroupId();
-        }
-
-        List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(groupId).build());
-        NftInfoDo nftInfoDo = list.get(list.size() - 1);
-        String name = nftInfoDo.getName();
-        String[] nameArray = name.split("#");
+        List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(bean.getGroupId()).build());
+        Optional<NftInfoDo> maxNameInfo = list.stream().max(Comparator.comparing(NftInfoDo::getName));
+        String[] nameArray = maxNameInfo.get().getName().split("#");
         String newName = nameArray[0] + " # " + (NumberUtils.toInt(nameArray[1].trim(), -1));
 
         List<Long> elementIds = bean.getElementList().stream()
@@ -107,7 +91,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
         NftInfoDo newNftInfo = NftInfoDo.builder()
                 .nftId(0L)
-                .groupId(groupId)
+                .groupId(bean.getGroupId())
                 .type(NftType.COMPOSITE_CARD.getType())
                 .name(newName)
                 .owner(bean.getUserAddress())
@@ -184,8 +168,6 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 log.error("nftMetaverse get eleInfoIds element is empty {},{}", userAddress, groupDo);
                 return new NftSelfResourceVo();
             }
-            // TODO: 2022/1/11
-            log.info("nftMetaverse eleInfoIds {}", eleInfoIds);
 
             QueryWrapper<NftCompositeElement> wrapper = new QueryWrapper<>();
             wrapper.lambda().in(NftCompositeElement::getInfoId, eleInfoIds);
@@ -198,6 +180,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     .collect(Collectors.groupingBy(NftInfoDo::getId));
 
             Map<String, Map<String, Long>> sumMap = new HashMap<>();
+            Map<String, Map<String, List<Long>>> nftIdsMap = new HashMap<>();
             compositeElements.forEach(p -> {
                 List<NftInfoDo> infoDos = infoMap.get(p.getInfoId());
                 if (CollectionUtils.isEmpty(infoDos)) {
@@ -216,6 +199,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .score(p.getScore())
                         .sum(0)
                         .groupId(infoDo.getGroupId())
+//                        .nftIds()
                         .name(infoDo.getName())
                         .build();
                 elementMap.computeIfAbsent(type, k -> new HashSet<>());
@@ -224,11 +208,19 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 sumMap.computeIfAbsent(type, k -> new HashMap<>());
                 Long tmpSum = sumMap.get(type).get(property);
                 sumMap.get(type).put(property, Objects.isNull(tmpSum) ? 0 : tmpSum + 1);
+
+                nftIdsMap.computeIfAbsent(type, k -> new HashMap<>());
+                nftIdsMap.get(type).computeIfAbsent(property, k -> new ArrayList<>());
+                nftIdsMap.get(type).get(property).add(infoDo.getId());
             });
 
             elementMap.forEach((key, value) -> {
                 Map<String, Long> propertyMap = sumMap.get(key);
-                value.forEach(p -> p.setSum(propertyMap.get(p.getProperty())));
+                Map<String, List<Long>> nftIdMap = nftIdsMap.get(key);
+                value.forEach(p -> {
+                    p.setSum(propertyMap.get(p.getProperty()));
+                    p.setNftIds(nftIdMap.get(p.getProperty()));
+                });
             });
         } else if ("split".equalsIgnoreCase(nftType)) {
             NftGroupDo groupParam = NftGroupDo.builder()
@@ -246,8 +238,6 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 log.error("nftMetaverse get cardInfoIds card is empty {}, {}", userAddress, groupDo);
                 return new NftSelfResourceVo();
             }
-            // TODO: 2022/1/11
-            log.info("nftMetaverse cardInfoIds {}", cardInfoIds);
 
             QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();
             wrapper.lambda().in(NftCompositeCard::getInfoId, cardInfoIds);
@@ -271,6 +261,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .sex(p.getSex())
                         .image(infoDo.getImageLink())
                         .groupId(infoDo.getGroupId())
+                        .nftId(infoDo.getId())
                         .name(infoDo.getName())
                         .build();
                 cardList.add(cardVo);

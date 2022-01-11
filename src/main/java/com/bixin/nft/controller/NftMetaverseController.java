@@ -36,7 +36,7 @@ public class NftMetaverseController {
 
     @PostMapping("/compositeCard")
     public R compositeCard(CompositeCardBean bean) {
-        if (StringUtils.isBlank(bean.getUserAddress())) {
+        if (StringUtils.isBlank(bean.getUserAddress()) || bean.getGroupId() <= 0) {
             return R.failed("parameter is invalid");
         }
 
