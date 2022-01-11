@@ -217,7 +217,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
                 sumMap.computeIfAbsent(type, k -> new HashMap<>());
                 Long tmpSum = sumMap.get(type).get(property);
-                sumMap.get(type).put(property, Objects.isNull(tmpSum) ? 0 : tmpSum + 1);
+                sumMap.get(type).put(property, Objects.isNull(tmpSum) ? 1 : tmpSum + 1);
 
                 nftIdsMap.computeIfAbsent(type, k -> new HashMap<>());
                 nftIdsMap.get(type).computeIfAbsent(property, k -> new ArrayList<>());
