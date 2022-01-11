@@ -179,7 +179,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             }
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> eleInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
-            List<NftCompositeElement> compositeElements = compositeElementMapper.selectBatchIds(eleInfoIds);
+            if(CollectionUtils.isEmpty(eleInfoIds)){
+                R.success();
+            }
+
+            QueryWrapper<NftCompositeElement> wrapper = new QueryWrapper<>();
+            wrapper.lambda().in(NftCompositeElement::getInfoId,eleInfoIds);
+            List<NftCompositeElement> compositeElements =  compositeElementMapper.selectList(wrapper);
             if (CollectionUtils.isEmpty(compositeElements)) {
                 log.error("nftMetaverse get compositeElements is empty {}", eleInfoIds);
                 return R.success();
@@ -231,7 +237,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             }
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
-            List<NftCompositeCard> compositeCards = compositeCardMapper.selectBatchIds(cardInfoIds);
+            if(CollectionUtils.isEmpty(cardInfoIds)){
+                R.success();
+            }
+
+            QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();
+            wrapper.lambda().in(NftCompositeCard::getInfoId,cardInfoIds);
+            List<NftCompositeCard> compositeCards = compositeCardMapper.selectList(wrapper);
             if (CollectionUtils.isEmpty(compositeCards)) {
                 log.error("nftMetaverse get compositeCards is empty {}", cardInfoIds);
                 return R.success();
