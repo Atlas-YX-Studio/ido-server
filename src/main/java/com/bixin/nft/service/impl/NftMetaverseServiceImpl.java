@@ -168,26 +168,28 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         String nftMeta_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatMeta";
         String nftBody_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatBody";
 
-        if ( "element".equalsIgnoreCase(nftType)) {
+        if ("element".equalsIgnoreCase(nftType)) {
             NftGroupDo groupParam = NftGroupDo.builder()
                     .nftMeta(nftMeta_element)
                     .nftBody(nftBody_element)
                     .build();
             NftGroupDo groupDo = nftGroupService.selectByObject(groupParam);
             if (Objects.isNull(groupDo)) {
-                R.success();
+                log.error("nftMetaverse get groupDo element is empty {}", groupParam);
+                return R.success();
             }
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> eleInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
-            if(CollectionUtils.isEmpty(eleInfoIds)){
-                R.success();
+            if (CollectionUtils.isEmpty(eleInfoIds)) {
+                log.error("nftMetaverse get eleInfoIds element is empty {},{}", userAddress, groupDo);
+                return R.success();
             }
             // TODO: 2022/1/11
-            log.info("nftMetaverse eleInfoIds {}",eleInfoIds);
+            log.info("nftMetaverse eleInfoIds {}", eleInfoIds);
 
             QueryWrapper<NftCompositeElement> wrapper = new QueryWrapper<>();
-            wrapper.lambda().in(NftCompositeElement::getInfoId,eleInfoIds);
-            List<NftCompositeElement> compositeElements =  compositeElementMapper.selectList(wrapper);
+            wrapper.lambda().in(NftCompositeElement::getInfoId, eleInfoIds);
+            List<NftCompositeElement> compositeElements = compositeElementMapper.selectList(wrapper);
             if (CollectionUtils.isEmpty(compositeElements)) {
                 log.error("nftMetaverse get compositeElements is empty {}", eleInfoIds);
                 return R.success();
@@ -228,25 +230,27 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 Map<String, Long> propertyMap = sumMap.get(key);
                 value.forEach(p -> p.setSum(propertyMap.get(p.getProperty())));
             });
-        } else if ( "split".equalsIgnoreCase(nftType)) {
+        } else if ("split".equalsIgnoreCase(nftType)) {
             NftGroupDo groupParam = NftGroupDo.builder()
                     .nftMeta(nftMeta_card)
                     .nftBody(nftBody_card)
                     .build();
             NftGroupDo groupDo = nftGroupService.selectByObject(groupParam);
             if (Objects.isNull(groupDo)) {
-                R.success();
+                log.error("nftMetaverse get groupDo card is empty {}", groupParam);
+                return R.success();
             }
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
-            if(CollectionUtils.isEmpty(cardInfoIds)){
-                R.success();
+            if (CollectionUtils.isEmpty(cardInfoIds)) {
+                log.error("nftMetaverse get cardInfoIds card is empty {}, {}", userAddress, groupDo);
+                return R.success();
             }
             // TODO: 2022/1/11
-            log.info("nftMetaverse cardInfoIds {}",cardInfoIds);
+            log.info("nftMetaverse cardInfoIds {}", cardInfoIds);
 
             QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();
-            wrapper.lambda().in(NftCompositeCard::getInfoId,cardInfoIds);
+            wrapper.lambda().in(NftCompositeCard::getInfoId, cardInfoIds);
             List<NftCompositeCard> compositeCards = compositeCardMapper.selectList(wrapper);
             if (CollectionUtils.isEmpty(compositeCards)) {
                 log.error("nftMetaverse get compositeCards is empty {}", cardInfoIds);
