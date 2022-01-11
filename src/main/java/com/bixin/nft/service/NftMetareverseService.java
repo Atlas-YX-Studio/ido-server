@@ -1,6 +1,7 @@
 package com.bixin.nft.service;
 
 import com.bixin.common.response.R;
+import com.bixin.nft.bean.bo.CompositeCardBean;
 
 import java.util.List;
 import java.util.Map;
@@ -13,10 +14,10 @@ public interface NftMetareverseService {
 
     List<Map<String, Object>> getSumByOccupationGroup();
 
-    String compositeCard(String customName, String userAddress, List<Long> elementIds);
+    String compositeCard(CompositeCardBean bean);
 
     R analysisCard(String userAddress, long cardId);
 
-    R selfResource(String userAddress, String nftType);
+    R selfResource(String userAddress, String nftType, long groupId);
 
 }

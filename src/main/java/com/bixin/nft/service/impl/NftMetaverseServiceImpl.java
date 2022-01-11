@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.bixin.common.config.StarConfig;
 import com.bixin.common.response.R;
 import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.ido.core.client.ChainClientHelper;
@@ -11,9 +12,13 @@ import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.bean.bo.CompositeCardBean;
 import com.bixin.nft.bean.vo.NftSelfResourceVo;
+import com.bixin.nft.common.enums.CardElementType;
+import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.core.mapper.NftCompositeCardMapper;
 import com.bixin.nft.core.mapper.NftCompositeElementMapper;
+import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftInfoMapper;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
@@ -21,6 +26,7 @@ import com.bixin.nft.service.NftMetareverseService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.http.HttpEntity;
@@ -31,6 +37,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,9 +58,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     @Resource
     NftInfoMapper nftInfoMapper;
     @Resource
+    NftGroupMapper nftGroupMapper;
+    @Resource
     NftGroupService nftGroupService;
     @Resource
     NftInfoService nftInfoService;
+    @Resource
+    StarConfig idoStarConfig;
 
     @Override
     public List<Map<String, Object>> getSumByOccupationGroup() {
@@ -64,8 +75,58 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     }
 
 
-    public String compositeCard(String customName, String userAddress, List<Long> elementIds) {
+    public String compositeCard(CompositeCardBean bean) {
+        long groupId = 0;
+        if (bean.getGroupId() <= 0) {
+            String likeValue = idoStarConfig.getNft().getCatadd() + "::KikoCatCard";
+            List<NftGroupDo> groupDos = nftGroupService.getListByEnabled(true);
+            for (NftGroupDo p : groupDos) {
+                if (p.getNftMeta().startsWith(likeValue) && p.getNftBody().startsWith(likeValue)) {
+                    groupId = p.getId();
+                    break;
+                }
+            }
+        } else {
+            groupId = bean.getGroupId();
+        }
+
+        List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(groupId).build());
+        NftInfoDo nftInfoDo = list.get(list.size() - 1);
+        String name = nftInfoDo.getName();
+        String[] nameArray = name.split("#");
+        String newName = nameArray[0] + " # " + (NumberUtils.toInt(nameArray[1], -1));
+
+        List<Long> elementIds = bean.getElementList().stream()
+                .map(CompositeCardBean.CustomCardElement::getId)
+                .collect(Collectors.toList());
         List<NftCompositeElement> elementList = compositeElementMapper.selectBatchIds(elementIds);
+
+        BigDecimal sumScore = elementList.stream()
+                .map(NftCompositeElement::getScore)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        NftInfoDo newNftInfo = NftInfoDo.builder()
+                .nftId(0L)
+                .groupId(groupId)
+                .type(NftType.COMPOSITE_CARD.getType())
+                .name(newName)
+                .owner(bean.getUserAddress())
+                .imageLink("")
+                .imageData("")
+                .score(sumScore)
+                // TODO: 2022/1/11 排名
+                .rank(100)
+                .build();
+        //插入新的 nftInfo
+        nftInfoService.insert(newNftInfo);
+
+        //元素排序 key=order,value=elementId
+        Map<Long, Long> orderMap = new TreeMap<>();
+        bean.getElementList().forEach(p -> {
+            long maskOrder = CardElementType.of(p.getEleName()).getMaskOrder();
+            orderMap.put(maskOrder, p.getId());
+        });
+
 
         //校验 需要组合的卡牌是否已经存在，如果存在则直接反悔原有的图片链接，如果不存在，继续下一步
 
@@ -98,13 +159,25 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
      * @return
      */
     @Override
-    public R selfResource(String userAddress, String nftType) {
+    public R selfResource(String userAddress, String nftType, long groupId) {
         Map<String, Set<NftSelfResourceVo.ElementVo>> elementMap = new HashMap<>();
         List<NftSelfResourceVo.CardVo> cardList = new ArrayList<>();
+
+        String nftMeta_element = idoStarConfig.getNft().getCatadd() + "::KikoCatElement05::KikoCatMeta";
+        String nftBody_element = idoStarConfig.getNft().getCatadd() + "::KikoCatElement05::KikoCatBody";
+        String nftMeta_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatMeta";
+        String nftBody_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatBody";
+
+        NftGroupDo nftGroup = groupId > 0 ? nftGroupMapper.selectByPrimaryKey(groupId) : null;
+
         if ("all".equalsIgnoreCase(nftType) || "element".equalsIgnoreCase(nftType)) {
+            if (Objects.nonNull(nftGroup)) {
+                nftMeta_element = nftGroup.getNftMeta();
+                nftBody_element = nftGroup.getNftBody();
+            }
             NftGroupDo nftGroupDo = NftGroupDo.builder()
-                    .nftMeta("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCatElement04::KikoCatMeta")
-                    .nftBody("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCatElement04::KikoCatBody")
+                    .nftMeta(nftMeta_element)
+                    .nftBody(nftBody_element)
                     .build();
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, nftGroupDo);
             List<Long> eleInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
@@ -134,6 +207,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 //                        .score(BigDecimalUtil.div(p.getScore(), BigDecimal.valueOf(1000000000), 2))
                         .score(p.getScore())
                         .sum(0)
+                        .groupId(infoDo.getGroupId())
                         .build();
                 elementMap.computeIfAbsent(type, k -> new HashSet<>());
                 elementMap.get(type).add(elementVo);
@@ -149,9 +223,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             });
         }
         if ("all".equalsIgnoreCase(nftType) || "split".equalsIgnoreCase(nftType)) {
+            if (Objects.nonNull(nftGroup)) {
+                nftMeta_card = nftGroup.getNftMeta();
+                nftBody_card = nftGroup.getNftBody();
+            }
             NftGroupDo nftGroupDo = NftGroupDo.builder()
-                    .nftMeta("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCatCard04::KikoCatMeta")
-                    .nftBody("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCatCard04::KikoCatBody")
+                    .nftMeta(nftMeta_card)
+                    .nftBody(nftBody_card)
                     .build();
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, nftGroupDo);
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
@@ -174,6 +252,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .customName(p.getCustomName())
                         .sex(p.getSex())
                         .image(infoDo.getImageLink())
+                        .groupId(infoDo.getGroupId())
                         .build();
                 cardList.add(cardVo);
             });

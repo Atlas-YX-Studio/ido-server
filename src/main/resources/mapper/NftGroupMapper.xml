@@ -379,7 +379,7 @@
     select  * from nft_group where offering = #{offering} limit 1
   </select>
   <select id="getListByEnabled" parameterType="java.lang.Boolean" resultMap="BaseResultMap">
-    select  * from nft_group where enabled = #{enabled}
+    select  * from nft_group where enabled = #{enabled} order by id desc
   </select>
   <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
     select * from nft_group

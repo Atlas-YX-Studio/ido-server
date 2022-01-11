@@ -14,7 +14,7 @@ public enum NftBoxType {
 
     NFT("nft"),
     BOX("box"),
-    RECOMBINE_NFT("recombine_nft"),
+    RECOMBINE("recombine"),
     ELEMENT("element");
 
     private String desc;
@@ -25,8 +25,8 @@ public enum NftBoxType {
                 return NFT;
             case "box":
                 return BOX;
-            case "recombine_nft":
-                return RECOMBINE_NFT;
+            case "recombine":
+                return RECOMBINE;
             case "element":
                 return ELEMENT;
             default:

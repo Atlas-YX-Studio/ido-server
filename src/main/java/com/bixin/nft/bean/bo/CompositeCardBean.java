@@ -22,7 +22,9 @@ public class CompositeCardBean {
     //自定义卡牌名称
     private String customName;
     //0女 1男
-    private Integer sex;
+    private int sex;
+
+    private long groupId;
 
     private List<CustomCardElement> elementList;
 
