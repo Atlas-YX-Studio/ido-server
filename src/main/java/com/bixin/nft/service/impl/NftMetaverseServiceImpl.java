@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bixin.common.config.StarConfig;
 import com.bixin.common.response.R;
+import com.bixin.common.utils.LocalDateTimeUtil;
 import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.ido.core.client.ChainClientHelper;
 import com.bixin.nft.bean.DO.NftCompositeCard;
@@ -33,11 +34,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -74,11 +77,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         return compositeCardMapper.selectMaps(wrapper);
     }
 
+    @Transactional
     public String compositeCard(CompositeCardBean bean) {
+        //name编号递增
         List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(bean.getGroupId()).build());
         Optional<NftInfoDo> maxNameInfo = list.stream().max(Comparator.comparing(NftInfoDo::getName));
         String[] nameArray = maxNameInfo.get().getName().split("#");
-        String newName = nameArray[0] + " # " + (NumberUtils.toInt(nameArray[1].trim(), -1));
+        String newName = nameArray[0] + " # " + (NumberUtils.toInt(nameArray[1].trim(), -1) + 1);
 
         List<Long> elementIds = bean.getElementList().stream()
                 .map(CompositeCardBean.CustomCardElement::getId)
@@ -89,6 +94,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .map(NftCompositeElement::getScore)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        //插入新的 nftInfo
+        Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
         NftInfoDo newNftInfo = NftInfoDo.builder()
                 .nftId(0L)
                 .groupId(bean.getGroupId())
@@ -99,10 +106,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .imageData("")
                 .score(sumScore)
                 // TODO: 2022/1/11 排名
-                .rank(100)
+                .rank(0)
+                .created(false)
+//                .state()
+                .createTime(currentTime)
+                .updateTime(currentTime)
                 .build();
-        //插入新的 nftInfo
-//        nftInfoService.insert(newNftInfo);
+        nftInfoService.insert(newNftInfo);
 
         //元素排序 key=order,value=elementId
         Map<Long, Long> orderMap = new TreeMap<>();
@@ -211,7 +221,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
                 nftIdsMap.computeIfAbsent(type, k -> new HashMap<>());
                 nftIdsMap.get(type).computeIfAbsent(property, k -> new ArrayList<>());
-                nftIdsMap.get(type).get(property).add(infoDo.getId());
+                nftIdsMap.get(type).get(property).add(infoDo.getNftId());
             });
 
             elementMap.forEach((key, value) -> {
@@ -261,7 +271,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .sex(p.getSex())
                         .image(infoDo.getImageLink())
                         .groupId(infoDo.getGroupId())
-                        .nftId(infoDo.getId())
+                        .nftId(infoDo.getNftId())
                         .name(infoDo.getName())
                         .build();
                 cardList.add(cardVo);
