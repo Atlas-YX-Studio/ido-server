@@ -101,7 +101,8 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
                 JsonNode data = eventResult.getData();
                 // 添加日志
                 try {
-                    log.info("BlockEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
+                    // TODO: 2022/1/11
+//                    log.info("BlockEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
