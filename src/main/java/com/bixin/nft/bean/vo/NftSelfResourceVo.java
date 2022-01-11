@@ -34,6 +34,7 @@ public class NftSelfResourceVo {
         private BigDecimal score;
         private long sum;
         private long groupId;
+        private String name;
     }
 
     @Data
@@ -47,6 +48,7 @@ public class NftSelfResourceVo {
         private int sex;
         private String image;
         private long groupId;
+        private String name;
     }
 
 }

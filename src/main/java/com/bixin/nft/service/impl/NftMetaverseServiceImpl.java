@@ -208,6 +208,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .score(p.getScore())
                         .sum(0)
                         .groupId(infoDo.getGroupId())
+                        .name(infoDo.getName())
                         .build();
                 elementMap.computeIfAbsent(type, k -> new HashSet<>());
                 elementMap.get(type).add(elementVo);
@@ -253,6 +254,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .sex(p.getSex())
                         .image(infoDo.getImageLink())
                         .groupId(infoDo.getGroupId())
+                        .name(infoDo.getName())
                         .build();
                 cardList.add(cardVo);
             });
