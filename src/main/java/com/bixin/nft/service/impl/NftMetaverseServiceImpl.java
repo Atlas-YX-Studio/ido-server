@@ -183,9 +183,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 R.success();
             }
             // TODO: 2022/1/11
-            else{
-                log.info("nftMetaverse eleInfoIds {}",eleInfoIds);
-            }
+            log.info("nftMetaverse eleInfoIds {}",eleInfoIds);
 
             QueryWrapper<NftCompositeElement> wrapper = new QueryWrapper<>();
             wrapper.lambda().in(NftCompositeElement::getInfoId,eleInfoIds);
@@ -245,9 +243,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 R.success();
             }
             // TODO: 2022/1/11
-            else{
-                log.info("nftMetaverse cardInfoIds {}",cardInfoIds);
-            }
+            log.info("nftMetaverse cardInfoIds {}",cardInfoIds);
 
             QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();
             wrapper.lambda().in(NftCompositeCard::getInfoId,cardInfoIds);
