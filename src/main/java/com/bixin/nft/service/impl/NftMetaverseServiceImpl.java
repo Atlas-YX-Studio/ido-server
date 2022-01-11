@@ -176,13 +176,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             NftGroupDo groupDo = nftGroupService.selectByObject(groupParam);
             if (Objects.isNull(groupDo)) {
                 log.error("nftMetaverse get groupDo element is empty {}", groupParam);
-                return null;
+                return new NftSelfResourceVo();
             }
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> eleInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(eleInfoIds)) {
                 log.error("nftMetaverse get eleInfoIds element is empty {},{}", userAddress, groupDo);
-                return null;
+                return new NftSelfResourceVo();
             }
             // TODO: 2022/1/11
             log.info("nftMetaverse eleInfoIds {}", eleInfoIds);
@@ -192,7 +192,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             List<NftCompositeElement> compositeElements = compositeElementMapper.selectList(wrapper);
             if (CollectionUtils.isEmpty(compositeElements)) {
                 log.error("nftMetaverse get compositeElements is empty {}", eleInfoIds);
-                return null;
+                return new NftSelfResourceVo();
             }
             Map<Long, List<NftInfoDo>> infoMap = nftInfoDos.stream()
                     .collect(Collectors.groupingBy(NftInfoDo::getId));
@@ -238,13 +238,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             NftGroupDo groupDo = nftGroupService.selectByObject(groupParam);
             if (Objects.isNull(groupDo)) {
                 log.error("nftMetaverse get groupDo card is empty {}", groupParam);
-                return null;
+                return new NftSelfResourceVo();
             }
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(cardInfoIds)) {
                 log.error("nftMetaverse get cardInfoIds card is empty {}, {}", userAddress, groupDo);
-                return null;
+                return new NftSelfResourceVo();
             }
             // TODO: 2022/1/11
             log.info("nftMetaverse cardInfoIds {}", cardInfoIds);
@@ -254,7 +254,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             List<NftCompositeCard> compositeCards = compositeCardMapper.selectList(wrapper);
             if (CollectionUtils.isEmpty(compositeCards)) {
                 log.error("nftMetaverse get compositeCards is empty {}", cardInfoIds);
-                return null;
+                return new NftSelfResourceVo();
             }
             Map<Long, List<NftInfoDo>> infoMap = nftInfoDos.stream()
                     .collect(Collectors.groupingBy(NftInfoDo::getId));
