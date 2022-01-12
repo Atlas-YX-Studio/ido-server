@@ -344,7 +344,11 @@ public class NftInfoController {
         if (ObjectUtils.isEmpty(nftInfoDo)) {
             return R.failed("nftInfoDo不存在，meta = " + nftMeta + "，body = " + nftBody + "，nftId = " + nftId);
         }
+        //素材
         List<NftCompositeElement> compositeElements = null;
+        //cat
+        NftKikoCatDo nftKikoCatDo = null;
+
         if (nftMeta.contains("KikoCatCard") && nftBody.contains("KikoCatCard")) {
             List<NftCompositeCard> compositeCards = metareverseService.getCompositeCard(nftInfoDo.getId());
             if (CollectionUtils.isEmpty(compositeCards)) {
@@ -356,20 +360,22 @@ public class NftInfoController {
             if (CollectionUtils.isEmpty(compositeElements)) {
                 return R.failed("NftCompositeElement 不存在，nftIds = " + new HashSet<>(eleNftIds));
             }
-        }
-        // 获取cat
-        NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
-        selectNftKikoCatDo.setInfoId(nftInfoDo.getId());
-        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByObject(selectNftKikoCatDo);
-        if (ObjectUtils.isEmpty(nftKikoCatDo)) {
-            return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+        } else {
+            NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
+            selectNftKikoCatDo.setInfoId(nftInfoDo.getId());
+            nftKikoCatDo = nftKikoCatService.selectByObject(selectNftKikoCatDo);
+            if (ObjectUtils.isEmpty(nftKikoCatDo)) {
+                return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+            }
         }
         NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftInfoDo, () -> BeanCopyUtil.copyProperties(nftGroupDo, () -> {
             NftInfoVo vo = new NftInfoVo();
             vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
             return vo;
         }));
-        nftInfoVo.setProperties(nftKikoCatDo);
+        if (Objects.nonNull(nftKikoCatDo)) {
+            nftInfoVo.setProperties(nftKikoCatDo);
+        }
         if (!CollectionUtils.isEmpty(compositeElements)) {
             nftInfoVo.setCompositeElements(compositeElements);
         }
