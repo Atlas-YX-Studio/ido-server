@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.internal.Lists;
 import com.beust.jcommander.internal.Maps;
-import com.bixin.ido.core.client.ChainClientHelper;
+import com.bixin.core.client.ChainClientHelper;
 import com.bixin.ido.service.IPlatformBuyBackService;
 import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;

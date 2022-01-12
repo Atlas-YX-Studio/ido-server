@@ -1,4 +1,4 @@
-package com.bixin.ido.core.client;
+package com.bixin.core.client;
 
 import com.beust.jcommander.internal.Maps;
 import com.bixin.ido.bean.DO.IdoDxProduct;

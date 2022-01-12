@@ -3,7 +3,7 @@ package com.bixin.ido.scheduler;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
-import com.bixin.ido.core.client.ChainClientHelper;
+import com.bixin.core.client.ChainClientHelper;
 import com.bixin.ido.bean.DO.IdoDxProduct;
 import com.bixin.ido.bean.DO.IdoDxUserRecord;
 import com.bixin.core.redis.RedisCache;

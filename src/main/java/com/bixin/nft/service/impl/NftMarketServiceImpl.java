@@ -5,7 +5,6 @@ import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftMarketMapper;
 import com.bixin.nft.service.NftMarketService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -140,14 +139,16 @@ public class NftMarketServiceImpl implements NftMarketService {
             sortValue = "mm.create_time ";
         }
         if (0 == sort || 1 == sort) {
-            sortValue += " desc";
-            if(!"ctime".equalsIgnoreCase(sortRule.trim())){
+            if (!"ctime".equalsIgnoreCase(sortRule.trim())) {
                 sortValue += " desc, mm.create_time desc";
+            } else {
+                sortValue += " desc";
             }
         } else if (2 == sort) {
-            sortValue += " asc";
-            if(!"ctime".equalsIgnoreCase(sortRule.trim())){
+            if (!"ctime".equalsIgnoreCase(sortRule.trim())) {
                 sortValue += " asc, mm.create_time desc";
+            } else {
+                sortValue += " asc";
             }
         }
         paramMap.put("sort", sortValue);

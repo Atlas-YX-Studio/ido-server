@@ -8,7 +8,7 @@ import com.bixin.common.config.StarConfig;
 import com.bixin.common.response.R;
 import com.bixin.common.utils.LocalDateTimeUtil;
 import com.bixin.common.utils.StarCoinJsonUtil;
-import com.bixin.ido.core.client.ChainClientHelper;
+import com.bixin.core.client.ChainClientHelper;
 import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftGroupDo;

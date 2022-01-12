@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.bixin.IdoServerApplication;
 import com.bixin.common.utils.BigDecimalUtil;
 import com.bixin.common.utils.StarCoinJsonUtil;
-import com.bixin.ido.core.client.ChainClientHelper;
+import com.bixin.core.client.ChainClientHelper;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.dto.NftSelfResourceDto;
@@ -30,7 +30,6 @@ import org.springframework.util.ObjectUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author zhangcheng
