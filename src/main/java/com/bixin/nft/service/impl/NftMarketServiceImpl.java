@@ -5,6 +5,7 @@ import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftMarketMapper;
 import com.bixin.nft.service.NftMarketService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -125,7 +126,9 @@ public class NftMarketServiceImpl implements NftMarketService {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
-        paramMap.put("type", nftType);
+        if (StringUtils.isNotBlank(nftType)) {
+            paramMap.put("type", nftType);
+        }
         if (groupId > 0) {
             paramMap.put("groupId", groupId);
         }
