@@ -14,8 +14,8 @@ public enum NftBoxType {
 
     NFT("nft"),
     BOX("box"),
-    RECOMBINE("recombine"),
-    ELEMENT("element");
+    COMPOSITE_CARD("composite_card"),
+    COMPOSITE_ELEMENT("composite_element");
 
     private String desc;
 
@@ -25,10 +25,10 @@ public enum NftBoxType {
                 return NFT;
             case "box":
                 return BOX;
-            case "recombine":
-                return RECOMBINE;
-            case "element":
-                return ELEMENT;
+            case "composite_card":
+                return COMPOSITE_CARD;
+            case "composite_element":
+                return COMPOSITE_ELEMENT;
             default:
                 return null;
         }

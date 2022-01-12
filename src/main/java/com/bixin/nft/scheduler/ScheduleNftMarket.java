@@ -269,6 +269,14 @@ public class ScheduleNftMarket {
                 log.error("ScheduleNftMarket buildNft and nftGroupDo is null");
                 return;
             }
+            String nftType = NftBoxType.NFT.getDesc();
+            if (nftGroupDo.getNftMeta().contains("KikoCatCard") && nftGroupDo.getNftBody().contains("KikoCatCard")) {
+                nftType = NftBoxType.COMPOSITE_CARD.getDesc();
+            } else if (nftGroupDo.getNftMeta().contains("KikoCatElement") && nftGroupDo.getNftBody().contains("KikoCatElement")) {
+                nftType = NftBoxType.COMPOSITE_ELEMENT.getDesc();
+            }
+            String finalNftType = nftType;
+
             nftList.forEach(p -> p.getItems().forEach(so -> {
                 NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
                 NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
@@ -285,7 +293,7 @@ public class ScheduleNftMarket {
                         .chainId(so.getId())
                         .nftBoxId(nftInfo.getId())
                         .groupId(nftGroupDo.getId())
-                        .type(NftBoxType.NFT.getDesc())
+                        .type(finalNftType)
                         .name(nftGroupDo.getName())
                         .nftName(nftInfo.getName())
                         .owner(so.getSeller())
