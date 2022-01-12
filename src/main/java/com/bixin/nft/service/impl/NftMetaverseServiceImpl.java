@@ -69,6 +69,19 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     @Resource
     StarConfig idoStarConfig;
 
+
+    public List<NftCompositeCard> getCompositeCard(long nftId) {
+        Map<String, Object> columnMap = new HashMap<>();
+        columnMap.put("info_id", nftId);
+        return compositeCardMapper.selectByMap(columnMap);
+    }
+
+    public List<NftCompositeElement> getCompositeElements(Set<Long> nftIds) {
+        QueryWrapper<NftCompositeElement> wrapper = new QueryWrapper<>();
+        wrapper.lambda().in(NftCompositeElement::getInfoId, nftIds);
+        return compositeElementMapper.selectList(wrapper);
+    }
+
     @Override
     public List<Map<String, Object>> getSumByOccupationGroup() {
         QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();

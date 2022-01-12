@@ -1,5 +1,6 @@
 package com.bixin.nft.bean.vo;
 
+import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
 import com.bixin.nft.bean.dto.TokenDto;
 import lombok.Data;
@@ -131,6 +132,9 @@ public class NftInfoVo {
      * 配置属性
      */
     private NftKikoCatDo properties;
+
+    //nft 素材
+    private List<NftCompositeElement> compositeElements;
 
     /**
      * 支持币种

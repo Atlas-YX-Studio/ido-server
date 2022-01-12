@@ -7,6 +7,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * NFT 卡牌
@@ -406,6 +410,70 @@ public class NftCompositeCard implements Serializable {
      */
     @TableField("update_time")
     private Long updateTime;
+
+
+    public static List<Long> getElementIds(NftCompositeCard card) {
+        List<Long> list = Arrays.asList(
+                card.getBackgroundId(),
+                card.getFurId(),
+                card.getExpressionId(),
+                card.getHeadId(),
+                card.getAccessoriesId(),
+                card.getEyesId(),
+                card.getClothesId(),
+                card.getHatId(),
+                card.getCostumeId(),
+                card.getMakeupId(),
+                card.getShoesId(),
+                card.getMouthId(),
+                card.getEarringId(),
+                card.getNecklaceId(),
+                card.getNeckId(),
+                card.getHairId(),
+                card.getHornId(),
+                card.getHandsId(),
+                card.getBodyId(),
+                card.getSkinId(),
+                card.getTattooId(),
+                card.getPeopleId(),
+                card.getCharacteristicId(),
+                card.getHobbyId(),
+                card.getZodiacId(),
+                card.getActionId(),
+                card.getToysId(),
+                card.getFruitsId(),
+                card.getVegetablesId(),
+                card.getMeatId(),
+                card.getBeveragesId(),
+                card.getMeatId(),
+                card.getBeveragesId(),
+                card.getFoodId(),
+                card.getVehicleId(),
+                card.getWeatherId(),
+                card.getMonthId(),
+                card.getSportsId(),
+                card.getMusicId(),
+                card.getMoviesId(),
+                card.getSeasonId(),
+                card.getOutfitId(),
+                card.getFaceId(),
+                card.getArmId(),
+                card.getLegId(),
+                card.getFootId(),
+                card.getWeaponId(),
+                card.getHelmetId(),
+                card.getArmorId(),
+                card.getMechaId(),
+                card.getPantsId(),
+                card.getSkirtId(),
+                card.getLeftHandId(),
+                card.getRightHandId(),
+                card.getPetsId(),
+                card.getGiftsId(),
+                card.getTailId()
+        );
+        return list;
+    }
 
 
 }

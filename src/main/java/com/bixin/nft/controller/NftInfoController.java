@@ -21,12 +21,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,6 +47,8 @@ public class NftInfoController {
     private NftMarketService nftMarketService;
     @Autowired
     private NftEventService nftEventService;
+    @Resource
+    private NftMetareverseService metareverseService;
 
     /**
      * 元数据
@@ -345,6 +344,19 @@ public class NftInfoController {
         if (ObjectUtils.isEmpty(nftInfoDo)) {
             return R.failed("nftInfoDo不存在，meta = " + nftMeta + "，body = " + nftBody + "，nftId = " + nftId);
         }
+        List<NftCompositeElement> compositeElements = null;
+        if (nftMeta.contains("KikoCatCard") && nftBody.contains("KikoCatCard")) {
+            List<NftCompositeCard> compositeCards = metareverseService.getCompositeCard(nftInfoDo.getId());
+            if (CollectionUtils.isEmpty(compositeCards)) {
+                return R.failed("NftCompositeCard 不存在，nftId = " + nftInfoDo.getNftId());
+            }
+            NftCompositeCard compositeCard = compositeCards.get(0);
+            List<Long> eleNftIds = NftCompositeCard.getElementIds(compositeCard);
+            compositeElements = metareverseService.getCompositeElements(new HashSet<>(eleNftIds));
+            if (CollectionUtils.isEmpty(compositeElements)) {
+                return R.failed("NftCompositeElement 不存在，nftIds = " + new HashSet<>(eleNftIds));
+            }
+        }
         // 获取cat
         NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
         selectNftKikoCatDo.setInfoId(nftInfoDo.getId());
@@ -358,6 +370,9 @@ public class NftInfoController {
             return vo;
         }));
         nftInfoVo.setProperties(nftKikoCatDo);
+        if (!CollectionUtils.isEmpty(compositeElements)) {
+            nftInfoVo.setCompositeElements(compositeElements);
+        }
         return R.success(nftInfoVo);
     }
 
