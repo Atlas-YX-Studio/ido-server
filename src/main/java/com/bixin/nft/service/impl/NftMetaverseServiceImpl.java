@@ -159,14 +159,6 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         });
 
 
-        //校验 需要组合的卡牌是否已经存在，如果存在则直接反悔原有的图片链接，如果不存在，继续下一步
-
-        //http 调用远程组合卡牌服务，获取新组合的卡牌 url
-
-        //查询原始表 nft_info 的 nft 原始数据，然后把新组合的卡牌数据插入到组合卡牌表
-
-        //返回 卡牌的 url
-
         return null;
     }
 
@@ -198,7 +190,6 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         String nftBody_element = idoStarConfig.getNft().getCatadd() + "::KikoCatElement05::KikoCatBody";
         String nftMeta_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatMeta";
         String nftBody_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatBody";
-        String payToken = "";
 
         if ("element".equalsIgnoreCase(nftType)) {
             NftGroupDo groupParam = NftGroupDo.builder()
@@ -210,7 +201,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 log.error("nftMetaverse get groupDo element is empty {}", groupParam);
                 return new NftSelfResourceVo();
             }
-            payToken = groupDo.getPayToken();
+            String payToken = groupDo.getPayToken();
 
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> eleInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
@@ -251,6 +242,9 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .groupId(infoDo.getGroupId())
 //                        .nftIds()
                         .name(infoDo.getName())
+                        .nftMeta(nftMeta_card)
+                        .nftBody(nftBody_card)
+                        .payToken(payToken)
                         .build();
                 elementMap.computeIfAbsent(type, k -> new HashSet<>());
                 elementMap.get(type).add(elementVo);
@@ -282,7 +276,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 log.error("nftMetaverse get groupDo card is empty {}", groupParam);
                 return new NftSelfResourceVo();
             }
-            payToken = groupDo.getPayToken();
+            String payToken = groupDo.getPayToken();
 
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
@@ -316,14 +310,14 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .groupId(infoDo.getGroupId())
                         .chainId(infoDo.getNftId())
                         .nftId(infoDo.getId())
+                        .nftMeta(nftMeta_card)
+                        .nftBody(nftBody_card)
+                        .payToken(payToken)
                         .build();
                 cardList.add(cardVo);
             });
         }
         NftSelfResourceVo resourceVo = NftSelfResourceVo.builder()
-                .nftMeta(nftMeta_card)
-                .nftBody(nftBody_card)
-                .payToken(payToken)
                 .cardList(cardList)
                 .elementMap(elementMap)
                 .build();

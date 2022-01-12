@@ -20,9 +20,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class NftSelfResourceVo {
 
-    private String nftMeta;
-    private String nftBody;
-    private String payToken;
     private Map<String, Set<ElementVo>> elementMap;
     private List<CardVo> cardList;
 
@@ -39,6 +36,9 @@ public class NftSelfResourceVo {
         private Map<Long, Long> chainNftIds;
         private String name;
         private long groupId;
+        private String nftMeta;
+        private String nftBody;
+        private String payToken;
     }
 
     @Data
@@ -55,6 +55,9 @@ public class NftSelfResourceVo {
         private long groupId;
         private long chainId;
         private long nftId;
+        private String nftMeta;
+        private String nftBody;
+        private String payToken;
     }
 
 }

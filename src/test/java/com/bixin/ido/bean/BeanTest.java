@@ -1,6 +1,7 @@
 package com.bixin.ido.bean;
 
 import com.bixin.common.utils.BeanReflectUtil;
+import com.bixin.common.utils.JacksonUtil;
 import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.bo.CompositeCardBean;
 
@@ -71,6 +72,13 @@ public class BeanTest {
             BeanReflectUtil.setFieldValue(card, fieldName, element.getId());
         }
         System.out.println(card);
+
+        System.out.println("------------");
+
+        Map<Integer, NftCompositeCard> map = new HashMap<>();
+        map.put(0, card);
+        map.put(1, card);
+        System.out.println("map:: "+ JacksonUtil.toJson(map));
 
     }
 
