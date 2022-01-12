@@ -20,6 +20,9 @@ import java.util.Set;
 @AllArgsConstructor
 public class NftSelfResourceVo {
 
+    private String nftMeta;
+    private String nftBody;
+    private String payToken;
     private Map<String, Set<ElementVo>> elementMap;
     private List<CardVo> cardList;
 
@@ -33,9 +36,9 @@ public class NftSelfResourceVo {
         private String image;
         private BigDecimal score;
         private long sum;
-        private long groupId;
-        private List<Long> chainIds;
+        private Map<Long, Long> chainNftIds;
         private String name;
+        private long groupId;
     }
 
     @Data
@@ -48,9 +51,10 @@ public class NftSelfResourceVo {
         //0女 1男
         private int sex;
         private String image;
+        private String name;
         private long groupId;
         private long chainId;
-        private String name;
+        private long nftId;
     }
 
 }

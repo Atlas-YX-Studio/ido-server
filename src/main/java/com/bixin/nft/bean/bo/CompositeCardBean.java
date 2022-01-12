@@ -19,11 +19,11 @@ public class CompositeCardBean {
 
     //用户地址
     private String userAddress;
+    private String occupation;
     //自定义卡牌名称
     private String customName;
     //0女 1男
     private int sex;
-
     private long groupId;
 
     private List<CustomCardElement> elementList;

@@ -13,10 +13,8 @@ public enum CardState {
 
     //初始化
     card_init(0),
-    card_combining(1),
-    card_split(2),
-    card_combining_invalid(3),
-    card_split_invalid(4),
+    card_combining_success(1),
+    card_split_success(2),
 
     ;
 

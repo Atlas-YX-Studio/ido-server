@@ -179,7 +179,7 @@ CREATE TABLE `nft_composite_card`
     `info_id`              bigint(20)  NOT NULL COMMENT 'nft_Info id',
     `occupation`           varchar(64) NOT NULL DEFAULT '' COMMENT '职业',
     `custom_name`          varchar(64) NOT NULL DEFAULT '' COMMENT '自定义组合卡牌名称',
-    `state`                tinyint(1)  NOT NULL DEFAULT 0 COMMENT '状态 0有效，1无效',
+    `state`                int(1)  NOT NULL DEFAULT 0 COMMENT '状态 0初始化，1有效(组合成功)，2无效(分解成功)',
     `original`             tinyint(1)  NOT NULL DEFAULT 0 COMMENT '是否初始卡牌',
     `sex`                  tinyint(8)  NOT NULL DEFAULT 0 COMMENT '性别：0女 1男',
     `background_id`        bigint(20)           DEFAULT 0 COMMENT '背景id',

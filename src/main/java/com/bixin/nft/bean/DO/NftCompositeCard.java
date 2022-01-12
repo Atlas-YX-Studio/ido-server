@@ -4,13 +4,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.bixin.common.utils.BeanReflectUtil;
+import com.bixin.nft.bean.bo.CompositeCardBean;
+import com.google.common.base.CaseFormat;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * NFT 卡牌
@@ -55,7 +57,7 @@ public class NftCompositeCard implements Serializable {
      * 状态 0有效，1无效
      */
     @TableField("state")
-    private Boolean state;
+    private Integer state;
 
     /**
      * 是否初始卡牌
@@ -475,5 +477,25 @@ public class NftCompositeCard implements Serializable {
         return list;
     }
 
+    public static NftCompositeCard of(List<CompositeCardBean.CustomCardElement> elements) {
+        NftCompositeCard card = new NftCompositeCard();
+        for (CompositeCardBean.CustomCardElement element : elements) {
+            String eleName = element.getEleName();
+            if (Objects.nonNull(map.get(eleName))) {
+                eleName = map.get(eleName);
+            }
+            String name = eleName.replaceAll("\\s*", "");
+            String fieldName = name.substring(0, 1).toLowerCase()
+                    + name.substring(1, name.length())
+                    + "Id";
+            BeanReflectUtil.setFieldValue(card, fieldName, element.getId());
+        }
+        return card;
+    }
+
+
+    static final Map<String, String> map = new HashMap<>() {{
+        put("Facial Expression", "expression");
+    }};
 
 }

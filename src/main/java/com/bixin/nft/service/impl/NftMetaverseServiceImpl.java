@@ -16,6 +16,7 @@ import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.bo.CompositeCardBean;
 import com.bixin.nft.bean.vo.NftSelfResourceVo;
 import com.bixin.nft.common.enums.CardElementType;
+import com.bixin.nft.common.enums.CardState;
 import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.core.mapper.NftCompositeCardMapper;
 import com.bixin.nft.core.mapper.NftCompositeElementMapper;
@@ -107,7 +108,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .map(NftCompositeElement::getScore)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        //插入新的 nftInfo
+        //插入新的 nftInfo、卡牌
         Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
         NftInfoDo newNftInfo = NftInfoDo.builder()
                 .nftId(0L)
@@ -118,14 +119,37 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .imageLink("")
                 .imageData("")
                 .score(sumScore)
-                // TODO: 2022/1/11 排名
                 .rank(0)
                 .created(false)
 //                .state()
                 .createTime(currentTime)
                 .updateTime(currentTime)
                 .build();
+        // TODO: 2022/1/12  debug
+        log.info("nftMetaverse new nft info: {}", newNftInfo);
         nftInfoService.insert(newNftInfo);
+
+        NftInfoDo newInsertNftInfo = nftInfoService.selectByObject(NftInfoDo.builder()
+                .groupId(bean.getGroupId())
+                .type(NftType.COMPOSITE_CARD.getType())
+                .name(newName)
+                .owner(bean.getUserAddress())
+                .score(sumScore)
+                .createTime(currentTime)
+                .updateTime(currentTime)
+                .build());
+        NftCompositeCard newNftCompositeCard = NftCompositeCard.of(bean.getElementList());
+        newNftCompositeCard.setInfoId(newInsertNftInfo.getId());
+        newNftCompositeCard.setOccupation(bean.getOccupation());
+        newNftCompositeCard.setCustomName(bean.getCustomName());
+        newNftCompositeCard.setState(CardState.card_init.getCode());
+        newNftCompositeCard.setOriginal(false);
+        newNftCompositeCard.setSex((byte) bean.getSex());
+        newNftCompositeCard.setCreateTime(currentTime);
+        newNftCompositeCard.setUpdateTime(currentTime);
+        // TODO: 2022/1/12  debug
+        log.info("nftMetaverse new nft card info: {}", newNftCompositeCard);
+        compositeCardMapper.insert(newNftCompositeCard);
 
         //元素排序 key=order,value=elementId
         Map<Long, Long> orderMap = new TreeMap<>();
@@ -174,6 +198,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         String nftBody_element = idoStarConfig.getNft().getCatadd() + "::KikoCatElement05::KikoCatBody";
         String nftMeta_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatMeta";
         String nftBody_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatBody";
+        String payToken = "";
 
         if ("element".equalsIgnoreCase(nftType)) {
             NftGroupDo groupParam = NftGroupDo.builder()
@@ -185,6 +210,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 log.error("nftMetaverse get groupDo element is empty {}", groupParam);
                 return new NftSelfResourceVo();
             }
+            payToken = groupDo.getPayToken();
+
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> eleInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(eleInfoIds)) {
@@ -203,7 +230,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     .collect(Collectors.groupingBy(NftInfoDo::getId));
 
             Map<String, Map<String, Long>> sumMap = new HashMap<>();
-            Map<String, Map<String, List<Long>>> nftIdsMap = new HashMap<>();
+            Map<String, Map<String, Map<Long,Long>>> nftIdsMap = new HashMap<>();
             compositeElements.forEach(p -> {
                 List<NftInfoDo> infoDos = infoMap.get(p.getInfoId());
                 if (CollectionUtils.isEmpty(infoDos)) {
@@ -233,16 +260,16 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 sumMap.get(type).put(property, Objects.isNull(tmpSum) ? 1 : tmpSum + 1);
 
                 nftIdsMap.computeIfAbsent(type, k -> new HashMap<>());
-                nftIdsMap.get(type).computeIfAbsent(property, k -> new ArrayList<>());
-                nftIdsMap.get(type).get(property).add(infoDo.getNftId());
+                nftIdsMap.get(type).computeIfAbsent(property, k -> new HashMap<>());
+                nftIdsMap.get(type).get(property).put(infoDo.getNftId(), infoDo.getId());
             });
 
             elementMap.forEach((key, value) -> {
                 Map<String, Long> propertyMap = sumMap.get(key);
-                Map<String, List<Long>> nftIdMap = nftIdsMap.get(key);
+                Map<String, Map<Long,Long>> nftIdMap = nftIdsMap.get(key);
                 value.forEach(p -> {
                     p.setSum(propertyMap.get(p.getProperty()));
-                    p.setChainIds(nftIdMap.get(p.getProperty()));
+                    p.setChainNftIds(nftIdMap.get(p.getProperty()));
                 });
             });
         } else if ("split".equalsIgnoreCase(nftType)) {
@@ -255,6 +282,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 log.error("nftMetaverse get groupDo card is empty {}", groupParam);
                 return new NftSelfResourceVo();
             }
+            payToken = groupDo.getPayToken();
+
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(cardInfoIds)) {
@@ -283,14 +312,18 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .customName(p.getCustomName())
                         .sex(p.getSex())
                         .image(infoDo.getImageLink())
+                        .name(infoDo.getName())
                         .groupId(infoDo.getGroupId())
                         .chainId(infoDo.getNftId())
-                        .name(infoDo.getName())
+                        .nftId(infoDo.getId())
                         .build();
                 cardList.add(cardVo);
             });
         }
         NftSelfResourceVo resourceVo = NftSelfResourceVo.builder()
+                .nftMeta(nftMeta_card)
+                .nftBody(nftBody_card)
+                .payToken(payToken)
                 .cardList(cardList)
                 .elementMap(elementMap)
                 .build();
