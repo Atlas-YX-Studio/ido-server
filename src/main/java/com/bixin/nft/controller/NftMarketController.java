@@ -35,13 +35,13 @@ public class NftMarketController {
 
     @GetMapping("/getALL")
     public P getALlByPage(@RequestParam(value = "groupId", defaultValue = "0") long groupId,
-                          @RequestParam(value = "nftType", defaultValue = "0") int nftType,
+                          @RequestParam(value = "nftType", defaultValue = "") String nftType,
                           @RequestParam(value = "sort", defaultValue = "0") int sort,
                           @RequestParam(value = "sortRule", defaultValue = "") String sortRule,
                           @RequestParam(value = "pageSize", defaultValue = "20") long pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "0") long pageNum) {
 
-        if (groupId < 0 || nftType < 0 || sort < 0 || pageNum < 0 || pageSize <= 0
+        if (groupId < 0 || sort < 0 || pageNum < 0 || pageSize <= 0
                 || StringUtils.isBlank(sortRule)) {
             return P.failed("parameter is invalid");
         }
