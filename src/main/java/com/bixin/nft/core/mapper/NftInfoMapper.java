@@ -52,4 +52,7 @@ public interface NftInfoMapper {
 
 
     List<NftInfoDo> selectByPage(Map<String,Object> map);
+
+    List<NftInfoDo> selectByIds(List<Long> list);
+
 }

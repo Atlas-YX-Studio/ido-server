@@ -168,30 +168,39 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         log.info("nftMetaverse new nft card info: {}", newNftCompositeCard);
         compositeCardMapper.insert(newNftCompositeCard);
 
-        //元素排序 key=order,value=elementId
+        //元素排序 key=order,value=element nftId
         Map<Long, Long> orderMap = new TreeMap<>();
         bean.getElementList().forEach(p -> {
             long maskOrder = CardElementType.of(p.getEleName()).getMaskOrder();
             orderMap.put(maskOrder, p.getId());
         });
 
+//        elementNftIds
+        List<NftInfoDo> infoDos = nftInfoMapper.selectByIds(elementNftIds);
+        if (CollectionUtils.isEmpty(infoDos)) {
+            throw new BizException("element nft info id not exits : " + elementNftIds);
+        }
+        Map<Long, List<NftInfoDo>> nftInfoGroup = infoDos.stream()
+                .collect(Collectors.groupingBy(NftInfoDo::getId));
         Map<Long, List<NftCompositeElement>> cardGroupMap = elementList.stream()
                 .collect(Collectors.groupingBy(NftCompositeElement::getInfoId));
 
         Map<Integer, CreateCompositeCardBean.Layer> layerMap = new TreeMap<>();
         AtomicInteger count = new AtomicInteger(0);
-        String finalNewName = newName;
         orderMap.forEach((key, value) -> {
             List<NftCompositeElement> nftElements = cardGroupMap.get(value);
-            if (CollectionUtils.isEmpty(nftElements)) {
-                log.error("nftMetaverse get nftElements is null {}, {}", value, cardGroupMap);
+            List<NftInfoDo> infoList = nftInfoGroup.get(value);
+            if (CollectionUtils.isEmpty(nftElements) || CollectionUtils.isEmpty(infoList)) {
+                log.error("nftMetaverse get nftElements is null {}, {}, {}",
+                        value, cardGroupMap, nftInfoGroup);
                 return;
             }
             NftCompositeElement compositeElement = nftElements.get(0);
+            NftInfoDo info = infoList.get(0);
             layerMap.put(count.getAndIncrement(), CreateCompositeCardBean.Layer.builder()
                     .nft_id(compositeElement.getInfoId())
-                    .name(finalNewName)
-                    .property(compositeElement.getProperty())
+                    .name(info.getName())
+                    .property(CardElementType.of(compositeElement.getType()).getDesc())
                     .score(compositeElement.getScore())
                     .build());
         });

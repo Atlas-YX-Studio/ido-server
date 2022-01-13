@@ -1,5 +1,6 @@
 package com.bixin.core.client;
 
+import com.bixin.nft.bean.bo.CreateCompositeCardBean;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
