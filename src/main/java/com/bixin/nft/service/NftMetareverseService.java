@@ -23,7 +23,7 @@ public interface NftMetareverseService {
 
     List<Map<String, Object>> getSumByOccupationGroup();
 
-    MutablePair<Long, String> compositeCard(CompositeCardBean bean);
+     String compositeCard(CompositeCardBean bean);
 
     R analysisCard(String userAddress, long cardId);
 
