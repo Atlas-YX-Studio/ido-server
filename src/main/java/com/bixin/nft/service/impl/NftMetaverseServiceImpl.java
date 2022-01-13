@@ -111,7 +111,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         String[] nameArray = maxNameInfo.get().getName().split("#");
         String newName = nameArray[0];
         if (nameArray.length == 2) {
-            newName += " # " + (NumberUtils.toInt(nameArray[1].trim(), -1) + 1);
+            newName += "  # " + (NumberUtils.toInt(nameArray[1].trim(), -1) + 1);
         } else {
             newName += " # 1";
         }
