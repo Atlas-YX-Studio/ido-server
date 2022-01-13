@@ -179,6 +179,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
         Map<Integer, CreateCompositeCardBean.Layer> layerMap = new TreeMap<>();
         AtomicInteger count = new AtomicInteger(0);
+        String finalNewName = newName;
         orderMap.forEach((key, value) -> {
             List<NftCompositeElement> nftElements = cardGroupMap.get(value);
             if (CollectionUtils.isEmpty(nftElements)) {
@@ -188,7 +189,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             NftCompositeElement compositeElement = nftElements.get(0);
             layerMap.put(count.getAndIncrement(), CreateCompositeCardBean.Layer.builder()
                     .nft_id(compositeElement.getInfoId())
-                    .name(newName)
+                    .name(finalNewNßame)
                     .property(compositeElement.getProperty())
                     .score(compositeElement.getScore())
                     .build());
