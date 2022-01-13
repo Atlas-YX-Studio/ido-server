@@ -20,6 +20,7 @@ import com.bixin.nft.bean.bo.CreateCompositeCardBean;
 import com.bixin.nft.bean.vo.NftSelfResourceVo;
 import com.bixin.nft.common.enums.CardElementType;
 import com.bixin.nft.common.enums.CardState;
+import com.bixin.nft.common.enums.NftInfoState;
 import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.core.mapper.NftCompositeCardMapper;
 import com.bixin.nft.core.mapper.NftCompositeElementMapper;
@@ -127,7 +128,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .score(sumScore)
                 .rank(0)
                 .created(false)
-                .state("init")
+                .state(NftInfoState.INIT.getDesc())
                 .createTime(currentTime)
                 .updateTime(currentTime)
                 .build();

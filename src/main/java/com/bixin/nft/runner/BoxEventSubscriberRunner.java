@@ -1,23 +1,29 @@
 package com.bixin.nft.runner;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.bixin.common.config.StarConfig;
 import com.bixin.common.factory.NamedThreadFactory;
-import com.bixin.core.redis.RedisCache;
 import com.bixin.common.utils.LocalDateTimeUtil;
+import com.bixin.core.redis.RedisCache;
+import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftEventDo;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
-import com.bixin.nft.bean.dto.*;
+import com.bixin.nft.bean.dto.BoxOpenEventDto;
+import com.bixin.nft.bean.dto.NFTResolveEventDto;
+import com.bixin.nft.bean.dto.NftMintEventtDto;
+import com.bixin.nft.common.enums.CardState;
+import com.bixin.nft.common.enums.NftEventType;
+import com.bixin.nft.common.enums.NftInfoState;
+import com.bixin.nft.service.NftCompositeCardService;
 import com.bixin.nft.service.NftEventService;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
-import com.bixin.nft.common.enums.NftEventType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.DefaultApplicationArguments;
@@ -28,6 +34,7 @@ import org.starcoin.bean.EventFilter;
 import org.starcoin.bean.EventNotification;
 import org.starcoin.bean.EventNotificationResult;
 import org.web3j.protocol.websocket.WebSocketService;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -51,15 +58,15 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
     StarConfig idoStarConfig;
     @Resource
     RedisCache redisCache;
+    @Resource
+    NftEventService nftEventService;
+    @Resource
+    NftGroupService nftGroupService;
+    @Resource
+    NftInfoService nftInfoService;
+    @Resource
+    NftCompositeCardService nftCompositeCardService;
 
-    @Autowired
-    private NftEventService nftEventService;
-
-    @Autowired
-    private NftGroupService nftGroupService;
-
-    @Autowired
-    private NftInfoService nftInfoService;
 
     AtomicLong atomicSum = new AtomicLong(0);
     static final long initTime = 2000L;
@@ -95,7 +102,7 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args){
+    public void run(ApplicationArguments args) {
         poolExecutor.execute(() -> process(args));
     }
 
@@ -126,21 +133,27 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
                 String tagString = getEventName(eventResult.getTypeTag());
                 NftEventDo nftEventDo = null;
                 // 开盲盒
-                if(NftEventType.BOX_OPEN_EVENT.getDesc().equals(tagString)){
+                if (NftEventType.BOX_OPEN_EVENT.getDesc().equals(tagString)) {
                     log.info("BoxEventSubscriberRunner 铸造");
                     BoxOpenEventDto dto = mapper.convertValue(data, BoxOpenEventDto.class);
                     nftEventDo = BoxOpenEventDto.of(dto);
                 }
                 // 铸造
-                if(NftEventType.NFT_MINT_EVENT.getDesc().equals(tagString)){
+                if (NftEventType.NFT_MINT_EVENT.getDesc().equals(tagString)) {
                     log.info("NftEventSubscriberRunner 铸造");
                     NftMintEventtDto dto = mapper.convertValue(data, NftMintEventtDto.class);
                     nftEventDo = NftMintEventtDto.of(dto);
                 }
-                if(!ObjectUtils.isEmpty(nftEventDo)){
-                    setGroupIdAndInfoId(nftEventDo,eventResult.getTypeTag(),tagString);
+                // 分解
+                if (NftEventType.NFT_RESOLVE_EVENT.getDesc().equals(tagString)) {
+                    log.info("NftEventSubscriberRunner 铸造");
+                    NFTResolveEventDto dto = mapper.convertValue(data, NFTResolveEventDto.class);
+                    nftEventDo = NFTResolveEventDto.of(dto);
+                }
+                if (!ObjectUtils.isEmpty(nftEventDo)) {
+                    setGroupIdAndInfoId(nftEventDo, eventResult.getTypeTag(), tagString);
                     nftEventService.insert(nftEventDo);
-                }else{
+                } else {
                     log.error("BoxEventSubscriberRunner nftEventDo 为空");
                 }
             });
@@ -157,35 +170,65 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
     }
 
     // 设置 infoId 和 groupId
-    private void setGroupIdAndInfoId(NftEventDo nftEventDo,String typeTag,String eventType) {
+    private void setGroupIdAndInfoId(NftEventDo nftEventDo, String typeTag, String eventType) {
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
-        if(ObjectUtils.isEmpty(nftGroupDo)){
-            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}",meta,body);
-            return ;
+        if (ObjectUtils.isEmpty(nftGroupDo)) {
+            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+            return;
         }
-        NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
-        NftInfoDo nftInfoDo = nftInfoService.selectByObject(NftInfoParm);
-        if(ObjectUtils.isEmpty(nftInfoDo)){
-            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}",nftGroupDo.getId(),nftEventDo.getNftId());
-            return ;
+        NftInfoDo.NftInfoDoBuilder nftInfoDoBuilder = NftInfoDo.builder()
+                .groupId(nftGroupDo.getId())
+                .nftId(nftEventDo.getNftId());
+        if (NftEventType.NFT_MINT_EVENT.getDesc().equals(eventType)) {
+            nftInfoDoBuilder.state(NftInfoState.SUCCESS.getDesc());
+        }
+        NftInfoDo nftInfoParm = nftInfoDoBuilder.build();
+
+        NftInfoDo nftInfoDo = nftInfoService.selectByObject(nftInfoParm);
+        if (ObjectUtils.isEmpty(nftInfoDo)) {
+            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+            return;
         }
         nftEventDo.setInfoId(nftInfoDo.getId());
         nftEventDo.setGroupId(nftGroupDo.getId());
 
         try {
-            if(NftEventType.BOX_OPEN_EVENT.getDesc().equals(eventType)){
+            if (NftEventType.BOX_OPEN_EVENT.getDesc().equals(eventType)) {
                 nftInfoDo.setOwner(nftEventDo.getCreator());
                 nftInfoDo.setUpdateTime(System.currentTimeMillis());
                 nftInfoService.update(nftInfoDo);
             }
-        }catch (Exception e){
-            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :",e);
+        } catch (Exception e) {
+            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :", e);
         }
 
-        return ;
+        try {
+            if (NftEventType.NFT_MINT_EVENT.getDesc().equals(eventType)) {
+                nftCompositeCardService.update(
+                        NftCompositeCard.builder()
+                                .state(CardState.card_combining_success.getCode())
+                                .build(),
+                        Wrappers.<NftCompositeCard>lambdaUpdate()
+                                .eq(NftCompositeCard::getInfoId, nftInfoDo.getId())
+                );
+            }
+            if (NftEventType.NFT_RESOLVE_EVENT.getDesc().equals(eventType)) {
+                nftCompositeCardService.update(
+                        NftCompositeCard.builder()
+                                .state(CardState.card_split_success.getCode())
+                                .build(),
+                        Wrappers.<NftCompositeCard>lambdaUpdate()
+                                .eq(NftCompositeCard::getInfoId, nftInfoDo.getId())
+                );
+            }
+        } catch (Exception e) {
+            log.error("NftEventSubscriberRunner update nft_composite_card exception", e);
+        }
+
+        return;
     }
 
     private String getMeta(String typeTag) {
