@@ -99,6 +99,7 @@ public class StarConfig {
         private String imageBasePath;
         private String imageInfoApi;
         private String imageGroupApi;
+        private BigDecimal compositeFee;
     }
 
     @Data

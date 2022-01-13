@@ -25,7 +25,6 @@ CREATE TABLE `nft_group`
     `owner`               varchar(128) NOT NULL COMMENT '所有者',
     `selling_price`       int(11)      NOT NULL COMMENT '发售价格',
     `selling_time`        bigint(20)   NOT NULL COMMENT '开售时间',
-    `composite_price`     int          DEFAULT 0 COMMENT '组合手续费',
     `element_id`          bigint(20)   DEFAULT 0 COMMENT '元素id',
     `cn_description`      text COMMENT '中文描述',
     `en_description`      text COMMENT '英文描述',

@@ -166,11 +166,6 @@ public class NftGroupVo implements Serializable {
     private List<TokenDto> supportToken;
 
     /**
-     * 组合手续费
-     */
-    private Integer compositePrice;
-
-    /**
      * 元素id
      */
     private Long elementId;

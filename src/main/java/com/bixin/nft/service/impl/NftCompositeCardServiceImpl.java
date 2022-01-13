@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bixin.common.code.IdoErrorCode;
 import com.bixin.common.config.StarConfig;
 import com.bixin.common.exception.IdoException;
+import com.bixin.common.utils.BigDecimalUtil;
 import com.bixin.common.utils.TypeArgsUtil;
 import com.bixin.ido.common.enums.NftGroupStatus;
 import com.bixin.nft.bean.DO.NftCompositeCard;
@@ -307,8 +308,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
      * @return
      */
     private boolean deployCompositeCardContract(NftGroupDo nftGroupDo) {
-        double payTokenDecimal = Math.pow(10, nftGroupDo.getPayTokenPrecision());
-        BigInteger compositePrice = BigInteger.valueOf(nftGroupDo.getCompositePrice() * (long) payTokenDecimal);
+        BigInteger compositePrice = BigDecimalUtil.addPrecision(starConfig.getNft().getCompositeFee(), 9).toBigInteger();
         String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
         String path = "contract/nft/" + moduleName + ".mv";
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj

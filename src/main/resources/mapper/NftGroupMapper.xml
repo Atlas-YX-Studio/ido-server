@@ -24,7 +24,6 @@
     <result column="owner" jdbcType="VARCHAR" property="owner" />
     <result column="selling_price" jdbcType="INTEGER" property="sellingPrice" />
     <result column="selling_time" jdbcType="BIGINT" property="sellingTime" />
-    <result column="composite_price" jdbcType="INTEGER" property="compositePrice" />
     <result column="enabled" jdbcType="BIT" property="enabled" />
     <result column="offering" jdbcType="BIT" property="offering" />
     <result column="mining" jdbcType="BIT" property="mining" />
@@ -84,7 +83,7 @@
             #{boxTokenLogo,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR}, #{payTokenPrecision,jdbcType=INTEGER},
             #{nftMeta,jdbcType=VARCHAR}, #{nftBody,jdbcType=VARCHAR}, #{nftTypeInfo,jdbcType=VARCHAR},
             #{nftTypeImageLink,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR},
-            #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT}, #{compositePrice,jdbcType=INTEGER},
+            #{sellingPrice,jdbcType=INTEGER}, #{sellingTime,jdbcType=BIGINT}, #{enabled,jdbcType=BIT},
             #{offering,jdbcType=BIT}, #{mining,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{elementId,jdbcType=BIGINT},
             #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{supportToken,jdbcType=LONGVARCHAR}, #{nftTypeImageData,jdbcType=LONGVARCHAR},
             #{cnDescription,jdbcType=LONGVARCHAR}, #{enDescription,jdbcType=LONGVARCHAR}, #{cnRuleDesc,jdbcType=LONGVARCHAR},
@@ -153,9 +152,6 @@
       </if>
       <if test="sellingTime != null">
         selling_time = #{sellingTime,jdbcType=BIGINT},
-      </if>
-      <if test="compositePrice != null">
-        composite_price = #{compositePrice,jdbcType=INTEGER},
       </if>
       <if test="enabled != null">
         enabled = #{enabled,jdbcType=BIT},
@@ -230,7 +226,6 @@
         owner = #{owner,jdbcType=VARCHAR},
         selling_price = #{sellingPrice,jdbcType=INTEGER},
         selling_time = #{sellingTime,jdbcType=BIGINT},
-        composite_price = #{compositePrice,jdbcType=INTEGER},
         enabled = #{enabled,jdbcType=BIT},
         offering = #{offering,jdbcType=BIT},
         mining = #{mining,jdbcType=BIT},
@@ -313,9 +308,6 @@
       </if>
       <if test="null != sellingTime">
         and selling_time = #{sellingTime,jdbcType=BIGINT}
-      </if>
-      <if test="null != compositePrice">
-        and composite_price = #{compositePrice,jdbcType=INTEGER}
       </if>
       <if test="null != enabled">
         and enabled = #{enabled,jdbcType=BIT}

@@ -129,11 +129,6 @@ public class NftGroupDo implements Serializable {
     private Long sellingTime;
 
     /**
-     * 组合手续费
-     */
-    private Integer compositePrice;
-
-    /**
      * 是否激活
      */
     private Boolean enabled;
