@@ -35,6 +35,7 @@ public class NftSelfResourceVo {
         private long sum;
         private Map<Long, Long> chainNftIds;
         private String name;
+        private String eleName;
         private long groupId;
         private String nftMeta;
         private String nftBody;
