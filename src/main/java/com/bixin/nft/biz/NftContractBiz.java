@@ -456,8 +456,6 @@ public class NftContractBiz {
      * @return
      */
     public boolean deployNFTContractWithImage(NftGroupDo nftGroupDo) {
-        double payTokenDecimal = Math.pow(10, nftGroupDo.getPayTokenPrecision());
-        BigInteger compositePrice = BigInteger.valueOf(nftGroupDo.getCompositePrice() * (long) payTokenDecimal);
         String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
         String path = "contract/nft/" + moduleName + ".mv";
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj

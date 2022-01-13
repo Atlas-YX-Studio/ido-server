@@ -1,6 +1,7 @@
 package com.bixin.nft.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bixin.common.config.StarConfig;
 import com.bixin.common.constants.CommonConstant;
 import com.bixin.common.response.P;
 import com.bixin.common.response.R;
@@ -49,6 +50,8 @@ public class NftInfoController {
     private NftEventService nftEventService;
     @Resource
     private NftMetareverseService metareverseService;
+    @Resource
+    private StarConfig starConfig;
 
     /**
      * 元数据
@@ -78,6 +81,7 @@ public class NftInfoController {
                     return json;
                 }).collect(Collectors.toList());
         result.put("occupations", List.of(occupations));
+        result.put("compositeFee", starConfig.getNft().getCompositeFee());
 
         return R.success(result);
     }
