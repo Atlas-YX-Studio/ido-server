@@ -57,7 +57,7 @@
                           score, rank, created, state, create_time,
                           update_time, image_data)
     values (#{id,jdbcType=BIGINT}, #{nftId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
-            #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, #{imageLink,jdbcType=VARCHAR},
+            #{name,jdbcType=VARCHAR},  #{type,jdbcType=VARCHAR},#{owner,jdbcType=VARCHAR}, #{imageLink,jdbcType=VARCHAR},
             #{score,jdbcType=DECIMAL}, #{rank,jdbcType=INTEGER}, #{created,jdbcType=BIT}, #{state,jdbcType=VARCHAR},
             #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{imageData,jdbcType=LONGVARCHAR})
   </insert>

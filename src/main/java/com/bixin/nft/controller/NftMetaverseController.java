@@ -8,9 +8,11 @@ import com.bixin.nft.service.NftMetareverseService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -65,14 +67,15 @@ public class NftMetaverseController {
         String requestId = UUID.randomUUID().toString().replaceAll("-", "");
 
         try {
-            String image = redisCache.tryGetDistributedLock(
+            MutablePair<Long, String> pair = redisCache.tryGetDistributedLock(
                     key,
                     requestId,
                     lockExpiredTime,
                     lockNextExpiredTime,
                     () -> nftMetareverseService.compositeCard(bean)
             );
-            return R.success(image);
+            return R.success(Map.of("id", pair.getLeft(),
+                    "image", pair.getRight()));
         } catch (Exception e) {
             log.error("create nft image exception", e);
             return R.failed(e.getMessage());

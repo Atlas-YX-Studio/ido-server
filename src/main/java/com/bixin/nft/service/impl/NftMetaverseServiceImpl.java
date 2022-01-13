@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -99,7 +100,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     }
 
     @Transactional
-    public String compositeCard(CompositeCardBean bean) {
+    public MutablePair<Long, String> compositeCard(CompositeCardBean bean) {
         long eleGroupId = bean.getGroupId();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(eleGroupId).build());
         //name编号递增
@@ -213,13 +214,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         ResponseEntity<String> resp = triple.getLeft();
 //        String url = triple.getMiddle();
 //        HttpEntity<CreateCompositeCardBean> httpEntity = triple.getRight();
-        String imgUrl = "";
+        String imageUrl = "";
         if (resp.getStatusCode() == HttpStatus.OK) {
-            imgUrl = resp.getBody();
+            imageUrl = resp.getBody();
         } else {
             throw new BizException("create nft img is failed, param: " + createCompositeCardParam);
         }
-        return imgUrl;
+        return new MutablePair<>(newInsertNftInfo.getId(), imageUrl);
     }
 
     @Override

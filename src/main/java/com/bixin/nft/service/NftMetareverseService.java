@@ -5,6 +5,7 @@ import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.bo.CompositeCardBean;
 import com.bixin.nft.bean.vo.NftSelfResourceVo;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public interface NftMetareverseService {
 
     List<Map<String, Object>> getSumByOccupationGroup();
 
-    String compositeCard(CompositeCardBean bean);
+    MutablePair<Long, String> compositeCard(CompositeCardBean bean);
 
     R analysisCard(String userAddress, long cardId);
 
