@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bixin.common.config.StarConfig;
 import com.bixin.common.exception.BizException;
 import com.bixin.common.response.R;
+import com.bixin.common.utils.JacksonUtil;
 import com.bixin.common.utils.LocalDateTimeUtil;
 import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.core.client.ChainClientHelper;
@@ -209,16 +210,17 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         // TODO: 2022/1/13
         log.info("nftMetaverse create nft image param: {}", createCompositeCardParam);
 
-        MutableTriple<ResponseEntity<String>, String, HttpEntity<CreateCompositeCardBean>> triple = httpClientHelper.getCreateImgResp(createCompositeCardParam);
+        String paramValue = JacksonUtil.toJson(createCompositeCardParam);
+        MutableTriple<ResponseEntity<String>, String, HttpEntity<String>> triple = httpClientHelper.getCreateImgResp(paramValue);
         ResponseEntity<String> resp = triple.getLeft();
         String url = triple.getMiddle();
-        HttpEntity<CreateCompositeCardBean> httpEntity = triple.getRight();
+//        HttpEntity<String> httpEntity = triple.getRight();
         String imageUrl = "";
-        if (resp.getStatusCode() == HttpStatus.OK) {
+        if (resp.getStatusCode() == HttpStatus.OK && resp.getBody().startsWith("http")) {
             imageUrl = resp.getBody();
         } else {
             throw new BizException("create nft img is failed, resp: "
-                    + resp + "， param: " + createCompositeCardParam + ", url: " + url);
+                    + resp + "， param: " + paramValue + ", url: " + url);
         }
         return imageUrl;
     }
