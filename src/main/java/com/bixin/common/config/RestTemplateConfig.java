@@ -16,8 +16,8 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class RestTemplateConfig {
 
-    static final int readTimeout = 5000;
-    static final int connectTimeout = 5000;
+    static final int readTimeout = 10000;
+    static final int connectTimeout = 10000;
 
     @Bean
     public RestTemplate restTemplate(ClientHttpRequestFactory factory) {

@@ -80,6 +80,12 @@ public class BeanTest {
         map.put(1, card);
         System.out.println("map:: "+ JacksonUtil.toJson(map));
 
+
+        String value = "{'status': 'success', 'message': '上传成功', 'url': 'https://imagedelivery.net/3mRLd_IbBrrQFSP57PNsVw/19b5cb51-9cf3-4cbf-1c03-a6ee0cec2900/public'}";
+        String s = value.replaceAll("'", "\"");
+        System.out.println(s);
+        Map<String,Object> map1 = JacksonUtil.readValue(s, Map.class);
+        System.out.println(map1);
     }
 
 }

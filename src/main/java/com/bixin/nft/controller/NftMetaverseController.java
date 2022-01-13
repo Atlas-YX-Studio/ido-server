@@ -67,14 +67,14 @@ public class NftMetaverseController {
         String requestId = UUID.randomUUID().toString().replaceAll("-", "");
 
         try {
-            String image = redisCache.tryGetDistributedLock(
+            Map<String,Object> map = redisCache.tryGetDistributedLock(
                     key,
                     requestId,
                     lockExpiredTime,
                     lockNextExpiredTime,
                     () -> nftMetareverseService.compositeCard(bean)
             );
-            return R.success(Map.of("image", image));
+            return R.success(map);
         } catch (Exception e) {
             log.error("create nft image exception", e);
             return R.failed(e.getMessage());

@@ -100,7 +100,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     }
 
     @Transactional
-    public String compositeCard(CompositeCardBean bean) {
+    public Map<String, Object> compositeCard(CompositeCardBean bean) {
         long eleGroupId = bean.getGroupId();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(eleGroupId).build());
         //name编号递增
@@ -237,7 +237,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             throw new BizException("create nft img is failed, resp: "
                     + resp + "， param: " + paramValue + ", url: " + url);
         }
-        return imageUrl;
+        return Map.of("nftInfoId", newNftInfo.getId(), "image", imageUrl);
     }
 
     @Override
