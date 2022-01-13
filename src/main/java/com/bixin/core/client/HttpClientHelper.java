@@ -21,7 +21,7 @@ public class HttpClientHelper {
     @Resource
     RestTemplate restTemplate;
 
-    static final String CREATE_NFT_IMG_URL = "http://10.13.43.146:8080/create_nft";
+    static final String CREATE_NFT_IMG_URL = "http://10.13.43.146:8080/create_nft/";
 
 
     public MutableTriple<ResponseEntity<String>, String, HttpEntity<CreateCompositeCardBean>> getCreateImgResp(CreateCompositeCardBean bean) {
