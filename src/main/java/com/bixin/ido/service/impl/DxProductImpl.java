@@ -151,7 +151,7 @@ public class DxProductImpl implements IDxProductService {
 
         IdoDxProductDDL dxProductDDL = new IdoDxProductDDL();
         IdoDxProductDDL.Criteria criteria = dxProductDDL.createCriteria();
-        criteria.andStateEqualTo(ProductState.FINISH.getDesc());
+        criteria.andStateIn(List.of(ProductState.PROCESSING.getDesc(), ProductState.FINISH.getDesc()));
         criteria.andEndTimeGreaterThan(currentTime - intervalTime);
 
         return idoDxProductMapper.selectByDDL(dxProductDDL);

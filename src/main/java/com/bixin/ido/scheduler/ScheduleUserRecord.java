@@ -3,6 +3,7 @@ package com.bixin.ido.scheduler;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.bixin.common.utils.BigDecimalUtil;
 import com.bixin.ido.core.client.ChainClientHelper;
 import com.bixin.ido.bean.DO.IdoDxProduct;
 import com.bixin.ido.bean.DO.IdoDxUserRecord;
@@ -51,7 +52,7 @@ public class ScheduleUserRecord {
     //只查询项目结束最近 N 天的数据 / 毫秒
     static final long lastIntervalTime = 24 * 60 * 60 * 1000;
     //大于3次更新的记录不再更新
-    static final short maxTokenVersion = 2;
+    static final short maxTokenVersion = 100;
     //每次查询 N 条 用户记录
     static final long pageSize = 2000;
 
@@ -123,7 +124,8 @@ public class ScheduleUserRecord {
                                                 String tokenAmount = (String) pledgeMap.get("U128");
 
                                                 u.setTokenVersion((short) (u.getTokenVersion() + 1));
-                                                u.setTokenAmount(new BigDecimal(tokenAmount));
+                                                // todo 币种精度
+                                                u.setTokenAmount(BigDecimalUtil.removePrecision(new BigDecimal(tokenAmount), 9));
                                                 u.setUpdateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
 
                                                 idoDxUserRecordService.updateUserRecord(u);
