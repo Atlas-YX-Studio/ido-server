@@ -225,9 +225,15 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         String url = triple.getMiddle();
 //        HttpEntity<String> httpEntity = triple.getRight();
         String imageUrl = "";
-        if (resp.getStatusCode() == HttpStatus.OK && resp.getBody().startsWith("http")) {
-            imageUrl = resp.getBody();
-        } else {
+        boolean hasResult = false;
+        if (resp.getStatusCode() == HttpStatus.OK) {
+            Map<String, String> map = JacksonUtil.readValue(resp.getBody(), Map.class);
+            if ("success".equalsIgnoreCase(map.get("status"))) {
+                imageUrl = map.get("url");
+                hasResult = true;
+            }
+        }
+        if (!hasResult) {
             throw new BizException("create nft img is failed, resp: "
                     + resp + "， param: " + paramValue + ", url: " + url);
         }
