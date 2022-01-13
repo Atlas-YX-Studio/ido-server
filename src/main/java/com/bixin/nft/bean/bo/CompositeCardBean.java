@@ -33,7 +33,7 @@ public class CompositeCardBean {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CustomCardElement {
-        //素材 id
+        //素材 nftId
         private Long id;
         //素材名称
         private String eleName;

@@ -5,15 +5,18 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bixin.common.config.StarConfig;
+import com.bixin.common.exception.BizException;
 import com.bixin.common.response.R;
 import com.bixin.common.utils.LocalDateTimeUtil;
 import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.core.client.ChainClientHelper;
+import com.bixin.core.client.HttpClientHelper;
 import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.bo.CompositeCardBean;
+import com.bixin.nft.bean.bo.CreateCompositeCardBean;
 import com.bixin.nft.bean.vo.NftSelfResourceVo;
 import com.bixin.nft.common.enums.CardElementType;
 import com.bixin.nft.common.enums.CardState;
@@ -43,6 +46,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -69,6 +73,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     NftInfoService nftInfoService;
     @Resource
     StarConfig idoStarConfig;
+    @Resource
+    HttpClientHelper httpClientHelper;
 
 
     public List<NftCompositeCard> getCompositeCard(long nftId) {
@@ -99,10 +105,10 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         String[] nameArray = maxNameInfo.get().getName().split("#");
         String newName = nameArray[0] + " # " + (NumberUtils.toInt(nameArray[1].trim(), -1) + 1);
 
-        List<Long> elementIds = bean.getElementList().stream()
+        List<Long> elementNftIds = bean.getElementList().stream()
                 .map(CompositeCardBean.CustomCardElement::getId)
                 .collect(Collectors.toList());
-        List<NftCompositeElement> elementList = compositeElementMapper.selectBatchIds(elementIds);
+        List<NftCompositeElement> elementList = getCompositeElements(new HashSet<>(elementNftIds));
 
         BigDecimal sumScore = elementList.stream()
                 .map(NftCompositeElement::getScore)
@@ -121,7 +127,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .score(sumScore)
                 .rank(0)
                 .created(false)
-//                .state()
+                .state("init")
                 .createTime(currentTime)
                 .updateTime(currentTime)
                 .build();
@@ -158,9 +164,52 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             orderMap.put(maskOrder, p.getId());
         });
 
+        Map<Long, List<NftCompositeElement>> cardGroupMap = elementList.stream()
+                .collect(Collectors.groupingBy(NftCompositeElement::getInfoId));
 
+        Map<Integer, CreateCompositeCardBean.Layer> layerMap = new TreeMap<>();
+        AtomicInteger count = new AtomicInteger(0);
+        orderMap.forEach((key, value) -> {
+            List<NftCompositeElement> nftElements = cardGroupMap.get(value);
+            if (CollectionUtils.isEmpty(nftElements)) {
+                log.error("nftMetaverse get nftElements is null {}, {}", value, cardGroupMap);
+                return;
+            }
+            NftCompositeElement compositeElement = nftElements.get(0);
+            layerMap.put(count.getAndIncrement(), CreateCompositeCardBean.Layer.builder()
+                    .nft_id(compositeElement.getInfoId())
+                    .name(newName)
+                    .property(compositeElement.getProperty())
+                    .score(compositeElement.getScore())
+                    .build());
+        });
+        NftGroupDo nftGroupDo = nftGroupService.selectById(bean.getGroupId());
+        CreateCompositeCardBean createCompositeCardParam = CreateCompositeCardBean.builder()
+                .groupId(bean.getGroupId())
+                .group_name(nftGroupDo.getName())
+                .sex(bean.getSex())
+                .name(bean.getGroupId()
+                        + "_" + newInsertNftInfo.getId()
+                        + "_" + LocalDateTimeUtil.getSecondsByTime(LocalDateTime.now()))
+                .occupation(bean.getOccupation())
+                .original(0)
+                .custom_name(bean.getCustomName())
+                .layers(layerMap)
+                .build();
+        // TODO: 2022/1/13
+        log.info("nftMetaverse create nft image param: {}", createCompositeCardParam);
 
-        return null;
+        MutableTriple<ResponseEntity<String>, String, HttpEntity<CreateCompositeCardBean>> triple = httpClientHelper.getCreateImgResp(createCompositeCardParam);
+        ResponseEntity<String> resp = triple.getLeft();
+//        String url = triple.getMiddle();
+//        HttpEntity<CreateCompositeCardBean> httpEntity = triple.getRight();
+        String imgUrl = "";
+        if (resp.getStatusCode() == HttpStatus.OK) {
+            imgUrl = resp.getBody();
+        } else {
+            throw new BizException("create nft img is failed, param: " + createCompositeCardParam);
+        }
+        return imgUrl;
     }
 
     @Override
@@ -222,7 +271,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     .collect(Collectors.groupingBy(NftInfoDo::getId));
 
             Map<String, Map<String, Long>> sumMap = new HashMap<>();
-            Map<String, Map<String, Map<Long,Long>>> nftIdsMap = new HashMap<>();
+            Map<String, Map<String, Map<Long, Long>>> nftIdsMap = new HashMap<>();
             compositeElements.forEach(p -> {
                 List<NftInfoDo> infoDos = infoMap.get(p.getInfoId());
                 if (CollectionUtils.isEmpty(infoDos)) {
@@ -261,7 +310,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
             elementMap.forEach((key, value) -> {
                 Map<String, Long> propertyMap = sumMap.get(key);
-                Map<String, Map<Long,Long>> nftIdMap = nftIdsMap.get(key);
+                Map<String, Map<Long, Long>> nftIdMap = nftIdsMap.get(key);
                 value.forEach(p -> {
                     p.setSum(propertyMap.get(p.getProperty()));
                     p.setChainNftIds(nftIdMap.get(p.getProperty()));

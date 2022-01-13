@@ -261,3 +261,7 @@ CREATE TABLE `nft_composite_element`
   AUTO_INCREMENT = 10000
   DEFAULT CHARSET = utf8mb4 COMMENT ='NFT 元素';
 
+# 字段修改sql
+# ALTER TABLE nft_info ADD state varchar(32);
+# ALTER TABLE nft_composite_card MODIFY state int(1);
+

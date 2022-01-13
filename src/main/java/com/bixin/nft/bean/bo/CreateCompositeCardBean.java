@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * @author zhangcheng
@@ -28,6 +29,12 @@ public class CreateCompositeCardBean {
     //0女 1男
     private int sex;
 
+    private Map<Integer, Layer> layers;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Layer {
         private String property;
         private String name;

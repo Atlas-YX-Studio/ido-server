@@ -4,6 +4,7 @@ import com.bixin.common.response.R;
 import com.bixin.core.redis.RedisCache;
 import com.bixin.nft.bean.bo.CompositeCardBean;
 import com.bixin.nft.service.NftMetareverseService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import static com.bixin.common.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
  * @author zhangcheng
  * create  2021/12/23
  */
+@Slf4j
 @RestController
 @RequestMapping(NFT_REQUEST_PATH_PREFIX + "/meta")
 public class NftMetaverseController {
@@ -50,15 +52,20 @@ public class NftMetaverseController {
                 .collect(Collectors.toList());
         String requestId = UUID.randomUUID().toString().replaceAll("-", "");
 
-        String image = redisCache.tryGetDistributedLock(
-                key,
-                requestId,
-                lockExpiredTime,
-                lockNextExpiredTime,
-                () -> nftMetareverseService.compositeCard(bean)
-        );
+        try {
+            String image = redisCache.tryGetDistributedLock(
+                    key,
+                    requestId,
+                    lockExpiredTime,
+                    lockNextExpiredTime,
+                    () -> nftMetareverseService.compositeCard(bean)
+            );
+            return R.success(image);
+        } catch (Exception e) {
+            log.error("create nft image exception", e);
+            return R.failed(e.getMessage());
+        }
 
-        return R.success(image);
     }
 
     @GetMapping("/analysisCard")
