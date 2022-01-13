@@ -3,6 +3,7 @@ package com.bixin.nft.controller;
 import com.bixin.common.response.R;
 import com.bixin.core.redis.RedisCache;
 import com.bixin.nft.bean.bo.CompositeCardBean;
+import com.bixin.nft.common.enums.CardElementType;
 import com.bixin.nft.service.NftMetareverseService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,16 @@ public class NftMetaverseController {
     public R compositeCard(CompositeCardBean bean) {
         if (StringUtils.isBlank(bean.getUserAddress()) || bean.getGroupId() <= 0
                 || CollectionUtils.isEmpty(bean.getElementList())) {
+            return R.failed("parameter is invalid");
+        }
+        boolean validElementType = true;
+        for (CompositeCardBean.CustomCardElement cardElement : bean.getElementList()) {
+            if (Objects.isNull(CardElementType.of(cardElement.getEleName()))) {
+                validElementType = false;
+                break;
+            }
+        }
+        if (!validElementType) {
             return R.failed("parameter is invalid");
         }
 
