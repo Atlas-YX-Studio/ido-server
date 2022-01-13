@@ -100,11 +100,20 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
     @Transactional
     public String compositeCard(CompositeCardBean bean) {
+        long eleGroupId = bean.getGroupId();
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(eleGroupId).build());
         //name编号递增
-        List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(bean.getGroupId()).build());
-        Optional<NftInfoDo> maxNameInfo = list.stream().max(Comparator.comparing(NftInfoDo::getName));
+        List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(nftGroupDo.getId()).build());
+        Optional<NftInfoDo> maxNameInfo = list.stream()
+                .filter(p -> NftType.COMPOSITE_CARD.getType().equals(p.getType()))
+                .max(Comparator.comparing(NftInfoDo::getName));
         String[] nameArray = maxNameInfo.get().getName().split("#");
-        String newName = nameArray[0] + " # " + (NumberUtils.toInt(nameArray[1].trim(), -1) + 1);
+        String newName = nameArray[0];
+        if (nameArray.length == 2) {
+            newName += " # " + (NumberUtils.toInt(nameArray[1].trim(), -1) + 1);
+        } else {
+            newName += " # 1";
+        }
 
         List<Long> elementNftIds = bean.getElementList().stream()
                 .map(CompositeCardBean.CustomCardElement::getId)
@@ -119,7 +128,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
         NftInfoDo newNftInfo = NftInfoDo.builder()
                 .nftId(0L)
-                .groupId(bean.getGroupId())
+                .groupId(nftGroupDo.getId())
                 .type(NftType.COMPOSITE_CARD.getType())
                 .name(newName)
                 .owner(bean.getUserAddress())
@@ -137,7 +146,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         nftInfoService.insert(newNftInfo);
 
         NftInfoDo newInsertNftInfo = nftInfoService.selectByObject(NftInfoDo.builder()
-                .groupId(bean.getGroupId())
+                .groupId(nftGroupDo.getId())
                 .type(NftType.COMPOSITE_CARD.getType())
                 .name(newName)
                 .owner(bean.getUserAddress())
@@ -184,12 +193,11 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     .score(compositeElement.getScore())
                     .build());
         });
-        NftGroupDo nftGroupDo = nftGroupService.selectById(bean.getGroupId());
         CreateCompositeCardBean createCompositeCardParam = CreateCompositeCardBean.builder()
-                .groupId(bean.getGroupId())
+                .groupId(nftGroupDo.getId())
                 .group_name(nftGroupDo.getName())
                 .sex(bean.getSex())
-                .name(bean.getGroupId()
+                .name(nftGroupDo.getId()
                         + "_" + newInsertNftInfo.getId()
                         + "_" + LocalDateTimeUtil.getSecondsByTime(LocalDateTime.now()))
                 .occupation(bean.getOccupation())
