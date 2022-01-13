@@ -196,7 +196,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     .build());
         });
         CreateCompositeCardBean createCompositeCardParam = CreateCompositeCardBean.builder()
-                .groupId(nftGroupDo.getId())
+                .group_id(nftGroupDo.getId())
                 .group_name(nftGroupDo.getName())
                 .sex(bean.getSex())
                 .name(nftGroupDo.getId()

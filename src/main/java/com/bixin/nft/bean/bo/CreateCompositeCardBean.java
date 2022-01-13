@@ -19,7 +19,7 @@ import java.util.Map;
 public class CreateCompositeCardBean {
 
     private String group_name;
-    private long groupId;
+    private long group_id;
     //生成的 图片名称
     private String name;
     private String occupation;
