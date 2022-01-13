@@ -1,5 +1,6 @@
 package com.bixin.nft.controller;
 
+import com.bixin.common.exception.BizException;
 import com.bixin.common.response.R;
 import com.bixin.core.redis.RedisCache;
 import com.bixin.nft.bean.bo.CompositeCardBean;
@@ -8,7 +9,6 @@ import com.bixin.nft.service.NftMetareverseService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -67,7 +67,7 @@ public class NftMetaverseController {
         String requestId = UUID.randomUUID().toString().replaceAll("-", "");
 
         try {
-            Map<String,Object> map = redisCache.tryGetDistributedLock(
+            Map<String, Object> map = redisCache.tryGetDistributedLock(
                     key,
                     requestId,
                     lockExpiredTime,
@@ -75,9 +75,11 @@ public class NftMetaverseController {
                     () -> nftMetareverseService.compositeCard(bean)
             );
             return R.success(map);
+        } catch (BizException ex) {
+            return R.failed(ex.getMessage());
         } catch (Exception e) {
             log.error("create nft image exception", e);
-            return R.failed(e.getMessage());
+            return R.failed("create nft image exception");
         }
 
     }

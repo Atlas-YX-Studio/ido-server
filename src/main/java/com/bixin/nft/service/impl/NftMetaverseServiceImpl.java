@@ -107,11 +107,11 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(nftGroupDo.getId()).build());
         Optional<NftInfoDo> maxNameInfo = list.stream()
                 .filter(p -> NftType.COMPOSITE_CARD.getType().equals(p.getType()))
-                .max(Comparator.comparing(NftInfoDo::getName));
+                .max(Comparator.comparing(NftInfoDo::getId));
         String[] nameArray = maxNameInfo.get().getName().split("#");
         String newName = nameArray[0];
         if (nameArray.length == 2) {
-            newName += "  # " + (NumberUtils.toInt(nameArray[1].trim(), -1) + 1);
+            newName += " # " + (NumberUtils.toInt(nameArray[1].trim(), 0) + 1);
         } else {
             newName += " # 1";
         }
