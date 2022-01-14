@@ -477,6 +477,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             log.error("nftMetaverse get eleInfos is empty");
                             return;
                         }
+                        log.info("nftMetaverse get eleInfos {}",JacksonUtil.toJson(eleInfos));
                         Map<Long, Long> eleIdmap = eleInfos.stream()
                                 .collect(Collectors.toMap(NftInfoDo::getNftId, NftInfoDo::getId));
                         Map<String, Object> paramMap = new HashMap<>();
