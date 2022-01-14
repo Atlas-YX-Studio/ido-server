@@ -511,7 +511,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     } else {
                         Map<String, Object> groupParam = new HashMap<>();
                         groupParam.put("groupId", nftGroupDo.getId());
-                        groupParam.put("list", eleChainIds);
+                        groupParam.put("list", Arrays.asList(nftId.getValue()));
                         List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(groupParam);
                         if (CollectionUtils.isEmpty(eleInfos)) {
                             log.error("nftMetaverse get eleInfos is empty");
