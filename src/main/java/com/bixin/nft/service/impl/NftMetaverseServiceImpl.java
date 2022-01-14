@@ -485,9 +485,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         Map<String, Object> paramMap = new HashMap<>();
                         eleIdMap.forEach((column, var) -> {
                             Long eleNftId = eleIdmap.get(var);
-                            if (Objects.nonNull(eleNftId)) {
-                                paramMap.put(column, eleNftId);
-                            }
+                            paramMap.put(column, Objects.nonNull(eleNftId) ? eleNftId : 0);
                         });
                         log.info("nftMetaverse get newCards info {}", JacksonUtil.toJson(paramMap));
                         List<NftCompositeCard> newCards = compositeCardMapper.selectByMap(paramMap);
