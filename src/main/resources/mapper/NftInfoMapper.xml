@@ -55,13 +55,21 @@
       #{item}
     </foreach>
   </select>
-  <select id="selectByNftIds" parameterType="list" resultMap="BaseResultMap">
+  <select id="selectByNftIds" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from nft_info where nft_id in
-    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-      #{item}
-    </foreach>
+    from nft_info
+    <where>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT}
+      </if>
+      <if test="list != null">
+        and nft_id in
+      <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      </if>
+    </where>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from nft_info

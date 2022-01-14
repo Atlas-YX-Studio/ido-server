@@ -14,7 +14,6 @@ import com.bixin.nft.bean.dto.NFTResolveEventDto;
 import com.bixin.nft.bean.dto.NftMintEventtDto;
 import com.bixin.nft.common.enums.CardState;
 import com.bixin.nft.common.enums.NftEventType;
-import com.bixin.nft.common.enums.NftInfoState;
 import com.bixin.nft.service.NftCompositeCardService;
 import com.bixin.nft.service.NftEventService;
 import com.bixin.nft.service.NftGroupService;
@@ -179,13 +178,9 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
             log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
             return;
         }
-        NftInfoDo.NftInfoDoBuilder nftInfoDoBuilder = NftInfoDo.builder()
+        NftInfoDo nftInfoParm = NftInfoDo.builder()
                 .groupId(nftGroupDo.getId())
-                .nftId(nftEventDo.getNftId());
-        if (NftEventType.NFT_MINT_EVENT.getDesc().equals(eventType)) {
-            nftInfoDoBuilder.state(NftInfoState.SUCCESS.getDesc());
-        }
-        NftInfoDo nftInfoParm = nftInfoDoBuilder.build();
+                .nftId(nftEventDo.getNftId()).build();
 
         NftInfoDo nftInfoDo = nftInfoService.selectByObject(nftInfoParm);
         if (ObjectUtils.isEmpty(nftInfoDo)) {
@@ -204,29 +199,29 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
         } catch (Exception e) {
             log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :", e);
         }
-
-        try {
-            if (NftEventType.NFT_MINT_EVENT.getDesc().equals(eventType)) {
-                nftCompositeCardService.update(
-                        NftCompositeCard.builder()
-                                .state(CardState.card_combining_success.getCode())
-                                .build(),
-                        Wrappers.<NftCompositeCard>lambdaUpdate()
-                                .eq(NftCompositeCard::getInfoId, nftInfoDo.getId())
-                );
-            }
-            if (NftEventType.NFT_RESOLVE_EVENT.getDesc().equals(eventType)) {
-                nftCompositeCardService.update(
-                        NftCompositeCard.builder()
-                                .state(CardState.card_split_success.getCode())
-                                .build(),
-                        Wrappers.<NftCompositeCard>lambdaUpdate()
-                                .eq(NftCompositeCard::getInfoId, nftInfoDo.getId())
-                );
-            }
-        } catch (Exception e) {
-            log.error("NftEventSubscriberRunner update nft_composite_card exception", e);
-        }
+//
+//        try {
+//            if (NftEventType.NFT_MINT_EVENT.getDesc().equals(eventType)) {
+//                nftCompositeCardService.update(
+//                        NftCompositeCard.builder()
+//                                .state(CardState.card_combining_success.getCode())
+//                                .build(),
+//                        Wrappers.<NftCompositeCard>lambdaUpdate()
+//                                .eq(NftCompositeCard::getInfoId, nftInfoDo.getId())
+//                );
+//            }
+//            if (NftEventType.NFT_RESOLVE_EVENT.getDesc().equals(eventType)) {
+//                nftCompositeCardService.update(
+//                        NftCompositeCard.builder()
+//                                .state(CardState.card_split_success.getCode())
+//                                .build(),
+//                        Wrappers.<NftCompositeCard>lambdaUpdate()
+//                                .eq(NftCompositeCard::getInfoId, nftInfoDo.getId())
+//                );
+//            }
+//        } catch (Exception e) {
+//            log.error("NftEventSubscriberRunner update nft_composite_card exception", e);
+//        }
 
         return;
     }

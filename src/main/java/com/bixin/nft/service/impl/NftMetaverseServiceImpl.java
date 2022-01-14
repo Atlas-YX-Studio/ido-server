@@ -470,7 +470,10 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     log.info("nftMetaverse get chain nft info:{},{},{},{}",
                             userAddress, nftGroupDo.getId(), nftId.getValue(), JacksonUtil.toJson(eleIdMap));
 
-                    List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(eleChainIds);
+                    Map<String, Object> groupParam = new HashMap<>();
+                    groupParam.put("groupId", nftGroupDo.getElementId());
+                    groupParam.put("list", eleChainIds);
+                    List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(groupParam);
                     if (CollectionUtils.isEmpty(eleInfos)) {
                         log.error("nftMetaverse get eleInfos is empty");
                         return;
