@@ -63,6 +63,9 @@
       <if test="groupId != null">
         group_id = #{groupId,jdbcType=BIGINT}
       </if>
+      <if test="type != null">
+        and type = #{type,jdbcType=VARCHAR}
+      </if>
       <if test="list != null">
         and nft_id in
       <foreach collection="list" index="index" item="item" open="(" separator="," close=")">

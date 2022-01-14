@@ -25,20 +25,4 @@ public class NFTResolveEventDto {
     //链上 id
     private long id;
 
-    public static NftEventDo of(NFTResolveEventDto dto) {
-        NftEventDo.NftEventDoBuilder builder = NftEventDo.builder()
-                .nftId(dto.getId())
-                .creator("")
-                .seller(dto.getOwner())
-                .sellingPrice(BigDecimal.ZERO)
-                .bider("")
-                .bidPrice(BigDecimal.ZERO)
-                .type(NftEventType.NFT_RESOLVE_EVENT.getDesc())
-                .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
-                .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
-        builder.payToken("");
-        return builder.build();
-    }
-
-
 }

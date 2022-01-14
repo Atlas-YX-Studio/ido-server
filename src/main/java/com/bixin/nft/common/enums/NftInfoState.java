@@ -13,6 +13,7 @@ public enum NftInfoState {
 
     INIT("init"),
     SUCCESS("success"),
+    INVALID("invalid"),
 
     ;
 
