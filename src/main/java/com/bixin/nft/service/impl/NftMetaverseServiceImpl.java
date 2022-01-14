@@ -499,14 +499,15 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             log.error("nftMetaverse NFTInfo不存在, groupId:{}，nftId:{}", nftGroupDo.getId(), nftInfoId);
                             return;
                         }
-                        // 以链上为准，更新当前owner
-                        if (!StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())) {
+                        if (!nftInfoDo.getCreated() || !StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())
+                                || Objects.isNull(nftInfoDo.getNftId()) || nftInfoDo.getNftId() <= 0
+                                || !NftInfoState.SUCCESS.getDesc().equals(nftInfoDo.getState())) {
                             nftInfoDo.setOwner(userAddress);
+                            nftInfoDo.setNftId(nftId.getValue());
+                            nftInfoDo.setCreated(true);
+                            nftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
+                            nftInfoService.update(nftInfoDo);
                         }
-                        nftInfoDo.setNftId(nftId.getValue());
-                        nftInfoDo.setCreated(true);
-                        nftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
-                        nftInfoService.update(nftInfoDo);
                         nftInfoDos.add(nftInfoDo);
                     } else {
                         Map<String, Object> groupParam = new HashMap<>();
@@ -524,7 +525,6 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                                 nftInfoService.update(infoDo);
                             }
                             nftInfoDos.add(infoDo);
-
                         }
                     }
                 });
