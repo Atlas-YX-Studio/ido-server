@@ -48,6 +48,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -455,7 +456,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                                 List<JSONArray> cardElementIds = StarCoinJsonUtil.parseStructObj(info[1]);
                                 for (JSONArray idArray : cardElementIds) {
                                     if (String.valueOf(idArray.get(0)).endsWith("_id")) {
-                                        Map<String, Object> idValueMap = (Map<String, Object>) idArray.get(0);
+                                        Map<String, Object> idValueMap = (Map<String, Object>) idArray.get(1);
                                         long u64 = NumberUtils.toLong(String.valueOf(idValueMap.get("U64")), 0);
                                         if (u64 > 0) {
                                             eleIdMap.put(String.valueOf(idArray.get(0)), u64);
