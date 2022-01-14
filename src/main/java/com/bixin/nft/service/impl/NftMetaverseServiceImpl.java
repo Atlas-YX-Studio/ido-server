@@ -237,7 +237,10 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             throw new BizException("create nft img is failed, resp: "
                     + resp + "， param: " + paramValue + ", url: " + url);
         }
-        return Map.of("nftInfoId", newNftInfo.getId(), "image", imageUrl);
+        return Map.of("nftInfoId", newNftInfo.getId(),
+                "image", imageUrl,
+                "name", newName,
+                "description", nftGroupDo.getEnDescription());
     }
 
     @Override
@@ -269,7 +272,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     .filter(p -> NftType.COMPOSITE_ELEMENT.getType().equalsIgnoreCase(p.getType()))
                     .collect(Collectors.toList());
             if (CollectionUtils.isEmpty(nftElementGroupList)) {
-                log.error("nftMetaverse get nftElementGroupList is empty {}", nftGroups);
+                log.error("nftMetaverse get nftElementGroupList is empty");
             }
             buildElementResource(userAddress, nftElementGroupList, elementMap);
         } else if ("split".equalsIgnoreCase(nftType)) {
@@ -277,7 +280,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     .filter(p -> NftType.COMPOSITE_CARD.getType().equalsIgnoreCase(p.getType()))
                     .collect(Collectors.toList());
             if (CollectionUtils.isEmpty(nftCardGroupList)) {
-                log.error("nftMetaverse get nftCardGroupList is empty {}", nftGroups);
+                log.error("nftMetaverse get nftCardGroupList is empty");
             }
             buildCardResource(userAddress, nftCardGroupList, cardList);
         }
