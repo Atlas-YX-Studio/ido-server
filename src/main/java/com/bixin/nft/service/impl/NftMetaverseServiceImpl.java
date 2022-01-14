@@ -471,16 +471,16 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             userAddress, nftGroupDo.getId(), nftGroupDo.getElementId(),
                             eleChainIds, JacksonUtil.toJson(eleIdMap));
 
-                    Map<String, Object> groupParam = new HashMap<>();
-                    groupParam.put("groupId", nftGroupDo.getElementId());
-                    groupParam.put("list", eleChainIds);
-                    List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(groupParam);
-                    if (CollectionUtils.isEmpty(eleInfos)) {
-                        log.error("nftMetaverse get eleInfos is empty");
-                        return;
-                    }
                     long nftInfoId = 0;
                     if (nftType.contains("card")) {
+                        Map<String, Object> groupParam = new HashMap<>();
+                        groupParam.put("groupId", nftGroupDo.getElementId());
+                        groupParam.put("list", eleChainIds);
+                        List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(groupParam);
+                        if (CollectionUtils.isEmpty(eleInfos)) {
+                            log.error("nftMetaverse get eleInfos is empty");
+                            return;
+                        }
                         Map<Long, Long> eleIdmap = eleInfos.stream()
                                 .collect(Collectors.toMap(NftInfoDo::getNftId, NftInfoDo::getId));
                         Map<String, Object> paramMap = new HashMap<>();
@@ -497,24 +497,43 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             return;
                         }
                         nftInfoId = newCards.get(0).getInfoId();
+
+                        NftInfoDo nftInfoDo = nftInfoService.selectById(nftInfoId);
+                        if (ObjectUtils.isEmpty(nftInfoDo)) {
+                            log.error("nftMetaverse NFTInfo不存在, groupId:{}，nftId:{}", nftGroupDo.getId(), nftInfoId);
+                            return;
+                        }
+                        // 以链上为准，更新当前owner
+                        if (!StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())) {
+                            nftInfoDo.setOwner(userAddress);
+                        }
+                        nftInfoDo.setNftId(nftInfoId);
+                        nftInfoDo.setCreated(true);
+                        nftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
+                        nftInfoService.update(nftInfoDo);
+                        nftInfoDos.add(nftInfoDo);
                     } else {
-                        nftInfoId = eleInfos.get(0).getId();
+                        Map<String, Object> groupParam = new HashMap<>();
+                        groupParam.put("groupId", nftGroupDo.getId());
+                        groupParam.put("list", eleChainIds);
+                        List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(groupParam);
+                        if (CollectionUtils.isEmpty(eleInfos)) {
+                            log.error("nftMetaverse get eleInfos is empty");
+                            return;
+                        }
+                        for (NftInfoDo infoDo : eleInfos) {
+                            // 以链上为准，更新当前owner
+                            if (!StringUtils.equalsIgnoreCase(userAddress, infoDo.getOwner())) {
+                                infoDo.setOwner(userAddress);
+                            }
+                            infoDo.setNftId(nftInfoId);
+                            infoDo.setCreated(true);
+                            infoDo.setState(NftInfoState.SUCCESS.getDesc());
+                            nftInfoService.update(infoDo);
+                            nftInfoDos.add(infoDo);
+
+                        }
                     }
-                    
-                    NftInfoDo nftInfoDo = nftInfoService.selectById(nftInfoId);
-                    if (ObjectUtils.isEmpty(nftInfoDo)) {
-                        log.error("nftMetaverse NFTInfo不存在, groupId:{}，nftId:{}", nftGroupDo.getId(), nftInfoId);
-                        return;
-                    }
-                    // 以链上为准，更新当前owner
-                    if (!StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())) {
-                        nftInfoDo.setOwner(userAddress);
-                    }
-                    nftInfoDo.setNftId(nftInfoId);
-                    nftInfoDo.setCreated(true);
-                    nftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
-                    nftInfoService.update(nftInfoDo);
-                    nftInfoDos.add(nftInfoDo);
                 });
             }
         });
