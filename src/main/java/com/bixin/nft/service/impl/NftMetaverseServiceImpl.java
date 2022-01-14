@@ -263,29 +263,44 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     public NftSelfResourceVo selfResource(String userAddress, String nftType) {
         Map<String, Set<NftSelfResourceVo.ElementVo>> elementMap = new HashMap<>();
         List<NftSelfResourceVo.CardVo> cardList = new ArrayList<>();
-
-        String nftMeta_element = idoStarConfig.getNft().getCatadd() + "::KikoCatElement05::KikoCatMeta";
-        String nftBody_element = idoStarConfig.getNft().getCatadd() + "::KikoCatElement05::KikoCatBody";
-        String nftMeta_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatMeta";
-        String nftBody_card = idoStarConfig.getNft().getCatadd() + "::KikoCatCard05::KikoCatBody";
-
+        List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
         if ("element".equalsIgnoreCase(nftType)) {
-            NftGroupDo groupParam = NftGroupDo.builder()
-                    .nftMeta(nftMeta_element)
-                    .nftBody(nftBody_element)
-                    .build();
-            NftGroupDo groupDo = nftGroupService.selectByObject(groupParam);
-            if (Objects.isNull(groupDo)) {
-                log.error("nftMetaverse get groupDo element is empty {}", groupParam);
-                return new NftSelfResourceVo();
+            List<NftGroupDo> nftElementGroupList = nftGroups.stream()
+                    .filter(p -> NftType.COMPOSITE_ELEMENT.getType().equalsIgnoreCase(p.getType()))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isEmpty(nftElementGroupList)) {
+                log.error("nftMetaverse get nftElementGroupList is empty {}", nftGroups);
             }
+            buildElementResource(userAddress, nftElementGroupList, elementMap);
+        } else if ("split".equalsIgnoreCase(nftType)) {
+            List<NftGroupDo> nftCardGroupList = nftGroups.stream()
+                    .filter(p -> NftType.COMPOSITE_ELEMENT.getType().equalsIgnoreCase(p.getType()))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isEmpty(nftCardGroupList)) {
+                log.error("nftMetaverse get nftCardGroupList is empty {}", nftGroups);
+            }
+            buildCardResource(userAddress, nftCardGroupList, cardList);
+        }
+        NftSelfResourceVo resourceVo = NftSelfResourceVo.builder()
+                .cardList(cardList)
+                .elementMap(elementMap)
+                .build();
+        return resourceVo;
+    }
+
+    private void buildElementResource(String userAddress,
+                                      List<NftGroupDo> nftElementGroupList,
+                                      Map<String, Set<NftSelfResourceVo.ElementVo>> elementMap) {
+        for (NftGroupDo groupDo : nftElementGroupList) {
+            String nftMeta = groupDo.getNftMeta();
+            String nftBody = groupDo.getNftBody();
             String payToken = groupDo.getPayToken();
 
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> eleInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(eleInfoIds)) {
                 log.error("nftMetaverse get eleInfoIds element is empty {},{}", userAddress, groupDo);
-                return new NftSelfResourceVo();
+                continue;
             }
 
             QueryWrapper<NftCompositeElement> wrapper = new QueryWrapper<>();
@@ -293,7 +308,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             List<NftCompositeElement> compositeElements = compositeElementMapper.selectList(wrapper);
             if (CollectionUtils.isEmpty(compositeElements)) {
                 log.error("nftMetaverse get compositeElements is empty {}", eleInfoIds);
-                return new NftSelfResourceVo();
+                continue;
             }
             Map<Long, List<NftInfoDo>> infoMap = nftInfoDos.stream()
                     .collect(Collectors.groupingBy(NftInfoDo::getId));
@@ -314,14 +329,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .type(type)
                         .property(property)
                         .image(infoDo.getImageLink())
-//                        .score(BigDecimalUtil.div(p.getScore(), BigDecimal.valueOf(1000000000), 2))
                         .score(p.getScore())
                         .sum(0)
                         .groupId(infoDo.getGroupId())
                         .name(infoDo.getName())
                         .eleName(CardElementType.of(type).getDesc())
-                        .nftMeta(nftMeta_card)
-                        .nftBody(nftBody_card)
+                        .nftMeta(nftMeta)
+                        .nftBody(nftBody)
                         .payToken(payToken)
                         .build();
                 elementMap.computeIfAbsent(type, k -> new HashSet<>());
@@ -335,7 +349,6 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 nftIdsMap.get(type).computeIfAbsent(property, k -> new HashMap<>());
                 nftIdsMap.get(type).get(property).put(infoDo.getNftId(), infoDo.getId());
             });
-
             elementMap.forEach((key, value) -> {
                 Map<String, Long> propertyMap = sumMap.get(key);
                 Map<String, Map<Long, Long>> nftIdMap = nftIdsMap.get(key);
@@ -344,23 +357,22 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     p.setChainNftIds(nftIdMap.get(p.getProperty()));
                 });
             });
-        } else if ("split".equalsIgnoreCase(nftType)) {
-            NftGroupDo groupParam = NftGroupDo.builder()
-                    .nftMeta(nftMeta_card)
-                    .nftBody(nftBody_card)
-                    .build();
-            NftGroupDo groupDo = nftGroupService.selectByObject(groupParam);
-            if (Objects.isNull(groupDo)) {
-                log.error("nftMetaverse get groupDo card is empty {}", groupParam);
-                return new NftSelfResourceVo();
-            }
+        }
+    }
+
+    public void buildCardResource(String userAddress,
+                                  List<NftGroupDo> nftCardGroupList,
+                                  List<NftSelfResourceVo.CardVo> cardList) {
+        for (NftGroupDo groupDo : nftCardGroupList) {
+            String nftMeta = groupDo.getNftMeta();
+            String nftBody = groupDo.getNftBody();
             String payToken = groupDo.getPayToken();
 
             List<NftInfoDo> nftInfoDos = getNftListFromChain(userAddress, groupDo);
             List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(cardInfoIds)) {
                 log.error("nftMetaverse get cardInfoIds card is empty {}, {}", userAddress, groupDo);
-                return new NftSelfResourceVo();
+                continue;
             }
 
             QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();
@@ -368,7 +380,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             List<NftCompositeCard> compositeCards = compositeCardMapper.selectList(wrapper);
             if (CollectionUtils.isEmpty(compositeCards)) {
                 log.error("nftMetaverse get compositeCards is empty {}", cardInfoIds);
-                return new NftSelfResourceVo();
+                continue;
             }
             Map<Long, List<NftInfoDo>> infoMap = nftInfoDos.stream()
                     .collect(Collectors.groupingBy(NftInfoDo::getId));
@@ -388,20 +400,14 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .groupId(infoDo.getGroupId())
                         .chainId(infoDo.getNftId())
                         .nftId(infoDo.getId())
-                        .nftMeta(nftMeta_card)
-                        .nftBody(nftBody_card)
+                        .nftMeta(nftMeta)
+                        .nftBody(nftBody)
                         .payToken(payToken)
                         .build();
                 cardList.add(cardVo);
             });
         }
-        NftSelfResourceVo resourceVo = NftSelfResourceVo.builder()
-                .cardList(cardList)
-                .elementMap(elementMap)
-                .build();
-        return resourceVo;
     }
-
 
     private List<NftInfoDo> getNftListFromChain(String userAddress, NftGroupDo nftGroupDo) {
         MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple =
