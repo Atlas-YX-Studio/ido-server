@@ -274,7 +274,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             buildElementResource(userAddress, nftElementGroupList, elementMap);
         } else if ("split".equalsIgnoreCase(nftType)) {
             List<NftGroupDo> nftCardGroupList = nftGroups.stream()
-                    .filter(p -> NftType.COMPOSITE_ELEMENT.getType().equalsIgnoreCase(p.getType()))
+                    .filter(p -> NftType.COMPOSITE_CARD.getType().equalsIgnoreCase(p.getType()))
                     .collect(Collectors.toList());
             if (CollectionUtils.isEmpty(nftCardGroupList)) {
                 log.error("nftMetaverse get nftCardGroupList is empty {}", nftGroups);
