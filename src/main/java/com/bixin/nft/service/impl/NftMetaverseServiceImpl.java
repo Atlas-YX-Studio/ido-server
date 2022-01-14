@@ -230,6 +230,9 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             Map<String, String> map = JacksonUtil.readValue(resp.getBody(), Map.class);
             if ("success".equalsIgnoreCase(map.get("status"))) {
                 imageUrl = map.get("url");
+                nftInfoService.update(NftInfoDo.builder().
+                        id(newInsertNftInfo.getId())
+                        .imageLink(imageUrl).build());
                 hasResult = true;
             }
         }
