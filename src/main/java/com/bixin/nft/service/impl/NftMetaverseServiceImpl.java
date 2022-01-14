@@ -458,10 +458,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                                 if (String.valueOf(idArray.get(0)).endsWith("_id")) {
                                     Map<String, Object> idValueMap = (Map<String, Object>) idArray.get(1);
                                     long u64 = NumberUtils.toLong(String.valueOf(idValueMap.get("U64")), 0);
-                                    if (u64 > 0) {
-                                        eleChainIds.add(u64);
-                                        eleIdMap.put(String.valueOf(idArray.get(0)), u64);
-                                    }
+                                    eleChainIds.add(u64);
+                                    eleIdMap.put(String.valueOf(idArray.get(0)), u64);
                                 }
                             }
                         }
