@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -439,6 +440,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             if ("items".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
                 List<JSONObject> vector = StarCoinJsonUtil.parseVectorObj(stcResult[1]);
                 vector.forEach(el -> {
+                    MutableLong nftId = new MutableLong(0);
                     List<JSONArray> structValue = StarCoinJsonUtil.parseStructObj(el);
                     Map<String, Long> eleIdMap = new HashMap<>();
                     List<Long> eleChainIds = new ArrayList<>();
@@ -446,32 +448,26 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         Object[] info = v.toArray();
                         if ("id".equals(String.valueOf(info[0]))) {
                             Map<String, Object> valueMap = (Map<String, Object>) info[1];
-                            long u64 = NumberUtils.toLong(String.valueOf(valueMap.get("U64")), 0);
-                            if (u64 > 0) {
-                                eleChainIds.add(u64);
-                            }
+                            nftId.setValue(Long.valueOf((String) valueMap.get("U64")));
                         }
-                        if (nftType.contains("card")) {
-                            if ("type_meta".equals(String.valueOf(info[0]))) {
-                                List<JSONArray> cardElementIds = StarCoinJsonUtil.parseStructObj(info[1]);
-                                for (JSONArray idArray : cardElementIds) {
-                                    if (String.valueOf(idArray.get(0)).endsWith("_id")) {
-                                        Map<String, Object> idValueMap = (Map<String, Object>) idArray.get(1);
-                                        long u64 = NumberUtils.toLong(String.valueOf(idValueMap.get("U64")), 0);
-                                        if (u64 > 0) {
-                                            eleChainIds.add(u64);
-                                            eleIdMap.put(String.valueOf(idArray.get(0)), u64);
-                                        }
+                        if (nftType.contains("card") && "type_meta".equals(String.valueOf(info[0]))) {
+                            List<JSONArray> cardElementIds = StarCoinJsonUtil.parseStructObj(info[1]);
+                            for (JSONArray idArray : cardElementIds) {
+                                if (String.valueOf(idArray.get(0)).endsWith("_id")) {
+                                    Map<String, Object> idValueMap = (Map<String, Object>) idArray.get(1);
+                                    long u64 = NumberUtils.toLong(String.valueOf(idValueMap.get("U64")), 0);
+                                    if (u64 > 0) {
+                                        eleChainIds.add(u64);
+                                        eleIdMap.put(String.valueOf(idArray.get(0)), u64);
                                     }
                                 }
                             }
                         }
                     });
-                    log.info("nftMetaverse get chain nft info:{},{},{},{},{}",
+                    log.info("nftMetaverse get chain nft info:{},{},{},{},{},{}",
                             userAddress, nftGroupDo.getId(), nftGroupDo.getElementId(),
-                            eleChainIds, JacksonUtil.toJson(eleIdMap));
+                            nftId, eleChainIds, JacksonUtil.toJson(eleIdMap));
 
-                    long nftInfoId = 0;
                     if (nftType.contains("card")) {
                         Map<String, Object> groupParam = new HashMap<>();
                         groupParam.put("groupId", nftGroupDo.getElementId());
@@ -496,7 +492,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             log.error("nftMetaverse get newCards is empty");
                             return;
                         }
-                        nftInfoId = newCards.get(0).getInfoId();
+                        long nftInfoId = newCards.get(0).getInfoId();
 
                         NftInfoDo nftInfoDo = nftInfoService.selectById(nftInfoId);
                         if (ObjectUtils.isEmpty(nftInfoDo)) {
@@ -507,7 +503,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         if (!StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())) {
                             nftInfoDo.setOwner(userAddress);
                         }
-                        nftInfoDo.setNftId(nftInfoId);
+                        nftInfoDo.setNftId(nftId.getValue());
                         nftInfoDo.setCreated(true);
                         nftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
                         nftInfoService.update(nftInfoDo);
@@ -525,11 +521,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             // 以链上为准，更新当前owner
                             if (!StringUtils.equalsIgnoreCase(userAddress, infoDo.getOwner())) {
                                 infoDo.setOwner(userAddress);
+                                nftInfoService.update(infoDo);
                             }
-                            infoDo.setNftId(nftInfoId);
-                            infoDo.setCreated(true);
-                            infoDo.setState(NftInfoState.SUCCESS.getDesc());
-                            nftInfoService.update(infoDo);
                             nftInfoDos.add(infoDo);
 
                         }
