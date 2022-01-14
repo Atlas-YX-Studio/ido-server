@@ -518,14 +518,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             log.error("nftMetaverse get eleInfos is empty");
                             return;
                         }
-                        for (NftInfoDo infoDo : eleInfos) {
-                            // 以链上为准，更新当前owner
-                            if (!StringUtils.equalsIgnoreCase(userAddress, infoDo.getOwner())) {
-                                infoDo.setOwner(userAddress);
-                                nftInfoService.update(infoDo);
-                            }
-                            nftInfoDos.add(infoDo);
+                        NftInfoDo infoDo = eleInfos.get(0);
+                        // 以链上为准，更新当前owner
+                        if (!StringUtils.equalsIgnoreCase(userAddress, infoDo.getOwner())) {
+                            infoDo.setOwner(userAddress);
+                            nftInfoService.update(infoDo);
                         }
+                        nftInfoDos.add(infoDo);
                     }
                 });
             }
