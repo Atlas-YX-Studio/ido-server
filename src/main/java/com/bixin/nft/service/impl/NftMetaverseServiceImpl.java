@@ -48,7 +48,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -444,7 +443,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     MutableLong nftId = new MutableLong(0);
                     List<JSONArray> structValue = StarCoinJsonUtil.parseStructObj(el);
                     String structType = StarCoinJsonUtil.parseStructTypeObj(el);
-                    Map<String, Object> eleIdMap = new HashMap<>();
+                    Map<String, Long> eleIdMap = new HashMap<>();
+                    List<Long> eleChainIds = new ArrayList<>();
                     structValue.forEach(v -> {
                         Object[] info = v.toArray();
                         if ("id".equals(String.valueOf(info[0]))) {
@@ -459,6 +459,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                                         Map<String, Object> idValueMap = (Map<String, Object>) idArray.get(1);
                                         long u64 = NumberUtils.toLong(String.valueOf(idValueMap.get("U64")), 0);
                                         if (u64 > 0) {
+                                            eleChainIds.add(u64);
                                             eleIdMap.put(String.valueOf(idArray.get(0)), u64);
                                         }
                                     }
@@ -469,7 +470,22 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     log.info("nftMetaverse get chain nft info:{},{},{},{}",
                             userAddress, nftGroupDo.getId(), nftId.getValue(), JacksonUtil.toJson(eleIdMap));
 
-                    List<NftCompositeCard> newCards = compositeCardMapper.selectByMap(eleIdMap);
+                    List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(eleChainIds);
+                    if (CollectionUtils.isEmpty(eleInfos)) {
+                        log.error("nftMetaverse get eleInfos is empty");
+                        return;
+                    }
+                    Map<Long, Long> eleIdmap = eleInfos.stream()
+                            .collect(Collectors.toMap(NftInfoDo::getNftId, NftInfoDo::getId));
+                    Map<String, Object> paramMap = new HashMap<>();
+                    eleIdMap.forEach((column, var) -> {
+                        Long eleNftId = eleIdmap.get(var);
+                        if (Objects.nonNull(eleNftId)) {
+                            paramMap.put(column, eleNftId);
+                        }
+                    });
+                    log.info("nftMetaverse get newCards info {}", JacksonUtil.toJson(paramMap));
+                    List<NftCompositeCard> newCards = compositeCardMapper.selectByMap(paramMap);
                     if (CollectionUtils.isEmpty(newCards)) {
                         log.error("nftMetaverse get newCards is empty");
                         return;

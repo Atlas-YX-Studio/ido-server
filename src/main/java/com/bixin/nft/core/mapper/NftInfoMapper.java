@@ -55,4 +55,6 @@ public interface NftInfoMapper {
 
     List<NftInfoDo> selectByIds(List<Long> list);
 
+    List<NftInfoDo> selectByNftIds(List<Long> list);
+
 }
