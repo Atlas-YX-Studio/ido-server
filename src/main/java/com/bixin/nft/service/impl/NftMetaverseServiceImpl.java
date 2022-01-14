@@ -458,7 +458,9 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                                 if (String.valueOf(idArray.get(0)).endsWith("_id")) {
                                     Map<String, Object> idValueMap = (Map<String, Object>) idArray.get(1);
                                     long u64 = NumberUtils.toLong(String.valueOf(idValueMap.get("U64")), 0);
-                                    eleChainIds.add(u64);
+                                    if (u64 > 0) {
+                                        eleChainIds.add(u64);
+                                    }
                                     eleIdMap.put(String.valueOf(idArray.get(0)), u64);
                                 }
                             }
@@ -477,7 +479,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             log.error("nftMetaverse get eleInfos is empty");
                             return;
                         }
-                        log.info("nftMetaverse get eleInfos {}",JacksonUtil.toJson(eleInfos));
+                        log.info("nftMetaverse get eleInfos {}", JacksonUtil.toJson(eleInfos));
                         Map<Long, Long> eleIdmap = eleInfos.stream()
                                 .collect(Collectors.toMap(NftInfoDo::getNftId, NftInfoDo::getId));
                         Map<String, Object> paramMap = new HashMap<>();
