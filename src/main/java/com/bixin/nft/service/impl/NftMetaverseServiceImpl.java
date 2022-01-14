@@ -109,7 +109,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .filter(p -> NftType.COMPOSITE_CARD.getType().equals(p.getType()))
                 .max(Comparator.comparing(NftInfoDo::getId));
         String[] nameArray = maxNameInfo.get().getName().split("#");
-        String newName = nameArray[0];
+        String newName = nameArray[0].trim();
         if (nameArray.length == 2) {
             newName += " # " + (NumberUtils.toInt(nameArray[1].trim(), 0) + 1);
         } else {
