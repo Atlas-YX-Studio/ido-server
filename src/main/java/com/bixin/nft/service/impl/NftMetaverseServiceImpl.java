@@ -240,10 +240,12 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             throw new BizException("create nft img is failed, resp: "
                     + resp + "， param: " + paramValue + ", url: " + url);
         }
-        return Map.of("nftInfoId", newNftInfo.getId(),
+        Map<String, Object> result = Map.of("nftInfoId", newNftInfo.getId(),
                 "image", imageUrl,
                 "name", newName,
                 "description", nftGroupDo.getEnDescription());
+        log.info("nftMetaverse create nft image success {}", JacksonUtil.toJson(result));
+        return result;
     }
 
     @Override
