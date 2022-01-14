@@ -447,7 +447,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             nftId.setValue(Long.valueOf((String) valueMap.get("U64")));
                         }
                     });
-                    log.info("nftMetaverse get chain nft info:{},{}", nftGroupDo.getId(), nftId.getValue());
+                    log.info("nftMetaverse get chain nft info:{},{},{}",
+                            userAddress, nftGroupDo.getId(), nftId.getValue());
                     if (nftId.getValue() <= 0) {
                         log.error("nftMetaverse NFTId解析错误, groupId:{}，nftId:{}, struct:{}", nftGroupDo.getId(), nftId.getValue(), el);
                         return;
