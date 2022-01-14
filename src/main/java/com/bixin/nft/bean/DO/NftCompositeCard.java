@@ -11,7 +11,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -493,9 +492,33 @@ public class NftCompositeCard implements Serializable {
         return card;
     }
 
+    public static void initChainNftIds() {
+        Class<NftCompositeCard> clazz = NftCompositeCard.class;
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            String fieldName = field.getName();
+            if (fieldName.contains("Id")) {
+                String chain_id = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldName);
+                chainNftMap.put(chain_id, fieldName);
+                nftChainMap.put(fieldName, chain_id);
+            }
+        }
+    }
+
+
+    public static Map<String, String> chainNftMap = new HashMap<>();
+    public static Map<String, String> nftChainMap = new HashMap<>();
 
     static final Map<String, String> map = new HashMap<>() {{
         put("Facial Expression", "expression");
     }};
+
+
+    public static void main(String[] args) {
+        initChainNftIds();
+        System.out.println(chainNftMap);
+        System.out.println(nftChainMap);
+
+    }
 
 }

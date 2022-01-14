@@ -270,6 +270,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         Map<String, Set<NftSelfResourceVo.ElementVo>> elementMap = new HashMap<>();
         List<NftSelfResourceVo.CardVo> cardList = new ArrayList<>();
         List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
+        // TODO: 2022/1/14 修改
+        NftCompositeCard.initChainNftIds();
         if ("element".equalsIgnoreCase(nftType)) {
             List<NftGroupDo> nftElementGroupList = nftGroups.stream()
                     .filter(p -> NftType.COMPOSITE_ELEMENT.getType().equalsIgnoreCase(p.getType()))
@@ -440,23 +442,44 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 vector.forEach(el -> {
                     MutableLong nftId = new MutableLong(0);
                     List<JSONArray> structValue = StarCoinJsonUtil.parseStructObj(el);
+                    String structType = StarCoinJsonUtil.parseStructTypeObj(el);
+                    Map<String, Object> eleIdMap = new HashMap<>();
                     structValue.forEach(v -> {
                         Object[] info = v.toArray();
                         if ("id".equals(String.valueOf(info[0]))) {
                             Map<String, Object> valueMap = (Map<String, Object>) info[1];
                             nftId.setValue(Long.valueOf((String) valueMap.get("U64")));
                         }
+                        if (structType.contains("KikoCatCard")) {
+                            if ("type_meta".equals(String.valueOf(info[0]))) {
+                                List<JSONArray> cardElementIds = StarCoinJsonUtil.parseStructObj(info[1]);
+//                            KikoCatCard
+//                            KikoCatElement
+                                Object[] idArray = cardElementIds.toArray();
+                                if (String.valueOf(idArray[0]).endsWith("_id")) {
+                                    Map<String, Object> idValueMap = (Map<String, Object>) info[1];
+                                    long u64 = NumberUtils.toLong(String.valueOf(idValueMap.get("U64")), 0);
+                                    if (u64 > 0) {
+                                        eleIdMap.put(String.valueOf(idArray[0]), u64);
+                                    }
+                                }
+                            }
+                        }
                     });
-                    log.info("nftMetaverse get chain nft info:{},{},{}",
-                            userAddress, nftGroupDo.getId(), nftId.getValue());
+                    log.info("nftMetaverse get chain nft info:{},{},{},{}",
+                            userAddress, nftGroupDo.getId(), nftId.getValue(), JacksonUtil.toJson(eleIdMap));
+
+                    List<NftCompositeCard> newCards = compositeCardMapper.selectByMap(eleIdMap);
+                    if (CollectionUtils.isEmpty(newCards)) {
+                        log.error("nftMetaverse get newCards is empty");
+                        return;
+                    }
+                    NftCompositeCard card = newCards.get(0);
+                    NftInfoDo nftInfoDo = nftInfoService.selectById(card.getInfoId());
                     if (nftId.getValue() <= 0) {
                         log.error("nftMetaverse NFTId解析错误, groupId:{}，nftId:{}, struct:{}", nftGroupDo.getId(), nftId.getValue(), el);
                         return;
                     }
-                    NftInfoDo selectNftInfoDo = new NftInfoDo();
-                    selectNftInfoDo.setGroupId(nftGroupDo.getId());
-                    selectNftInfoDo.setNftId(nftId.getValue());
-                    NftInfoDo nftInfoDo = nftInfoService.selectByObject(selectNftInfoDo);
                     if (ObjectUtils.isEmpty(nftInfoDo)) {
                         log.error("nftMetaverse NFTInfo不存在, groupId:{}，nftId:{}", nftGroupDo.getId(), nftId.getValue());
                         return;
@@ -464,8 +487,11 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     // 以链上为准，更新当前owner
                     if (!StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())) {
                         nftInfoDo.setOwner(userAddress);
-                        nftInfoService.update(nftInfoDo);
                     }
+                    nftInfoDo.setNftId(nftId.getValue());
+                    nftInfoDo.setCreated(true);
+                    nftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
+                    nftInfoService.update(nftInfoDo);
                     nftInfoDos.add(nftInfoDo);
                 });
             }

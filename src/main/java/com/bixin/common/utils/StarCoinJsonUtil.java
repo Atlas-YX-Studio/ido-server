@@ -44,6 +44,15 @@ public class StarCoinJsonUtil {
         List<JSONArray> arr = (List<JSONArray>) structMap.get("value");
         return arr;
     }
+    public static String parseStructTypeObj(Object obj) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> valueMap = (Map<String, Object>) obj;
+        @SuppressWarnings("unchecked")
+        Map<String, Object> structMap = (Map<String, Object>) valueMap.get("Struct");
+        @SuppressWarnings("unchecked")
+       String type = (String) structMap.get("type_");
+        return type;
+    }
 
     public static List<JSONObject> parseVectorObj(Object obj) {
         @SuppressWarnings("unchecked")
