@@ -352,6 +352,15 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .payToken(payToken)
                         .build();
 
+                sumMap.computeIfAbsent(type, k -> new HashMap<>());
+                Long tmpSum = sumMap.get(type).get(property);
+                long lastSum = Objects.isNull(tmpSum) ? 1 : tmpSum + 1;
+                sumMap.get(type).put(property, lastSum);
+
+                nftIdsMap.computeIfAbsent(type, k -> new HashMap<>());
+                nftIdsMap.get(type).computeIfAbsent(property, k -> new HashMap<>());
+                nftIdsMap.get(type).get(property).put(infoDo.getNftId(), infoDo.getId());
+
                 repeatPropertyMap.computeIfAbsent(type, k -> new HashMap<>());
                 NftSelfResourceVo.ElementVo tmpVo = repeatPropertyMap.get(type).put(property, elementVo);
 
@@ -363,24 +372,18 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             userAddress, groupDo.getId(), groupDo.getElementId(), tmpVo);
                     tmpSet.remove(tmpVo);
                 }
+                elementVo.setSum(lastSum);
+                elementVo.setChainNftIds(nftIdsMap.get(type).get(property));
                 tmpSet.add(elementVo);
-
-                sumMap.computeIfAbsent(type, k -> new HashMap<>());
-                Long tmpSum = sumMap.get(type).get(property);
-                sumMap.get(type).put(property, Objects.isNull(tmpSum) ? 1 : tmpSum + 1);
-
-                nftIdsMap.computeIfAbsent(type, k -> new HashMap<>());
-                nftIdsMap.get(type).computeIfAbsent(property, k -> new HashMap<>());
-                nftIdsMap.get(type).get(property).put(infoDo.getNftId(), infoDo.getId());
             });
-            elementMap.forEach((key, value) -> {
-                Map<String, Long> propertyMap = sumMap.get(key);
-                Map<String, Map<Long, Long>> nftIdMap = nftIdsMap.get(key);
-                value.forEach(p -> {
-                    p.setSum(propertyMap.get(p.getProperty()));
-                    p.setChainNftIds(nftIdMap.get(p.getProperty()));
-                });
-            });
+//            elementMap.forEach((key, value) -> {
+//                Map<String, Long> propertyMap = sumMap.get(key);
+//                Map<String, Map<Long, Long>> nftIdMap = nftIdsMap.get(key);
+//                value.forEach(p -> {
+//                    p.setSum(propertyMap.get(p.getProperty()));
+//                    p.setChainNftIds(nftIdMap.get(p.getProperty()));
+//                });
+//            });
         }
     }
 

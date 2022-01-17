@@ -92,6 +92,7 @@ public class HexTest {
             put("11-22", "11-11-22");
         }});
         System.out.println("llll:"+sumMap.get("11").put("11-22","11-11-33"));
+        System.out.println("llll:"+sumMap.get("11").putIfAbsent("11-22","11-11-44"));
         System.out.println("llll:"+sumMap);
 
 
