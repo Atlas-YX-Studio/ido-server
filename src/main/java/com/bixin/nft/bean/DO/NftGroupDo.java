@@ -203,5 +203,7 @@ public class NftGroupDo implements Serializable {
      */
     private Long elementId;
 
+
+
     private static final long serialVersionUID = 1L;
 }

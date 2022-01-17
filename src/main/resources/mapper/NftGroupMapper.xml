@@ -45,7 +45,7 @@
   <sql id="Base_Column_List">
     id, series, series_name, name, series_logo, series_quantity, quantity, offering_quantity, box_token,
     box_token_precision, box_token_logo, pay_token, pay_token_precision, nft_meta, nft_body,
-    nft_type_info, nft_type_image_link, creator, owner, selling_price, selling_time, composite_price,
+    nft_type_info, nft_type_image_link, creator, owner, selling_price, selling_time,
     enabled, offering, mining, status, type, element_id, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
@@ -71,7 +71,7 @@
                            box_token_logo, pay_token, pay_token_precision,
                            nft_meta, nft_body, nft_type_info,
                            nft_type_image_link, creator, owner,
-                           selling_price, selling_time, enabled, composite_price,
+                           selling_price, selling_time, enabled,
                            offering, mining, status, type, element_id, create_time,
                            update_time, support_token, nft_type_image_data,
                            cn_description, en_description, cn_rule_desc,
