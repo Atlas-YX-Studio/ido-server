@@ -4,6 +4,7 @@ import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
 import com.bixin.nft.bean.dto.TokenDto;
+import com.bixin.nft.common.enums.NftType;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -137,6 +138,8 @@ public class NftInfoVo {
     private NftCompositeCard compositeCard;
 
     private NftCompositeElement compositeElement;
+
+    private NftType nftType;
 
     /**
      * 支持币种

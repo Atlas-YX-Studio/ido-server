@@ -355,12 +355,15 @@ public class NftInfoController {
         //cat
         NftKikoCatDo nftKikoCatDo = null;
 
+        NftType nftType = NftType.NORMAL;
+
         if (nftMeta.contains("KikoCatCard") && nftBody.contains("KikoCatCard")) {
             List<NftCompositeCard> compositeCards = metareverseService.getCompositeCard(nftInfoDo.getId());
             if (CollectionUtils.isEmpty(compositeCards)) {
                 return R.failed("NftCompositeCard 不存在，nftId = " + nftInfoDo.getNftId());
             }
             compositeCard = compositeCards.get(0);
+            nftType = NftType.NORMAL;
         } else if (nftMeta.contains("KikoCatElement") && nftBody.contains("KikoCatElement")) {
             Set<Long> ids = new HashSet<>() {{
                 add(nftInfoDo.getId());
@@ -370,6 +373,7 @@ public class NftInfoController {
                 return R.failed("NftCompositeElement 不存在，nftIds = " + ids);
             }
             compositeElement = compositeElements.get(0);
+            nftType = NftType.COMPOSITE_ELEMENT;
         } else {
             NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
             selectNftKikoCatDo.setInfoId(nftInfoDo.getId());
@@ -392,6 +396,7 @@ public class NftInfoController {
         if (Objects.nonNull(compositeElement)) {
             nftInfoVo.setCompositeElement(compositeElement);
         }
+        nftInfoVo.setNftType(nftType);
         return R.success(nftInfoVo);
     }
 
