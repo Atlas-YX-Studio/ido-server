@@ -142,13 +142,13 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
                 }
                 // 铸造
                 if (NftEventType.NFT_MINT_EVENT.getDesc().equals(tagString)) {
-                    log.info("NftEventSubscriberRunner 铸造");
+                    log.info("BoxEventSubscriberRunner 铸造");
                     NftMintEventtDto dto = mapper.convertValue(data, NftMintEventtDto.class);
                     nftEventDo = NftMintEventtDto.of(dto);
                 }
                 // 分解
                 if (NftEventType.NFT_RESOLVE_EVENT.getDesc().equals(tagString)) {
-                    log.info("NftEventSubscriberRunner 分解");
+                    log.info("BoxEventSubscriberRunner 分解");
                     NFTResolveEventDto dto = mapper.convertValue(data, NFTResolveEventDto.class);
                     resolveNftEvent(dto, eventResult.getTypeTag(), tagString);
                 }
@@ -177,7 +177,7 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
         NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
-            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
+            log.error("BoxEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
             return;
         }
         NftInfoDo infoParam = NftInfoDo.builder()
@@ -186,20 +186,20 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
                 .groupId(nftGroupDo.getId())
                 .type(NftType.COMPOSITE_CARD.getType())
                 .build();
-        log.info("NftEventSubscriberRunner get resolve nft param {}", infoParam);
+        log.info("BoxEventSubscriberRunner get resolve nft param {}", infoParam);
         NftInfoDo infoDo = nftInfoService.selectByObject(infoParam);
         if (Objects.isNull(infoDo)) {
-            log.error("NftEventSubscriberRunner get resolve nft is empty {}", infoParam);
+            log.error("BoxEventSubscriberRunner get resolve nft is empty {}", infoParam);
             return;
         }
-        log.info("NftEventSubscriberRunner get resolve nft info {},{}", infoDo.getId(), infoDo.getGroupId());
+        log.info("BoxEventSubscriberRunner get resolve nft info {},{}", infoDo.getId(), infoDo.getGroupId());
 
         List<NftCompositeCard> compositeCards = nftMetareverseService.getCompositeCard(infoDo.getId());
         if (CollectionUtils.isEmpty(compositeCards)) {
-            log.error("NftEventSubscriberRunner get resolve card is empty {}", infoDo.getId());
+            log.error("BoxEventSubscriberRunner get resolve card is empty {}", infoDo.getId());
             return;
         }
-        log.info("NftEventSubscriberRunner get resolve card info {},{}", infoDo.getId(), compositeCards);
+        log.info("BoxEventSubscriberRunner get resolve card info {},{}", infoDo.getId(), compositeCards);
 
         Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
         nftInfoService.update(NftInfoDo.builder()
@@ -224,21 +224,21 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
-        log.error("NftEventSubscriberRunner group info，meta = {}, bogy = {}, {}", meta, body, eventType);
+        log.error("BoxEventSubscriberRunner group info，meta = {}, bogy = {}, {}", meta, body, eventType);
 
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
-            log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}, {}", meta, body, eventType);
+            log.error("BoxEventSubscriberRunner group 不存在，meta = {}, bogy = {}, {}", meta, body, eventType);
             return;
         }
         NftInfoDo nftInfoParm = NftInfoDo.builder()
                 .groupId(nftGroupDo.getId())
                 .nftId(nftEventDo.getNftId()).build();
-        log.info("NftEventSubscriberRunner nftInfo :{},{}", eventType, nftInfoParm);
+        log.info("BoxEventSubscriberRunner nftInfo :{},{}", eventType, nftInfoParm);
 
         NftInfoDo nftInfoDo = nftInfoService.selectByObject(nftInfoParm);
         if (ObjectUtils.isEmpty(nftInfoDo)) {
-            log.error("NftEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
+            log.error("BoxEventSubscriberRunner nftInfo 不存在，groupId = {}, nftId = {}", nftGroupDo.getId(), nftEventDo.getNftId());
             return;
         }
         nftEventDo.setInfoId(nftInfoDo.getId());
@@ -251,12 +251,12 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
                 nftInfoService.update(nftInfoDo);
             }
         } catch (Exception e) {
-            log.error("NftEventSubscriberRunner-setinfo-Ower 发生异常 :", e);
+            log.error("BoxEventSubscriberRunner-setinfo-Ower 发生异常 :", e);
         }
 
         try {
             if (NftEventType.NFT_MINT_EVENT.getDesc().equals(eventType)) {
-                log.info("NftEventSubscriberRunner nftCardInfo :{},{},{}", eventType, nftInfoParm, nftInfoDo.getId());
+                log.info("BoxEventSubscriberRunner nftCardInfo :{},{},{}", eventType, nftInfoParm, nftInfoDo.getId());
                 nftCompositeCardService.update(
                         NftCompositeCard.builder()
                                 .state(CardState.card_combining_success.getCode())
@@ -264,10 +264,10 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
                         Wrappers.<NftCompositeCard>lambdaUpdate()
                                 .eq(NftCompositeCard::getInfoId, nftInfoDo.getId())
                 );
-                log.info("NftEventSubscriberRunner update state success {}", nftInfoDo.getId());
+                log.info("BoxEventSubscriberRunner update state success {}", nftInfoDo.getId());
             }
         } catch (Exception e) {
-            log.error("NftEventSubscriberRunner update nft_composite_card exception", e);
+            log.error("BoxEventSubscriberRunner update nft_composite_card exception", e);
         }
 
         return;
