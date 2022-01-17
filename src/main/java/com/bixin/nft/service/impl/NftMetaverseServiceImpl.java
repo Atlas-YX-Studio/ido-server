@@ -82,7 +82,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     public List<NftCompositeCard> getCompositeCard(long nftId) {
         Map<String, Object> columnMap = new HashMap<>();
         columnMap.put("info_id", nftId);
-        columnMap.put("state", CardState.card_combining_success.getCode());
+//        columnMap.put("state", CardState.card_combining_success.getCode());
         return compositeCardMapper.selectByMap(columnMap);
     }
 
