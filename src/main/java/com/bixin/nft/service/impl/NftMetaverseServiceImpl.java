@@ -275,8 +275,6 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         Map<String, Set<NftSelfResourceVo.ElementVo>> elementMap = new HashMap<>();
         List<NftSelfResourceVo.CardVo> cardList = new ArrayList<>();
         List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
-        // TODO: 2022/1/14 修改
-        NftCompositeCard.initChainNftIds();
         if ("element".equalsIgnoreCase(nftType)) {
             List<NftGroupDo> nftElementGroupList = nftGroups.stream()
                     .filter(p -> NftType.COMPOSITE_ELEMENT.getType().equalsIgnoreCase(p.getType()))
@@ -328,6 +326,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
             Map<String, Map<String, Long>> sumMap = new HashMap<>();
             Map<String, Map<String, Map<Long, Long>>> nftIdsMap = new HashMap<>();
+            Map<String, Map<String, NftSelfResourceVo.ElementVo>> repeatPropertyMap = new HashMap<>();
             compositeElements.forEach(p -> {
                 List<NftInfoDo> infoDos = infoMap.get(p.getInfoId());
                 if (CollectionUtils.isEmpty(infoDos)) {
@@ -352,8 +351,17 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .nftBody(nftBody)
                         .payToken(payToken)
                         .build();
+
+                repeatPropertyMap.computeIfAbsent(type, k -> new HashMap<>());
+                NftSelfResourceVo.ElementVo tmpVo = repeatPropertyMap.get(type).put(property, elementVo);
+
                 elementMap.computeIfAbsent(type, k -> new HashSet<>());
-                elementMap.get(type).add(elementVo);
+                Set<NftSelfResourceVo.ElementVo> tmpSet = elementMap.get(type);
+
+                if(Objects.nonNull(tmpVo)){
+                    tmpSet.remove(tmpVo);
+                }
+                tmpSet.add(elementVo);
 
                 sumMap.computeIfAbsent(type, k -> new HashMap<>());
                 Long tmpSum = sumMap.get(type).get(property);
