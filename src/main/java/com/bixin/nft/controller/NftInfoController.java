@@ -348,8 +348,10 @@ public class NftInfoController {
         if (ObjectUtils.isEmpty(nftInfoDo)) {
             return R.failed("nftInfoDo不存在，meta = " + nftMeta + "，body = " + nftBody + "，nftId = " + nftId);
         }
+        //组合卡牌
+        NftCompositeCard compositeCard = null;
         //素材
-        List<NftCompositeElement> compositeElements = null;
+        NftCompositeElement compositeElement = null;
         //cat
         NftKikoCatDo nftKikoCatDo = null;
 
@@ -358,12 +360,16 @@ public class NftInfoController {
             if (CollectionUtils.isEmpty(compositeCards)) {
                 return R.failed("NftCompositeCard 不存在，nftId = " + nftInfoDo.getNftId());
             }
-            NftCompositeCard compositeCard = compositeCards.get(0);
-            List<Long> eleNftIds = NftCompositeCard.getElementIds(compositeCard);
-            compositeElements = metareverseService.getCompositeElements(new HashSet<>(eleNftIds));
+            compositeCard = compositeCards.get(0);
+        } else if (nftMeta.contains("KikoCatElement") && nftBody.contains("KikoCatElement")) {
+            Set<Long> ids = new HashSet<>() {{
+                add(nftInfoDo.getId());
+            }};
+            List<NftCompositeElement> compositeElements = metareverseService.getCompositeElements(ids);
             if (CollectionUtils.isEmpty(compositeElements)) {
-                return R.failed("NftCompositeElement 不存在，nftIds = " + new HashSet<>(eleNftIds));
+                return R.failed("NftCompositeElement 不存在，nftIds = " + ids);
             }
+            compositeElement = compositeElements.get(0);
         } else {
             NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
             selectNftKikoCatDo.setInfoId(nftInfoDo.getId());
@@ -380,8 +386,11 @@ public class NftInfoController {
         if (Objects.nonNull(nftKikoCatDo)) {
             nftInfoVo.setProperties(nftKikoCatDo);
         }
-        if (!CollectionUtils.isEmpty(compositeElements)) {
-            nftInfoVo.setCompositeElements(compositeElements);
+        if (Objects.nonNull(compositeCard)) {
+            nftInfoVo.setCompositeCard(compositeCard);
+        }
+        if (Objects.nonNull(compositeElement)) {
+            nftInfoVo.setCompositeElement(compositeElement);
         }
         return R.success(nftInfoVo);
     }
