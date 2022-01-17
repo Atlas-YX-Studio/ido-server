@@ -376,14 +376,6 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 elementVo.setChainNftIds(nftIdsMap.get(type).get(property));
                 tmpSet.add(elementVo);
             });
-//            elementMap.forEach((key, value) -> {
-//                Map<String, Long> propertyMap = sumMap.get(key);
-//                Map<String, Map<Long, Long>> nftIdMap = nftIdsMap.get(key);
-//                value.forEach(p -> {
-//                    p.setSum(propertyMap.get(p.getProperty()));
-//                    p.setChainNftIds(nftIdMap.get(p.getProperty()));
-//                });
-//            });
         }
     }
 
@@ -417,6 +409,16 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     log.error("nftMetaverse get infoMap card is empty {}", p);
                     return;
                 }
+                List<Long> eleNftIds = NftCompositeCard.getElementIds(p);
+                List<NftCompositeElement> elements = getCompositeElements(new HashSet<>(eleNftIds));
+                if (CollectionUtils.isEmpty(elements)) {
+                    log.error("nftMetaverse get card elements  is empty {}", new HashSet<>(eleNftIds));
+                    return;
+                }
+                BigDecimal sumScore = elements.stream()
+                        .map(NftCompositeElement::getScore)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
                 NftInfoDo infoDo = infoDos.get(0);
                 NftSelfResourceVo.CardVo cardVo = NftSelfResourceVo.CardVo.builder()
                         .original(p.getOriginal())
@@ -428,6 +430,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         .groupId(infoDo.getGroupId())
                         .chainId(infoDo.getNftId())
                         .nftId(infoDo.getId())
+                        .score(sumScore)
                         .nftMeta(nftMeta)
                         .nftBody(nftBody)
                         .payToken(payToken)

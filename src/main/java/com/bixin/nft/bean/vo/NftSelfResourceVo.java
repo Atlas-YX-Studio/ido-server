@@ -58,6 +58,7 @@ public class NftSelfResourceVo {
         private long groupId;
         private long chainId;
         private long nftId;
+        private BigDecimal score;
         private String nftMeta;
         private String nftBody;
         private String payToken;
