@@ -224,6 +224,8 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
+        log.error("NftEventSubscriberRunner group info，meta = {}, bogy = {}", meta, body);
+
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             log.error("NftEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
@@ -232,6 +234,7 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
         NftInfoDo nftInfoParm = NftInfoDo.builder()
                 .groupId(nftGroupDo.getId())
                 .nftId(nftEventDo.getNftId()).build();
+        log.info("NftEventSubscriberRunner nftInfo :{},{}", eventType, nftInfoParm);
 
         NftInfoDo nftInfoDo = nftInfoService.selectByObject(nftInfoParm);
         if (ObjectUtils.isEmpty(nftInfoDo)) {
@@ -253,6 +256,7 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
 
         try {
             if (NftEventType.NFT_MINT_EVENT.getDesc().equals(eventType)) {
+                log.info("NftEventSubscriberRunner nftCardInfo :{},{},{}", eventType, nftInfoParm, nftInfoDo.getId());
                 nftCompositeCardService.update(
                         NftCompositeCard.builder()
                                 .state(CardState.card_combining_success.getCode())
