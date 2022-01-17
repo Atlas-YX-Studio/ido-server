@@ -102,6 +102,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
     @Transactional
     public Map<String, Object> compositeCard(CompositeCardBean bean) {
+        // TODO: 2022/1/12  debug
+        log.info("nftMetaverse create nft param: {}", bean);
         long eleGroupId = bean.getGroupId();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(eleGroupId).build());
         //name编号递增

@@ -3,6 +3,7 @@ package com.bixin.nft.bean.dto;
 import com.bixin.common.utils.LocalDateTimeUtil;
 import com.bixin.nft.bean.DO.NftEventDo;
 import com.bixin.nft.common.enums.NftEventType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NftMintEventtDto {
 
     // nft id
