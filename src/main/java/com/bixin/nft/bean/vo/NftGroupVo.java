@@ -1,6 +1,7 @@
 package com.bixin.nft.bean.vo;
 
 import com.bixin.nft.bean.dto.TokenDto;
+import com.bixin.nft.common.enums.NftType;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -174,4 +175,8 @@ public class NftGroupVo implements Serializable {
      * 元素
      */
     private NftGroupVo element;
+
+    private NftType nftType;
+
+
 }

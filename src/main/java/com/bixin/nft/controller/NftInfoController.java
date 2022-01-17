@@ -298,6 +298,15 @@ public class NftInfoController {
             vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
             return vo;
         });
+        String nftMeta = nftGroupDo.getNftMeta();
+        String nftBody = nftGroupDo.getNftBody();
+        NftType nftType = NftType.NORMAL;
+        if (nftMeta.contains("KikoCatCard") && nftBody.contains("KikoCatCard")) {
+            nftType = NftType.COMPOSITE_CARD;
+        } else if (nftMeta.contains("KikoCatElement") && nftBody.contains("KikoCatElement")) {
+            nftType = NftType.COMPOSITE_ELEMENT;
+        }
+        nftGroupVo.setNftType(nftType);
         // 是否出售中
         NftMarketDo nftMarketParam = new NftMarketDo();
         nftMarketParam.setChainId(boxId);
