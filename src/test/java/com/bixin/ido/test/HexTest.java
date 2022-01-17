@@ -43,7 +43,7 @@ public class HexTest {
 //        String hex = "0x454f53";
         String hex = "0x6d696e6572".replaceAll("0x", "");
 //        String hex1 = "0x55534454";
-        String hex1 = "0x63617264".replaceAll("0x", "");
+        String hex1 = "0x6835".replaceAll("0x", "");
         String s = HexStringUtil.toStringHex(hex);
         String s1 = HexStringUtil.toStringHex(hex1);
 

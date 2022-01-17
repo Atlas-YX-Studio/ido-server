@@ -503,8 +503,10 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             return;
                         }
                         // 以链上为准，更新当前owner
+                        boolean hasUpdate = false;
                         if (!StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())) {
                             nftInfoDo.setOwner(userAddress);
+                            hasUpdate = true;
                         }
                         if (!nftInfoDo.getCreated()
                                 || Objects.isNull(nftInfoDo.getNftId()) || nftInfoDo.getNftId() <= 0
@@ -513,6 +515,9 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                             nftInfoDo.setNftId(nftId.getValue());
                             nftInfoDo.setCreated(true);
                             nftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
+                            hasUpdate = true;
+                        }
+                        if (hasUpdate) {
                             nftInfoService.update(nftInfoDo);
                         }
                         nftInfoDos.add(nftInfoDo);
