@@ -358,7 +358,9 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 elementMap.computeIfAbsent(type, k -> new HashSet<>());
                 Set<NftSelfResourceVo.ElementVo> tmpSet = elementMap.get(type);
 
-                if(Objects.nonNull(tmpVo)){
+                if (Objects.nonNull(tmpVo)) {
+                    log.warn("nftMetaverse element property repeat {},{},{},{}",
+                            userAddress, groupDo.getId(), groupDo.getElementId(), tmpVo);
                     tmpSet.remove(tmpVo);
                 }
                 tmpSet.add(elementVo);
