@@ -272,7 +272,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
      */
     @Override
     public NftSelfResourceVo selfResource(String userAddress, String nftType) {
-        Map<String, Set<NftSelfResourceVo.ElementVo>> elementMap = new HashMap<>();
+        Map<String, List<NftSelfResourceVo.ElementVo>> elementMap = new HashMap<>();
         List<NftSelfResourceVo.CardVo> cardList = new ArrayList<>();
         List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
         if ("element".equalsIgnoreCase(nftType)) {
@@ -301,7 +301,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
     private void buildElementResource(String userAddress,
                                       List<NftGroupDo> nftElementGroupList,
-                                      Map<String, Set<NftSelfResourceVo.ElementVo>> elementMap) {
+                                      Map<String, List<NftSelfResourceVo.ElementVo>> elementMap) {
         for (NftGroupDo groupDo : nftElementGroupList) {
             String nftMeta = groupDo.getNftMeta();
             String nftBody = groupDo.getNftBody();
@@ -364,8 +364,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 repeatPropertyMap.computeIfAbsent(type, k -> new HashMap<>());
                 NftSelfResourceVo.ElementVo tmpVo = repeatPropertyMap.get(type).put(property, elementVo);
 
-                elementMap.computeIfAbsent(type, k -> new HashSet<>());
-                Set<NftSelfResourceVo.ElementVo> tmpSet = elementMap.get(type);
+                elementMap.computeIfAbsent(type, k -> new ArrayList<>());
+                List<NftSelfResourceVo.ElementVo> tmpSet = elementMap.get(type);
 
                 if (Objects.nonNull(tmpVo)) {
                     log.warn("nftMetaverse element property repeat {},{},{},{}",

@@ -20,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class NftSelfResourceVo {
 
-    private Map<String, Set<ElementVo>> elementMap;
+    private Map<String, List<ElementVo>> elementMap;
     private List<CardVo> cardList;
 
     @Data
