@@ -68,5 +68,5 @@ public interface NftInfoService {
 
     List<NftInfoVo> getUnStakingNftList(String userAddress);
 
-    List<NftInfoVo> getUserNftList(String userAddress);
+    List<NftInfoVo> getUnSellNftList(String userAddress);
 }

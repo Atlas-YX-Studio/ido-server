@@ -9,6 +9,7 @@ import com.bixin.core.client.ChainClientHelper;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.vo.NftInfoVo;
+import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.core.mapper.NftInfoMapper;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
@@ -146,8 +147,11 @@ public class NftInfoServiceImpl implements NftInfoService {
         List<NftGroupDo> nftGroups = nftGroupService.listByObject(NftGroupDo.builder().mining(true).build());
         nftGroups.forEach(nftGroupDo -> {
             List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
-            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain,
-                    () -> BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new));
+            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain, nftInfoDo -> {
+                NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new);
+                nftInfoVo.setNftType(NftType.of(nftInfoDo.getType()));
+                return nftInfoVo;
+            });
             nftInfoVos.addAll(nftInfoVoList);
         });
 
@@ -159,14 +163,17 @@ public class NftInfoServiceImpl implements NftInfoService {
      *
      * @param userAddress
      */
-    public List<NftInfoVo> getUserNftList(String userAddress) {
+    public List<NftInfoVo> getUnSellNftList(String userAddress) {
         List<NftInfoVo> nftInfoVos = Lists.newArrayList();
 
         List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
         nftGroups.forEach(nftGroupDo -> {
             List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
-            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain,
-                    () -> BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new));
+            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain, nftInfoDo -> {
+                NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new);
+                nftInfoVo.setNftType(NftType.of(nftInfoDo.getType()));
+                return nftInfoVo;
+            });
             nftInfoVos.addAll(nftInfoVoList);
         });
 

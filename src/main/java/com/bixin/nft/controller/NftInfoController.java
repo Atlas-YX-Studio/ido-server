@@ -323,6 +323,23 @@ public class NftInfoController {
         return R.success(nftGroupVo);
     }
 
+    /**
+     * 未出售NFT列表
+     *
+     * @param address
+     * @return
+     */
+    @GetMapping("/unsell/list")
+    public R unSellList(@RequestParam String address) {
+        return R.success(nftInfoService.getUnSellNftList(address));
+    }
+
+    /**
+     * 待质押NFT列表
+     *
+     * @param address
+     * @return
+     */
     @GetMapping("/unused/list")
     public R unusedList(@RequestParam String address) {
         return R.success(nftInfoService.getUnStakingNftList(address));

@@ -20,7 +20,7 @@ public class NftInfoServiceTest {
 
     @Test
     void ownerNftList() {
-        log.info("nftList:" + JSON.toJSONString(nftInfoService.getUserNftList("0xa85291039ddad8845d5097624c81c3fd")));
+        log.info("nftList:" + JSON.toJSONString(nftInfoService.getUnSellNftList("0x16D2E435CEBAb5eABbfd16402d4b22Ea")));
     }
 
 }
