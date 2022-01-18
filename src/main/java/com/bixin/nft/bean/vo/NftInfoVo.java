@@ -137,9 +137,7 @@ public class NftInfoVo {
 
     private NftType nftType;
 
-    private NftCompositeCard compositeCard;
-
-    private NftCompositeElement compositeElement;
+    private List<NftCompositeElement> compositeElements;
 
     /**
      * 支持币种

@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,8 +32,7 @@ public class NftSelfSellingVo extends NftMarketDo {
     private BigDecimal score;
 
     private NftType nftType;
-    private NftCompositeCard compositeCard;
-    private NftCompositeElement compositeElement;
+    private List<NftCompositeElement> compositeElements;
 
 
     public static NftSelfSellingVo of(Map<String, Object> map) {
