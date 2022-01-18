@@ -181,4 +181,8 @@ public class NftGroupVo implements Serializable {
 
     private String imageLink;
 
+    private String occupation;
+    private String customName;
+    private int sex;
+
 }
