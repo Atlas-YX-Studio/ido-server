@@ -32,7 +32,7 @@ public class NftSelfSellingVo extends NftMarketDo {
     private String nftBody;
     private BigDecimal score;
 
-    private NftBoxType nftType;
+    private NftType nftType;
     private List<NftCompositeElement> compositeElements;
 
     private String occupation;

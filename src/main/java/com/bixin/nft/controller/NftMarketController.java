@@ -113,7 +113,10 @@ public class NftMarketController {
                 p.setNftBody(nftBody);
 
             }
-            NftBoxType type = Objects.nonNull(p.getType()) ? NftBoxType.of(p.getType()) : NftBoxType.NFT;
+            NftType type = NftType.of(p.getType());
+            if (Objects.nonNull(type)) {
+                type = NftType.NORMAL;
+            }
             p.setNftType(type);
 
             Long nftBoxId = p.getNftBoxId();
