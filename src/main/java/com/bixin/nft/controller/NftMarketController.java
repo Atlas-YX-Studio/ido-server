@@ -111,7 +111,7 @@ public class NftMarketController {
                 String boxToken = nftGroupDo.getBoxToken();
                 String nftMeta = nftGroupDo.getNftMeta();
                 String nftBody = nftGroupDo.getNftBody();
-                NftType type = Objects.nonNull(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
+                NftBoxType type = Objects.nonNull(nftGroupDo.getType()) ? NftBoxType.of(nftGroupDo.getType()) : NftBoxType.NFT;
 
                 p.setBoxToken(boxToken);
                 p.setNftMeta(nftMeta);
