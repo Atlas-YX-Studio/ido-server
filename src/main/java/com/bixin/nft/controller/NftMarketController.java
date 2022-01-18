@@ -89,7 +89,7 @@ public class NftMarketController {
                     .collect(Collectors.groupingBy(NftCompositeCard::getInfoId));
         }
         Map<Long, List<NftCompositeElement>> eleNftMap = null;
-        if (!CollectionUtils.isEmpty(cardNftIds)) {
+        if (!CollectionUtils.isEmpty(eleNftIds)) {
             List<NftCompositeElement> compositeElements = metareverseService.getCompositeElements(eleNftIds);
             eleNftMap = compositeElements.stream()
                     .collect(Collectors.groupingBy(NftCompositeElement::getInfoId));
