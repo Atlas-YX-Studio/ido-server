@@ -74,10 +74,7 @@ public class NftMarketController {
 
         Set<Long> groupIds = list.stream().map(NftSelfSellingVo::getGroupId).collect(Collectors.toSet());
         Map<Long, NftGroupDo> map = new HashMap<>();
-        groupIds.forEach(id -> {
-            NftGroupDo nftGroupDo = nftGroupService.selectById(id);
-            map.put(id, nftGroupDo);
-        });
+        groupIds.forEach(id -> map.put(id, nftGroupService.selectById(id)));
 
         List<Long> cardNftIds = list.stream().filter(p -> NftBoxType.COMPOSITE_CARD.getDesc().equalsIgnoreCase(p.getType()))
                 .map(NftSelfSellingVo::getNftBoxId).collect(Collectors.toList());
@@ -111,13 +108,14 @@ public class NftMarketController {
                 String boxToken = nftGroupDo.getBoxToken();
                 String nftMeta = nftGroupDo.getNftMeta();
                 String nftBody = nftGroupDo.getNftBody();
-                NftBoxType type = Objects.nonNull(nftGroupDo.getType()) ? NftBoxType.of(nftGroupDo.getType()) : NftBoxType.NFT;
-
                 p.setBoxToken(boxToken);
                 p.setNftMeta(nftMeta);
                 p.setNftBody(nftBody);
-                p.setNftType(type);
+
             }
+            NftBoxType type = Objects.nonNull(p.getType()) ? NftBoxType.of(p.getType()) : NftBoxType.NFT;
+            p.setNftType(type);
+
             Long nftBoxId = p.getNftBoxId();
             if (!CollectionUtils.isEmpty(eleNftMap) && Objects.nonNull(eleNftMap.get(nftBoxId))) {
                 p.setCompositeElements(eleNftMap.get(nftBoxId));
