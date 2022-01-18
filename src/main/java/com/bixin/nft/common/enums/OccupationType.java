@@ -10,7 +10,7 @@ public enum OccupationType {
     ADVENTURER("Adventurer", "冒险家"),
     EXTREME_PLAYER("Extreme Player", "极限玩家"),
     ATHLETES("Athletes", "运动员"),
-    NONE("None", "无"),
+//    NONE("None", "无"),
 
     ;
 
