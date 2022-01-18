@@ -318,6 +318,7 @@ public class NftInfoController {
             nftGroupVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftGroupVo.setOwner(nftMarketDo.getOwner());
         }
+        nftGroupVo.setImageLink(nftMarketDo.getIcon());
         return R.success(nftGroupVo);
     }
 

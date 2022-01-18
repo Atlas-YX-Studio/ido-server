@@ -179,7 +179,6 @@ public class NftGroupVo implements Serializable {
 
     private NftType nftType;
 
-    private NftCompositeCard compositeCard;
-
+    private String imageLink;
 
 }
