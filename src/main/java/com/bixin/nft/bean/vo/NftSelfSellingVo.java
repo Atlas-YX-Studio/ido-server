@@ -34,6 +34,10 @@ public class NftSelfSellingVo extends NftMarketDo {
     private NftType nftType;
     private List<NftCompositeElement> compositeElements;
 
+    private String occupation;
+    private String customName;
+    private int sex;
+
 
     public static NftSelfSellingVo of(Map<String, Object> map) {
         return NftSelfSellingVo.builder()

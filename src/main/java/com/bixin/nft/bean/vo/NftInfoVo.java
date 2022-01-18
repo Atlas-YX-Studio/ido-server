@@ -144,4 +144,8 @@ public class NftInfoVo {
      */
     private List<TokenDto> supportToken;
 
+    private String occupation;
+    private String customName;
+    private int sex;
+
 }
