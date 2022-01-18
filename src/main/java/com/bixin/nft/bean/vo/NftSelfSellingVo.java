@@ -1,6 +1,9 @@
 package com.bixin.nft.bean.vo;
 
+import com.bixin.nft.bean.DO.NftCompositeCard;
+import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftMarketDo;
+import com.bixin.nft.common.enums.NftType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,6 +29,11 @@ public class NftSelfSellingVo extends NftMarketDo {
     private String nftMeta;
     private String nftBody;
     private BigDecimal score;
+
+    private NftType nftType;
+    private NftCompositeCard compositeCard;
+    private NftCompositeElement compositeElement;
+
 
     public static NftSelfSellingVo of(Map<String, Object> map) {
         return NftSelfSellingVo.builder()

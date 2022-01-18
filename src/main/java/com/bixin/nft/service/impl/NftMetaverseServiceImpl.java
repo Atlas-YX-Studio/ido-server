@@ -79,6 +79,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     HttpClientHelper httpClientHelper;
 
 
+    @Override
     public List<NftCompositeCard> getCompositeCard(long nftId) {
         Map<String, Object> columnMap = new HashMap<>();
         columnMap.put("info_id", nftId);
@@ -86,6 +87,14 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         return compositeCardMapper.selectByMap(columnMap);
     }
 
+    @Override
+    public List<NftCompositeCard> getCompositeCards(List<Long> nftIds) {
+        QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();
+        wrapper.lambda().in(NftCompositeCard::getInfoId, nftIds);
+        return compositeCardMapper.selectList(wrapper);
+    }
+
+    @Override
     public List<NftCompositeElement> getCompositeElements(Set<Long> nftIds) {
         QueryWrapper<NftCompositeElement> wrapper = new QueryWrapper<>();
         wrapper.lambda().in(NftCompositeElement::getInfoId, nftIds);

@@ -19,11 +19,13 @@ public interface NftMetareverseService {
 
     List<NftCompositeCard> getCompositeCard(long nftId);
 
+    List<NftCompositeCard> getCompositeCards(List<Long> nftIds);
+
     List<NftCompositeElement> getCompositeElements(Set<Long> nftIds);
 
     List<Map<String, Object>> getSumByOccupationGroup();
 
-    Map<String,Object> compositeCard(CompositeCardBean bean);
+    Map<String, Object> compositeCard(CompositeCardBean bean);
 
     R analysisCard(String userAddress, long cardId);
 
