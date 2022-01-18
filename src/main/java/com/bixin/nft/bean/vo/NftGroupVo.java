@@ -1,5 +1,6 @@
 package com.bixin.nft.bean.vo;
 
+import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.dto.TokenDto;
 import com.bixin.nft.common.enums.NftType;
 import lombok.Data;
@@ -177,6 +178,8 @@ public class NftGroupVo implements Serializable {
     private NftGroupVo element;
 
     private NftType nftType;
+
+    private NftCompositeCard compositeCard;
 
 
 }

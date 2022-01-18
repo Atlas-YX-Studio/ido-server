@@ -38,18 +38,20 @@ import java.util.stream.Stream;
 @RequestMapping("/v1/nft/")
 public class NftInfoController {
 
-    @Autowired
+    @Resource
     private NftInfoService nftInfoService;
-    @Autowired
+    @Resource
     private NftGroupService nftGroupService;
-    @Autowired
+    @Resource
     private NftKikoCatService nftKikoCatService;
-    @Autowired
+    @Resource
     private NftMarketService nftMarketService;
-    @Autowired
+    @Resource
     private NftEventService nftEventService;
     @Resource
     private NftMetareverseService metareverseService;
+    @Resource
+    private NftCompositeCardService compositeCardService;
     @Resource
     private StarConfig starConfig;
 
@@ -298,20 +300,17 @@ public class NftInfoController {
             vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
             return vo;
         });
-        String nftMeta = nftGroupDo.getNftMeta();
-        String nftBody = nftGroupDo.getNftBody();
-        NftType nftType = NftType.NORMAL;
-        if (nftMeta.contains("KikoCatCard") && nftBody.contains("KikoCatCard")) {
-            nftType = NftType.COMPOSITE_CARD;
-        } else if (nftMeta.contains("KikoCatElement") && nftBody.contains("KikoCatElement")) {
-            nftType = NftType.COMPOSITE_ELEMENT;
-        }
+        NftType nftType = Objects.nonNull(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
         nftGroupVo.setNftType(nftType);
+        if (NftType.COMPOSITE_CARD == nftType) {
+            
+        }
+
         // 是否出售中
         NftMarketDo nftMarketParam = new NftMarketDo();
         nftMarketParam.setChainId(boxId);
         nftMarketParam.setGroupId(nftGroupDo.getId());
-        nftMarketParam.setType("box");
+        nftMarketParam.setType(Objects.nonNull(nftGroupDo.getType()) ? nftGroupDo.getType() : "box");
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParam);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftGroupVo.setOnSell(false);
