@@ -12,7 +12,10 @@ import com.bixin.nft.bean.vo.NftGroupVo;
 import com.bixin.nft.bean.vo.NftInfoVo;
 import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
-import com.bixin.nft.common.enums.*;
+import com.bixin.nft.common.enums.CardElementType;
+import com.bixin.nft.common.enums.NftEventType;
+import com.bixin.nft.common.enums.NftType;
+import com.bixin.nft.common.enums.OccupationType;
 import com.bixin.nft.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
@@ -314,19 +317,7 @@ public class NftInfoController {
             nftGroupVo.setSellingPrice(nftMarketDo.getSellPrice());
             nftGroupVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftGroupVo.setOwner(nftMarketDo.getOwner());
-
-            if(NftBoxType.COMPOSITE_CARD.getDesc().equals(nftMarketDo.getType())){
-                Long nftBoxId = nftMarketDo.getNftBoxId();
-                List<NftCompositeCard> compositeCards = metareverseService.getCompositeCards(Arrays.asList(nftBoxId));
-                if(!CollectionUtils.isEmpty(compositeCards)){
-                    NftCompositeCard card = compositeCards.get(0);
-                    nftGroupVo.setOccupation(card.getOccupation());
-                    nftGroupVo.setCustomName(card.getCustomName());
-                    nftGroupVo.setSex(card.getSex());
-                }
-            }
         }
-        
         nftGroupVo.setImageLink(nftMarketDo.getIcon());
 
         return R.success(nftGroupVo);
@@ -429,7 +420,7 @@ public class NftInfoController {
         if (!CollectionUtils.isEmpty(compositeElements)) {
             nftInfoVo.setCompositeElements(compositeElements);
         }
-        if(Objects.nonNull(compositeCard)){
+        if (Objects.nonNull(compositeCard)) {
             nftInfoVo.setOccupation(compositeCard.getOccupation());
             nftInfoVo.setCustomName(compositeCard.getCustomName());
             nftInfoVo.setSex(compositeCard.getSex());
@@ -500,9 +491,9 @@ public class NftInfoController {
         nftMarketParam.setNftBoxId(nftInfoDo.getId());
         nftMarketParam.setGroupId(nftInfoDo.getGroupId());
         String type = "nft";
-        if(nftType == NftType.COMPOSITE_ELEMENT){
+        if (nftType == NftType.COMPOSITE_ELEMENT) {
             type = NftType.COMPOSITE_ELEMENT.getType();
-        }else if(nftType == NftType.COMPOSITE_CARD){
+        } else if (nftType == NftType.COMPOSITE_CARD) {
             type = NftType.COMPOSITE_CARD.getType();
         }
         nftMarketParam.setType(type);
@@ -522,7 +513,7 @@ public class NftInfoController {
         if (!CollectionUtils.isEmpty(compositeElements)) {
             nftInfoVo.setCompositeElements(compositeElements);
         }
-        if(Objects.nonNull(compositeCard)){
+        if (Objects.nonNull(compositeCard)) {
             nftInfoVo.setOccupation(compositeCard.getOccupation());
             nftInfoVo.setCustomName(compositeCard.getCustomName());
             nftInfoVo.setSex(compositeCard.getSex());
