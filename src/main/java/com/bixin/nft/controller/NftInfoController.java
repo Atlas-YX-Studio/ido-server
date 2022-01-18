@@ -326,9 +326,7 @@ public class NftInfoController {
                 }
             }
         }
-
-
-
+        
         nftGroupVo.setImageLink(nftMarketDo.getIcon());
 
         return R.success(nftGroupVo);
