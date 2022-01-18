@@ -114,7 +114,7 @@ public class NftMarketController {
 
             }
             NftType type = NftType.of(p.getType());
-            if (Objects.nonNull(type)) {
+            if (Objects.isNull(type)) {
                 type = NftType.NORMAL;
             }
             p.setNftType(type);
