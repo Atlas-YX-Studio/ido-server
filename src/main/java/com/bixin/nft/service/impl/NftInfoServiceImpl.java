@@ -142,31 +142,30 @@ public class NftInfoServiceImpl implements NftInfoService {
      * @param userAddress
      */
     public List<NftInfoVo> getUnStakingNftList(String userAddress) {
-        List<NftInfoVo> nftInfoVos = Lists.newArrayList();
-
         List<NftGroupDo> nftGroups = nftGroupService.listByObject(NftGroupDo.builder().mining(true).build());
-        nftGroups.forEach(nftGroupDo -> {
-            List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
-            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain, nftInfoDo -> {
-                NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new);
-                nftInfoVo.setNftType(NftType.of(nftInfoDo.getType()));
-                return nftInfoVo;
-            });
-            nftInfoVos.addAll(nftInfoVoList);
-        });
+        List<NftGroupDo> nftGroupDos = nftGroups.stream()
+                .filter(nftGroupDo -> !NftType.COMPOSITE_ELEMENT.getType().equalsIgnoreCase(nftGroupDo.getType()))
+                .collect(Collectors.toList());
+        List<NftInfoVo> nftInfoVos = getNftInfoVos(userAddress, nftGroupDos);
 
         return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
     }
 
     /**
      * 获取我的NFT
+     * todo 增加盲盒
      *
      * @param userAddress
      */
     public List<NftInfoVo> getUnSellNftList(String userAddress) {
-        List<NftInfoVo> nftInfoVos = Lists.newArrayList();
-
         List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
+        List<NftInfoVo> nftInfoVos = getNftInfoVos(userAddress, nftGroups);
+
+        return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
+    }
+
+    private List<NftInfoVo> getNftInfoVos(String userAddress, List<NftGroupDo> nftGroups) {
+        List<NftInfoVo> nftInfoVos = Lists.newArrayList();
         nftGroups.forEach(nftGroupDo -> {
             List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
             List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain, nftInfoDo -> {
@@ -176,8 +175,7 @@ public class NftInfoServiceImpl implements NftInfoService {
             });
             nftInfoVos.addAll(nftInfoVoList);
         });
-
-        return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
+        return nftInfoVos;
     }
 
     /**
