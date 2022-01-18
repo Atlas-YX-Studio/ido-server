@@ -17,6 +17,7 @@ import com.bixin.nft.common.enums.NftEventType;
 import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.common.enums.OccupationType;
 import com.bixin.nft.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -34,6 +35,7 @@ import java.util.stream.Stream;
  * @author: 系统
  * @created: 2021-09-15
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/nft/")
 public class NftInfoController {
@@ -429,16 +431,28 @@ public class NftInfoController {
             vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
             return vo;
         }));
-        String nftMeta = nftGroupDo.getNftMeta();
-        String nftBody = nftGroupDo.getNftBody();
+        NftType nftType = Objects.nonNull(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
 
-        NftType nftType = NftType.NORMAL;
-        if (nftMeta.contains("KikoCatCard") && nftBody.contains("KikoCatCard")) {
-            nftType = NftType.COMPOSITE_CARD;
-        } else if (nftMeta.contains("KikoCatElement") && nftBody.contains("KikoCatElement")) {
-            nftType = NftType.COMPOSITE_ELEMENT;
+        //组合卡牌
+        NftCompositeCard compositeCard = null;
+        //素材
+        NftCompositeElement compositeElement = null;
+        if (nftType == NftType.COMPOSITE_CARD) {
+            List<NftCompositeCard> compositeCards = metareverseService.getCompositeCard(nftInfoDo.getId());
+            if (CollectionUtils.isEmpty(compositeCards)) {
+                return R.failed("NftCompositeCard 不存在，nftId = " + nftInfoDo.getNftId());
+            }
+            compositeCard = compositeCards.get(0);
+        } else if (nftType == NftType.COMPOSITE_ELEMENT) {
+            Set<Long> ids = new HashSet<>() {{
+                add(nftInfoDo.getId());
+            }};
+            List<NftCompositeElement> compositeElements = metareverseService.getCompositeElements(ids);
+            if (CollectionUtils.isEmpty(compositeElements)) {
+                return R.failed("NftCompositeElement 不存在，nftIds = " + ids);
+            }
+            compositeElement = compositeElements.get(0);
         }
-
         // 是否出售中
         NftMarketDo nftMarketParam = new NftMarketDo();
         nftMarketParam.setChainId(nftInfoDo.getNftId());
@@ -456,6 +470,12 @@ public class NftInfoController {
         }
         nftInfoVo.setProperties(nftKikoCatDo);
         nftInfoVo.setNftType(nftType);
+        if (Objects.nonNull(compositeCard)) {
+            nftInfoVo.setCompositeCard(compositeCard);
+        }
+        if (Objects.nonNull(compositeElement)) {
+            nftInfoVo.setCompositeElement(compositeElement);
+        }
         return R.success(nftInfoVo);
     }
 

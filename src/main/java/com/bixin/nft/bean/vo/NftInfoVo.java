@@ -135,11 +135,11 @@ public class NftInfoVo {
      */
     private NftKikoCatDo properties;
 
+    private NftType nftType;
+
     private NftCompositeCard compositeCard;
 
     private NftCompositeElement compositeElement;
-
-    private NftType nftType;
 
     /**
      * 支持币种
