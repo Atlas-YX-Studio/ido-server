@@ -18,7 +18,6 @@ import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.common.enums.OccupationType;
 import com.bixin.nft.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -444,10 +443,10 @@ public class NftInfoController {
                 return R.failed("NftCompositeElement 不存在，nftIds = " + ids);
             }
             compositeElement = compositeElements.get(0);
-        }else{
+        } else {
             NftKikoCatDo parm = new NftKikoCatDo();
             parm.setInfoId(nftInfoDo.getId());
-             nftKikoCatDo = nftKikoCatService.selectByObject(parm);
+            nftKikoCatDo = nftKikoCatService.selectByObject(parm);
             if (ObjectUtils.isEmpty(nftKikoCatDo)) {
                 return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
             }
@@ -462,7 +461,7 @@ public class NftInfoController {
         nftMarketParam.setChainId(nftInfoDo.getNftId());
         nftMarketParam.setNftBoxId(nftInfoDo.getId());
         nftMarketParam.setGroupId(nftInfoDo.getGroupId());
-        nftMarketParam.setType("nft");
+        nftMarketParam.setType(nftType == NftType.COMPOSITE_ELEMENT ? NftType.COMPOSITE_ELEMENT.getType() : "nft");
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParam);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftInfoVo.setOnSell(false);
