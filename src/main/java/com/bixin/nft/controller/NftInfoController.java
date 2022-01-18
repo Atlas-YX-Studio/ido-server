@@ -420,23 +420,15 @@ public class NftInfoController {
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
         }
-        NftKikoCatDo parm = new NftKikoCatDo();
-        parm.setInfoId(nftInfoDo.getId());
-        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByObject(parm);
-        if (ObjectUtils.isEmpty(nftKikoCatDo)) {
-            return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
-        }
-        NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftInfoDo, () -> BeanCopyUtil.copyProperties(nftGroupDo, () -> {
-            NftInfoVo vo = new NftInfoVo();
-            vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
-            return vo;
-        }));
         NftType nftType = Objects.nonNull(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
 
         //组合卡牌
         NftCompositeCard compositeCard = null;
         //素材
         NftCompositeElement compositeElement = null;
+        //cat
+        NftKikoCatDo nftKikoCatDo = null;
+
         if (nftType == NftType.COMPOSITE_CARD) {
             List<NftCompositeCard> compositeCards = metareverseService.getCompositeCard(nftInfoDo.getId());
             if (CollectionUtils.isEmpty(compositeCards)) {
@@ -452,7 +444,19 @@ public class NftInfoController {
                 return R.failed("NftCompositeElement 不存在，nftIds = " + ids);
             }
             compositeElement = compositeElements.get(0);
+        }else{
+            NftKikoCatDo parm = new NftKikoCatDo();
+            parm.setInfoId(nftInfoDo.getId());
+             nftKikoCatDo = nftKikoCatService.selectByObject(parm);
+            if (ObjectUtils.isEmpty(nftKikoCatDo)) {
+                return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+            }
         }
+        NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftInfoDo, () -> BeanCopyUtil.copyProperties(nftGroupDo, () -> {
+            NftInfoVo vo = new NftInfoVo();
+            vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
+            return vo;
+        }));
         // 是否出售中
         NftMarketDo nftMarketParam = new NftMarketDo();
         nftMarketParam.setChainId(nftInfoDo.getNftId());
@@ -468,7 +472,9 @@ public class NftInfoController {
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftInfoVo.setOwner(nftMarketDo.getOwner());
         }
-        nftInfoVo.setProperties(nftKikoCatDo);
+        if (Objects.nonNull(nftKikoCatDo)) {
+            nftInfoVo.setProperties(nftKikoCatDo);
+        }
         nftInfoVo.setNftType(nftType);
         if (Objects.nonNull(compositeCard)) {
             nftInfoVo.setCompositeCard(compositeCard);
