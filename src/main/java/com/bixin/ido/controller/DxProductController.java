@@ -51,7 +51,8 @@ public class DxProductController {
         List<HomeProductVO> previewProducts = idoDxProductService.getHomeProducts(ProductState.PREVIEW);
         List<HomeProductVO> initProducts = idoDxProductService.getHomeProducts(ProductState.INIT);
         List<HomeProductVO> processingProducts = idoDxProductService.getHomeProducts(ProductState.PROCESSING);
-        ArrayList<HomeProductVO> homeProductVOS = Lists.newArrayList(Iterables.concat(previewProducts, initProducts, processingProducts));
+        List<HomeProductVO> finishProducts = idoDxProductService.getHomeProducts(ProductState.FINISH);
+        ArrayList<HomeProductVO> homeProductVOS = Lists.newArrayList(Iterables.concat(previewProducts, initProducts, processingProducts, finishProducts));
         homeProductVOS.sort(Comparator.comparingInt(IdoDxProduct::getWeight).reversed());
         return R.success(homeProductVOS);
 
