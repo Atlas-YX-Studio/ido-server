@@ -143,10 +143,7 @@ public class NftInfoServiceImpl implements NftInfoService {
      */
     public List<NftInfoVo> getUnStakingNftList(String userAddress) {
         List<NftGroupDo> nftGroups = nftGroupService.listByObject(NftGroupDo.builder().mining(true).build());
-        List<NftGroupDo> nftGroupDos = nftGroups.stream()
-                .filter(nftGroupDo -> !NftType.COMPOSITE_ELEMENT.getType().equalsIgnoreCase(nftGroupDo.getType()))
-                .collect(Collectors.toList());
-        List<NftInfoVo> nftInfoVos = getNftInfoVos(userAddress, nftGroupDos);
+        List<NftInfoVo> nftInfoVos = getNftInfoVos(userAddress, nftGroups);
 
         return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
     }
