@@ -211,7 +211,7 @@
     WHERE
         type = "composite_card" and state="" or state="success"
     ORDER BY
-     score DESC
+     id DESC
     limit #{from},#{pageSize}
   </select>
 </mapper>
