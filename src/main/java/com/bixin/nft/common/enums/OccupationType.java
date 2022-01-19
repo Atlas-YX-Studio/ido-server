@@ -8,7 +8,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum OccupationType {
 
-    @JsonProperty("Adventurer")
     ADVENTURER("Adventurer", "冒险家",
             "https://imagedelivery.net/3mRLd_IbBrrQFSP57PNsVw/05862ea5-e6ee-4cca-6e6d-5b3af0914e00/public"),
     EXTREME_PLAYER("Extreme Player", "极限玩家",
