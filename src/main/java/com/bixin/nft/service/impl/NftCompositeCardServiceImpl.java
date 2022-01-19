@@ -273,6 +273,13 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
         }
 
+        // 初始化NFT挖矿
+        if (NftGroupStatus.OFFERING.name().equals(nftGroupDo.getStatus())) {
+            if (nftGroupDo.getMining()) {
+                nftContractBiz.initNFTMining(nftGroupDo.getId());
+            }
+        }
+
     }
 
     /**
