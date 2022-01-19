@@ -136,6 +136,14 @@ public class NftInfoServiceImpl implements NftInfoService {
         return nftInfoMapper.selectByPage(param);
     }
 
+    @Override
+    public List<NftInfoDo> selectAll4Rank(boolean predicateNextPage, long pageNum, long pageSize) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("from", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
+        param.put("pageSize", pageSize);
+        return nftInfoMapper.selectAll4Rank(param);
+    }
+
     /**
      * 获取待质押NFT
      *
