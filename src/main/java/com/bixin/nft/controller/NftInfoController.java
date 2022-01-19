@@ -6,6 +6,7 @@ import com.bixin.common.constants.CommonConstant;
 import com.bixin.common.response.P;
 import com.bixin.common.response.R;
 import com.bixin.common.utils.BeanCopyUtil;
+import com.bixin.common.utils.JacksonUtil;
 import com.bixin.nft.bean.DO.*;
 import com.bixin.nft.bean.dto.TokenDto;
 import com.bixin.nft.bean.vo.NftGroupVo;
@@ -18,6 +19,7 @@ import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.common.enums.OccupationType;
 import com.bixin.nft.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -51,8 +53,8 @@ public class NftInfoController {
     private NftEventService nftEventService;
     @Resource
     private NftMetareverseService metareverseService;
-    @Resource
-    private NftCompositeCardService compositeCardService;
+    //    @Resource
+//    private NftCompositeCardService compositeCardService;
     @Resource
     private StarConfig starConfig;
 
@@ -81,9 +83,24 @@ public class NftInfoController {
                     JSONObject json = new JSONObject();
                     json.put("desc", type.getDesc());
                     json.put("cnDesc", type.getCnDesc());
+                    json.put("image", type.getImage());
                     return json;
                 }).collect(Collectors.toList());
-        result.put("occupations", List.of(occupations));
+
+        List<Map<String, Object>> sumByOccupationGroup = metareverseService.getSumByOccupationGroup();
+        Map<String, List<Map<String, Object>>> occupationMap = sumByOccupationGroup.stream()
+                .collect(Collectors.groupingBy(p -> String.valueOf(p.get("occupation")).toLowerCase()));
+        occupations.forEach(p -> {
+            String desc = String.valueOf(p.get("desc"));
+            List<Map<String, Object>> mapList = occupationMap.get(desc.toLowerCase());
+            long sum = 0;
+            if (!CollectionUtils.isEmpty(mapList)) {
+                sum = NumberUtils.toLong(String.valueOf(mapList.get(0).get("sum")), 0);
+            }
+            p.put("sum", sum);
+        });
+
+        result.put("occupations", occupations);
         result.put("compositeFee", starConfig.getNft().getCompositeFee());
 
         return R.success(result);
