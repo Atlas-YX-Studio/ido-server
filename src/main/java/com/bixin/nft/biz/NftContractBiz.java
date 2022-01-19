@@ -211,6 +211,10 @@ public class NftContractBiz {
                 nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
                 nftGroupDo.setUpdateTime(System.currentTimeMillis());
                 nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+                // 初始化NFT挖矿
+                if (nftGroupDo.getMining()) {
+                    initNFTMining(nftGroupDo.getId());
+                }
             });
         }
     }
@@ -766,6 +770,32 @@ public class NftContractBiz {
                 .build();
         if (!contractService.callFunction(market, scriptFunctionObj)) {
             log.error("NFT市场回购初始化失败, 合约请求失败");
+            throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+        }
+    }
+
+    /**
+     * 初始化NFT回购
+     */
+    public void initNFTMining(Long groupId) {
+        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(groupId);
+        if (nftGroupDo == null) {
+            log.error("NFT挖矿初始化失败, groupId:{} 不存在", groupId);
+            throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
+        }
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(starConfig.getMining().getNftMiningAddress())
+                .moduleName(starConfig.getMining().getNftMiningModule())
+                .functionName("nft_init")
+                .args(Lists.newArrayList())
+                .tyArgs(Lists.newArrayList(
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()),
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftBody())
+                ))
+                .build();
+        if (!contractService.callFunction(starConfig.getMining().getMiningAddress(), scriptFunctionObj)) {
+            log.error("NFT挖矿初始化失败, 合约请求失败");
             throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
         }
     }

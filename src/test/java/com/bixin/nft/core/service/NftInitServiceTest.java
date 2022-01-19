@@ -62,4 +62,9 @@ class NftInitServiceTest {
         assert nftInitService.sellBox();
     }
 
+    @Test
+    void initNFTMining() {
+        nftInitService.initNFTMining(10012L);
+    }
+
 }

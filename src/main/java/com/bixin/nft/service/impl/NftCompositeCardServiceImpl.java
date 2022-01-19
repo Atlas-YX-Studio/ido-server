@@ -216,7 +216,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                 createdNftInfoDos.sort(Comparator.comparingLong(NftInfoDo::getNftId).reversed());
                 nftId.setValue(createdNftInfoDos.get(0).getNftId() + 1);
             }
-            nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
+            nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId).reversed()).forEach(nftInfoDo -> {
                 nftInfoDo.setNftId(nftId.longValue());
                 nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
                 // 铸造NFT，存放图片url
@@ -271,6 +271,13 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
             nftGroupDo.setUpdateTime(System.currentTimeMillis());
             nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+        }
+
+        // 初始化NFT挖矿
+        if (NftGroupStatus.OFFERING.name().equals(nftGroupDo.getStatus())) {
+            if (nftGroupDo.getMining()) {
+                nftContractBiz.initNFTMining(nftGroupDo.getId());
+            }
         }
 
     }
@@ -405,7 +412,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                         BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getTailId()))
                 ))
                 .build();
-        return contractService.callFunction(address, scriptFunctionObj);
+        return contractService.callFunctionV2(address, scriptFunctionObj, 40000000);
     }
 
     private long getNftId(Long infoId) {
