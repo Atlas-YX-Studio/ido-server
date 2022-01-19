@@ -6,6 +6,7 @@ import com.bixin.common.constants.CommonConstant;
 import com.bixin.common.response.P;
 import com.bixin.common.response.R;
 import com.bixin.common.utils.BeanCopyUtil;
+import com.bixin.common.utils.JacksonUtil;
 import com.bixin.nft.bean.DO.*;
 import com.bixin.nft.bean.dto.TokenDto;
 import com.bixin.nft.bean.vo.NftGroupVo;
@@ -81,6 +82,7 @@ public class NftInfoController {
                     JSONObject json = new JSONObject();
                     json.put("desc", type.getDesc());
                     json.put("cnDesc", type.getCnDesc());
+                    json.put("image", type.getImage());
                     return json;
                 }).collect(Collectors.toList());
         result.put("occupations", List.of(occupations));
