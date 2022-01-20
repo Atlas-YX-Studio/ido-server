@@ -6,7 +6,9 @@ import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.bo.CompositeCardBean;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author zhangcheng
@@ -86,6 +88,17 @@ public class BeanTest {
         System.out.println(s);
         Map<String,Object> map1 = JacksonUtil.readValue(s, Map.class);
         System.out.println(map1);
+
+        AtomicReference<BigDecimal> scoreReference = new AtomicReference<>();
+        System.out.println(
+                "ssssss--1: "+scoreReference.get()
+        );
+        scoreReference.set(BigDecimal.valueOf(222.222222));
+        System.out.println(
+                "ssssss--2: "+scoreReference.get()
+        );
+
+
     }
 
 }
