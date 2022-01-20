@@ -6,7 +6,6 @@ import com.bixin.common.constants.CommonConstant;
 import com.bixin.common.response.P;
 import com.bixin.common.response.R;
 import com.bixin.common.utils.BeanCopyUtil;
-import com.bixin.common.utils.JacksonUtil;
 import com.bixin.nft.bean.DO.*;
 import com.bixin.nft.bean.dto.TokenDto;
 import com.bixin.nft.bean.vo.NftGroupVo;
@@ -334,8 +333,8 @@ public class NftInfoController {
             nftGroupVo.setSellingPrice(nftMarketDo.getSellPrice());
             nftGroupVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftGroupVo.setOwner(nftMarketDo.getOwner());
+            nftGroupVo.setImageLink(nftMarketDo.getIcon());
         }
-        nftGroupVo.setImageLink(nftMarketDo.getIcon());
 
         return R.success(nftGroupVo);
     }
