@@ -22,11 +22,12 @@ public class PlatformBuyBackController {
 
     @GetMapping("/getALL")
     public P list(@RequestParam(name = "groupId", defaultValue = "0") long groupId,
+            @RequestParam(value = "nftType", defaultValue = "all") String nftType,
             @RequestParam(name = "currency", defaultValue = "all") String currency,
             @RequestParam(name = "sort", defaultValue = "0") int sort,
             @RequestParam(name = "pageNum", defaultValue = "1") int pageNum,
             @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
-        List<PlatformBuyBackServiceImpl.BuyBackOrder> orders = platformBuyBackService.getOrders(groupId, currency, sort, pageNum, pageSize);
+        List<PlatformBuyBackServiceImpl.BuyBackOrder> orders = platformBuyBackService.getOrders(groupId, nftType, currency, sort, pageNum, pageSize);
         boolean hasNext = false;
         if (orders.size() > pageSize) {
             orders = orders.subList(0, pageSize);
