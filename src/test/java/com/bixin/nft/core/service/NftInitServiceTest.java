@@ -64,7 +64,7 @@ class NftInitServiceTest {
 
     @Test
     void initNFTMining() {
-        nftInitService.initNFTMining(10012L);
+        nftInitService.initNFTMining(10016L);
     }
 
 }
