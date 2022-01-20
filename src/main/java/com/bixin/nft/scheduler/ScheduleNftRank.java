@@ -11,12 +11,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -72,14 +71,31 @@ public class ScheduleNftRank {
                 .collect(Collectors.toList());
 
         AtomicInteger rank = new AtomicInteger(0);
+        AtomicInteger lastRank = new AtomicInteger(0);
         List<NftInfoDo> updateList = new ArrayList<>();
+        AtomicReference<BigDecimal> scoreReference = new AtomicReference<>();
         Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+
         sortList.forEach(p -> {
-            updateList.add(NftInfoDo.builder()
+            NftInfoDo.NftInfoDoBuilder nftInfoBuilder = NftInfoDo.builder()
                     .id(p.getId())
-                    .rank(rank.incrementAndGet())
-                    .updateTime(currentTime)
-                    .build());
+                    .updateTime(currentTime);
+
+            if (Objects.isNull(scoreReference.get())) {
+                nftInfoBuilder.rank(rank.incrementAndGet());
+                lastRank.set(rank.get());
+            } else {
+                if (p.getScore().compareTo(scoreReference.get()) == 0) {
+                    nftInfoBuilder.rank(lastRank.get());
+                    rank.incrementAndGet();
+                }else{
+                    nftInfoBuilder.rank(rank.incrementAndGet());
+                    lastRank.set(rank.get());
+                }
+            }
+            scoreReference.set(p.getScore());
+
+            updateList.add(nftInfoBuilder.build());
         });
 
         updateList.forEach(p -> {
