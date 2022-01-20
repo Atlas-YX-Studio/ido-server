@@ -158,27 +158,27 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
     }
 
     @Override
-    public List<BuyBackOrder> getOrders(Long groupId, String nftType, String currency, int sort, int pageNum, int pageSize) {
-        Comparator<BuyBackOrder> comparator = Comparator.comparing(o -> o.buyPrice);
+    public List<BuyBackOrder> getOrders(Long groupId, String nftType, String currency, String sortRule, int sort, int pageNum, int pageSize) {
+        Comparator<BuyBackOrder> comparator = Comparator.comparing(o -> false);
+        if ("price".equalsIgnoreCase(sortRule.trim())) {
+            comparator = Comparator.comparing(o -> o.buyPrice);
+        } else if ("rarity".equalsIgnoreCase(sortRule.trim())) {
+            comparator = Comparator.comparing(o -> o.score);
+        }
+
         if (sort == 1) {
             comparator = comparator.reversed();
-        } else if (sort == 3) {
-            comparator = Comparator.comparing(o -> o.score);
-            comparator = comparator.reversed();
         }
+
 
         Stream<BuyBackOrder> buyBackOrderStream;
         if (Objects.equals(0L, groupId) && StringUtils.equalsIgnoreCase("all", currency)) {
             buyBackOrderStream= orderMap.values().stream().flatMap(x -> x.values().stream().flatMap(Collection::stream));
-//            list = orderMap.values().stream().flatMap(x -> x.values().stream().flatMap(Collection::stream)).sorted(comparator).collect(Collectors.toList());
         } else if (Objects.equals(0L, groupId)) {
             buyBackOrderStream = orderMap.values().stream().flatMap(x -> x.getOrDefault(currency, List.of()).stream());
-//            list = orderMap.values().stream().flatMap(x -> x.getOrDefault(currency, List.of()).stream()).sorted(comparator).collect(Collectors.toList());
         } else if (StringUtils.equalsIgnoreCase("all", currency)) {
             buyBackOrderStream = orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream);
-//            list = orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream).sorted(comparator).collect(Collectors.toList());
         } else {
-//            list = orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().sorted(comparator).collect(Collectors.toList());
             buyBackOrderStream = orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream();
         }
 
