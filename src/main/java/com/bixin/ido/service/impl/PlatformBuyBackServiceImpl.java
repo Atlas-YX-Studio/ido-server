@@ -159,19 +159,12 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
 
     @Override
     public List<BuyBackOrder> getOrders(Long groupId, String nftType, String currency, String sortRule, int sort, int pageNum, int pageSize) {
-        Comparator<BuyBackOrder> comparator = Comparator.comparing(o -> false);
+        Comparator<BuyBackOrder> comparator = null;
         if ("price".equalsIgnoreCase(sortRule.trim())) {
             comparator = Comparator.comparing(o -> o.buyPrice);
         } else if ("rarity".equalsIgnoreCase(sortRule.trim())) {
             comparator = Comparator.comparing(o -> o.score);
         }
-
-        if (sort == 1 && "ctime".equalsIgnoreCase(sortRule.trim())) {
-            comparator = Comparator.comparing(o -> true);
-        } else if (sort == 1) {
-            comparator = comparator.reversed();
-        }
-
 
         Stream<BuyBackOrder> buyBackOrderStream;
         if (Objects.equals(0L, groupId) && StringUtils.equalsIgnoreCase("all", currency)) {
@@ -188,7 +181,14 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
             buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType));
         }
 
-        List<BuyBackOrder> list = buyBackOrderStream.sorted(comparator).collect(Collectors.toList());
+        if (Objects.nonNull(comparator)) {
+            buyBackOrderStream = buyBackOrderStream.sorted(comparator);
+        }
+
+        List<BuyBackOrder> list = buyBackOrderStream.collect(Collectors.toList());
+        if (sort == 1) {
+            Collections.reverse(list);
+        }
 
         int start = pageSize * Math.max((pageNum - 1), 0);
 //        int end = Math.min(list.size(), start + pageSize);
