@@ -166,7 +166,9 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
             comparator = Comparator.comparing(o -> o.score);
         }
 
-        if (sort == 1) {
+        if (sort == 1 && "ctime".equalsIgnoreCase(sortRule.trim())) {
+            comparator = Comparator.comparing(o -> true);
+        } else if (sort == 1) {
             comparator = comparator.reversed();
         }
 
