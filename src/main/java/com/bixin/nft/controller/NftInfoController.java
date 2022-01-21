@@ -324,7 +324,7 @@ public class NftInfoController {
         NftMarketDo nftMarketParam = new NftMarketDo();
         nftMarketParam.setChainId(boxId);
         nftMarketParam.setGroupId(nftGroupDo.getId());
-        nftMarketParam.setType(Objects.nonNull(nftGroupDo.getType()) ? nftGroupDo.getType() : "box");
+        nftMarketParam.setType("box");
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParam);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftGroupVo.setOnSell(false);
