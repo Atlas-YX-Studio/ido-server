@@ -211,7 +211,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             NftInfoDo info = infoList.get(0);
             layerMap.put(count.getAndIncrement(), CreateCompositeCardBean.Layer.builder()
                     .nft_id(compositeElement.getInfoId())
-                    .name(info.getName())
+                    .name(StringUtils.substringBefore(info.getName(), "##").trim())
                     .property(CardElementType.of(compositeElement.getType()).getDesc())
                     .score(compositeElement.getScore())
                     .build());
