@@ -31,7 +31,7 @@ spring:
 ## 日志配置
 logging:
   path: logs
-  logLevel: INFO
+  logLevel: DUBUG
 
 
 ## ------------------------------业务相关配置写到下面-------------------------
