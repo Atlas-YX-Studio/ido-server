@@ -19,6 +19,6 @@ class NftMarketControllerTest {
 
     @Test
     void getALlByPage() {
-        log.info("list: {}", JSON.toJSONString(nftMarketController.getALlByPage(0, "nft", 1, "ctime", 30, 1)));
+        log.info("list: {}", JSON.toJSONString(nftMarketController.getALlByPage(0, null, 1, "ctime", 30, 1)));
     }
 }

@@ -58,10 +58,10 @@ public class NftMarketController {
                 || StringUtils.isBlank(sortRule)) {
             return P.failed("parameter is invalid");
         }
-        List<String> nftTypes;
+        List<String> nftTypes = List.of();
         if (NftBoxType.NFT.getDesc().equals(nftType)) {
             nftTypes = List.of(NftBoxType.NFT.getDesc(), NftBoxType.COMPOSITE_CARD.getDesc());
-        } else {
+        } else if (StringUtils.isNotBlank(nftType)) {
             nftTypes = List.of(nftType);
         }
         List<Map<String, Object>> maps = nftMarketService.selectByPage(true, pageSize + 1, pageNum, sort, groupId, sortRule, nftTypes);
@@ -90,6 +90,8 @@ public class NftMarketController {
                 if (!sellingVo.getOriginal()) {
                     list.add(sellingVo);
                 }
+            } else {
+                list.add(sellingVo);
             }
         });
 
