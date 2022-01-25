@@ -167,6 +167,8 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
             } else if (NftBoxType.COMPOSITE_CARD.getDesc().equals(nftType)) {
                 // 组合NFT，只包括分解后重新合成的NFT
                 buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) && !x.original);
+            } else {
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType));
             }
         }
 
