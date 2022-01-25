@@ -161,14 +161,13 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         }
 
         if (!StringUtils.equalsIgnoreCase("all", nftType)) {
-            buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType));
-        }
-        if (NftBoxType.NFT.getDesc().equals(nftType)) {
-            // 原生NFT，包括普通NFT+原生可合成卡牌
-            buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) || x.original);
-        } else if (NftBoxType.COMPOSITE_CARD.getDesc().equals(nftType)) {
-            // 组合NFT，只包括分解后重新合成的NFT
-            buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) && !x.original);
+            if (NftBoxType.NFT.getDesc().equals(nftType)) {
+                // 原生NFT，包括普通NFT+原生可合成卡牌
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) || x.original);
+            } else if (NftBoxType.COMPOSITE_CARD.getDesc().equals(nftType)) {
+                // 组合NFT，只包括分解后重新合成的NFT
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) && !x.original);
+            }
         }
 
         if (Objects.nonNull(comparator)) {
