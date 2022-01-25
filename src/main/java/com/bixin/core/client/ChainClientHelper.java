@@ -99,4 +99,9 @@ public class ChainClientHelper {
         return getPostResp(addressArray);
     }
 
+    public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getNftTypeInfo(String meta) {
+        List<String> addressArray = Arrays.asList("0x00000000000000000000000000000001", "0x00000000000000000000000000000001::NFT::NFTTypeInfoV2<" + meta + ">");
+        return getPostResp(addressArray);
+    }
+
 }

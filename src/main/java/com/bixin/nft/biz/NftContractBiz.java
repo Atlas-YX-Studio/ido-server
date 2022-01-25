@@ -1,13 +1,16 @@
 package com.bixin.nft.biz;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.bixin.common.code.IdoErrorCode;
 import com.bixin.common.config.StarConfig;
 import com.bixin.common.exception.IdoException;
-import com.bixin.ido.common.enums.NftGroupStatus;
 import com.bixin.common.utils.BigDecimalUtil;
+import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.common.utils.TypeArgsUtil;
+import com.bixin.core.client.ChainClientHelper;
+import com.bixin.ido.common.enums.NftGroupStatus;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
@@ -20,8 +23,13 @@ import com.google.common.collect.Lists;
 import com.novi.serde.Bytes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.starcoin.bean.ScriptFunctionObj;
@@ -35,6 +43,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -53,6 +62,8 @@ public class NftContractBiz {
     private NftImagesUploadBiz nftImagesUploadBiz;
     @Resource
     private StarConfig starConfig;
+    @Resource
+    private ChainClientHelper chainClientHelper;
 
     @Value("${ido.star.nft.market}")
     private String market;
@@ -850,6 +861,7 @@ public class NftContractBiz {
         nftGroupDoList.forEach(nftGroupDo -> {
             NftInfoDo selectInfoDo = new NftInfoDo();
             selectInfoDo.setGroupId(nftGroupDo.getId());
+            selectInfoDo.setCreated(true);
             List<NftInfoDo> nftInfoDoList = nftInfoMapper.selectByPrimaryKeySelectiveList(selectInfoDo);
             nftInfoList.addAll(nftInfoDoList);
         });
@@ -938,6 +950,27 @@ public class NftContractBiz {
                 ))
                 .build();
         return contractService.callFunction("0x142f352A24FEB989C65C1d48c4d884a9", scriptFunctionObj);
+    }
+
+
+    public long getNftCounterId(String meta) {
+        MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple =
+                chainClientHelper.getNftTypeInfo(meta);
+        ResponseEntity<String> resp = triple.getLeft();
+        if (resp.getStatusCode() != HttpStatus.OK) {
+            return -1;
+        }
+        List<JSONArray> values = StarCoinJsonUtil.parseRpcResult(resp);
+        if (CollectionUtils.isEmpty(values)) {
+            return -1;
+        }
+        MutableLong nftId = new MutableLong(-1);
+        values.forEach(value -> {
+            if ("counter".equalsIgnoreCase(String.valueOf(value.getString(0)))) {
+                nftId.setValue(value.getJSONObject(1).getLongValue("U64"));
+            }
+        });
+        return nftId.getValue();
     }
 
 }

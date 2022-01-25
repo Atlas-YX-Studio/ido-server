@@ -16,7 +16,7 @@ class NftCompositeCardServiceTest {
 
     @Test
     void createCompositeNFT() {
-        nftCompositeCardService.createCompositeNFT(10004);
+        nftCompositeCardService.createCompositeNFT(10012);
     }
 
     @Test

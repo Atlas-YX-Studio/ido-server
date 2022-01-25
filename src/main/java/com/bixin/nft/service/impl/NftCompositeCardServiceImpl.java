@@ -16,6 +16,7 @@ import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.dto.TokenDto;
 import com.bixin.nft.biz.NftContractBiz;
 import com.bixin.nft.common.enums.CardElementType;
+import com.bixin.nft.common.enums.NftInfoState;
 import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.core.mapper.NftCompositeCardMapper;
 import com.bixin.nft.core.mapper.NftGroupMapper;
@@ -76,20 +77,6 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             log.error("NFT type:{} 必须为card", cardGroupDo.getType());
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
-        createElementNFT(cardGroupDo.getElementId());
-        createCardNFT(cardGroupDo.getId());
-    }
-
-    public void createCompositeNFTV2(long cardGroupId) {
-        NftGroupDo cardGroupDo = nftGroupMapper.selectByPrimaryKey(cardGroupId);
-        if (cardGroupDo == null) {
-            log.error("groupId:{} 不存在", cardGroupId);
-            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
-        }
-        if (!NftType.COMPOSITE_CARD.getType().equals(cardGroupDo.getType())) {
-            log.error("NFT type:{} 必须为card", cardGroupDo.getType());
-            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
-        }
 
         // 部署合约
         NftGroupDo elementGroupDo = nftGroupMapper.selectByPrimaryKey(cardGroupDo.getElementId());
@@ -120,30 +107,28 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             nftGroupMapper.updateByPrimaryKeySelective(cardGroupDo);
         }
         // mint nft
-        // todo 先铸造元素，再组合
         if (NftGroupStatus.INITIALIZED.name().equals(cardGroupDo.getStatus())) {
             NftInfoDo selectNftInfoDo = new NftInfoDo();
             selectNftInfoDo.setGroupId(cardGroupDo.getId());
             selectNftInfoDo.setCreated(false);
+            selectNftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
             // 取出该组下所有待铸造NFT
             List<NftInfoDo> nftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
             if (CollectionUtils.isEmpty(nftInfoDos)) {
                 return;
             }
-            MutableInt nftId = new MutableInt(1);
-            // 获取该组最后一个id
-            selectNftInfoDo = new NftInfoDo();
-            selectNftInfoDo.setGroupId(cardGroupDo.getId());
-            selectNftInfoDo.setCreated(true);
-            List<NftInfoDo> createdNftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
-            if (!CollectionUtils.isEmpty(createdNftInfoDos)) {
-                createdNftInfoDos.sort(Comparator.comparingLong(NftInfoDo::getNftId).reversed());
-                nftId.setValue(createdNftInfoDos.get(0).getNftId() + 1);
-            }
-            nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId).reversed()).forEach(nftInfoDo -> {
-                nftInfoDo.setNftId(nftId.longValue());
+            nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
+                // 铸造相关元素
+                mintRelatedElement(elementGroupDo, nftInfoDo);
+                // 铸造NFT
+                // 获取该组最后一个id
+                long nftCounterId = nftContractBiz.getNftCounterId(cardGroupDo.getNftMeta());
+                if (nftCounterId == -1) {
+                    log.error("nftCompositeCard groupId:{} nftCounterId不存在", cardGroupDo.getId());
+                    throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
+                }
+                nftInfoDo.setNftId(nftCounterId + 1);
                 nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                // 铸造NFT，存放图片url
                 if (!mintCardNFT(cardGroupDo, nftInfoDo)) {
                     log.error("NFT {} mint失败", nftInfoDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
@@ -153,8 +138,14 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                 nftInfoDo.setCreated(true);
                 nftInfoDo.setUpdateTime(System.currentTimeMillis());
                 nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                nftId.add(1);
             });
+            // 全部铸造完成
+            elementGroupDo.setStatus(NftGroupStatus.CREATED.name());
+            elementGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(elementGroupDo);
+            // 重新rank
+            nftContractBiz.reRank(elementGroupDo.getSeries());
+
             // 全部铸造完成，修改
             cardGroupDo.setStatus(NftGroupStatus.CREATED.name());
             cardGroupDo.setUpdateTime(System.currentTimeMillis());
@@ -165,9 +156,22 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
 
         // 市场创建resource
         if (NftGroupStatus.CREATED.name().equals(cardGroupDo.getStatus())) {
-            List<TokenDto> supportTokenList = JSON.parseObject(cardGroupDo.getSupportToken(),
-                    new TypeReference<>() {
-                    });
+            // 市场初始化元素
+            List<TokenDto> supportTokenList = JSON.parseObject(elementGroupDo.getSupportToken(),
+                    new TypeReference<>() {});
+            supportTokenList.forEach(tokenDto -> {
+                if (!nftContractBiz.initMarket(elementGroupDo, tokenDto.getAddress())) {
+                    log.error("NFT {} 市场初始化失败, 设置币种:{}", elementGroupDo.getName(), tokenDto.getAddress());
+                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                }
+            });
+            elementGroupDo.setStatus(NftGroupStatus.OFFERING.name());
+            elementGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(elementGroupDo);
+
+            // 市场初始化卡牌
+            supportTokenList = JSON.parseObject(cardGroupDo.getSupportToken(),
+                    new TypeReference<>() {});
             supportTokenList.forEach(tokenDto -> {
                 if (!nftContractBiz.initMarket(cardGroupDo, tokenDto.getAddress())) {
                     log.error("NFT {} 市场初始化失败, 设置币种:{}", cardGroupDo.getName(), tokenDto.getAddress());
@@ -206,206 +210,42 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
 
     }
 
-    /**
-     *
-     *
-     * @return
-     */
-    public void createElementNFT(long groupId) {
-        // 部署nft合约
-        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(groupId);
-        if (nftGroupDo == null) {
-            log.error("groupId:{} 不存在", groupId);
+    private void mintRelatedElement(NftGroupDo nftElementGroupDo, NftInfoDo nftCardInfoDo) {
+        NftCompositeCard nftCompositeCard = this.lambdaQuery().eq(NftCompositeCard::getInfoId, nftCardInfoDo.getId()).one();
+        if (nftCompositeCard == null) {
+            log.error("nftCompositeCard infoId:{} 不存在", nftCardInfoDo.getId());
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
-        if (NftGroupStatus.PENDING.name().equals(nftGroupDo.getStatus())) {
-            if (!nftContractBiz.deployNFTContractWithImage(nftGroupDo)) {
-                log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
-                throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
-            }
-            nftGroupDo.setStatus(NftGroupStatus.INITIALIZED.name());
-            nftGroupDo.setUpdateTime(System.currentTimeMillis());
-            log.info("NFT合约 {} 部署成功", nftGroupDo.getName());
-            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+        // 获取所有关联元素
+        List<Long> elementIds = NftCompositeCard.getElementIds(nftCompositeCard);
+        List<NftInfoDo> elementInfos = nftInfoMapper.selectByIds(elementIds);
+        // 获取该组最后一个id
+        MutableInt nftId = new MutableInt(1);
+        long nftCounterId = nftContractBiz.getNftCounterId(nftElementGroupDo.getNftMeta());
+        if (nftCounterId == -1) {
+            log.error("nftCompositeCard groupId:{} nftCounterId不存在", nftCardInfoDo.getId());
+            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
-        // mint nft
-        if (NftGroupStatus.INITIALIZED.name().equals(nftGroupDo.getStatus())) {
-            NftInfoDo selectNftInfoDo = new NftInfoDo();
-            selectNftInfoDo.setGroupId(nftGroupDo.getId());
-            selectNftInfoDo.setCreated(false);
-            // 取出该组下所有待铸造NFT
-            List<NftInfoDo> nftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
-            if (CollectionUtils.isEmpty(nftInfoDos)) {
+        nftId.setValue(nftCounterId + 1);
+        elementInfos.forEach(elementInfo -> {
+            if (elementInfo.getCreated()) {
+                // 已上链
                 return;
             }
-            MutableInt nftId = new MutableInt(1);
-            // 获取该组最后一个id
-            selectNftInfoDo = new NftInfoDo();
-            selectNftInfoDo.setGroupId(nftGroupDo.getId());
-            selectNftInfoDo.setCreated(true);
-            List<NftInfoDo> createdNftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
-            if (!CollectionUtils.isEmpty(createdNftInfoDos)) {
-                createdNftInfoDos.sort(Comparator.comparingLong(NftInfoDo::getNftId).reversed());
-                nftId.setValue(createdNftInfoDos.get(0).getNftId() + 1);
-            }
-            nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
-                nftInfoDo.setNftId(nftId.longValue());
-                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                // 铸造NFT，存放图片url
-                if (!mintElementNFT(nftGroupDo, nftInfoDo)) {
-                    log.error("NFT {} mint失败", nftInfoDo.getName());
-                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-                }
-                log.info("NFT {} mint成功", nftInfoDo.getName());
-                nftInfoDo.setOwner("");
-                nftInfoDo.setCreated(true);
-                nftInfoDo.setUpdateTime(System.currentTimeMillis());
-                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                nftId.add(1);
-            });
-            // 全部铸造完成，修改
-            nftGroupDo.setStatus(NftGroupStatus.CREATED.name());
-            nftGroupDo.setUpdateTime(System.currentTimeMillis());
-            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
-            // 重新rank
-            nftContractBiz.reRank(nftGroupDo.getSeries());
-        }
-
-        // 市场创建resource + 盲盒发售
-        if (NftGroupStatus.CREATED.name().equals(nftGroupDo.getStatus())) {
-            List<TokenDto> supportTokenList = JSON.parseObject(nftGroupDo.getSupportToken(),
-                    new TypeReference<>() {
-                    });
-            supportTokenList.forEach(tokenDto -> {
-                if (!nftContractBiz.initMarket(nftGroupDo, tokenDto.getAddress())) {
-                    log.error("NFT {} 市场初始化失败, 设置币种:{}", nftGroupDo.getName(), tokenDto.getAddress());
-                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-                }
-            });
-            // 发售成功
-            log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
-            nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
-            nftGroupDo.setUpdateTime(System.currentTimeMillis());
-            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
-        }
-    }
-
-    /**
-     * 部署NFT合约
-     *
-     * @return
-     */
-    public void createCardNFT(long groupId) {
-        // 部署nft合约
-        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(groupId);
-        if (nftGroupDo == null) {
-            log.error("groupId:{} 不存在", groupId);
-            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
-        }
-        NftGroupDo elementGroupDo = nftGroupMapper.selectByPrimaryKey(nftGroupDo.getElementId());
-        if (elementGroupDo == null) {
-            log.error("element groupId:{} 不存在", nftGroupDo.getElementId());
-            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
-        }
-        if (!NftGroupStatus.OFFERING.name().equals(elementGroupDo.getStatus())) {
-            log.error("element groupId:{} 未创建", nftGroupDo.getElementId());
-            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
-        }
-
-        if (NftGroupStatus.PENDING.name().equals(nftGroupDo.getStatus())) {
-            if (!deployCompositeCardContract(nftGroupDo)) {
-                log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
-                throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
-            }
-            nftGroupDo.setStatus(NftGroupStatus.INITIALIZED.name());
-            nftGroupDo.setUpdateTime(System.currentTimeMillis());
-            log.info("NFT合约 {} 部署成功", nftGroupDo.getName());
-            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
-        }
-        // mint nft
-        if (NftGroupStatus.INITIALIZED.name().equals(nftGroupDo.getStatus())) {
-            NftInfoDo selectNftInfoDo = new NftInfoDo();
-            selectNftInfoDo.setGroupId(nftGroupDo.getId());
-            selectNftInfoDo.setCreated(false);
-            // 取出该组下所有待铸造NFT
-            List<NftInfoDo> nftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
-            if (CollectionUtils.isEmpty(nftInfoDos)) {
-                return;
-            }
-            MutableInt nftId = new MutableInt(1);
-            // 获取该组最后一个id
-            selectNftInfoDo = new NftInfoDo();
-            selectNftInfoDo.setGroupId(nftGroupDo.getId());
-            selectNftInfoDo.setCreated(true);
-            List<NftInfoDo> createdNftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
-            if (!CollectionUtils.isEmpty(createdNftInfoDos)) {
-                createdNftInfoDos.sort(Comparator.comparingLong(NftInfoDo::getNftId).reversed());
-                nftId.setValue(createdNftInfoDos.get(0).getNftId() + 1);
-            }
-            nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId).reversed()).forEach(nftInfoDo -> {
-                nftInfoDo.setNftId(nftId.longValue());
-                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                // 铸造NFT，存放图片url
-                if (!mintCardNFT(nftGroupDo, nftInfoDo)) {
-                    log.error("NFT {} mint失败", nftInfoDo.getName());
-                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-                }
-                log.info("NFT {} mint成功", nftInfoDo.getName());
-                nftInfoDo.setOwner("");
-                nftInfoDo.setCreated(true);
-                nftInfoDo.setUpdateTime(System.currentTimeMillis());
-                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
-                nftId.add(1);
-            });
-            // 全部铸造完成，修改
-            nftGroupDo.setStatus(NftGroupStatus.CREATED.name());
-            nftGroupDo.setUpdateTime(System.currentTimeMillis());
-            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
-            // 重新rank
-            nftContractBiz.reRank(nftGroupDo.getSeries());
-        }
-
-        // 市场创建resource
-        if (NftGroupStatus.CREATED.name().equals(nftGroupDo.getStatus())) {
-            List<TokenDto> supportTokenList = JSON.parseObject(nftGroupDo.getSupportToken(),
-                    new TypeReference<>() {
-                    });
-            supportTokenList.forEach(tokenDto -> {
-                if (!nftContractBiz.initMarket(nftGroupDo, tokenDto.getAddress())) {
-                    log.error("NFT {} 市场初始化失败, 设置币种:{}", nftGroupDo.getName(), tokenDto.getAddress());
-                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-                }
-            });
-            if (!nftContractBiz.transferBox(nftGroupDo)) {
-                log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
+            elementInfo.setNftId(nftId.longValue());
+            nftInfoMapper.updateByPrimaryKeySelective(elementInfo);
+            // 铸造NFT，存放图片url
+            if (!mintElementNFT(nftElementGroupDo, elementInfo)) {
+                log.error("NFT {} mint失败", elementInfo.getName());
                 throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
             }
-            log.info("NFT {} 盲盒转账成功", nftGroupDo.getName());
-            nftGroupDo.setStatus(NftGroupStatus.TRANSFER.name());
-            nftGroupDo.setUpdateTime(System.currentTimeMillis());
-            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
-        }
-
-        // 盲盒发售
-        if (NftGroupStatus.TRANSFER.name().equals(nftGroupDo.getStatus())) {
-            if (!nftContractBiz.initBoxOffering(nftGroupDo)) {
-                log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
-                throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
-            }
-            // 发售成功
-            log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
-            nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
-            nftGroupDo.setUpdateTime(System.currentTimeMillis());
-            nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
-        }
-
-        // 初始化NFT挖矿
-        if (NftGroupStatus.OFFERING.name().equals(nftGroupDo.getStatus())) {
-            if (nftGroupDo.getMining()) {
-                nftContractBiz.initNFTMining(nftGroupDo.getId());
-            }
-        }
-
+            log.info("NFT {} mint成功", elementInfo.getName());
+            elementInfo.setOwner("");
+            elementInfo.setCreated(true);
+            elementInfo.setUpdateTime(System.currentTimeMillis());
+            nftInfoMapper.updateByPrimaryKeySelective(elementInfo);
+            nftId.add(1);
+        });
     }
 
     /**
@@ -632,5 +472,6 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                 .build();
         return contractService.callFunction(address, scriptFunctionObj);
     }
+
 
 }
