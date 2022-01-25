@@ -53,22 +53,30 @@
   <select id="selectPages" parameterType="map" resultType="map">
     SELECT
     mm.*,
-    ff.score
+    ff.score,
+    cc.original
     FROM
     nft_market mm
     LEFT JOIN
     nft_info ff
     ON mm.group_id = ff.group_id
     AND mm.nft_box_id = ff.id
+    LEFT JOIN
+    nft_composite_card cc
+    ON mm.nft_box_id = cc.info_id
     <where>
+      1=1
       <if test="groupId != null">
         AND mm.group_id = #{groupId}
       </if>
       <if test="payToken != null">
         AND mm.pay_token = #{payToken}
       </if>
-      <if test="type != null">
-        AND mm.type = #{type}
+      <if test="types != null">
+        AND mm.type IN
+        <foreach collection="types" item="type" index="index" open="(" close=")" separator=",">
+          #{type}
+        </foreach>
       </if>
     </where>
     ORDER BY

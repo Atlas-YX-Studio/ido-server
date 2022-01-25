@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -134,6 +135,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                             if (Objects.nonNull(nftInfo)) {
                                 order.id = nftInfo.getId();
                                 order.groupId = nftInfo.getGroupId();
+                                order.nftType = nftInfo.getType();
                                 order.address = groupDo.getCreator();
                                 order.metaData = groupDo.getNftMeta();
                                 order.name = nftInfo.getName();
@@ -156,24 +158,36 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
     }
 
     @Override
-    public List<BuyBackOrder> getOrders(Long groupId, String currency, int sort, int pageNum, int pageSize) {
-        Comparator<BuyBackOrder> comparator = Comparator.comparing(o -> o.buyPrice);
-        if (sort == 1) {
-            comparator = comparator.reversed();
-        } else if (sort == 3) {
+    public List<BuyBackOrder> getOrders(Long groupId, String nftType, String currency, String sortRule, int sort, int pageNum, int pageSize) {
+        Comparator<BuyBackOrder> comparator = null;
+        if ("price".equalsIgnoreCase(sortRule.trim())) {
+            comparator = Comparator.comparing(o -> o.buyPrice);
+        } else if ("rarity".equalsIgnoreCase(sortRule.trim())) {
             comparator = Comparator.comparing(o -> o.score);
-            comparator = comparator.reversed();
         }
 
-        List<BuyBackOrder> list;
+        Stream<BuyBackOrder> buyBackOrderStream;
         if (Objects.equals(0L, groupId) && StringUtils.equalsIgnoreCase("all", currency)) {
-            list = orderMap.values().stream().flatMap(x -> x.values().stream().flatMap(Collection::stream)).sorted(comparator).collect(Collectors.toList());
+            buyBackOrderStream= orderMap.values().stream().flatMap(x -> x.values().stream().flatMap(Collection::stream));
         } else if (Objects.equals(0L, groupId)) {
-            list = orderMap.values().stream().flatMap(x -> x.getOrDefault(currency, List.of()).stream()).sorted(comparator).collect(Collectors.toList());
+            buyBackOrderStream = orderMap.values().stream().flatMap(x -> x.getOrDefault(currency, List.of()).stream());
         } else if (StringUtils.equalsIgnoreCase("all", currency)) {
-            list = orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream).sorted(comparator).collect(Collectors.toList());
+            buyBackOrderStream = orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream);
         } else {
-            list = orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().sorted(comparator).collect(Collectors.toList());
+            buyBackOrderStream = orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream();
+        }
+
+        if (!StringUtils.equalsIgnoreCase("all", nftType)) {
+            buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType));
+        }
+
+        if (Objects.nonNull(comparator)) {
+            buyBackOrderStream = buyBackOrderStream.sorted(comparator);
+        }
+
+        List<BuyBackOrder> list = buyBackOrderStream.collect(Collectors.toList());
+        if (sort == 1) {
+            Collections.reverse(list);
         }
 
         int start = pageSize * Math.max((pageNum - 1), 0);
@@ -193,6 +207,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         public Long id;
         public Long nftId;
         public Long groupId;
+        public String nftType;
         public String address;
         public String metaData;
         public String name;

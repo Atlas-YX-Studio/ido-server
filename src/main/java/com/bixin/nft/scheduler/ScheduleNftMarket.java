@@ -269,6 +269,10 @@ public class ScheduleNftMarket {
                 log.error("ScheduleNftMarket buildNft and nftGroupDo is null");
                 return;
             }
+            // disabled的不上架
+            if (!nftGroupDo.getEnabled()) {
+                return;
+            }
             String nftType = NftBoxType.NFT.getDesc();
             if (nftGroupDo.getNftMeta().contains("KikoCatCard") && nftGroupDo.getNftBody().contains("KikoCatCard")) {
                 nftType = NftBoxType.COMPOSITE_CARD.getDesc();
@@ -319,6 +323,10 @@ public class ScheduleNftMarket {
             NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
             if (Objects.isNull(nftGroupDo)) {
                 log.error("ScheduleNftMarket buildBox and nftGroupDo is null");
+                return;
+            }
+            // disabled的不上架
+            if (!nftGroupDo.getEnabled()) {
                 return;
             }
             boxList.forEach(p -> p.getItems().forEach(so -> {

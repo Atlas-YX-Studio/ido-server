@@ -58,7 +58,13 @@ public class NftMarketController {
                 || StringUtils.isBlank(sortRule)) {
             return P.failed("parameter is invalid");
         }
-        List<Map<String, Object>> maps = nftMarketService.selectByPage(true, pageSize + 1, pageNum, sort, groupId, sortRule, nftType);
+        List<String> nftTypes = List.of();
+        if (NftBoxType.NFT.getDesc().equals(nftType)) {
+            nftTypes = List.of(NftBoxType.NFT.getDesc(), NftBoxType.COMPOSITE_CARD.getDesc());
+        } else if (StringUtils.isNotBlank(nftType)) {
+            nftTypes = List.of(nftType);
+        }
+        List<Map<String, Object>> maps = nftMarketService.selectByPage(true, pageSize + 1, pageNum, sort, groupId, sortRule, nftTypes);
         if (CollectionUtils.isEmpty(maps)) {
             return P.success(null, false);
         }
@@ -70,7 +76,24 @@ public class NftMarketController {
         }
 
         List<NftSelfSellingVo> list = new ArrayList<>();
-        maps.forEach(p -> list.add(NftSelfSellingVo.of(p)));
+        maps.forEach(p -> {
+            NftSelfSellingVo sellingVo = NftSelfSellingVo.of(p);
+            if (NftBoxType.NFT.getDesc().equals(nftType)) {
+                // 原生NFT，包括普通NFT+原生可合成卡牌
+                if (NftBoxType.NFT.getDesc().equals(sellingVo.getType())) {
+                    list.add(sellingVo);
+                } else if (NftBoxType.COMPOSITE_CARD.getDesc().equals(sellingVo.getType()) && sellingVo.getOriginal()) {
+                    list.add(sellingVo);
+                }
+            } else if (NftBoxType.COMPOSITE_CARD.getDesc().equals(nftType)) {
+                // 组合NFT，只包括分解后重新合成的NFT
+                if (!sellingVo.getOriginal()) {
+                    list.add(sellingVo);
+                }
+            } else {
+                list.add(sellingVo);
+            }
+        });
 
         Set<Long> groupIds = list.stream().map(NftSelfSellingVo::getGroupId).collect(Collectors.toSet());
         Map<Long, NftGroupDo> map = new HashMap<>();

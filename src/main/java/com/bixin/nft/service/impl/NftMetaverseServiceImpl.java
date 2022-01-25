@@ -211,13 +211,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             NftInfoDo info = infoList.get(0);
             layerMap.put(count.getAndIncrement(), CreateCompositeCardBean.Layer.builder()
                     .nft_id(compositeElement.getInfoId())
-                    .name(info.getName())
+                    .name(StringUtils.substringBefore(info.getName(), "##").trim())
                     .property(CardElementType.of(compositeElement.getType()).getDesc())
                     .score(compositeElement.getScore())
                     .build());
         });
         CreateCompositeCardBean createCompositeCardParam = CreateCompositeCardBean.builder()
-                .group_id(bean.getGroupId())
+                .group_id(nftGroupDo.getId())
                 .group_name(nftGroupDo.getName())
                 .sex(bean.getSex())
                 .name(nftGroupDo.getId()
