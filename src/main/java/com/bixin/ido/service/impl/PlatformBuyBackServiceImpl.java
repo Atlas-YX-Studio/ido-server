@@ -124,7 +124,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                                 order.fullCurrency = groupDo.getPayToken();
                                 order.icon = nftInfo.getImageLink();
                                 order.score = nftInfo.getScore();
-                                order.original = nftCompositeCardService.query().eq("nft_info_id", nftInfo.getId()).eq("original", true).exists();
+                                order.original = nftCompositeCardService.query().eq("info_id", nftInfo.getId()).eq("original", true).exists();
                             }
                             orders.add(order);
                         });
