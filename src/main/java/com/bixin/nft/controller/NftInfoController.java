@@ -506,13 +506,13 @@ public class NftInfoController {
         nftMarketParam.setChainId(nftInfoDo.getNftId());
         nftMarketParam.setNftBoxId(nftInfoDo.getId());
         nftMarketParam.setGroupId(nftInfoDo.getGroupId());
-        String type = "nft";
-        if (nftType == NftType.COMPOSITE_ELEMENT) {
-            type = NftType.COMPOSITE_ELEMENT.getType();
-        } else if (nftType == NftType.COMPOSITE_CARD) {
-            type = NftType.COMPOSITE_CARD.getType();
-        }
-        nftMarketParam.setType(type);
+//        String type = "nft";
+//        if (nftType == NftType.COMPOSITE_ELEMENT) {
+//            type = NftType.COMPOSITE_ELEMENT.getType();
+//        } else if (nftType == NftType.COMPOSITE_CARD) {
+//            type = NftType.COMPOSITE_CARD.getType();
+//        }
+        nftMarketParam.setType(nftInfoDo.getType());
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParam);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftInfoVo.setOnSell(false);

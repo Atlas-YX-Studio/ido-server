@@ -1,14 +1,16 @@
 package com.bixin.nft.scheduler;
 
-import com.bixin.common.config.StarConfig;
 import com.bixin.common.utils.LocalDateTimeUtil;
 import com.bixin.core.redis.RedisCache;
+import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.common.enums.NftType;
+import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -27,7 +29,9 @@ import java.util.stream.Collectors;
 public class ScheduleNftRank {
 
     @Resource
-    NftInfoService nftInfoService;
+    private NftGroupService nftGroupService;
+    @Resource
+    private NftInfoService nftInfoService;
     @Resource
     private RedisCache redisCache;
 
@@ -51,6 +55,22 @@ public class ScheduleNftRank {
     }
 
     private void updateNftInfoRank() {
+        // update card quantity
+        NftGroupDo selectNftGroupDo = new NftGroupDo();
+        selectNftGroupDo.setType(NftType.COMPOSITE_CARD.getType());
+        List<NftGroupDo> nftGroupDos = nftGroupService.listByObject(selectNftGroupDo);
+        if (CollectionUtils.isNotEmpty(nftGroupDos)) {
+            nftGroupDos.forEach(nftGroupDo -> {
+                NftInfoDo selectNftInfoDo = new NftInfoDo();
+                selectNftInfoDo.setGroupId(nftGroupDo.getId());
+                selectNftInfoDo.setCreated(true);
+                int count = nftInfoService.selectCountBySelective(selectNftInfoDo);
+                nftGroupDo.setQuantity(count);
+                nftGroupDo.setSeriesQuantity(count);
+                nftGroupService.update(nftGroupDo);
+            });
+        }
+        // update rank
         AtomicInteger count = new AtomicInteger(0);
         List<NftInfoDo> allList = new ArrayList<>();
         for (; ; ) {

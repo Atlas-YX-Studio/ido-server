@@ -169,6 +169,11 @@ public class NftInfoServiceImpl implements NftInfoService {
         return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
     }
 
+    @Override
+    public int selectCountBySelective(NftInfoDo model) {
+        return nftInfoMapper.selectCountBySelective(model);
+    }
+
     private List<NftInfoVo> getNftInfoVos(String userAddress, List<NftGroupDo> nftGroups) {
         List<NftInfoVo> nftInfoVos = Lists.newArrayList();
         nftGroups.forEach(nftGroupDo -> {

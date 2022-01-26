@@ -33,4 +33,10 @@ class NftControllerTest {
         log.info("meta:" + JSON.toJSONString(nftInfoController.meta()));
     }
 
+    @Test
+    void nftInfo() {
+        log.info("nftInfo:" + JSON.toJSONString(nftInfoController.nftInfo(30371L)));
+    }
+
+
 }

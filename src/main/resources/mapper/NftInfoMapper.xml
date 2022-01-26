@@ -214,4 +214,8 @@
      id DESC
     limit #{from},#{pageSize}
   </select>
+  <select id="selectCountBySelective" parameterType="com.bixin.nft.bean.DO.NftInfoDo" resultType="java.lang.Integer">
+    select count(*) from nft_info
+    <include refid="baseQuery" />
+  </select>
 </mapper>
