@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author zhangcheng
@@ -50,6 +49,7 @@ public class NftSelfResourceVo {
     public static class CardVo {
         private boolean original;
         private String customName;
+        private String occupation;
         //0女 1男
         private int sex;
         private String image;

@@ -432,6 +432,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 NftSelfResourceVo.CardVo cardVo = NftSelfResourceVo.CardVo.builder()
                         .original(p.getOriginal())
                         .customName(p.getCustomName())
+                        .occupation(p.getOccupation())
                         .sex(p.getSex())
                         .image(infoDo.getImageLink())
                         .name(infoDo.getName())
