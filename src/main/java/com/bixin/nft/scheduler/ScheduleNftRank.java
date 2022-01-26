@@ -4,7 +4,6 @@ import com.bixin.common.utils.LocalDateTimeUtil;
 import com.bixin.core.redis.RedisCache;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
-import com.bixin.nft.common.enums.NftInfoState;
 import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
@@ -64,7 +63,7 @@ public class ScheduleNftRank {
             nftGroupDos.forEach(nftGroupDo -> {
                 NftInfoDo selectNftInfoDo = new NftInfoDo();
                 selectNftInfoDo.setGroupId(nftGroupDo.getId());
-                selectNftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
+                selectNftInfoDo.setCreated(true);
                 int count = nftInfoService.selectCountBySelective(selectNftInfoDo);
                 nftGroupDo.setQuantity(count);
                 nftGroupDo.setSeriesQuantity(count);
