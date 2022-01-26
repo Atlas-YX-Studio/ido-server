@@ -10,6 +10,8 @@ import com.bixin.ido.service.IPlatformBuyBackService;
 import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.common.enums.NftBoxType;
+import com.bixin.nft.service.NftCompositeCardService;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,38 +44,18 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
     @Resource
     private NftInfoService nftInfoService;
 
-    private Map<String, NftInfoDo> nftInfoMap;
+    @Resource
+    private NftCompositeCardService nftCompositeCardService;
 
     // Map<groupId, Map<currency, List<BuyBackOrder>>>
     private Map<Long, Map<String, List<BuyBackOrder>>> orderMap;
 
     @PostConstruct
     public void init() {
-
-        this.refreshNftInfo();
         this.refreshOrders();
-
     }
 
-    @Scheduled(cron = "* 0/10 * * * ?")
-    public void refreshNftInfo() {
-        try {
-            List<NftInfoDo> nftInfoDos = nftInfoService.listByObject(new NftInfoDo());
-            if (CollectionUtils.isEmpty(nftInfoDos)) {
-                log.warn("platform buy back refresh nft info is empty");
-                return;
-            }
-            nftInfoMap = nftInfoDos.stream().filter(x -> x.getNftId() != 0).collect(Collectors.toMap(x -> toInfoKey(x.getGroupId(), x.getNftId()), y -> y));
-        } catch (Exception e) {
-            log.error("refreshNftInfo exception", e);
-        }
-    }
-
-    private String toInfoKey(Long groupId, Long nftId) {
-        return String.format("%s_%s", groupId, nftId);
-    }
-
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     public void refreshOrders() {
         Map<Long, Map<String, List<BuyBackOrder>>> tempOrderMap = Maps.newHashMap();
 
@@ -131,7 +113,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                                     });
                                 }
                             });
-                            NftInfoDo nftInfo = nftInfoMap.get(toInfoKey(groupDo.getId(), order.nftId));
+                            NftInfoDo nftInfo = nftInfoService.selectByObject(NftInfoDo.builder().groupId(groupDo.getId()).nftId(order.nftId).build());
                             if (Objects.nonNull(nftInfo)) {
                                 order.id = nftInfo.getId();
                                 order.groupId = nftInfo.getGroupId();
@@ -142,6 +124,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                                 order.fullCurrency = groupDo.getPayToken();
                                 order.icon = nftInfo.getImageLink();
                                 order.score = nftInfo.getScore();
+                                order.original = nftCompositeCardService.query().eq("info_id", nftInfo.getId()).eq("original", true).exists();
                             }
                             orders.add(order);
                         });
@@ -178,7 +161,15 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         }
 
         if (!StringUtils.equalsIgnoreCase("all", nftType)) {
-            buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType));
+            if (NftBoxType.NFT.getDesc().equals(nftType)) {
+                // 原生NFT，包括普通NFT+原生可合成卡牌
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) || x.original);
+            } else if (NftBoxType.COMPOSITE_CARD.getDesc().equals(nftType)) {
+                // 组合NFT，只包括分解后重新合成的NFT
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) && !x.original);
+            } else {
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType));
+            }
         }
 
         if (Objects.nonNull(comparator)) {
@@ -215,6 +206,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         public String fullCurrency;
         public String icon;
         public BigDecimal score;
+        public Boolean original;
 
         public String getCurrency() {
             if (StringUtils.isBlank(this.fullCurrency)) {
