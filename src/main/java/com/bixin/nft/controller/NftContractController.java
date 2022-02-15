@@ -2,6 +2,7 @@ package com.bixin.nft.controller;
 
 import com.bixin.common.response.R;
 import com.bixin.nft.biz.NftContractBiz;
+import com.bixin.nft.service.NftCompositeCardService;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,8 @@ public class NftContractController {
     private NftGroupService nftGroupService;
     @Resource
     private NftInfoService nftInfoService;
+    @Resource
+    private NftCompositeCardService nftCompositeCardService;
 
     private final static String SECRET_KEY = "766dF569970B22B29152eB326dad1b1E";
 
@@ -40,6 +43,15 @@ public class NftContractController {
             return R.failed("permission denied");
         }
         nftContractService.initNFTMarket(new BigInteger(creatorFee), new BigInteger(platformFee));
+        return R.success(true);
+    }
+
+    @GetMapping("/nft/createCompositeNFT")
+    public R createCompositeNFT(@RequestParam String secretKey, @RequestParam Long groupId) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
+        }
+        nftCompositeCardService.createCompositeNFT(groupId);
         return R.success(true);
     }
 

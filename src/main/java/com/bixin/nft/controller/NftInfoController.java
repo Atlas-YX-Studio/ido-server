@@ -1,5 +1,7 @@
 package com.bixin.nft.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.bixin.common.config.StarConfig;
 import com.bixin.common.constants.CommonConstant;
 import com.bixin.common.response.P;
 import com.bixin.common.response.R;
@@ -10,17 +12,22 @@ import com.bixin.nft.bean.vo.NftGroupVo;
 import com.bixin.nft.bean.vo.NftInfoVo;
 import com.bixin.nft.bean.vo.OperationRecordVo;
 import com.bixin.nft.bean.vo.SeriesListVo;
+import com.bixin.nft.common.enums.CardElementType;
 import com.bixin.nft.common.enums.NftEventType;
+import com.bixin.nft.common.enums.NftType;
+import com.bixin.nft.common.enums.OccupationType;
 import com.bixin.nft.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @class: NftInfoController
@@ -28,20 +35,75 @@ import java.util.List;
  * @author: 系统
  * @created: 2021-09-15
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/nft/")
 public class NftInfoController {
 
-    @Autowired
+    @Resource
     private NftInfoService nftInfoService;
-    @Autowired
+    @Resource
     private NftGroupService nftGroupService;
-    @Autowired
+    @Resource
     private NftKikoCatService nftKikoCatService;
-    @Autowired
+    @Resource
     private NftMarketService nftMarketService;
-    @Autowired
+    @Resource
     private NftEventService nftEventService;
+    @Resource
+    private NftMetareverseService metareverseService;
+    //    @Resource
+//    private NftCompositeCardService compositeCardService;
+    @Resource
+    private StarConfig starConfig;
+
+    /**
+     * 元数据
+     *
+     * @return
+     */
+    @GetMapping("/meta")
+    public R meta() {
+        Map<String, Object> result = new HashMap<>();
+        // 属性
+        List<JSONObject> elements = Stream.of(CardElementType.values()).filter(CardElementType::isEnable)
+                .map(type -> {
+                    JSONObject json = new JSONObject();
+                    json.put("desc", type.getDesc());
+                    json.put("cnDesc", type.getCnDesc());
+                    json.put("id", type.getId());
+                    json.put("maskOrder", type.getMaskOrder());
+                    return json;
+                }).collect(Collectors.toList());
+        result.put("elements", elements);
+        // 职业
+        List<JSONObject> occupations = Stream.of(OccupationType.values())
+                .map(type -> {
+                    JSONObject json = new JSONObject();
+                    json.put("desc", type.getDesc());
+                    json.put("cnDesc", type.getCnDesc());
+                    json.put("image", type.getImage());
+                    return json;
+                }).collect(Collectors.toList());
+
+        List<Map<String, Object>> sumByOccupationGroup = metareverseService.getSumByOccupationGroup();
+        Map<String, List<Map<String, Object>>> occupationMap = sumByOccupationGroup.stream()
+                .collect(Collectors.groupingBy(p -> String.valueOf(p.get("occupation")).toLowerCase()));
+        occupations.forEach(p -> {
+            String desc = String.valueOf(p.get("desc"));
+            List<Map<String, Object>> mapList = occupationMap.get(desc.toLowerCase());
+            long sum = 0;
+            if (!CollectionUtils.isEmpty(mapList)) {
+                sum = NumberUtils.toLong(String.valueOf(mapList.get(0).get("sum")), 0);
+            }
+            p.put("sum", sum);
+        });
+
+        result.put("occupations", occupations);
+        result.put("compositeFee", starConfig.getNft().getCompositeFee());
+
+        return R.success(result);
+    }
 
     /**
      * 获取系列列表
@@ -76,6 +138,11 @@ public class NftInfoController {
         List<NftGroupVo> nftGroupVoLis = BeanCopyUtil.copyListProperties(nftGroupDoList, nftGroupDo -> {
             NftGroupVo nftGroupVo = new NftGroupVo();
             nftGroupVo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
+            if (NftType.COMPOSITE_CARD.getType().equals(nftGroupDo.getType()) && nftGroupDo.getElementId() != 0) {
+                NftGroupDo elementGroupDo = nftGroupService.selectById(nftGroupDo.getElementId());
+                NftGroupVo elementGroupVo = BeanCopyUtil.copyProperties(elementGroupDo, NftGroupVo::new);
+                nftGroupVo.setElement(elementGroupVo);
+            }
             return nftGroupVo;
         });
         return R.success(nftGroupVoLis);
@@ -250,6 +317,9 @@ public class NftInfoController {
             vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
             return vo;
         });
+        NftType nftType = Objects.nonNull(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
+        nftGroupVo.setNftType(nftType);
+
         // 是否出售中
         NftMarketDo nftMarketParam = new NftMarketDo();
         nftMarketParam.setChainId(boxId);
@@ -263,10 +333,29 @@ public class NftInfoController {
             nftGroupVo.setSellingPrice(nftMarketDo.getSellPrice());
             nftGroupVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftGroupVo.setOwner(nftMarketDo.getOwner());
+            nftGroupVo.setImageLink(nftMarketDo.getIcon());
         }
+
         return R.success(nftGroupVo);
     }
 
+    /**
+     * 未出售NFT列表
+     *
+     * @param address
+     * @return
+     */
+    @GetMapping("/unsell/list")
+    public R unSellList(@RequestParam String address) {
+        return R.success(nftInfoService.getUnSellNftList(address));
+    }
+
+    /**
+     * 待质押NFT列表
+     *
+     * @param address
+     * @return
+     */
     @GetMapping("/unused/list")
     public R unusedList(@RequestParam String address) {
         return R.success(nftInfoService.getUnStakingNftList(address));
@@ -300,19 +389,59 @@ public class NftInfoController {
         if (ObjectUtils.isEmpty(nftInfoDo)) {
             return R.failed("nftInfoDo不存在，meta = " + nftMeta + "，body = " + nftBody + "，nftId = " + nftId);
         }
-        // 获取cat
-        NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
-        selectNftKikoCatDo.setInfoId(nftInfoDo.getId());
-        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByObject(selectNftKikoCatDo);
-        if (ObjectUtils.isEmpty(nftKikoCatDo)) {
-            return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+        NftCompositeCard compositeCard = null;
+        List<NftCompositeElement> compositeElements = new ArrayList<>();
+        //cat
+        NftKikoCatDo nftKikoCatDo = null;
+
+        NftType nftType = Objects.nonNull(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
+
+        if (nftType == NftType.COMPOSITE_CARD) {
+            List<NftCompositeCard> compositeCards = metareverseService.getCompositeCard(nftInfoDo.getId());
+            if (CollectionUtils.isEmpty(compositeCards)) {
+                return R.failed("NftCompositeCard 不存在，nftId = " + nftInfoDo.getNftId());
+            }
+            compositeCard = compositeCards.get(0);
+            List<Long> elementIds = NftCompositeCard.getElementIds(compositeCard);
+            List<NftCompositeElement> elementList = metareverseService.getCompositeElements(new HashSet<>(elementIds));
+            if (CollectionUtils.isEmpty(elementList)) {
+                return R.failed("NftCompositeElement 不存在，nftIds = " + elementIds);
+            }
+            compositeElements.addAll(elementList);
+        } else if (nftType == NftType.COMPOSITE_ELEMENT) {
+            Set<Long> ids = new HashSet<>() {{
+                add(nftInfoDo.getId());
+            }};
+            List<NftCompositeElement> elementList = metareverseService.getCompositeElements(ids);
+            if (CollectionUtils.isEmpty(elementList)) {
+                return R.failed("NftCompositeElement 不存在，nftIds = " + ids);
+            }
+            compositeElements.addAll(elementList);
+        } else {
+            NftKikoCatDo selectNftKikoCatDo = new NftKikoCatDo();
+            selectNftKikoCatDo.setInfoId(nftInfoDo.getId());
+            nftKikoCatDo = nftKikoCatService.selectByObject(selectNftKikoCatDo);
+            if (ObjectUtils.isEmpty(nftKikoCatDo)) {
+                return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+            }
         }
         NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftInfoDo, () -> BeanCopyUtil.copyProperties(nftGroupDo, () -> {
             NftInfoVo vo = new NftInfoVo();
             vo.setSupportToken(TokenDto.of(nftGroupDo.getSupportToken()));
             return vo;
         }));
-        nftInfoVo.setProperties(nftKikoCatDo);
+        if (Objects.nonNull(nftKikoCatDo)) {
+            nftInfoVo.setProperties(nftKikoCatDo);
+        }
+        if (!CollectionUtils.isEmpty(compositeElements)) {
+            nftInfoVo.setCompositeElements(compositeElements);
+        }
+        if (Objects.nonNull(compositeCard)) {
+            nftInfoVo.setOccupation(compositeCard.getOccupation());
+            nftInfoVo.setCustomName(compositeCard.getCustomName());
+            nftInfoVo.setSex(compositeCard.getSex());
+        }
+        nftInfoVo.setNftType(nftType);
         return R.success(nftInfoVo);
     }
 
@@ -331,11 +460,41 @@ public class NftInfoController {
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("nftGroupDo不存在，groupId = " + nftInfoDo.getGroupId());
         }
-        NftKikoCatDo parm = new NftKikoCatDo();
-        parm.setInfoId(nftInfoDo.getId());
-        NftKikoCatDo nftKikoCatDo = nftKikoCatService.selectByObject(parm);
-        if (ObjectUtils.isEmpty(nftKikoCatDo)) {
-            return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+        NftType nftType = Objects.nonNull(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
+
+        NftCompositeCard compositeCard = null;
+        List<NftCompositeElement> compositeElements = new ArrayList<>();
+        //cat
+        NftKikoCatDo nftKikoCatDo = null;
+
+        if (nftType == NftType.COMPOSITE_CARD) {
+            List<NftCompositeCard> compositeCards = metareverseService.getCompositeCard(nftInfoDo.getId());
+            if (CollectionUtils.isEmpty(compositeCards)) {
+                return R.failed("NftCompositeCard 不存在，nftId = " + nftInfoDo.getNftId());
+            }
+            compositeCard = compositeCards.get(0);
+            List<Long> elementIds = NftCompositeCard.getElementIds(compositeCard);
+            List<NftCompositeElement> elementList = metareverseService.getCompositeElements(new HashSet<>(elementIds));
+            if (CollectionUtils.isEmpty(elementList)) {
+                return R.failed("NftCompositeElement 不存在，nftIds = " + elementIds);
+            }
+            compositeElements.addAll(elementList);
+        } else if (nftType == NftType.COMPOSITE_ELEMENT) {
+            Set<Long> ids = new HashSet<>() {{
+                add(nftInfoDo.getId());
+            }};
+            List<NftCompositeElement> elementList = metareverseService.getCompositeElements(ids);
+            if (CollectionUtils.isEmpty(elementList)) {
+                return R.failed("NftCompositeElement 不存在，nftIds = " + ids);
+            }
+            compositeElements.addAll(elementList);
+        } else {
+            NftKikoCatDo parm = new NftKikoCatDo();
+            parm.setInfoId(nftInfoDo.getId());
+            nftKikoCatDo = nftKikoCatService.selectByObject(parm);
+            if (ObjectUtils.isEmpty(nftKikoCatDo)) {
+                return R.failed("nftKikoCatDo不存在，nftId = " + nftInfoDo.getNftId());
+            }
         }
         NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftInfoDo, () -> BeanCopyUtil.copyProperties(nftGroupDo, () -> {
             NftInfoVo vo = new NftInfoVo();
@@ -347,7 +506,13 @@ public class NftInfoController {
         nftMarketParam.setChainId(nftInfoDo.getNftId());
         nftMarketParam.setNftBoxId(nftInfoDo.getId());
         nftMarketParam.setGroupId(nftInfoDo.getGroupId());
-        nftMarketParam.setType("nft");
+//        String type = "nft";
+//        if (nftType == NftType.COMPOSITE_ELEMENT) {
+//            type = NftType.COMPOSITE_ELEMENT.getType();
+//        } else if (nftType == NftType.COMPOSITE_CARD) {
+//            type = NftType.COMPOSITE_CARD.getType();
+//        }
+        nftMarketParam.setType(nftInfoDo.getType());
         NftMarketDo nftMarketDo = nftMarketService.selectByObject(nftMarketParam);
         if (ObjectUtils.isEmpty(nftMarketDo)) {
             nftInfoVo.setOnSell(false);
@@ -357,7 +522,18 @@ public class NftInfoController {
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftInfoVo.setOwner(nftMarketDo.getOwner());
         }
-        nftInfoVo.setProperties(nftKikoCatDo);
+        if (Objects.nonNull(nftKikoCatDo)) {
+            nftInfoVo.setProperties(nftKikoCatDo);
+        }
+        nftInfoVo.setNftType(nftType);
+        if (!CollectionUtils.isEmpty(compositeElements)) {
+            nftInfoVo.setCompositeElements(compositeElements);
+        }
+        if (Objects.nonNull(compositeCard)) {
+            nftInfoVo.setOccupation(compositeCard.getOccupation());
+            nftInfoVo.setCustomName(compositeCard.getCustomName());
+            nftInfoVo.setSex(compositeCard.getSex());
+        }
         return R.success(nftInfoVo);
     }
 

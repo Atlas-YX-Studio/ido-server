@@ -52,4 +52,13 @@ public interface NftInfoMapper {
 
 
     List<NftInfoDo> selectByPage(Map<String,Object> map);
+
+    List<NftInfoDo> selectAll4Rank(Map<String,Object> map);
+
+    List<NftInfoDo> selectByIds(List<Long> list);
+
+    List<NftInfoDo> selectByNftIds(Map<String,Object> map);
+
+    int selectCountBySelective(NftInfoDo model);
+
 }

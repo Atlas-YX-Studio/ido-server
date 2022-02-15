@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.beust.jcommander.internal.Lists;
-import com.bixin.ido.core.client.ChainClientHelper;
+import com.bixin.core.client.ChainClientHelper;
 import com.bixin.ido.bean.DO.SwapCoins;
 import com.bixin.ido.bean.dto.SwapTokenMarketDto;
 import com.bixin.ido.bean.vo.CoinStatsInfoVO;

@@ -13,4 +13,13 @@ public enum NftType {
 
     private String type;
 
+    public static NftType of(String type) {
+        for (NftType nftType : NftType.values()) {
+            if (type.equalsIgnoreCase(nftType.getType())) {
+                return nftType;
+            }
+        }
+        return null;
+    }
+
 }

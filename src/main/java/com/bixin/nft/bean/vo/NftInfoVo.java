@@ -1,7 +1,10 @@
 package com.bixin.nft.bean.vo;
 
+import com.bixin.nft.bean.DO.NftCompositeCard;
+import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
 import com.bixin.nft.bean.dto.TokenDto;
+import com.bixin.nft.common.enums.NftType;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -132,9 +135,17 @@ public class NftInfoVo {
      */
     private NftKikoCatDo properties;
 
+    private NftType nftType;
+
+    private List<NftCompositeElement> compositeElements;
+
     /**
      * 支持币种
      */
     private List<TokenDto> supportToken;
+
+    private String occupation;
+    private String customName;
+    private int sex;
 
 }

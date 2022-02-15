@@ -4,26 +4,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id as d
-        ,info_id as nfoId
-        ,occupation as ccupation
-        ,background_id as ackgroundId
-        ,background as ackground
-        ,background_score as ackgroundScore
-        ,fur_id as urId
-        ,fur as ur
-        ,fur_score as urScore
-        ,clothes_id as lothesId
-        ,clothes as lothes
-        ,clothes_score as lothesScore
-        ,facial_expression_id as acialExpressionId
-        ,facial_expression as acialExpression
-        ,facial_expression_score as acialExpressionScore
-        ,head_expression_id as eadExpressionId
-        ,head as ead
-        ,head_score as eadScore
-        ,create_time as reateTime
-        ,update_time as pdateTime
+        id, info_id, occupation, custom_name, background_id, fur_id, facial_id, head_id, accessories_id, eyes_id, clothes_id, hat_id, costume_id, makeup_id, shoes_id, mouth_id, earring_id, necklace_id, neck_id, hair_id, horn_id, hands_id, body_id, skin_id, tattoo_id, people_id, characteristic_id, hobby_id, zodiac_id, action_id, toys_id, fruits_id, vegetables_id, meat_id, beverages_id, food_id, vehicle_id, weather_id, month_id, sports_id, music_id, movies_id, season_id, outfit_id, face_id, arm_id, leg_id, foot_id, weapon_id, helmet_id, armor_id, mecha_id, pants_id, skirt_id, background, fur, facial, head, accessories, eyes, clothes, hat, costume, makeup, shoes, mouth, earring, necklace, neck, hair, horn, hands, body, skin, tattoo, people, characteristic, hobby, zodiac, action, toys, fruits, vegetables, meat, beverages, food, vehicle, weather, month, sports, music, movies, season, outfit, face, arm, leg, foot, weapon, helmet, armor, mecha, pants, skirt, background_score, fur_score, facial_score, head_score, accessories_score, eyes_score, clothes_score, hat_score, costume_score, makeup_score, shoes_score, mouth_score, earring_score, necklace_score, neck_score, hair_score, horn_score, hands_score, body_score, skin_score, tattoo_score, people_score, characteristic_score, hobby_score, zodiac_score, action_score, toys_score, fruits_score, vegetables_score, meat_score, beverages_score, food_score, vehicle_score, weather_score, month_score, sports_score, music_score, movies_score, season_score, outfit_score, face_score, arm_score, leg_score, foot_score, weapon_score, helmet_score, armor_score, mecha_score, pants_score, skirt_score, state, create_time, update_time
     </sql>
+
 
 </mapper>

@@ -1,4 +1,4 @@
-package com.bixin.ido.core.client;
+package com.bixin.core.client;
 
 import com.beust.jcommander.internal.Maps;
 import com.bixin.ido.bean.DO.IdoDxProduct;
@@ -98,4 +98,10 @@ public class ChainClientHelper {
         List<String> addressArray = Arrays.asList(userAddress, "0x00000000000000000000000000000001::NFTGallery::NFTGallery<" + meta + ", " + body + ">");
         return getPostResp(addressArray);
     }
+
+    public MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> getNftTypeInfo(String meta) {
+        List<String> addressArray = Arrays.asList("0x00000000000000000000000000000001", "0x00000000000000000000000000000001::NFT::NFTTypeInfoV2<" + meta + ">");
+        return getPostResp(addressArray);
+    }
+
 }

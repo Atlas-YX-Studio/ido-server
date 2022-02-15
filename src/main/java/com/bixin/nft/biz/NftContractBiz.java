@@ -1,12 +1,16 @@
 package com.bixin.nft.biz;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.bixin.common.code.IdoErrorCode;
+import com.bixin.common.config.StarConfig;
 import com.bixin.common.exception.IdoException;
-import com.bixin.ido.common.enums.NftGroupStatus;
 import com.bixin.common.utils.BigDecimalUtil;
+import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.common.utils.TypeArgsUtil;
+import com.bixin.core.client.ChainClientHelper;
+import com.bixin.ido.common.enums.NftGroupStatus;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
@@ -19,8 +23,13 @@ import com.google.common.collect.Lists;
 import com.novi.serde.Bytes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.starcoin.bean.ScriptFunctionObj;
@@ -34,6 +43,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,6 +60,10 @@ public class NftContractBiz {
     private ContractService contractService;
     @Resource
     private NftImagesUploadBiz nftImagesUploadBiz;
+    @Resource
+    private StarConfig starConfig;
+    @Resource
+    private ChainClientHelper chainClientHelper;
 
     @Value("${ido.star.nft.market}")
     private String market;
@@ -109,7 +123,7 @@ public class NftContractBiz {
 
         // 部署nft合约
         NftGroupDo selectNftGroupDo = new NftGroupDo();
-        selectNftGroupDo.setStatus(NftGroupStatus.APPENDING.name());
+        selectNftGroupDo.setStatus(NftGroupStatus.PENDING.name());
         List<NftGroupDo> nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (!CollectionUtils.isEmpty(nftGroupDos)) {
             nftGroupDos.forEach(nftGroupDo -> {
@@ -170,7 +184,7 @@ public class NftContractBiz {
             });
         }
 
-        // 市场创建resource + 盲盒发售
+        // 市场创建resource + 盲盒支付
         selectNftGroupDo.setStatus(NftGroupStatus.CREATED.name());
         nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
         if (!CollectionUtils.isEmpty(nftGroupDos)) {
@@ -188,15 +202,30 @@ public class NftContractBiz {
                     log.error("NFT {} 盲盒转账失败", nftGroupDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                 }
+                log.info("NFT {} 盲盒转账成功", nftGroupDo.getName());
+                nftGroupDo.setStatus(NftGroupStatus.TRANSFER.name());
+                nftGroupDo.setUpdateTime(System.currentTimeMillis());
+                nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+            });
+        }
+
+        // 发售盲盒
+        selectNftGroupDo.setStatus(NftGroupStatus.TRANSFER.name());
+        nftGroupDos = nftGroupMapper.selectByPrimaryKeySelectiveList(selectNftGroupDo);
+        if (!CollectionUtils.isEmpty(nftGroupDos)) {
+            nftGroupDos.forEach(nftGroupDo -> {
                 if (!initBoxOffering(nftGroupDo)) {
                     log.error("NFT {} 盲盒发售创建失败", nftGroupDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                 }
-                // 发售成功
                 log.info("NFT {} 盲盒发售创建成功", nftGroupDo.getName());
                 nftGroupDo.setStatus(NftGroupStatus.OFFERING.name());
                 nftGroupDo.setUpdateTime(System.currentTimeMillis());
                 nftGroupMapper.updateByPrimaryKeySelective(nftGroupDo);
+                // 初始化NFT挖矿
+                if (nftGroupDo.getMining()) {
+                    initNFTMining(nftGroupDo.getId());
+                }
             });
         }
     }
@@ -208,6 +237,7 @@ public class NftContractBiz {
      *
      * @return
      */
+    @Deprecated
     public void createBatchNFT(long groupId, int batch, int count, long gas) {
         // 同步上传图片
 //        nftImagesUploadBiz.run();
@@ -217,7 +247,7 @@ public class NftContractBiz {
         if (nftGroupDo == null) {
             return;
         }
-        if (NftGroupStatus.APPENDING.name().equals(nftGroupDo.getStatus())) {
+        if (NftGroupStatus.PENDING.name().equals(nftGroupDo.getStatus())) {
             if (!deployNFTContractWithImage(nftGroupDo)) {
                 log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
                 throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
@@ -333,7 +363,7 @@ public class NftContractBiz {
         if (nftGroupDo == null) {
             return;
         }
-        if (NftGroupStatus.APPENDING.name().equals(nftGroupDo.getStatus())) {
+        if (NftGroupStatus.PENDING.name().equals(nftGroupDo.getStatus())) {
             if (!deployNFTContractWithImage(nftGroupDo)) {
                 log.error("NFT合约 {} 部署失败", nftGroupDo.getName());
                 throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
@@ -440,7 +470,7 @@ public class NftContractBiz {
      *
      * @return
      */
-    private boolean deployNFTContractWithImage(NftGroupDo nftGroupDo) {
+    public boolean deployNFTContractWithImage(NftGroupDo nftGroupDo) {
         String moduleName = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()).getModuleName();
         String path = "contract/nft/" + moduleName + ".mv";
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
@@ -647,7 +677,7 @@ public class NftContractBiz {
      * @param nftGroupDo
      * @return
      */
-    private boolean transferBox(NftGroupDo nftGroupDo) {
+    public boolean transferBox(NftGroupDo nftGroupDo) {
         double boxTokenDecimal = nftGroupDo.getOfferingQuantity() * Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken());
         return contractService.transfer(nftGroupDo.getCreator(), market, typeObj, BigInteger.valueOf((long) boxTokenDecimal));
@@ -680,7 +710,7 @@ public class NftContractBiz {
     /**
      * 创建盲盒发售
      */
-    private boolean initBoxOffering(NftGroupDo nftGroupDo) {
+    public boolean initBoxOffering(NftGroupDo nftGroupDo) {
         double boxTokenDecimal = Math.pow(10, nftGroupDo.getBoxTokenPrecision());
         double payTokenDecimal = Math.pow(10, nftGroupDo.getPayTokenPrecision());
         BigInteger boxAmount = BigInteger.valueOf(nftGroupDo.getOfferingQuantity() * (long) boxTokenDecimal);
@@ -709,7 +739,7 @@ public class NftContractBiz {
     /**
      * 初始化市场
      */
-    private boolean initMarket(NftGroupDo nftGroupDo, String payToken) {
+    public boolean initMarket(NftGroupDo nftGroupDo, String payToken) {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(scripts)
@@ -751,6 +781,32 @@ public class NftContractBiz {
                 .build();
         if (!contractService.callFunction(market, scriptFunctionObj)) {
             log.error("NFT市场回购初始化失败, 合约请求失败");
+            throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+        }
+    }
+
+    /**
+     * 初始化NFT回购
+     */
+    public void initNFTMining(Long groupId) {
+        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(groupId);
+        if (nftGroupDo == null) {
+            log.error("NFT挖矿初始化失败, groupId:{} 不存在", groupId);
+            throw new IdoException(IdoErrorCode.DATA_NOT_EXIST);
+        }
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(starConfig.getMining().getNftMiningAddress())
+                .moduleName(starConfig.getMining().getNftMiningModule())
+                .functionName("nft_init")
+                .args(Lists.newArrayList())
+                .tyArgs(Lists.newArrayList(
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()),
+                        TypeArgsUtil.parseTypeObj(nftGroupDo.getNftBody())
+                ))
+                .build();
+        if (!contractService.callFunction(starConfig.getMining().getMiningAddress(), scriptFunctionObj)) {
+            log.error("NFT挖矿初始化失败, 合约请求失败");
             throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
         }
     }
@@ -805,6 +861,7 @@ public class NftContractBiz {
         nftGroupDoList.forEach(nftGroupDo -> {
             NftInfoDo selectInfoDo = new NftInfoDo();
             selectInfoDo.setGroupId(nftGroupDo.getId());
+            selectInfoDo.setCreated(true);
             List<NftInfoDo> nftInfoDoList = nftInfoMapper.selectByPrimaryKeySelectiveList(selectInfoDo);
             nftInfoList.addAll(nftInfoDoList);
         });
@@ -841,7 +898,7 @@ public class NftContractBiz {
                         BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(1))
                 ))
                 .tyArgs(Lists.newArrayList(
-                        TypeArgsUtil.parseTypeObj("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCat09::KikoCatBox"),
+                        TypeArgsUtil.parseTypeObj("0x69f1e543a3bef043b63bed825fcd2cf6::KikoCatCard04::KikoCatBox"),
                         TypeArgsUtil.parseTypeObj("0x1::STC::STC")
                 ))
                 .build();
@@ -851,12 +908,12 @@ public class NftContractBiz {
     public boolean open_box(String address, String module) {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
-                .moduleAddress(address)
+                .moduleAddress(starConfig.getNft().getCatadd())
                 .moduleName(module)
                 .functionName("open_box")
                 .args(Lists.newArrayList())
                 .build();
-        return contractService.callFunction(market, scriptFunctionObj);
+        return contractService.callFunction(address, scriptFunctionObj);
     }
 
     public boolean sellNFT() {
@@ -893,6 +950,27 @@ public class NftContractBiz {
                 ))
                 .build();
         return contractService.callFunction("0x142f352A24FEB989C65C1d48c4d884a9", scriptFunctionObj);
+    }
+
+
+    public long getNftCounterId(String meta) {
+        MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple =
+                chainClientHelper.getNftTypeInfo(meta);
+        ResponseEntity<String> resp = triple.getLeft();
+        if (resp.getStatusCode() != HttpStatus.OK) {
+            return -1;
+        }
+        List<JSONArray> values = StarCoinJsonUtil.parseRpcResult(resp);
+        if (CollectionUtils.isEmpty(values)) {
+            return -1;
+        }
+        MutableLong nftId = new MutableLong(-1);
+        values.forEach(value -> {
+            if ("counter".equalsIgnoreCase(String.valueOf(value.getString(0)))) {
+                nftId.setValue(value.getJSONObject(1).getLongValue("U64"));
+            }
+        });
+        return nftId.getValue();
     }
 
 }

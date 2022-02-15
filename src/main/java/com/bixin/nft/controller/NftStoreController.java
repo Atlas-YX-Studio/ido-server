@@ -2,11 +2,15 @@ package com.bixin.nft.controller;
 
 import com.bixin.common.response.P;
 import com.bixin.common.response.R;
+import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftGroupDo;
+import com.bixin.nft.bean.DO.NftMarketDo;
 import com.bixin.nft.bean.DO.TradingRecordDo;
 import com.bixin.nft.bean.vo.NftSelfSellingVo;
+import com.bixin.nft.common.enums.NftBoxType;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftMarketService;
+import com.bixin.nft.service.NftMetareverseService;
 import com.bixin.nft.service.TradingRecordService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -29,13 +33,14 @@ import static com.bixin.common.constants.PathConstant.NFT_REQUEST_PATH_PREFIX;
 @RequestMapping(NFT_REQUEST_PATH_PREFIX + "/store")
 public class NftStoreController {
 
-
     @Resource
-    public NftMarketService nftMarketService;
+    NftMarketService nftMarketService;
     @Resource
     NftGroupService nftGroupService;
     @Resource
-    private TradingRecordService tradingRecordService;
+    TradingRecordService tradingRecordService;
+    @Resource
+    NftMetareverseService metareverseService;
 
     @GetMapping("/selling")
     public R getALlByPage(@RequestParam(value = "userAddress", defaultValue = "") String userAddress) {
@@ -52,7 +57,17 @@ public class NftStoreController {
         List<NftSelfSellingVo> list = new ArrayList<>();
         maps.stream().forEach(p -> list.add(NftSelfSellingVo.of(p)));
 
-        Set<Long> groupIds = list.stream().map(p -> p.getGroupId()).collect(Collectors.toSet());
+        List<Long> nftIds = list.stream()
+                .filter(p -> NftBoxType.COMPOSITE_CARD.getDesc().equalsIgnoreCase(p.getType()))
+                .map(NftSelfSellingVo::getNftBoxId).collect(Collectors.toList());
+        Map<Long, List<NftCompositeCard>> cardIdMap = new HashMap<>();
+        if (!CollectionUtils.isEmpty(nftIds)) {
+            List<NftCompositeCard> compositeCards = metareverseService.getCompositeCards(nftIds);
+            cardIdMap = compositeCards.stream()
+                    .collect(Collectors.groupingBy(NftCompositeCard::getInfoId));
+        }
+
+        Set<Long> groupIds = list.stream().map(NftMarketDo::getGroupId).collect(Collectors.toSet());
         Map<Long, NftGroupDo> map = new HashMap<>();
         groupIds.forEach(id -> {
             NftGroupDo nftGroupDo = nftGroupService.selectById(id);
@@ -69,6 +84,15 @@ public class NftStoreController {
                 p.setNftMeta(nftMeta);
                 p.setNftBody(nftBody);
             }
+            List<NftCompositeCard> nftCompositeCards = cardIdMap.get(p.getNftBoxId());
+            if (!CollectionUtils.isEmpty(nftCompositeCards)) {
+                NftCompositeCard card = nftCompositeCards.get(0);
+                p.setOccupation(card.getOccupation());
+                p.setCustomName(card.getCustomName());
+                p.setSex(card.getSex());
+            }
+
+
         }
 
         return R.success(list);

@@ -2,6 +2,9 @@ package com.bixin.ido.test;
 
 import com.bixin.common.utils.HexStringUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author zhangcheng
  * create   2021/9/8
@@ -41,9 +44,9 @@ public class HexTest {
   */
     public static void main(String[] args) {
 //        String hex = "0x454f53";
-        String hex = "0x454f53".replaceAll("0x", "");
+        String hex = "0x6d696e6572".replaceAll("0x", "");
 //        String hex1 = "0x55534454";
-        String hex1 = "0x55534454".replaceAll("0x", "");
+        String hex1 = "0x6835".replaceAll("0x", "");
         String s = HexStringUtil.toStringHex(hex);
         String s1 = HexStringUtil.toStringHex(hex1);
 
@@ -81,6 +84,16 @@ public class HexTest {
 //        } catch (IOException e) {
 //            System.out.println(e);
 //        }
+
+
+        Map<String, Map<String, String>> sumMap = new HashMap<>();
+        sumMap.put("11", new HashMap<>() {{
+            put("11-11", "11-11-11");
+            put("11-22", "11-11-22");
+        }});
+        System.out.println("llll:"+sumMap.get("11").put("11-22","11-11-33"));
+        System.out.println("llll:"+sumMap.get("11").putIfAbsent("11-22","11-11-44"));
+        System.out.println("llll:"+sumMap);
 
 
     }

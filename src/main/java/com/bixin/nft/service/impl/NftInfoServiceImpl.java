@@ -5,10 +5,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bixin.common.utils.BeanCopyUtil;
 import com.bixin.common.utils.StarCoinJsonUtil;
-import com.bixin.ido.core.client.ChainClientHelper;
+import com.bixin.core.client.ChainClientHelper;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.vo.NftInfoVo;
+import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.core.mapper.NftInfoMapper;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
@@ -17,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.commons.lang3.tuple.MutableTriple;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Service
 public class NftInfoServiceImpl implements NftInfoService {
 
-    @Autowired
+    @Resource
     private NftInfoMapper nftInfoMapper;
     @Resource
     private ChainClientHelper chainClientHelper;
@@ -108,7 +108,12 @@ public class NftInfoServiceImpl implements NftInfoService {
      */
     @Override
     public NftInfoDo selectByObject(NftInfoDo model) {
-        return nftInfoMapper.selectByPrimaryKeySelective(model);
+        try {
+            return nftInfoMapper.selectByPrimaryKeySelective(model);
+        } catch (Exception e) {
+            log.error("nft info selectByObject exception {}", model, e);
+        }
+        return null;
     }
 
     /**
@@ -131,44 +136,61 @@ public class NftInfoServiceImpl implements NftInfoService {
         return nftInfoMapper.selectByPage(param);
     }
 
+    @Override
+    public List<NftInfoDo> selectAll4Rank(boolean predicateNextPage, long pageNum, long pageSize) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("from", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
+        param.put("pageSize", pageSize);
+        return nftInfoMapper.selectAll4Rank(param);
+    }
+
     /**
      * 获取待质押NFT
+     *
      * @param userAddress
      */
     public List<NftInfoVo> getUnStakingNftList(String userAddress) {
-        List<NftInfoVo> nftInfoVos = Lists.newArrayList();
-
         List<NftGroupDo> nftGroups = nftGroupService.listByObject(NftGroupDo.builder().mining(true).build());
-        nftGroups.forEach(nftGroupDo -> {
-            List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
-            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain,
-                    () -> BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new));
-            nftInfoVos.addAll(nftInfoVoList);
-        });
+        List<NftInfoVo> nftInfoVos = getNftInfoVos(userAddress, nftGroups);
 
         return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
     }
 
     /**
      * 获取我的NFT
+     * todo 增加盲盒
+     *
      * @param userAddress
      */
-    public List<NftInfoVo> getUserNftList(String userAddress) {
-        List<NftInfoVo> nftInfoVos = Lists.newArrayList();
-
+    public List<NftInfoVo> getUnSellNftList(String userAddress) {
         List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
-        nftGroups.forEach(nftGroupDo -> {
-            List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
-            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain,
-                    () -> BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new));
-            nftInfoVos.addAll(nftInfoVoList);
-        });
+        List<NftInfoVo> nftInfoVos = getNftInfoVos(userAddress, nftGroups);
 
         return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
     }
 
+    @Override
+    public int selectCountBySelective(NftInfoDo model) {
+        return nftInfoMapper.selectCountBySelective(model);
+    }
+
+    private List<NftInfoVo> getNftInfoVos(String userAddress, List<NftGroupDo> nftGroups) {
+        List<NftInfoVo> nftInfoVos = Lists.newArrayList();
+        nftGroups.forEach(nftGroupDo -> {
+            List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
+            List<NftInfoVo> nftInfoVoList = BeanCopyUtil.copyListProperties(nftListFromChain, nftInfoDo -> {
+                NftInfoVo nftInfoVo = BeanCopyUtil.copyProperties(nftGroupDo, NftInfoVo::new);
+                nftInfoVo.setNftType(NftType.of(nftInfoDo.getType()));
+                return nftInfoVo;
+            });
+            nftInfoVos.addAll(nftInfoVoList);
+        });
+        return nftInfoVos;
+    }
+
     /**
      * 从链上获取当前用户NFT
+     *
      * @param userAddress
      * @param nftGroupDo
      * @return

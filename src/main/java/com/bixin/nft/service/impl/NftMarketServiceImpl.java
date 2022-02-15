@@ -5,7 +5,7 @@ import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftMarketMapper;
 import com.bixin.nft.service.NftMarketService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -112,30 +112,49 @@ public class NftMarketServiceImpl implements NftMarketService {
         nftMarketMapper.deleteAllByIds(ids);
     }
 
+    /**
+     * @param predicateNextPage
+     * @param pageSize
+     * @param pageNum
+     * @param sort
+     * @param groupId
+     * @param nftTypes
+     * @return
+     */
     @Override
-    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String currency, String open) {
+    public List<Map<String, Object>> selectByPage(boolean predicateNextPage, long pageSize, long pageNum, int sort, long groupId, String sortRule, List<String> nftTypes) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("pageSize", pageSize);
         paramMap.put("pageFrom", predicateNextPage ? (pageNum - 1) * (pageSize - 1) : (pageNum - 1) * pageSize);
-        if (StringUtils.isNoneEmpty(open) && !"all".equalsIgnoreCase(open)) {
-            paramMap.put("type", open.toLowerCase());
-        }
-        if (StringUtils.isNoneEmpty(currency) && !"all".equalsIgnoreCase(currency)) {
-            paramMap.put("payToken", currency);
+        if (CollectionUtils.isNotEmpty(nftTypes)) {
+            paramMap.put("types", nftTypes);
         }
         if (groupId > 0) {
             paramMap.put("groupId", groupId);
         }
 
-        if (sort == 0) {
-            paramMap.put("sort", "mm.create_time desc");
-        } else if (sort == 1) {
-            paramMap.put("sort", "mm.sell_price desc, mm.create_time desc");
-        } else if (sort == 2) {
-            paramMap.put("sort", "mm.sell_price asc, mm.create_time desc");
-        }else if (sort == 3) {
-            paramMap.put("sort", "ff.score desc, mm.create_time desc");
+        String sortValue = "";
+        if ("price".equalsIgnoreCase(sortRule.trim())) {
+            sortValue = "mm.sell_price ";
+        } else if ("rarity".equalsIgnoreCase(sortRule.trim())) {
+            sortValue = "ff.score ";
+        } else if ("ctime".equalsIgnoreCase(sortRule.trim())) {
+            sortValue = "mm.create_time ";
         }
+        if (0 == sort || 1 == sort) {
+            if (!"ctime".equalsIgnoreCase(sortRule.trim())) {
+                sortValue += " desc, mm.create_time desc";
+            } else {
+                sortValue += " desc";
+            }
+        } else if (2 == sort) {
+            if (!"ctime".equalsIgnoreCase(sortRule.trim())) {
+                sortValue += " asc, mm.create_time desc";
+            } else {
+                sortValue += " asc";
+            }
+        }
+        paramMap.put("sort", sortValue);
 
         return nftMarketMapper.selectPages(paramMap);
     }

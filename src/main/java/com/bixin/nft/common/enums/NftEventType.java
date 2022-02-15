@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum NftEventType {
 
     NFT_MINT_EVENT("NFTMintEvent"),
+    NFT_RESOLVE_EVENT("NFTResolveEvent"),
     NFT_SELL_EVENT("NFTSellEvent"),
     NFT_BID_EVENT("NFTBidEvent"),
     NFT_BUY_EVENT("NFTBuyEvent"),
@@ -23,6 +24,7 @@ public enum NftEventType {
     BOX_ACCEPT_BID_EVENT("BoxAcceptBidEvent"),
     BOX_OFFLINE_EVENT("BoxOfflineEvent"),
     BOX_CHANGE_PRICE_EVENT("BoxChangePriceEvent"),
+
     ;
 
     private String desc;

@@ -5,11 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.beust.jcommander.internal.Lists;
 import com.beust.jcommander.internal.Maps;
-import com.bixin.ido.core.client.ChainClientHelper;
+import com.bixin.core.client.ChainClientHelper;
 import com.bixin.ido.service.IPlatformBuyBackService;
 import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.common.enums.NftBoxType;
+import com.bixin.nft.service.NftCompositeCardService;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -41,38 +44,18 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
     @Resource
     private NftInfoService nftInfoService;
 
-    private Map<String, NftInfoDo> nftInfoMap;
+    @Resource
+    private NftCompositeCardService nftCompositeCardService;
 
     // Map<groupId, Map<currency, List<BuyBackOrder>>>
     private Map<Long, Map<String, List<BuyBackOrder>>> orderMap;
 
     @PostConstruct
     public void init() {
-
-        this.refreshNftInfo();
         this.refreshOrders();
-
     }
 
-    @Scheduled(cron = "* 0/10 * * * ?")
-    public void refreshNftInfo() {
-        try {
-            List<NftInfoDo> nftInfoDos = nftInfoService.listByObject(new NftInfoDo());
-            if (CollectionUtils.isEmpty(nftInfoDos)) {
-                log.warn("platform buy back refresh nft info is empty");
-                return;
-            }
-            nftInfoMap = nftInfoDos.stream().filter(x -> x.getNftId() != 0).collect(Collectors.toMap(x -> toInfoKey(x.getGroupId(), x.getNftId()), y -> y));
-        } catch (Exception e) {
-            log.error("refreshNftInfo exception", e);
-        }
-    }
-
-    private String toInfoKey(Long groupId, Long nftId) {
-        return String.format("%s_%s", groupId, nftId);
-    }
-
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     public void refreshOrders() {
         Map<Long, Map<String, List<BuyBackOrder>>> tempOrderMap = Maps.newHashMap();
 
@@ -130,16 +113,18 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
                                     });
                                 }
                             });
-                            NftInfoDo nftInfo = nftInfoMap.get(toInfoKey(groupDo.getId(), order.nftId));
+                            NftInfoDo nftInfo = nftInfoService.selectByObject(NftInfoDo.builder().groupId(groupDo.getId()).nftId(order.nftId).build());
                             if (Objects.nonNull(nftInfo)) {
                                 order.id = nftInfo.getId();
                                 order.groupId = nftInfo.getGroupId();
+                                order.nftType = nftInfo.getType();
                                 order.address = groupDo.getCreator();
                                 order.metaData = groupDo.getNftMeta();
                                 order.name = nftInfo.getName();
                                 order.fullCurrency = groupDo.getPayToken();
                                 order.icon = nftInfo.getImageLink();
                                 order.score = nftInfo.getScore();
+                                order.original = nftCompositeCardService.query().eq("info_id", nftInfo.getId()).eq("original", true).exists();
                             }
                             orders.add(order);
                         });
@@ -156,24 +141,44 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
     }
 
     @Override
-    public List<BuyBackOrder> getOrders(Long groupId, String currency, int sort, int pageNum, int pageSize) {
-        Comparator<BuyBackOrder> comparator = Comparator.comparing(o -> o.buyPrice);
-        if (sort == 1) {
-            comparator = comparator.reversed();
-        } else if (sort == 3) {
+    public List<BuyBackOrder> getOrders(Long groupId, String nftType, String currency, String sortRule, int sort, int pageNum, int pageSize) {
+        Comparator<BuyBackOrder> comparator = null;
+        if ("price".equalsIgnoreCase(sortRule.trim())) {
+            comparator = Comparator.comparing(o -> o.buyPrice);
+        } else if ("rarity".equalsIgnoreCase(sortRule.trim())) {
             comparator = Comparator.comparing(o -> o.score);
-            comparator = comparator.reversed();
         }
 
-        List<BuyBackOrder> list;
+        Stream<BuyBackOrder> buyBackOrderStream;
         if (Objects.equals(0L, groupId) && StringUtils.equalsIgnoreCase("all", currency)) {
-            list = orderMap.values().stream().flatMap(x -> x.values().stream().flatMap(Collection::stream)).sorted(comparator).collect(Collectors.toList());
+            buyBackOrderStream= orderMap.values().stream().flatMap(x -> x.values().stream().flatMap(Collection::stream));
         } else if (Objects.equals(0L, groupId)) {
-            list = orderMap.values().stream().flatMap(x -> x.getOrDefault(currency, List.of()).stream()).sorted(comparator).collect(Collectors.toList());
+            buyBackOrderStream = orderMap.values().stream().flatMap(x -> x.getOrDefault(currency, List.of()).stream());
         } else if (StringUtils.equalsIgnoreCase("all", currency)) {
-            list = orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream).sorted(comparator).collect(Collectors.toList());
+            buyBackOrderStream = orderMap.getOrDefault(groupId, Map.of()).values().stream().flatMap(Collection::stream);
         } else {
-            list = orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream().sorted(comparator).collect(Collectors.toList());
+            buyBackOrderStream = orderMap.getOrDefault(groupId, Map.of()).getOrDefault(currency, List.of()).stream();
+        }
+
+        if (!StringUtils.equalsIgnoreCase("all", nftType)) {
+            if (NftBoxType.NFT.getDesc().equals(nftType)) {
+                // 原生NFT，包括普通NFT+原生可合成卡牌
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) || x.original);
+            } else if (NftBoxType.COMPOSITE_CARD.getDesc().equals(nftType)) {
+                // 组合NFT，只包括分解后重新合成的NFT
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType) && !x.original);
+            } else {
+                buyBackOrderStream = buyBackOrderStream.filter(x -> StringUtils.equalsIgnoreCase(x.nftType, nftType));
+            }
+        }
+
+        if (Objects.nonNull(comparator)) {
+            buyBackOrderStream = buyBackOrderStream.sorted(comparator);
+        }
+
+        List<BuyBackOrder> list = buyBackOrderStream.collect(Collectors.toList());
+        if (sort == 1) {
+            Collections.reverse(list);
         }
 
         int start = pageSize * Math.max((pageNum - 1), 0);
@@ -193,6 +198,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         public Long id;
         public Long nftId;
         public Long groupId;
+        public String nftType;
         public String address;
         public String metaData;
         public String name;
@@ -200,6 +206,7 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
         public String fullCurrency;
         public String icon;
         public BigDecimal score;
+        public Boolean original;
 
         public String getCurrency() {
             if (StringUtils.isBlank(this.fullCurrency)) {

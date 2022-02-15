@@ -100,11 +100,12 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
                 EventNotificationResult eventResult = b.getParams().getResult();
                 JsonNode data = eventResult.getData();
                 // 添加日志
-                try {
-                    log.info("BlockEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
+                // TODO: 2022/1/11
+//                try {
+//                    log.info("BlockEventSubscriberRunner infos: {}", mapper.writeValueAsString(eventResult));
+//                } catch (JsonProcessingException e) {
+//                    e.printStackTrace();
+//                }
                 //去重
                 if (duplicateEvent(eventResult)) {
                     log.info("BlockEventSubscriberRunner duplicate event data {}", eventResult);

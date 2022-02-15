@@ -1,6 +1,6 @@
 package com.bixin.nft.service;
 
-import com.bixin.nft.entity.NftCompositeElement;
+import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

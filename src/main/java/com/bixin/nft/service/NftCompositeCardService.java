@@ -1,6 +1,6 @@
 package com.bixin.nft.service;
 
-import com.bixin.nft.entity.NftCompositeCard;
+import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -10,5 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2021-12-20
  */
 public interface NftCompositeCardService extends IService<NftCompositeCard> {
+
+    void createCompositeNFT(long cardGroupId);
 
 }

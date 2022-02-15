@@ -1,6 +1,8 @@
 package com.bixin.nft.bean.vo;
 
+import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.dto.TokenDto;
+import com.bixin.nft.common.enums.NftType;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -34,6 +36,11 @@ public class NftGroupVo implements Serializable {
      * 组名
      */
     private String name;
+
+    /**
+     * 类型
+     */
+    private String type;
 
     /**
      * 系列发售图片
@@ -159,4 +166,19 @@ public class NftGroupVo implements Serializable {
      * 支持币种
      */
     private List<TokenDto> supportToken;
+
+    /**
+     * 元素id
+     */
+    private Long elementId;
+
+    /**
+     * 元素
+     */
+    private NftGroupVo element;
+
+    private NftType nftType;
+
+    private String imageLink;
+
 }

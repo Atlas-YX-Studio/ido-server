@@ -1,7 +1,8 @@
-package com.bixin.nft.service;
+package com.bixin.nft.core.service;
 
 import com.alibaba.fastjson.JSON;
 import com.bixin.IdoServerApplication;
+import com.bixin.nft.service.NftInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +20,12 @@ public class NftInfoServiceTest {
 
     @Test
     void ownerNftList() {
-        log.info("nftList:" + JSON.toJSONString(nftInfoService.getUserNftList("0xa85291039ddad8845d5097624c81c3fd")));
+        log.info("nftList:" + JSON.toJSONString(nftInfoService.getUnSellNftList("0x16d2e435cebab5eabbfd16402d4b22ea")));
+    }
+
+    @Test
+    void unStakingNftList() {
+        log.info("nftList:" + JSON.toJSONString(nftInfoService.getUnStakingNftList("0x16d2e435cebab5eabbfd16402d4b22ea")));
     }
 
 }

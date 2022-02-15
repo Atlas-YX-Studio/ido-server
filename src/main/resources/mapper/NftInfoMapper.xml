@@ -12,6 +12,7 @@
     <result column="score" jdbcType="DECIMAL" property="score" />
     <result column="rank" jdbcType="INTEGER" property="rank" />
     <result column="created" jdbcType="BIT" property="created" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
@@ -19,8 +20,7 @@
     <result column="image_data" jdbcType="LONGVARCHAR" property="imageData" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, nft_id, group_id, name, type, owner, image_link, score, rank, created, create_time,
-    update_time
+    id, nft_id, group_id, name, type, owner, image_link, score, `rank`, created, state, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
     image_data
@@ -47,6 +47,33 @@
     order by ${order} ${sort}
     limit #{from},#{pageSize}
   </select>
+  <select id="selectByIds" parameterType="list" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nft_info where id in
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+  <select id="selectByNftIds" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nft_info
+    <where>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT}
+      </if>
+      <if test="type != null">
+        and type = #{type,jdbcType=VARCHAR}
+      </if>
+      <if test="list != null">
+        and nft_id in
+      <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      </if>
+    </where>
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from nft_info
     where id = #{id,jdbcType=BIGINT}
@@ -54,12 +81,12 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftInfoDo" useGeneratedKeys="true">
     insert into nft_info (id, nft_id, group_id,
                           name, type, owner, image_link,
-                          score, rank, created, create_time,
+                          score, rank, created, state, create_time,
                           update_time, image_data)
     values (#{id,jdbcType=BIGINT}, #{nftId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
-            #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, #{imageLink,jdbcType=VARCHAR},
-            #{score,jdbcType=DECIMAL}, #{rank,jdbcType=INTEGER}, #{created,jdbcType=BIT}, #{createTime,jdbcType=BIGINT},
-            #{updateTime,jdbcType=BIGINT}, #{imageData,jdbcType=LONGVARCHAR})
+            #{name,jdbcType=VARCHAR},  #{type,jdbcType=VARCHAR},#{owner,jdbcType=VARCHAR}, #{imageLink,jdbcType=VARCHAR},
+            #{score,jdbcType=DECIMAL}, #{rank,jdbcType=INTEGER}, #{created,jdbcType=BIT}, #{state,jdbcType=VARCHAR},
+            #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, #{imageData,jdbcType=LONGVARCHAR})
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftInfoDo">
     update nft_info
@@ -91,6 +118,9 @@
       <if test="created != null">
         created = #{created,jdbcType=BIT},
       </if>
+      <if test="null != state">
+        state = #{state,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
       </if>
@@ -112,7 +142,7 @@
         owner = #{owner,jdbcType=VARCHAR},
         image_link = #{imageLink,jdbcType=VARCHAR},
         score = #{score,jdbcType=DECIMAL},
-        rank = #{rank,jdbcType=INTEGER},
+        `rank` = #{rank,jdbcType=INTEGER},
         created = #{created,jdbcType=BIT},
         create_time = #{createTime,jdbcType=BIGINT},
         update_time = #{updateTime,jdbcType=BIGINT},
@@ -133,8 +163,8 @@
       <if test="null != name">
         and name = #{name,jdbcType=VARCHAR}
       </if>
-      <if test="type != null">
-        type = #{type,jdbcType=VARCHAR},
+      <if test="null != type">
+        and `type` = #{type,jdbcType=VARCHAR}
       </if>
       <if test="null != owner">
         and owner = #{owner,jdbcType=VARCHAR}
@@ -150,6 +180,9 @@
       </if>
       <if test="null != created">
         and created = #{created,jdbcType=BIT}
+      </if>
+      <if test="null != state">
+        and state = #{state,jdbcType=VARCHAR}
       </if>
       <if test="null != createTime">
         and create_time = #{createTime,jdbcType=BIGINT}
@@ -168,6 +201,21 @@
   </select>
   <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.NftInfoDo" resultMap="BaseResultMap">
     select <include refid="Base_Column_List" /> from nft_info
+    <include refid="baseQuery" />
+  </select>
+  <select id="selectAll4Rank" parameterType="map" resultMap="BaseResultMap">
+    SELECT
+        <include refid="Base_Column_List" />
+    FROM
+        nft_info
+    WHERE
+        type = "composite_card" and state="" or state="success"
+    ORDER BY
+     id DESC
+    limit #{from},#{pageSize}
+  </select>
+  <select id="selectCountBySelective" parameterType="com.bixin.nft.bean.DO.NftInfoDo" resultType="java.lang.Integer">
+    select count(*) from nft_info
     <include refid="baseQuery" />
   </select>
 </mapper>

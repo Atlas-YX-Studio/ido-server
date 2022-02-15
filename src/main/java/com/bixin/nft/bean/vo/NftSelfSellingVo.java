@@ -1,6 +1,8 @@
 package com.bixin.nft.bean.vo;
 
+import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftMarketDo;
+import com.bixin.nft.common.enums.NftType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +29,14 @@ public class NftSelfSellingVo extends NftMarketDo {
     private String nftMeta;
     private String nftBody;
     private BigDecimal score;
+
+    private NftType nftType;
+    private List<NftCompositeElement> compositeElements;
+
+    private String occupation;
+    private String customName;
+    private int sex;
+    private Boolean original;
 
     public static NftSelfSellingVo of(Map<String, Object> map) {
         return NftSelfSellingVo.builder()
@@ -45,6 +56,7 @@ public class NftSelfSellingVo extends NftMarketDo {
                 .createTime(MapUtils.getLong(map, "create_time"))
                 .updateTime(MapUtils.getLong(map, "update_time"))
                 .score(BigDecimal.valueOf(MapUtils.getDoubleValue(map, "score")))
+                .original(MapUtils.getBoolean(map, "original"))
                 .build();
     }
 
