@@ -7,12 +7,15 @@ spring:
 #    url: jdbc:mysql://101.201.46.114:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
 #    username: crypto_rw
 #    password: crypto_rw_password
-    url: jdbc:mysql://52.77.131.111:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    username: admin
-    password: OdeWzZNalcTPk2LAo0Lg
+#    url: jdbc:mysql://52.77.131.111:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
+#    username: admin
+#    password: OdeWzZNalcTPk2LAo0Lg
 #    url: jdbc:mysql://localhost:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
 #    username: root
 #    password:
+    url: jdbc:mysql://13.213.126.178:3306/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: admin
+    password: Z1P8q4moD9NjAZxC9CDc
 
 ---
 ## redis config
@@ -40,14 +43,15 @@ ido:
   star:
     dx:
       resourceUrl: https://main-seed.starcoin.org
-      moduleName: 0x64c66296d98d6ab08579b14487157e05::Offering
+      moduleName: 0x89e1db66b5879bf19f5c1cc7d12d901a::Offering
     swap:
-      websocket-host: 13.229.71.62
+      websocket-host: 10.103.63.231
       websocket-port: 9870
-      websocket-contract-address: 64c66296d98d6ab08579b14487157e05
-      contract-address: c9cf2dd64e30c9b587c4f818adcc0eef
-      lp-pool-resource-name: 0xc9cf2dd64e30c9b587c4f818adcc0eef::SwapPair::SwapPair
-      usdt-address: 0x5b876a58b0e1cff855b6489cd8cf3bec::DummyToken::USDT
+      websocket-contract-address: a371dcd3556f40221b480bd1792c02ad
+      contract-address: a371dcd3556f40221b480bd1792c02ad
+      lp-pool-resource-name: 0xa371dcd3556f40221b480bd1792c02ad::SwapPair::SwapPair
+      lp-token-resource-name: 0xa371dcd3556f40221b480bd1792c02ad::SwapPair::LPToken
+      usdt-address: 0x9350502a3af6c617e9a42fa9e306a385::BX_USDT::BX_USDT
     runner:
       swap-consumer:
         core-threads: 1
@@ -56,27 +60,24 @@ ido:
       url: https://main-seed.starcoin.org
       chain-id: 1
     nft:
-      websocket-host: 13.229.71.62
+      websocket-host: 10.103.63.231
       websocket-port: 9870
-      market: "0xa85291039ddad8845d5097624c81c3fd"
-      scripts: "0x290c7b35320a4dd26f651fd184373fe7"
-      catadd: "0x69f1e543a3bef043b63bed825fcd2cf6"
-      market-module: "NFTMarket05"
-      scripts-module: "NFTScripts05"
+      market: "0x7ed4261b68ddb20158109794bbab3ae7"
+      scripts: "0x7ed4261b68ddb20158109794bbab3ae7"
+      catadd: "0x8355417c88d969f656935244641256ad"
+      market-module: "NFTMarket"
+      scripts-module: "NFTScripts"
       image-prefix: "https://imagedelivery.net"
-      image-base-path: "/Users/bixin/Documents/pics/nft/"
-      image-info-api: "https://test.kikoswap.com/v1/nft/image/info/"
-      image-group-api: "https://test.kikoswap.com/v1/nft/image/group/"
+      image-base-path: "/data/images/bixin-ido-server/nft/"
+      image-info-api: "https://kikoswap.com/v1/nft/image/info/"
+      image-group-api: "https://kikoswap.com/v1/nft/image/group/"
+      composite-fee: 0.01
+      composite-url: "http://10.13.43.146:8080/create_nft/"
     mining:
-      mining-address: "0xa85291039ddad8845d5097624c81c3fd"
-      mining-module: "Mining"
-      mining-manager: "0xa85291039ddad8845d5097624c81c3fd"
-      kiko-address: "0x69f1e543a3bef043b63bed825fcd2cf6"
-      kiko-module: "KIKO"
-      stc-gas: 0.01
-      nft-mining-day-reward: 144
-      nft-mining-block-reward: 0.01
-      nft-unit-price: 100
-      nft-mining-address: "0xa85291039ddad8845d5097624c81c3fd"
+      nft-mining-day-reward: 2765.0000016
+      nft-mining-block-reward: 0.192013889
+      nft-unit-price: 99
+      nft-mining-address: "0x7ed4261b68ddb20158109794bbab3ae7"
       nft-mining-module: "NFTMining"
       nft-mining-stc-fee: 0.01
+

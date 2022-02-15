@@ -1,6 +1,6 @@
 package com.bixin.core.client;
 
-import com.bixin.nft.bean.bo.CreateCompositeCardBean;
+import com.bixin.common.config.StarConfig;
 import org.apache.commons.lang3.tuple.MutableTriple;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,13 +19,13 @@ import javax.annotation.Resource;
 public class HttpClientHelper {
 
     @Resource
-    RestTemplate restTemplate;
-
-    static final String CREATE_NFT_IMG_URL = "http://10.13.43.146:8080/create_nft/";
+    private RestTemplate restTemplate;
+    @Resource
+    private StarConfig starConfig;
 
 
     public MutableTriple<ResponseEntity<String>, String, HttpEntity<String>> getCreateImgResp(String param) {
-        return getPostResp(CREATE_NFT_IMG_URL, param);
+        return getPostResp(starConfig.getNft().getCompositeUrl(), param);
     }
 
     private <T> MutableTriple<ResponseEntity<String>, String, HttpEntity<T>> getPostResp(String requestUrl, T body) {

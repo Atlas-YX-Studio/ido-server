@@ -100,6 +100,7 @@ public class StarConfig {
         private String imageInfoApi;
         private String imageGroupApi;
         private BigDecimal compositeFee;
+        private String compositeUrl;
     }
 
     @Data
