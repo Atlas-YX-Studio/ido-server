@@ -40,6 +40,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * NFT 卡牌 服务实现类
@@ -382,7 +383,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
     }
 
     private long getNftId(Long infoId) {
-        if (infoId != 0) {
+        if (Objects.nonNull(infoId) && infoId != 0) {
             NftInfoDo nftInfoDo = nftInfoMapper.selectByPrimaryKey(infoId);
             return nftInfoDo.getNftId();
         }
