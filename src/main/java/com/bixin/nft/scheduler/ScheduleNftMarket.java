@@ -274,9 +274,9 @@ public class ScheduleNftMarket {
                 return;
             }
             String nftType = NftBoxType.NFT.getDesc();
-            if (nftGroupDo.getNftMeta().contains("KikoCatCard") && nftGroupDo.getNftBody().contains("KikoCatCard")) {
+            if (NftBoxType.COMPOSITE_CARD.getDesc().equalsIgnoreCase(nftGroupDo.getType())) {
                 nftType = NftBoxType.COMPOSITE_CARD.getDesc();
-            } else if (nftGroupDo.getNftMeta().contains("KikoCatElement") && nftGroupDo.getNftBody().contains("KikoCatElement")) {
+            } else if (NftBoxType.COMPOSITE_ELEMENT.getDesc().equalsIgnoreCase(nftGroupDo.getType())) {
                 nftType = NftBoxType.COMPOSITE_ELEMENT.getDesc();
             }
             String finalNftType = nftType;
