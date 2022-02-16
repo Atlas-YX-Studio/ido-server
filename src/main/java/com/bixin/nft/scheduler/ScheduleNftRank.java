@@ -86,39 +86,42 @@ public class ScheduleNftRank {
             }
             allList.addAll(list.subList(0, PAGE_SIZE));
         }
-        List<NftInfoDo> sortList = allList.stream().sorted(Comparator.comparing(NftInfoDo::getScore))
-                .collect(Collectors.toList());
+        Map<Long, List<NftInfoDo>> groupNft = allList.stream().collect(Collectors.groupingBy(NftInfoDo::getGroupId));
+        groupNft.values().forEach(items->{
+            List<NftInfoDo> sortList = items.stream().sorted(Comparator.comparing(NftInfoDo::getScore))
+                    .collect(Collectors.toList());
 
-        AtomicInteger rank = new AtomicInteger(0);
-        AtomicInteger lastRank = new AtomicInteger(0);
-        List<NftInfoDo> updateList = new ArrayList<>();
-        AtomicReference<BigDecimal> scoreReference = new AtomicReference<>();
-        Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
+            AtomicInteger rank = new AtomicInteger(0);
+            AtomicInteger lastRank = new AtomicInteger(0);
+            List<NftInfoDo> updateList = new ArrayList<>();
+            AtomicReference<BigDecimal> scoreReference = new AtomicReference<>();
+            Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
 
-        sortList.forEach(p -> {
-            NftInfoDo.NftInfoDoBuilder nftInfoBuilder = NftInfoDo.builder()
-                    .id(p.getId())
-                    .updateTime(currentTime);
+            sortList.forEach(p -> {
+                NftInfoDo.NftInfoDoBuilder nftInfoBuilder = NftInfoDo.builder()
+                        .id(p.getId())
+                        .updateTime(currentTime);
 
-            if (Objects.isNull(scoreReference.get())) {
-                nftInfoBuilder.rank(rank.incrementAndGet());
-                lastRank.set(rank.get());
-            } else {
-                if (p.getScore().compareTo(scoreReference.get()) == 0) {
-                    nftInfoBuilder.rank(lastRank.get());
-                    rank.incrementAndGet();
-                }else{
+                if (Objects.isNull(scoreReference.get())) {
                     nftInfoBuilder.rank(rank.incrementAndGet());
                     lastRank.set(rank.get());
+                } else {
+                    if (p.getScore().compareTo(scoreReference.get()) == 0) {
+                        nftInfoBuilder.rank(lastRank.get());
+                        rank.incrementAndGet();
+                    }else{
+                        nftInfoBuilder.rank(rank.incrementAndGet());
+                        lastRank.set(rank.get());
+                    }
                 }
-            }
-            scoreReference.set(p.getScore());
+                scoreReference.set(p.getScore());
 
-            updateList.add(nftInfoBuilder.build());
-        });
+                updateList.add(nftInfoBuilder.build());
+            });
 
-        updateList.forEach(p -> {
-            nftInfoService.update(p);
+            updateList.forEach(p -> {
+                nftInfoService.update(p);
+            });
         });
     }
 
