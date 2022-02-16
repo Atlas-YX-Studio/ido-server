@@ -252,8 +252,8 @@ public class ContractService {
                         }
                     }
                 },
-                30,
-                5000,
+                60,
+                2000,
                 Exception.class
         );
     }
