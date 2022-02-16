@@ -58,7 +58,7 @@ ido:
       image-base-path: "/data/images/bixin-ido-server/nft/"
       image-info-api: "https://kikoswap.com/v1/nft/image/info/"
       image-group-api: "https://kikoswap.com/v1/nft/image/group/"
-      composite-fee: 0.01
+      composite-fee: 29
       composite-url: "http://10.103.81.254:8080/create_nft/"
     mining:
       nft-mining-day-reward: 2765.0000016
