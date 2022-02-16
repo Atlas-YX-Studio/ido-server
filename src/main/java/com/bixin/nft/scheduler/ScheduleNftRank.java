@@ -66,7 +66,6 @@ public class ScheduleNftRank {
                 selectNftInfoDo.setCreated(true);
                 int count = nftInfoService.selectCountBySelective(selectNftInfoDo);
                 nftGroupDo.setQuantity(count);
-                nftGroupDo.setSeriesQuantity(count);
                 nftGroupService.update(nftGroupDo);
             });
         }
