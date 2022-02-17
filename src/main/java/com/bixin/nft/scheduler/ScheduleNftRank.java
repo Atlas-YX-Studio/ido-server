@@ -93,7 +93,7 @@ public class ScheduleNftRank {
         }
         Map<Long, List<NftInfoDo>> groupNft = allList.stream().collect(Collectors.groupingBy(NftInfoDo::getGroupId));
         groupNft.values().forEach(items->{
-            List<NftInfoDo> sortList = items.stream().sorted(Comparator.comparing(NftInfoDo::getScore))
+            List<NftInfoDo> sortList = items.stream().sorted(Comparator.comparing(NftInfoDo::getScore).reversed())
                     .collect(Collectors.toList());
 
             AtomicInteger rank = new AtomicInteger(0);
