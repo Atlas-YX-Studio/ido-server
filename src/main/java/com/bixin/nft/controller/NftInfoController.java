@@ -437,6 +437,7 @@ public class NftInfoController {
             nftInfoVo.setCompositeElements(compositeElements);
         }
         if (Objects.nonNull(compositeCard)) {
+            nftInfoVo.setOriginal(compositeCard.getOriginal());
             nftInfoVo.setOccupation(compositeCard.getOccupation());
             nftInfoVo.setCustomName(compositeCard.getCustomName());
             nftInfoVo.setSex(compositeCard.getSex());
@@ -530,6 +531,7 @@ public class NftInfoController {
             nftInfoVo.setCompositeElements(compositeElements);
         }
         if (Objects.nonNull(compositeCard)) {
+            nftInfoVo.setOriginal(compositeCard.getOriginal());
             nftInfoVo.setOccupation(compositeCard.getOccupation());
             nftInfoVo.setCustomName(compositeCard.getCustomName());
             nftInfoVo.setSex(compositeCard.getSex());

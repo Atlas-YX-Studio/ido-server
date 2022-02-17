@@ -1,6 +1,5 @@
 package com.bixin.nft.bean.vo;
 
-import com.bixin.nft.bean.DO.NftCompositeCard;
 import com.bixin.nft.bean.DO.NftCompositeElement;
 import com.bixin.nft.bean.DO.NftKikoCatDo;
 import com.bixin.nft.bean.dto.TokenDto;
@@ -144,6 +143,7 @@ public class NftInfoVo {
      */
     private List<TokenDto> supportToken;
 
+    private Boolean original;
     private String occupation;
     private String customName;
     private int sex;
