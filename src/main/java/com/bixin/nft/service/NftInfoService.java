@@ -1,6 +1,7 @@
 package com.bixin.nft.service;
 
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.bean.vo.NftCollectionVo;
 import com.bixin.nft.bean.vo.NftInfoVo;
 
 import java.util.List;
@@ -69,7 +70,7 @@ public interface NftInfoService {
 
     List<NftInfoVo> getUnStakingNftList(String userAddress);
 
-    List<NftInfoVo> getUnSellNftList(String userAddress);
-
     int selectCountBySelective(NftInfoDo model);
+
+    List<NftCollectionVo> getUnSellNftList(String userAddress);
 }

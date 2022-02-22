@@ -264,3 +264,6 @@ CREATE TABLE `nft_composite_element`
 # ALTER TABLE nft_info ADD state varchar(32);
 # ALTER TABLE nft_composite_card MODIFY state int(1);
 
+ALTER TABLE nft_market ADD `sell_type` int(1)  NOT NULL DEFAULT 0 COMMENT '状态 1一口价，2拍卖' after `type`;
+
+ALTER TABLE nft_market ADD `end_time` bigint(20) NOT NULL DEFAULT 0 COMMENT '拍卖结束时间' after `icon`;

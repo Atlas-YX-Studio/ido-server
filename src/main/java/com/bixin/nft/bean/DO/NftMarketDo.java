@@ -43,6 +43,11 @@ public class NftMarketDo implements Serializable {
     private String type;
 
     /**
+     * 售卖方式 1: fixed price, 2: auction
+     */
+    private Integer sellType;
+
+    /**
      * ndf/box 分组全称
      */
     private String name;
@@ -71,6 +76,11 @@ public class NftMarketDo implements Serializable {
      * 图片地址
      */
     private String icon;
+
+    /**
+     * 拍卖结束时间
+     */
+    private Long endTime;
 
     /**
      * 创建时间

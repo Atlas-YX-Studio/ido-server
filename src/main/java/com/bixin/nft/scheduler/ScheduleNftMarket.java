@@ -56,12 +56,13 @@ public class ScheduleNftMarket {
     ObjectMapper mapper = new ObjectMapper();
 
     private static final String separator = "::";
-    private static final String boxSuffix = separator + "BoxSelling";
-    private static final String nftSuffix = separator + "NFTSelling";
+    private static final String boxSuffix = separator + "BoxSellingV2";
+    private static final String nftSuffix = separator + "NFTSellingV2";
 
     private static final long PROCESSING_EXPIRE_TIME = 30 * 1000L;
     private static final long LOCK_EXPIRE_TIME = 0L;
     private static final String GET_NFT_MARKET_LOCK = "get_nft_market_lock";
+    private static final String AUCTION_SETTLEMENT_LOCK = "AUCTION_SETTLEMENT_LOCK";
 
     //        @Scheduled(cron = "0/10 * * * * ?")
     @Scheduled(fixedDelay = 10000)
@@ -298,6 +299,7 @@ public class ScheduleNftMarket {
                         .nftBoxId(nftInfo.getId())
                         .groupId(nftGroupDo.getId())
                         .type(finalNftType)
+                        .sellType(so.getType())
                         .name(nftGroupDo.getName())
                         .nftName(nftInfo.getName())
                         .owner(so.getSeller())
@@ -306,6 +308,7 @@ public class ScheduleNftMarket {
                         .sellPrice(so.getSelling_price())
                         .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
                         .icon(nftInfo.getImageLink())
+                        .endTime(so.getEnd_time())
                         .createTime(sellingTime)
                         .updateTime(currentTime)
                         .build();
@@ -340,6 +343,7 @@ public class ScheduleNftMarket {
                         .nftBoxId(0L)
                         .groupId(nftGroupDo.getId())
                         .type(NftBoxType.BOX.getDesc())
+                        .sellType(so.getType())
                         .name(nftGroupDo.getName())
                         .owner(so.getSeller())
 //                        .nftName(null)
@@ -348,6 +352,7 @@ public class ScheduleNftMarket {
                         .sellPrice(so.getSelling_price())
                         .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
                         .icon(nftGroupDo.getBoxTokenLogo())
+                        .endTime(so.getEnd_time())
                         .createTime(sellingTime)
                         .updateTime(currentTime)
                         .build();
@@ -356,5 +361,21 @@ public class ScheduleNftMarket {
         });
     }
 
+    @Scheduled(fixedDelay = 30000)
+    public void auctionSettlement() {
+        redisCache.tryGetDistributedLock(
+                AUCTION_SETTLEMENT_LOCK,
+                UUID.randomUUID().toString(),
+                PROCESSING_EXPIRE_TIME,
+                LOCK_EXPIRE_TIME,
+                () -> {
+                    NftMarketDo nftMarketDo = nftMarketService.popAuctionEndItem(System.currentTimeMillis());
+                    if (Objects.isNull(nftMarketDo)) {
+                        return;
+                    }
+                    String hash = nftMarketService.auctionSettlement(nftMarketDo);
+                    log.info("auctionSettlement success, hash={}", hash);
+                });
+    }
 
 }

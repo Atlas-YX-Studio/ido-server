@@ -8,9 +8,12 @@ import com.bixin.common.utils.StarCoinJsonUtil;
 import com.bixin.core.client.ChainClientHelper;
 import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
+import com.bixin.nft.bean.vo.NftCollectionVo;
 import com.bixin.nft.bean.vo.NftInfoVo;
 import com.bixin.nft.common.enums.NftType;
+import com.bixin.nft.common.enums.NftBoxType;
 import com.bixin.nft.core.mapper.NftInfoMapper;
+import com.bixin.nft.service.ContractService;
 import com.bixin.nft.service.NftGroupService;
 import com.bixin.nft.service.NftInfoService;
 import com.google.common.collect.Lists;
@@ -26,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +54,8 @@ public class NftInfoServiceImpl implements NftInfoService {
     private NftGroupService nftGroupService;
     @Resource
     private NftInfoService nftInfoService;
+    @Resource
+    private ContractService contractService;
 
     /**
      * @explain: 添加NftInfoDo对象
@@ -157,16 +163,35 @@ public class NftInfoServiceImpl implements NftInfoService {
     }
 
     /**
-     * 获取我的NFT
-     * todo 增加盲盒
-     *
+     * 获取我的NFT和盲盒
      * @param userAddress
      */
-    public List<NftInfoVo> getUnSellNftList(String userAddress) {
-        List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
-        List<NftInfoVo> nftInfoVos = getNftInfoVos(userAddress, nftGroups);
+    public List<NftCollectionVo> getUnSellNftList(String userAddress) {
+        List<NftCollectionVo> nftCollectionVos = Lists.newArrayList();
 
-        return nftInfoVos.stream().sorted(Comparator.comparing(NftInfoVo::getScore).reversed()).collect(Collectors.toList());
+        List<NftGroupDo> nftGroups = nftGroupService.getListByEnabled(true);
+        nftGroups.forEach(nftGroupDo -> {
+            // nft
+            List<NftInfoDo> nftListFromChain = getNftListFromChain(userAddress, nftGroupDo);
+            List<NftCollectionVo> tempCollectionVos = BeanCopyUtil.copyListProperties(nftListFromChain,
+                    () -> {
+                        NftCollectionVo vo = BeanCopyUtil.copyProperties(nftGroupDo, NftCollectionVo::new);
+                        vo.setCollectionType(NftBoxType.NFT.getDesc());
+                        return vo;
+                    });
+            nftCollectionVos.addAll(tempCollectionVos);
+            // 盲盒
+            long boxAmount = contractService.getAddressAmount(userAddress, nftGroupDo.getBoxToken());
+            for (int i = 0; i < boxAmount; i++) {
+                NftCollectionVo vo = BeanCopyUtil.copyProperties(nftGroupDo, NftCollectionVo::new);
+                vo.setCollectionType(NftBoxType.BOX.getDesc());
+                vo.setImageLink(nftGroupDo.getBoxTokenLogo());
+                vo.setScore(BigDecimal.ZERO);
+                nftCollectionVos.add(vo);
+            }
+        });
+
+        return nftCollectionVos.stream().sorted(Comparator.comparing(NftCollectionVo::getScore).reversed()).collect(Collectors.toList());
     }
 
     @Override

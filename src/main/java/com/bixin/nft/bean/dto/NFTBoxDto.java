@@ -29,9 +29,11 @@ public class NFTBoxDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Item {
         private Long id;
+        private Integer type;
         private String seller;
         private BigDecimal selling_price;
         private BidToken bid_tokens;
+        private Long end_time;
 
         @Data
         @Builder

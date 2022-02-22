@@ -1,7 +1,9 @@
 package com.bixin.nft.service;
 
+import com.bixin.ido.bean.DO.LPMiningPoolDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -67,4 +69,7 @@ public interface NftMarketService {
 
     List<Map<String, Object>> selectScoreByOwner(String owner);
 
+    NftMarketDo popAuctionEndItem(Long endTime);
+
+    String auctionSettlement(NftMarketDo nftMarketDo);
 }

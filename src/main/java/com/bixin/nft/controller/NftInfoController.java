@@ -18,6 +18,7 @@ import com.bixin.nft.common.enums.NftType;
 import com.bixin.nft.common.enums.OccupationType;
 import com.bixin.nft.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -330,6 +331,8 @@ public class NftInfoController {
             nftGroupVo.setOnSell(false);
         } else {
             nftGroupVo.setOnSell(true);
+            nftGroupVo.setSellType(nftMarketDo.getSellType());
+            nftGroupVo.setEndTime(nftMarketDo.getEndTime());
             nftGroupVo.setSellingPrice(nftMarketDo.getSellPrice());
             nftGroupVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftGroupVo.setOwner(nftMarketDo.getOwner());
@@ -394,7 +397,7 @@ public class NftInfoController {
         //cat
         NftKikoCatDo nftKikoCatDo = null;
 
-        NftType nftType = Objects.nonNull(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
+        NftType nftType = StringUtils.isNotBlank(nftGroupDo.getType()) ? NftType.of(nftGroupDo.getType()) : NftType.NORMAL;
 
         if (nftType == NftType.COMPOSITE_CARD) {
             List<NftCompositeCard> compositeCards = metareverseService.getCompositeCard(nftInfoDo.getId());
@@ -519,6 +522,8 @@ public class NftInfoController {
             nftInfoVo.setOnSell(false);
         } else {
             nftInfoVo.setOnSell(true);
+            nftInfoVo.setSellType(nftMarketDo.getSellType());
+            nftInfoVo.setEndTime(nftMarketDo.getEndTime());
             nftInfoVo.setSellingPrice(nftMarketDo.getSellPrice());
             nftInfoVo.setTopBidPrice(nftMarketDo.getOfferPrice());
             nftInfoVo.setOwner(nftMarketDo.getOwner());
