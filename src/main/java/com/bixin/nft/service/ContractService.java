@@ -6,13 +6,18 @@ import com.bixin.common.code.IdoErrorCode;
 import com.bixin.common.exception.IdoException;
 import com.bixin.common.exception.SequenceException;
 import com.bixin.common.config.StarConfig;
+import com.bixin.common.utils.JacksonUtil;
 import com.bixin.common.utils.RetryingUtil;
+import com.bixin.nft.bean.dto.ChainBalanceDto;
+import com.bixin.nft.bean.dto.ChainResponseDto;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
 import com.novi.serde.Bytes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.starcoin.api.StateRPCClient;
 import org.starcoin.bean.ListResourceOption;
 import org.starcoin.bean.ScriptFunctionObj;
 import org.starcoin.bean.TypeObj;
@@ -27,6 +32,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 @Slf4j
@@ -67,6 +74,14 @@ public class ContractService {
         listResourceOption.setDecode(true);
         String result = starcoinClient.call("state.list_resource", Lists.newArrayList(new Object[]{AccountAddressUtils.hex(sender), listResourceOption}));
 //        log.info("starCoin resource result:{}", result);
+        return result;
+    }
+
+    public String getResource(String address, String resourceKey) {
+        AccountAddress sender = AccountAddressUtils.create(address);
+        ListResourceOption listResourceOption = new ListResourceOption();
+        listResourceOption.setDecode(true);
+        String result = starcoinClient.call("state.get_resource", Lists.newArrayList(new Object[]{AccountAddressUtils.hex(sender), resourceKey, listResourceOption}));
         return result;
     }
 
@@ -256,6 +271,17 @@ public class ContractService {
                 2000,
                 Exception.class
         );
+    }
+
+    public long getAddressAmount(String address, String token) {
+        String resourceKey = "0x00000000000000000000000000000001::Account::Balance<" + token + ">";
+        String result = getResource(address, resourceKey);
+        ChainResponseDto<ChainBalanceDto> chainBalance = JacksonUtil.readValue(result, new TypeReference<ChainResponseDto<ChainBalanceDto>>() {});
+        return Optional.ofNullable(chainBalance)
+                .map(ChainResponseDto::getResult)
+                .map(ChainResponseDto.ChainResource::getJson)
+                .map(ChainBalanceDto::getTokenValue)
+                .orElse(0L);
     }
 
 }

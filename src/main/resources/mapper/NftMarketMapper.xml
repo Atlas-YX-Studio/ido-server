@@ -7,6 +7,7 @@
     <result column="nft_box_id" jdbcType="BIGINT" property="nftBoxId" />
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="sell_type" jdbcType="INTEGER" property="sellType" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="nft_name" jdbcType="VARCHAR" property="nftName" />
     <result column="owner" jdbcType="VARCHAR" property="owner" />
@@ -15,12 +16,13 @@
     <result column="sell_price" jdbcType="DECIMAL" property="sellPrice" />
     <result column="offer_price" jdbcType="DECIMAL" property="offerPrice" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="end_time" jdbcType="BIGINT" property="endTime" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="update_time" jdbcType="BIGINT" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, chain_id, nft_box_id, group_id, type, name, nft_name, owner, pay_token, address, sell_price, offer_price, icon,
-    create_time, update_time
+    id, chain_id, nft_box_id, group_id, type, sell_type, name, nft_name, owner, pay_token,
+    address, sell_price, offer_price, icon, end_time, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -125,16 +127,18 @@
     </foreach>
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.bixin.nft.bean.DO.NftMarketDo" useGeneratedKeys="true">
-    insert into nft_market (id, chain_id, nft_box_id, group_id,
-      type, name, owner, pay_token, nft_name,
-      address, sell_price, offer_price, 
-      icon, create_time, update_time
-      )
-    values (#{id,jdbcType=BIGINT}, #{chainId,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT},
-            #{type,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, #{payToken,jdbcType=VARCHAR}, #{nftName,jdbcType=VARCHAR},
-           #{address,jdbcType=VARCHAR}, #{sellPrice,jdbcType=DECIMAL}, #{offerPrice,jdbcType=DECIMAL},
-      #{icon,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}
-      )
+    insert into nft_market (id, chain_id, nft_box_id,
+      group_id, type, sell_type,
+      name, nft_name, owner,
+      pay_token, address, sell_price,
+      offer_price, icon, end_time,
+      create_time, update_time)
+    values (#{id,jdbcType=BIGINT}, #{chainId,jdbcType=BIGINT}, #{nftBoxId,jdbcType=BIGINT},
+      #{groupId,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{sellType,jdbcType=INTEGER},
+      #{name,jdbcType=VARCHAR}, #{nftName,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR},
+      #{payToken,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{sellPrice,jdbcType=DECIMAL},
+      #{offerPrice,jdbcType=DECIMAL}, #{icon,jdbcType=VARCHAR}, #{endTime,jdbcType=BIGINT},
+      #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT})
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.bixin.nft.bean.DO.NftMarketDo">
     update nft_market
@@ -150,6 +154,9 @@
       </if>
       <if test="type != null">
         type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="sellType != null">
+        sell_type = #{sellType,jdbcType=INTEGER},
       </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -174,6 +181,9 @@
       </if>
       <if test="icon != null">
         icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=BIGINT},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -201,6 +211,9 @@
       <if test="null != type">
          and type = #{type,jdbcType=VARCHAR}
       </if>
+      <if test="null != sellType">
+         and sell_type = #{sellType,jdbcType=INTEGER}
+      </if>
       <if test="null != name">
          and name = #{name,jdbcType=VARCHAR}
       </if>
@@ -225,6 +238,9 @@
       <if test="null != icon">
          and icon = #{icon,jdbcType=VARCHAR}
       </if>
+      <if test="null != endTime">
+         and end_time = #{endTime,jdbcType=BIGINT}
+      </if>
       <if test="null != createTime">
          and create_time = #{createTime,jdbcType=BIGINT}
       </if>
@@ -240,5 +256,14 @@
   <select id="selectByPrimaryKeySelectiveList" parameterType="com.bixin.nft.bean.DO.NftMarketDo" resultMap="BaseResultMap">
     select  * from nft_market
     <include refid="baseQuery" />
+  </select>
+  <select id="selectOneEndItem" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nft_market
+    where
+    sell_type = 2
+    and end_time &lt; #{endTime,jdbcType=BIGINT}
+    limit 1
   </select>
 </mapper>

@@ -1,14 +1,26 @@
 package com.bixin.nft.service.impl;
 
+import com.bixin.common.config.StarConfig;
+import com.bixin.common.utils.TypeArgsUtil;
+import com.bixin.ido.bean.DO.LPMiningPoolDo;
+import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftMarketDo;
+import com.bixin.nft.common.enums.NftBoxType;
 import com.bixin.nft.core.mapper.NftGroupMapper;
 import com.bixin.nft.core.mapper.NftMarketMapper;
+import com.bixin.nft.service.ContractService;
 import com.bixin.nft.service.NftMarketService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.starcoin.bean.ScriptFunctionObj;
+import org.starcoin.bean.TypeObj;
+import org.starcoin.utils.AccountAddressUtils;
+import org.starcoin.utils.BcsSerializeHelper;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +40,10 @@ public class NftMarketServiceImpl implements NftMarketService {
     private NftMarketMapper nftMarketMapper;
     @Resource
     private NftGroupMapper nftGroupMapper;
+    @Resource
+    private ContractService contractService;
+    @Resource
+    private StarConfig starConfig;
 
     /**
      * @explain: 添加NftMarketDo对象
@@ -112,6 +128,11 @@ public class NftMarketServiceImpl implements NftMarketService {
         nftMarketMapper.deleteAllByIds(ids);
     }
 
+    @Override
+    public NftMarketDo popAuctionEndItem(Long endTime) {
+        return nftMarketMapper.selectOneEndItem(endTime);
+    }
+
     /**
      * @param predicateNextPage
      * @param pageSize
@@ -140,6 +161,8 @@ public class NftMarketServiceImpl implements NftMarketService {
             sortValue = "ff.score ";
         } else if ("ctime".equalsIgnoreCase(sortRule.trim())) {
             sortValue = "mm.create_time ";
+        } else if ("etime".equalsIgnoreCase(sortRule.trim())) {
+            sortValue = "mm.end_time ";
         }
         if (0 == sort || 1 == sort) {
             if (!"ctime".equalsIgnoreCase(sortRule.trim())) {
@@ -162,6 +185,53 @@ public class NftMarketServiceImpl implements NftMarketService {
     @Override
     public List<Map<String, Object>> selectScoreByOwner(String owner) {
         return nftMarketMapper.selectScoreByOwner(owner);
+    }
+
+
+    /**
+     * 执行合约结算nft拍卖 todo function name
+     *
+     * @param nftMarketDo
+     * @return
+     */
+    @Override
+    public String auctionSettlement(NftMarketDo nftMarketDo) {
+        log.info("auctionSettlement sellAddress:{} nft_id:{} 拍卖结算中...", nftMarketDo.getAddress(), nftMarketDo.getChainId());
+        NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(nftMarketDo.getGroupId());
+
+        ScriptFunctionObj scriptFunctionObj;
+        if (nftMarketDo.getType().equalsIgnoreCase(NftBoxType.NFT.getDesc())) {
+            scriptFunctionObj = ScriptFunctionObj
+                    .builder()
+                    .moduleAddress(starConfig.getNft().getScripts())
+                    .moduleName(starConfig.getNft().getScriptsModule())
+                    .functionName("nft_delivery")
+                    .args(Lists.newArrayList(
+                        BcsSerializeHelper.serializeU64ToBytes(nftMarketDo.getChainId())
+                    ))
+                    .tyArgs(Lists.newArrayList(
+                            TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta()),
+                            TypeArgsUtil.parseTypeObj(nftGroupDo.getNftBody()),
+                            TypeArgsUtil.parseTypeObj(nftMarketDo.getPayToken())))
+                    .build();
+        } else if (nftMarketDo.getType().equalsIgnoreCase(NftBoxType.BOX.getDesc())) {
+            scriptFunctionObj = ScriptFunctionObj
+                    .builder()
+                    .moduleAddress(starConfig.getNft().getScripts())
+                    .moduleName(starConfig.getNft().getScriptsModule())
+                    .functionName("box_delivery")
+                    .args(Lists.newArrayList(
+                        BcsSerializeHelper.serializeU128ToBytes(BigInteger.valueOf(nftMarketDo.getChainId()))
+                    ))
+                    .tyArgs(Lists.newArrayList(
+                            TypeArgsUtil.parseTypeObj(nftGroupDo.getBoxToken()),
+                            TypeArgsUtil.parseTypeObj(nftMarketDo.getPayToken())))
+                    .build();
+        } else {
+            log.error("auctionSettlement unknown type:{}", nftMarketDo.getType());
+            return null;
+        }
+        return contractService.callFunctionAndGetHash(starConfig.getNft().getScripts(), scriptFunctionObj);
     }
 
 }
