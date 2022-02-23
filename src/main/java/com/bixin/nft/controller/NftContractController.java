@@ -31,7 +31,7 @@ public class NftContractController {
     private final static String SECRET_KEY = "766dF569970B22B29152eB326dad1b1E";
 
     /**
-     * 初始化市场合约
+     * 初始化市场合约，发布NFT无需调用
      *
      * @return
      */
@@ -46,6 +46,13 @@ public class NftContractController {
         return R.success(true);
     }
 
+    /**
+     * 发布QQ秀NFT合约
+     *
+     * @param secretKey
+     * @param groupId
+     * @return
+     */
     @GetMapping("/nft/createCompositeNFT")
     public R createCompositeNFT(@RequestParam String secretKey, @RequestParam Long groupId) {
         if (!SECRET_KEY.equals(secretKey)) {
@@ -55,6 +62,12 @@ public class NftContractController {
         return R.success(true);
     }
 
+    /**
+     * 发布NFT普通合约
+     *
+     * @param secretKey
+     * @return
+     */
     @GetMapping("/nft/create")
     public R createNFT(@RequestParam(value = "secretKey") String secretKey) {
         if (!SECRET_KEY.equals(secretKey)) {
@@ -64,6 +77,13 @@ public class NftContractController {
         return R.success(true);
     }
 
+    /**
+     * 发布不包含盲盒NFT
+     *
+     * @param secretKey
+     * @param groupId
+     * @return
+     */
     @GetMapping("/nft/createNoBox")
     public R createNFTWithNoBox(@RequestParam String secretKey,
                                 @RequestParam Long groupId) {
@@ -74,6 +94,16 @@ public class NftContractController {
         return R.success(true);
     }
 
+    /**
+     * 发布批量NFT（当前仅用于测试，无线上合约对应）
+     *
+     * @param secretKey
+     * @param groupId
+     * @param batch
+     * @param count
+     * @param gas
+     * @return
+     */
     @GetMapping("/nft/createBatch")
     public R createBatchNFT(@RequestParam String secretKey,
                                 @RequestParam Long groupId,
@@ -87,6 +117,16 @@ public class NftContractController {
         return R.success(true);
     }
 
+    /**
+     * 批量发送NFT，用于发送给运营
+     *
+     * @param secretKey
+     * @param groupId
+     * @param startNftId
+     * @param endNftId
+     * @param toAddress
+     * @return
+     */
     @GetMapping("/nft/transferNft")
     public R transferNft(@RequestParam String secretKey,
                                 @RequestParam Long groupId,
@@ -100,6 +140,14 @@ public class NftContractController {
         return R.success(true);
     }
 
+    /**
+     * 市场回购初始化，新增加系列时使用
+     *
+     * @param secretKey
+     * @param groupId
+     * @param payToken
+     * @return
+     */
     @GetMapping("/nft/buyback-init")
     public R initBuyBackNFT(@RequestParam(value = "secretKey") String secretKey,
                             @RequestParam(value = "groupId") Long groupId,
@@ -111,6 +159,15 @@ public class NftContractController {
         return R.success(true);
     }
 
+    /**
+     * 市场回购，新增加NFT时使用
+     *
+     * @param secretKey
+     * @param infoId
+     * @param payToken
+     * @param price
+     * @return
+     */
     @GetMapping("/nft/buyback")
     public R buyBackNFT(@RequestParam(value = "secretKey") String secretKey,
                         @RequestParam(value = "infoId") Long infoId,
@@ -123,6 +180,13 @@ public class NftContractController {
         return R.success(true);
     }
 
+    /**
+     * NFT重新排序，一般无需调用
+     *
+     * @param secretKey
+     * @param series
+     * @return
+     */
     @GetMapping("/nft/rank")
     public R rank(@RequestParam(value = "secretKey") String secretKey,
                   @RequestParam(value = "series") String series) {
