@@ -435,6 +435,14 @@ public class NftContractBiz {
         }
     }
 
+    /**
+     * 发送NFT
+     *
+     * @param groupId
+     * @param startNftId
+     * @param endNftId
+     * @param toAddress
+     */
     public void transferNFT(long groupId, long startNftId, long endNftId, String toAddress) {
         NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(groupId);
         if (nftGroupDo == null || !NftGroupStatus.OFFERING.name().equals(nftGroupDo.getStatus())) {
@@ -812,7 +820,7 @@ public class NftContractBiz {
     }
 
     /**
-     * @return
+     * 增加NFT回购
      */
     public void buyBackNFT(Long infoId, String payToken, BigDecimal price) {
         NftInfoDo nftInfoDo = nftInfoMapper.selectByPrimaryKey(infoId);
@@ -888,6 +896,11 @@ public class NftContractBiz {
         });
     }
 
+    /**
+     * 购买首发盲盒
+     *
+     * @return
+     */
     public boolean buyFromOffering() {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
@@ -905,6 +918,12 @@ public class NftContractBiz {
         return contractService.callFunction(market, scriptFunctionObj);
     }
 
+    /**
+     * 打开盲盒
+     * @param address
+     * @param module
+     * @return
+     */
     public boolean open_box(String address, String module) {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
@@ -916,6 +935,10 @@ public class NftContractBiz {
         return contractService.callFunction(address, scriptFunctionObj);
     }
 
+    /**
+     * 出售NFT
+     * @return
+     */
     public boolean sellNFT() {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
@@ -935,6 +958,10 @@ public class NftContractBiz {
         return contractService.callFunction("0x142f352A24FEB989C65C1d48c4d884a9", scriptFunctionObj);
     }
 
+    /**
+     * 出售盲盒
+     * @return
+     */
     public boolean sellBox() {
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
@@ -952,7 +979,11 @@ public class NftContractBiz {
         return contractService.callFunction("0x142f352A24FEB989C65C1d48c4d884a9", scriptFunctionObj);
     }
 
-
+    /**
+     * 获取NFT当前最新ID
+     * @param meta
+     * @return
+     */
     public long getNftCounterId(String meta) {
         MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple =
                 chainClientHelper.getNftTypeInfo(meta);
