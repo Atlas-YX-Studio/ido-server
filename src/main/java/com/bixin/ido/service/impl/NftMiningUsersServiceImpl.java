@@ -286,7 +286,8 @@ public class NftMiningUsersServiceImpl extends ServiceImpl<NftMiningUsersMapper,
         LambdaUpdateWrapper<NftMiningUsers> nftMiningUsersUpdateWrapper = Wrappers.<NftMiningUsers>lambdaUpdate()
                 .setSql("pending_reward = pending_reward - " + miningHarvestRecordDo.getAmount())
                 .set(NftMiningUsers::getUpdateTime, System.currentTimeMillis())
-                .eq(NftMiningUsers::getId, nftMiningUsers.getId());
+                .eq(NftMiningUsers::getId, nftMiningUsers.getId())
+                .ge(NftMiningUsers::getPendingReward, miningHarvestRecordDo.getAmount());
         nftMiningUsersService.update(nftMiningUsersUpdateWrapper);
         miningHarvestRecordDo.setStatus(HarvestStatusEnum.SUCCESS.name());
         miningHarvestRecordDo.setUpdateTime(System.currentTimeMillis());
