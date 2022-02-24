@@ -14,6 +14,10 @@ public class NftCollectionVo {
      */
     private String collectionType;
     /**
+     * 类型
+     */
+    private String type;
+    /**
      * NFT id (链上)
      */
     private Long nftId;

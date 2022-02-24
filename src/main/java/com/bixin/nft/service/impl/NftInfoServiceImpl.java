@@ -184,6 +184,7 @@ public class NftInfoServiceImpl implements NftInfoService {
             long boxAmount = contractService.getAddressAmount(userAddress, nftGroupDo.getBoxToken());
             for (int i = 0; i < boxAmount; i++) {
                 NftCollectionVo vo = BeanCopyUtil.copyProperties(nftGroupDo, NftCollectionVo::new);
+                vo.setType(NftBoxType.BOX.getDesc());
                 vo.setCollectionType(NftBoxType.BOX.getDesc());
                 vo.setImageLink(nftGroupDo.getBoxTokenLogo());
                 vo.setScore(BigDecimal.ZERO);
