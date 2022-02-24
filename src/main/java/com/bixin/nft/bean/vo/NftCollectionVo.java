@@ -18,6 +18,10 @@ public class NftCollectionVo {
      */
     private Long nftId;
     /**
+     * 名称
+     */
+    private String name;
+    /**
      * nft_meta地址
      */
     private String nftMeta;
