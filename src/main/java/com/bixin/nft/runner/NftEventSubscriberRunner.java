@@ -18,6 +18,7 @@ import com.bixin.nft.common.enums.NftEventType;
 import com.bixin.nft.common.enums.TradingRecordDirection;
 import com.bixin.nft.common.enums.TradingRecordState;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.reactivex.Flowable;
@@ -82,7 +83,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
     static final long duplicateExpiredTime = 20 * 60;
 
     static final String separator = "::";
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);;
 
     ThreadPoolExecutor poolExecutor;
 
