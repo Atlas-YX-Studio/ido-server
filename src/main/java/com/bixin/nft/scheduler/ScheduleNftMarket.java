@@ -227,6 +227,7 @@ public class ScheduleNftMarket {
                 });
             }
         });
+        log.info("market validAndUpdate delGroupIds={}, delIds={}, delTypes={}", delGroupIds, delIds, delTypes);
         if (!CollectionUtils.isEmpty(delGroupIds)) {
             nftMarketService.deleteAllByGroupIds(delGroupIds);
         }
