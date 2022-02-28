@@ -119,8 +119,8 @@ public class NftMarketServiceImpl implements NftMarketService {
     }
 
     @Override
-    public void deleteAllByGroupIdTypes(Map<Long, Object> groupIdTypeMap) {
-        nftMarketMapper.deleteAllByGroupIdTypes(groupIdTypeMap);
+    public void deleteAllByGroupIdTypes(Long groupId, List<String> types) {
+        nftMarketMapper.deleteAllByGroupIdTypes(groupId, types);
     }
 
     @Override
@@ -200,7 +200,9 @@ public class NftMarketServiceImpl implements NftMarketService {
         NftGroupDo nftGroupDo = nftGroupMapper.selectByPrimaryKey(nftMarketDo.getGroupId());
 
         ScriptFunctionObj scriptFunctionObj;
-        if (nftMarketDo.getType().equalsIgnoreCase(NftBoxType.NFT.getDesc())) {
+        if (nftMarketDo.getType().equalsIgnoreCase(NftBoxType.NFT.getDesc())
+                || nftMarketDo.getType().equalsIgnoreCase(NftBoxType.COMPOSITE_CARD.getDesc())
+                || nftMarketDo.getType().equalsIgnoreCase(NftBoxType.COMPOSITE_ELEMENT.getDesc())) {
             scriptFunctionObj = ScriptFunctionObj
                     .builder()
                     .moduleAddress(starConfig.getNft().getScripts())
