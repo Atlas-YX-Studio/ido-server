@@ -117,7 +117,10 @@
   </delete>
   <delete id="deleteAllByGroupIdTypes" parameterType="map">
     delete from nft_market
-    where group_id = #{groupId} and type = #{type}
+    where group_id = #{groupId} and type in
+    <foreach collection="types" index="index" item="type" open="(" separator="," close=")">
+       #{type}
+    </foreach>
   </delete>
   <delete id="deleteAllByIds" >
     delete from nft_market

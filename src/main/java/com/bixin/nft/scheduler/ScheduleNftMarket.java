@@ -235,9 +235,7 @@ public class ScheduleNftMarket {
             nftMarketService.deleteAllByIds(delIds);
         }
         delTypes.forEach((groupId, type) -> {
-            nftMarketService.deleteAllByGroupIdTypes(new HashMap<>() {{
-                put(groupId, type);
-            }});
+            nftMarketService.deleteAllByGroupIdTypes(groupId, type);
         });
         updateList.forEach(p -> nftMarketService.update(p));
         insertList.forEach(p -> nftMarketService.insert(p));

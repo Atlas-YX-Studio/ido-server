@@ -52,7 +52,7 @@ public interface NftMarketMapper {
 
     void deleteAllByGroupIds(List<Long> groupIds);
 
-    void deleteAllByGroupIdTypes(Map<Long, Object> groupIdTypeMap);
+    void deleteAllByGroupIdTypes(Long groupId, List<String> types);
 
     void deleteAllByIds(List<Long> ids);
 
