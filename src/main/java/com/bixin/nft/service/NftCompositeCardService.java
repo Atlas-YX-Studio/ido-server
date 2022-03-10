@@ -13,4 +13,6 @@ public interface NftCompositeCardService extends IService<NftCompositeCard> {
 
     void createCompositeNFT(long cardGroupId);
 
+    void createCompositeNFTV2(long cardGroupId);
+
 }

@@ -208,7 +208,150 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                 nftContractBiz.initNFTMining(cardGroupDo.getId());
             }
         }
+    }
 
+    @Override
+    public void createCompositeNFTV2(long cardGroupId) {
+        NftGroupDo cardGroupDo = nftGroupMapper.selectByPrimaryKey(cardGroupId);
+        if (cardGroupDo == null) {
+            log.error("groupId:{} 不存在"+cardGroupId);
+            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
+        }
+        if (!NftType.COMPOSITE_CARD.getType().equals(cardGroupDo.getType())) {
+            log.error("NFT type:{} 必须为card", cardGroupDo.getType());
+            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
+        }
+
+        // 部署合约
+        NftGroupDo elementGroupDo = nftGroupMapper.selectByPrimaryKey(cardGroupDo.getElementId());
+        if (elementGroupDo == null) {
+            log.error("element groupId:{} 不存在", cardGroupDo.getElementId());
+            throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
+        }
+        // 部署element合约
+        if (NftGroupStatus.PENDING.name().equals(elementGroupDo.getStatus())) {
+            if (!nftContractBiz.deployNFTContractWithImage(elementGroupDo)) {
+                log.error("NFT元素合约 {} 部署失败", elementGroupDo.getName());
+                throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
+            }
+            elementGroupDo.setStatus(NftGroupStatus.INITIALIZED.name());
+            elementGroupDo.setUpdateTime(System.currentTimeMillis());
+            log.info("NFT元素合约 {} 部署成功", elementGroupDo.getName());
+            nftGroupMapper.updateByPrimaryKeySelective(elementGroupDo);
+        }
+        // 部署card合约
+        if (NftGroupStatus.PENDING.name().equals(cardGroupDo.getStatus())) {
+            if (!deployCompositeCardContract(cardGroupDo)) {
+                log.error("NFT卡牌合约 {} 部署失败", cardGroupDo.getName());
+                throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
+            }
+            cardGroupDo.setStatus(NftGroupStatus.INITIALIZED.name());
+            cardGroupDo.setUpdateTime(System.currentTimeMillis());
+            log.info("NFT卡牌合约 {} 部署成功", cardGroupDo.getName());
+            nftGroupMapper.updateByPrimaryKeySelective(cardGroupDo);
+        }
+
+        // mint nft
+        if (NftGroupStatus.INITIALIZED.name().equals(cardGroupDo.getStatus())) {
+            NftInfoDo selectNftInfoDo = new NftInfoDo();
+            selectNftInfoDo.setGroupId(cardGroupDo.getId());
+            selectNftInfoDo.setCreated(false);
+            selectNftInfoDo.setState("");//NftInfoState.SUCCESS.getDesc());
+            // 取出该组下所有待铸造NFT
+            List<NftInfoDo> nftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
+            if (CollectionUtils.isEmpty(nftInfoDos)) {
+                return;
+            }
+            nftInfoDos.stream().sorted(Comparator.comparingLong(NftInfoDo::getId)).forEach(nftInfoDo -> {
+                // 铸造相关元素
+                mintRelatedElement(elementGroupDo, nftInfoDo);
+                // 铸造NFT
+                // 获取该组最后一个id
+                long nftCounterId = nftContractBiz.getNftCounterId(cardGroupDo.getNftMeta());
+                if (nftCounterId == -1) {
+                    log.error("nftCompositeCard groupId:{} nftCounterId不存在", cardGroupDo.getId());
+                    throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
+                }
+                nftInfoDo.setNftId(nftCounterId + 1);
+                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+                if (!mintCardNFTV2(cardGroupDo, nftInfoDo)) {
+                    log.error("NFT {} mint失败", nftInfoDo.getName());
+                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                }
+                log.info("NFT {} mint成功", nftInfoDo.getName());
+                nftInfoDo.setOwner("");
+                nftInfoDo.setCreated(true);
+                nftInfoDo.setUpdateTime(System.currentTimeMillis());
+                nftInfoMapper.updateByPrimaryKeySelective(nftInfoDo);
+            });
+            // 全部铸造完成
+            elementGroupDo.setStatus(NftGroupStatus.CREATED.name());
+            elementGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(elementGroupDo);
+            // 重新rank
+            nftContractBiz.reRank(elementGroupDo.getSeries());
+
+            // 全部铸造完成，修改
+            cardGroupDo.setStatus(NftGroupStatus.CREATED.name());
+            cardGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(cardGroupDo);
+            // 重新rank
+            nftContractBiz.reRank(cardGroupDo.getSeries());
+        }
+
+        // 市场创建resource
+        if (NftGroupStatus.CREATED.name().equals(cardGroupDo.getStatus())) {
+            // 市场初始化元素
+            List<TokenDto> supportTokenList = JSON.parseObject(elementGroupDo.getSupportToken(),
+                    new TypeReference<>() {});
+            supportTokenList.forEach(tokenDto -> {
+                if (!nftContractBiz.initMarket(elementGroupDo, tokenDto.getAddress())) {
+                    log.error("NFT {} 市场初始化失败, 设置币种:{}", elementGroupDo.getName(), tokenDto.getAddress());
+                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                }
+            });
+            elementGroupDo.setStatus(NftGroupStatus.OFFERING.name());
+            elementGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(elementGroupDo);
+
+            // 市场初始化卡牌
+            supportTokenList = JSON.parseObject(cardGroupDo.getSupportToken(),
+                    new TypeReference<>() {});
+            supportTokenList.forEach(tokenDto -> {
+                if (!nftContractBiz.initMarket(cardGroupDo, tokenDto.getAddress())) {
+                    log.error("NFT {} 市场初始化失败, 设置币种:{}", cardGroupDo.getName(), tokenDto.getAddress());
+                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                }
+            });
+            if (!nftContractBiz.transferBox(cardGroupDo)) {
+                log.error("NFT {} 盲盒转账失败", cardGroupDo.getName());
+                throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+            }
+            log.info("NFT {} 盲盒转账成功", cardGroupDo.getName());
+            cardGroupDo.setStatus(NftGroupStatus.TRANSFER.name());
+            cardGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(cardGroupDo);
+        }
+
+        // 盲盒发售
+        if (NftGroupStatus.TRANSFER.name().equals(cardGroupDo.getStatus())) {
+            if (!nftContractBiz.initBoxOffering(cardGroupDo)) {
+                log.error("NFT {} 盲盒发售创建失败", cardGroupDo.getName());
+                throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+            }
+            // 发售成功
+            log.info("NFT {} 盲盒发售创建成功", cardGroupDo.getName());
+            cardGroupDo.setStatus(NftGroupStatus.OFFERING.name());
+            cardGroupDo.setUpdateTime(System.currentTimeMillis());
+            nftGroupMapper.updateByPrimaryKeySelective(cardGroupDo);
+        }
+
+        // 初始化NFT挖矿
+        if (NftGroupStatus.OFFERING.name().equals(cardGroupDo.getStatus())) {
+            if (cardGroupDo.getMining()) {
+                nftContractBiz.initNFTMining(cardGroupDo.getId());
+            }
+        }
     }
 
     private void mintRelatedElement(NftGroupDo nftElementGroupDo, NftInfoDo nftCardInfoDo) {
@@ -228,6 +371,17 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
         nftId.setValue(nftCounterId + 1);
+
+        //todo 自测时使用
+        //elementInfos.forEach(elementInfo -> {
+        //    if (elementInfo.getCreated()) {
+        //        elementInfo.setCreated(false);
+        //        nftInfoMapper.updateByPrimaryKeySelective(elementInfo);
+        //    }
+        //});
+        //todo
+
+
         elementInfos.forEach(elementInfo -> {
             if (elementInfo.getCreated()) {
                 // 已上链
@@ -315,6 +469,84 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                 .moduleAddress(starConfig.getNft().getCatadd())
                 .moduleName(typeObj.getModuleName())
                 .functionName("composite_original_card")
+                .args(Lists.newArrayList(
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(starConfig.getNft().getImageInfoApi() + nftInfoDo.getId())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(nftGroupDo.getEnDescription())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(card.getOccupation())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeString(card.getCustomName())),
+                        Bytes.valueOf(BcsSerializeHelper.serializeU8(card.getSex())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getBackgroundId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFurId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getClothesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getExpressionId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHeadId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getAccessoriesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getEyesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHatId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getCostumeId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMakeupId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getShoesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMouthId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getEarringId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getNecklaceId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getNeckId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHairId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHornId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHandsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getBodyId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSkinId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getTattooId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getPeopleId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getCharacteristicId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHobbyId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getZodiacId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getActionId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getToysId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFruitsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getVegetablesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMeatId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getBeveragesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFoodId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getVehicleId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getWeatherId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMonthId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSportsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMusicId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMoviesId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSeasonId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getOutfitId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFaceId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getArmId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getLegId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getFoodId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getWeaponId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getHelmetId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getArmorId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getMechaId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getPantsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getSkirtId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getLeftHandId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getRightHandId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getPetsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getGiftsId())),
+                        BcsSerializeHelper.serializeU64ToBytes(getNftId(card.getTailId()))
+                ))
+                .build();
+        return contractService.callFunctionV2(address, scriptFunctionObj, 40000000);
+    }
+
+    private boolean mintCardNFTV2(NftGroupDo nftGroupDo, NftInfoDo nftInfoDo) {
+        NftCompositeCard card = this.lambdaQuery().eq(NftCompositeCard::getInfoId, nftInfoDo.getId()).one();
+
+        TypeObj typeObj = TypeArgsUtil.parseTypeObj(nftGroupDo.getNftMeta());
+        String address = typeObj.getModuleAddress();
+
+        ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
+                .builder()
+                .moduleAddress(address)
+                .moduleName("AvatarKikoCardV3")
+                .functionName("mint_nft")
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
                         Bytes.valueOf(BcsSerializeHelper.serializeString(starConfig.getNft().getImageInfoApi() + nftInfoDo.getId())),

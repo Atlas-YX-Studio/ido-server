@@ -62,6 +62,15 @@ public class NftContractController {
         return R.success(true);
     }
 
+    @GetMapping("/nft/createCompositeNFTV2")
+    public R createCompositeNFTV2(@RequestParam String secretKey, @RequestParam Long groupId) {
+        if (!SECRET_KEY.equals(secretKey)) {
+            return R.failed("permission denied");
+        }
+        nftCompositeCardService.createCompositeNFTV2(groupId);
+        return R.success(true);
+    }
+
     /**
      * 发布NFT普通合约
      *
