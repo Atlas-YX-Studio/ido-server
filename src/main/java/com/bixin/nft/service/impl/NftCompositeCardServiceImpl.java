@@ -546,7 +546,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(address)
-                .moduleName("AvatarKikoCardV3")
+                .moduleName("AvatarKikoCardV6")
                 .functionName("mint_nft")
                 .args(Lists.newArrayList(
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftInfoDo.getName())),
