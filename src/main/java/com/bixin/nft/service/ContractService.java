@@ -129,7 +129,7 @@ public class ContractService {
      * @return
      */
     public boolean callFunction(String senderAddress, ScriptFunctionObj scriptFunctionObj) {
-        log.info("createCompositeNFT 合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
+        log.info("createCompositeNFT callFunction 合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
         return RetryingUtil.retry(
@@ -159,7 +159,7 @@ public class ContractService {
      * @return
      */
     public boolean callFunctionV2(String senderAddress, ScriptFunctionObj scriptFunctionObj, long gas) {
-        log.info("合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
+        log.info("createCompositeNFT callFunctionV2 合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
         return RetryingUtil.retry(
