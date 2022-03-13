@@ -129,16 +129,16 @@ public class ContractService {
      * @return
      */
     public boolean callFunction(String senderAddress, ScriptFunctionObj scriptFunctionObj) {
-        log.info("合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
+        log.info("createCompositeNFT 合约请求 sender:{}, function: {}", senderAddress, JSON.toJSONString(scriptFunctionObj));
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
         return RetryingUtil.retry(
                 () -> {
                     String result = callFunction(sender, privateKey, scriptFunctionObj, 10000000L);
-                    log.info("合约请求 result: {}", result);
+                    log.info("createCompositeNFT 合约请求 result: {}", result);
                     String txn = JSON.parseObject(result).getString("result");
                     if (StringUtils.isBlank(txn)) {
-                        log.info("合约请求失败");
+                        log.info("createCompositeNFT 合约请求失败");
                         if (result.contains("SEQUENCE_NUMBER_TOO_OLD")) {
                             throw new SequenceException();
                         }
@@ -165,10 +165,10 @@ public class ContractService {
         return RetryingUtil.retry(
                 () -> {
                     String result = callFunction(sender, privateKey, scriptFunctionObj, gas);
-                    log.info("合约请求 result: {}", result);
+                    log.info("createCompositeNFT 合约请求 result: {}", result);
                     String txn = JSON.parseObject(result).getString("result");
                     if (StringUtils.isBlank(txn)) {
-                        log.info("合约请求失败");
+                        log.info("createCompositeNFT 合约请求失败");
                         if (result.contains("SEQUENCE_NUMBER_TOO_OLD")) {
                             throw new SequenceException();
                         }
@@ -229,15 +229,15 @@ public class ContractService {
      * @return
      */
     public boolean transfer(String senderAddress, String toAddress, TypeObj typeObj, BigInteger amount) {
-        log.info("转账请求 sender:{}, to:{}, token:{}, amount:{}", senderAddress, toAddress, typeObj.toRPCString(), amount);
+        log.info("createCompositeNFT 转账请求 sender:{}, to:{}, token:{}, amount:{}", senderAddress, toAddress, typeObj.toRPCString(), amount);
         AccountAddress sender = AccountAddressUtils.create(senderAddress);
         Ed25519PrivateKey privateKey = getPrivateKey(senderAddress);
         String result = starcoinClient.transfer(sender, privateKey, AccountAddressUtils.create(toAddress),
                 typeObj, amount);
-        log.info("转账请求 result: {}", result);
+        log.info("createCompositeNFT 转账请求 result: {}", result);
         String txn = JSON.parseObject(result).getString("result");
         if (StringUtils.isBlank(txn)) {
-            log.info("转账请求失败");
+            log.info("createCompositeNFT 转账请求失败");
             return false;
         }
         return checkTxt(txn);
@@ -249,7 +249,7 @@ public class ContractService {
     }
 
     public boolean checkTxt(String txn) {
-        log.info("合约hash:{}", txn);
+        log.info("createCompositeNFT 合约hash:{}", txn);
         return RetryingUtil.retry(
                 () -> {
                     String rst = starcoinClient.getTransactionInfo(txn);
@@ -259,10 +259,10 @@ public class ContractService {
                         throw new RuntimeException("合约执行中... " + "txn:" + txn);
                     } else {
                         if ("Executed".equalsIgnoreCase(result.getString("status"))) {
-                            log.info("合约执行成功，result: {}", result);
+                            log.info("createCompositeNFT 合约执行成功，result: {}", result);
                             return true;
                         } else {
-                            log.info("合约执行失败，result:{}", result);
+                            log.info("createCompositeNFT 合约执行失败，result:{}", result);
                             return false;
                         }
                     }
