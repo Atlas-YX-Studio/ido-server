@@ -134,7 +134,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                     log.error("createCompositeNFT NFT {} mint失败", nftInfoDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                 }
-                log.info("createCompositeNFT NFT {} mint成功", nftInfoDo.getName());
+                log.info("createCompositeNFT NFT {} mintCardNFT mint成功", nftInfoDo.getName());
                 nftInfoDo.setOwner("");
                 nftInfoDo.setCreated(true);
                 nftInfoDo.setUpdateTime(System.currentTimeMillis());
@@ -278,7 +278,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                     log.error("createCompositeNFT NFT {} mint失败", nftInfoDo.getName());
                     throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
                 }
-                log.info("createCompositeNFT NFT {} mint成功", nftInfoDo.getName());
+                log.info("createCompositeNFT NFT {} mintCardNFT mint成功", nftInfoDo.getName());
                 nftInfoDo.setOwner("");
                 nftInfoDo.setCreated(true);
                 nftInfoDo.setUpdateTime(System.currentTimeMillis());
@@ -360,6 +360,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             log.error("createCompositeNFT nftCompositeCard infoId:{} 不存在", nftCardInfoDo.getId());
             throw new IdoException(IdoErrorCode.CONTRACT_DEPLOY_FAILURE);
         }
+
         // 获取所有关联元素
         List<Long> elementIds = NftCompositeCard.getElementIds(nftCompositeCard);
         List<NftInfoDo> elementInfos = nftInfoMapper.selectByIds(elementIds);
@@ -394,7 +395,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
                 log.error("createCompositeNFT NFT {} mint失败", elementInfo.getName());
                 throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
             }
-            log.info("createCompositeNFT NFT {} mint成功", elementInfo.getName());
+            log.info("createCompositeNFT NFT {} elementInfos mint成功", elementInfo.getName());
             elementInfo.setOwner("");
             elementInfo.setCreated(true);
             elementInfo.setUpdateTime(System.currentTimeMillis());
