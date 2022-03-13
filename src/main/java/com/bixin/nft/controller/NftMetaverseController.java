@@ -84,6 +84,49 @@ public class NftMetaverseController {
 
     }
 
+    @PostMapping("/compositeCardV2")
+    public R compositeCardV2(@RequestBody CompositeCardBean bean) {
+        if (StringUtils.isBlank(bean.getUserAddress())
+                || bean.getGroupId() <= 0
+                || CollectionUtils.isEmpty(bean.getElementList())) {
+            return R.failed("parameter is invalid");
+        }
+        boolean validElementType = true;
+        for (CompositeCardBean.CustomCardElement cardElement : bean.getElementList()) {
+            if (Objects.isNull(CardElementType.of(cardElement.getEleName()))) {
+                validElementType = false;
+                break;
+            }
+        }
+        if (!validElementType) {
+            return R.failed("parameter is invalid");
+        }
+
+        String key = bean.getUserAddress()
+                + "_" + bean.getGroupId()
+                + "_" + bean.getSex()
+                + "_" + bean.getElementList().stream()
+                .map(CompositeCardBean.CustomCardElement::getId)
+                .collect(Collectors.toList());
+        String requestId = UUID.randomUUID().toString().replaceAll("-", "");
+
+        try {
+            Map<String, Object> map = redisCache.tryGetDistributedLock(
+                    key,
+                    requestId,
+                    lockExpiredTime,
+                    lockNextExpiredTime,
+                    () -> nftMetareverseService.compositeCardV2(bean)
+            );
+            return R.success(map);
+        } catch (BizException ex) {
+            return R.failed(ex.getMessage());
+        } catch (Exception e) {
+            log.error("create nft image exception", e);
+            return R.failed("create nft image exception");
+        }
+    }
+
     @GetMapping("/analysisCard")
     public R analysisCard(@RequestParam(value = "userAddress", defaultValue = "") String userAddress,
                           @RequestParam(value = "cardId", defaultValue = "0") long cardId) {

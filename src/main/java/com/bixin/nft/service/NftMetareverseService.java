@@ -27,6 +27,8 @@ public interface NftMetareverseService {
 
     Map<String, Object> compositeCard(CompositeCardBean bean);
 
+    Map<String, Object> compositeCardV2(CompositeCardBean bean);
+
     R analysisCard(String userAddress, long cardId);
 
     NftSelfResourceVo selfResource(String userAddress, String nftType);
