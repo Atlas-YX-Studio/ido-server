@@ -120,7 +120,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             throw new BizException("element nft info id not exits : " + nftInfoIds);
         }
 
-        Optional<NftInfoDo> maxInfoDo = infoDos.stream().filter(p -> NftType.COMPOSITE_CARD.getType().equals(p.getType())).max(Comparator.comparing(NftInfoDo::getGroupId));
+        Optional<NftInfoDo> maxInfoDo = infoDos.stream().filter(p -> NftType.COMPOSITE_ELEMENT.getType().equals(p.getType())).max(Comparator.comparing(NftInfoDo::getGroupId));
         Long maxGroupId = maxInfoDo.get().getGroupId();
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(maxGroupId).build());
 
@@ -136,6 +136,9 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         }
 
         List<NftCompositeElement> compositeElements = getCompositeElements(new HashSet<>(nftInfoIds));
+        if (CollectionUtils.isEmpty(compositeElements)) {
+            throw new BizException("element nft info id not exits : " + nftInfoIds);
+        }
         BigDecimal sumScore = compositeElements.stream().map(NftCompositeElement::getScore).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         //插入新的 nftInfo、卡牌
