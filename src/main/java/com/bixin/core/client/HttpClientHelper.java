@@ -28,6 +28,10 @@ public class HttpClientHelper {
         return getPostResp(starConfig.getNft().getCompositeUrl(), param);
     }
 
+    public MutableTriple<ResponseEntity<String>, String, HttpEntity<String>> getCreateImgRespV2(String param) {
+        return getPostResp(starConfig.getNft().getCompositeUrlV2(), param);
+    }
+
     private <T> MutableTriple<ResponseEntity<String>, String, HttpEntity<T>> getPostResp(String requestUrl, T body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

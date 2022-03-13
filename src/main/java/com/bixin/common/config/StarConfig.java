@@ -87,7 +87,7 @@ public class StarConfig {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Nft{
+    public static class Nft {
         private String websocketHost;
         private String websocketPort;
         private String market;
@@ -101,6 +101,7 @@ public class StarConfig {
         private String imageGroupApi;
         private BigDecimal compositeFee;
         private String compositeUrl;
+        private String compositeUrlV2;
     }
 
     @Data

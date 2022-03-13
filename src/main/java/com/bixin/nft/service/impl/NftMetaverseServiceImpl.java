@@ -18,6 +18,7 @@ import com.bixin.nft.bean.DO.NftGroupDo;
 import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.bo.CompositeCardBean;
 import com.bixin.nft.bean.bo.CreateCompositeCardBean;
+import com.bixin.nft.bean.bo.CreateCompositeCardBeanV2;
 import com.bixin.nft.bean.vo.NftSelfResourceVo;
 import com.bixin.nft.common.enums.CardElementType;
 import com.bixin.nft.common.enums.CardState;
@@ -113,13 +114,19 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
     public Map<String, Object> compositeCardV2(CompositeCardBean bean) {
         // TODO: 2022/1/12  debug
         log.info("nftMetaverse create nft param: {}", bean);
-        long eleGroupId = bean.getGroupId();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(eleGroupId).build());
+        List<Long> nftInfoIds = bean.getElementList().stream().map(CompositeCardBean.CustomCardElement::getId).collect(Collectors.toList());
+        List<NftInfoDo> infoDos = nftInfoMapper.selectByIds(nftInfoIds);
+        if (CollectionUtils.isEmpty(infoDos)) {
+            throw new BizException("element nft info id not exits : " + nftInfoIds);
+        }
+
+        Optional<NftInfoDo> maxInfoDo = infoDos.stream().filter(p -> NftType.COMPOSITE_CARD.getType().equals(p.getType())).max(Comparator.comparing(NftInfoDo::getGroupId));
+        Long maxGroupId = maxInfoDo.get().getGroupId();
+        NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(maxGroupId).build());
+
         //name编号递增
         List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(nftGroupDo.getId()).build());
-        Optional<NftInfoDo> maxNameInfo = list.stream()
-                .filter(p -> NftType.COMPOSITE_CARD.getType().equals(p.getType()))
-                .max(Comparator.comparing(NftInfoDo::getId));
+        Optional<NftInfoDo> maxNameInfo = list.stream().filter(p -> NftType.COMPOSITE_CARD.getType().equals(p.getType())).max(Comparator.comparing(NftInfoDo::getId));
         String[] nameArray = maxNameInfo.get().getName().split("#");
         String newName = nameArray[0].trim();
         if (nameArray.length == 2) {
@@ -128,14 +135,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             newName += " # 1";
         }
 
-        List<Long> elementNftIds = bean.getElementList().stream()
-                .map(CompositeCardBean.CustomCardElement::getId)
-                .collect(Collectors.toList());
-        List<NftCompositeElement> elementList = getCompositeElements(new HashSet<>(elementNftIds));
-
-        BigDecimal sumScore = elementList.stream()
-                .map(NftCompositeElement::getScore)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<NftCompositeElement> compositeElements = getCompositeElements(new HashSet<>(nftInfoIds));
+        BigDecimal sumScore = compositeElements.stream().map(NftCompositeElement::getScore).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         //插入新的 nftInfo、卡牌
         Long currentTime = LocalDateTimeUtil.getMilliByTime(LocalDateTime.now());
@@ -155,8 +156,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .updateTime(currentTime)
                 .build();
         // TODO: 2022/1/12  debug
-        log.info("nftMetaverse new nft info: {}", newNftInfo);
         nftInfoService.insert(newNftInfo);
+        log.info("nftMetaverse new nft info: {}", newNftInfo);
 
         NftInfoDo newInsertNftInfo = nftInfoService.selectByObject(NftInfoDo.builder()
                 .groupId(nftGroupDo.getId())
@@ -167,6 +168,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .createTime(currentTime)
                 .updateTime(currentTime)
                 .build());
+
         NftCompositeCard newNftCompositeCard = NftCompositeCard.of(bean.getElementList());
         newNftCompositeCard.setInfoId(newInsertNftInfo.getId());
         newNftCompositeCard.setOccupation(bean.getOccupation());
@@ -177,8 +179,8 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         newNftCompositeCard.setCreateTime(currentTime);
         newNftCompositeCard.setUpdateTime(currentTime);
         // TODO: 2022/1/12  debug
-        log.info("nftMetaverse new nft card info: {}", newNftCompositeCard);
         compositeCardMapper.insert(newNftCompositeCard);
+        log.info("nftMetaverse new nft card info: {}", newNftCompositeCard);
 
         //元素排序 key=order,value=element nftId
         Map<Long, Long> orderMap = new TreeMap<>();
@@ -187,36 +189,29 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             orderMap.put(maskOrder, p.getId());
         });
 
-//        elementNftIds
-        List<NftInfoDo> infoDos = nftInfoMapper.selectByIds(elementNftIds);
-        if (CollectionUtils.isEmpty(infoDos)) {
-            throw new BizException("element nft info id not exits : " + elementNftIds);
-        }
-        Map<Long, List<NftInfoDo>> nftInfoGroup = infoDos.stream()
-                .collect(Collectors.groupingBy(NftInfoDo::getId));
-        Map<Long, List<NftCompositeElement>> cardGroupMap = elementList.stream()
-                .collect(Collectors.groupingBy(NftCompositeElement::getInfoId));
+        Map<Long, List<NftInfoDo>> nftInfoGroup = infoDos.stream().collect(Collectors.groupingBy(NftInfoDo::getId));
+        Map<Long, List<NftCompositeElement>> cardGroupMap = compositeElements.stream().collect(Collectors.groupingBy(NftCompositeElement::getInfoId));
 
-        Map<Integer, CreateCompositeCardBean.Layer> layerMap = new TreeMap<>();
         AtomicInteger count = new AtomicInteger(0);
+        Map<Integer, CreateCompositeCardBeanV2.Layer> layerMap = new TreeMap<>();
         orderMap.forEach((key, value) -> {
-            List<NftCompositeElement> nftElements = cardGroupMap.get(value);
+            List<NftCompositeElement> _compositeElements = cardGroupMap.get(value);
             List<NftInfoDo> infoList = nftInfoGroup.get(value);
-            if (CollectionUtils.isEmpty(nftElements) || CollectionUtils.isEmpty(infoList)) {
-                log.error("nftMetaverse get nftElements is null {}, {}, {}",
-                        value, cardGroupMap, nftInfoGroup);
+            if (CollectionUtils.isEmpty(_compositeElements) || CollectionUtils.isEmpty(infoList)) {
+                log.error("nftMetaverse get _compositeElements is null {}, {}, {}", value, cardGroupMap, nftInfoGroup);
                 return;
             }
-            NftCompositeElement compositeElement = nftElements.get(0);
+            NftCompositeElement compositeElement = _compositeElements.get(0);
             NftInfoDo info = infoList.get(0);
-            layerMap.put(count.getAndIncrement(), CreateCompositeCardBean.Layer.builder()
-                    .nft_id(compositeElement.getInfoId())
+
+            layerMap.put(count.getAndIncrement(), CreateCompositeCardBeanV2.Layer.builder()
+                    .element_group_id(info.getGroupId())
                     .name(StringUtils.substringBefore(info.getName(), "##").trim())
                     .property(CardElementType.of(compositeElement.getType()).getDesc())
                     .score(compositeElement.getScore())
                     .build());
         });
-        CreateCompositeCardBean createCompositeCardParam = CreateCompositeCardBean.builder()
+        CreateCompositeCardBeanV2 createCompositeCardParam = CreateCompositeCardBeanV2.builder()
                 .group_id(nftGroupDo.getId())
                 .group_name(nftGroupDo.getName())
                 .sex(bean.getSex())
@@ -232,30 +227,23 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         log.info("nftMetaverse create nft image param: {}", createCompositeCardParam);
 
         String paramValue = JacksonUtil.toJson(createCompositeCardParam);
-        MutableTriple<ResponseEntity<String>, String, HttpEntity<String>> triple = httpClientHelper.getCreateImgResp(paramValue);
+        MutableTriple<ResponseEntity<String>, String, HttpEntity<String>> triple = httpClientHelper.getCreateImgRespV2(paramValue);
         ResponseEntity<String> resp = triple.getLeft();
         String url = triple.getMiddle();
-//        HttpEntity<String> httpEntity = triple.getRight();
         String imageUrl = "";
         boolean hasResult = false;
         if (resp.getStatusCode() == HttpStatus.OK) {
             Map<String, String> map = JacksonUtil.readValue(resp.getBody(), Map.class);
             if ("success".equalsIgnoreCase(map.get("status"))) {
+                nftInfoService.update(NftInfoDo.builder().id(newInsertNftInfo.getId()).imageLink(imageUrl).build());
                 imageUrl = map.get("url");
-                nftInfoService.update(NftInfoDo.builder().
-                        id(newInsertNftInfo.getId())
-                        .imageLink(imageUrl).build());
                 hasResult = true;
             }
         }
         if (!hasResult) {
-            throw new BizException("create nft img is failed, resp: "
-                    + resp + "， param: " + paramValue + ", url: " + url);
+            throw new BizException("create nft img is failed, resp: " + resp + "， param: " + paramValue + ", url: " + url);
         }
-        Map<String, Object> result = Map.of("nftInfoId", newNftInfo.getId(),
-                "image", imageUrl,
-                "name", newName,
-                "description", nftGroupDo.getEnDescription());
+        Map<String, Object> result = Map.of("nftInfoId", newNftInfo.getId(), "image", imageUrl, "name", newName, "description", nftGroupDo.getEnDescription());
         log.info("nftMetaverse create nft image success {}", JacksonUtil.toJson(result));
         return result;
     }

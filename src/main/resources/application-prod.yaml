@@ -60,6 +60,7 @@ ido:
       image-group-api: "https://kikoswap.com/v1/nft/image/group/"
       composite-fee: 29
       composite-url: "http://10.103.81.254:8080/create_nft/"
+      composite-url-v2: "http://10.103.81.254:8080/create_nftv2/"
     mining:
       nft-mining-day-reward: 2765.0000016
       nft-mining-block-reward: 0.192013889
