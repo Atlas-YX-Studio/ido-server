@@ -256,7 +256,7 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             NftInfoDo selectNftInfoDo = new NftInfoDo();
             selectNftInfoDo.setGroupId(cardGroupDo.getId());
             selectNftInfoDo.setCreated(false);
-            selectNftInfoDo.setState("");//NftInfoState.SUCCESS.getDesc());
+            selectNftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
             // 取出该组下所有待铸造NFT
             List<NftInfoDo> nftInfoDos = nftInfoMapper.selectByPrimaryKeySelectiveList(selectNftInfoDo);
             if (CollectionUtils.isEmpty(nftInfoDos)) {
