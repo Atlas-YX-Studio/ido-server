@@ -305,9 +305,11 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             List<TokenDto> supportTokenList = JSON.parseObject(elementGroupDo.getSupportToken(),
                     new TypeReference<>() {});
             supportTokenList.forEach(tokenDto -> {
-                if (!nftContractBiz.initMarket(elementGroupDo, tokenDto.getAddress())) {
-                    log.error("createCompositeNFT NFT {} 市场初始化失败, 设置币种:{}", elementGroupDo.getName(), tokenDto.getAddress());
-                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                if (null != elementGroupDo.getBoxToken() && "".equals(elementGroupDo.getBoxToken())) {
+                    if (!nftContractBiz.initMarket(elementGroupDo, tokenDto.getAddress())) {
+                        log.error("createCompositeNFT NFT {} 市场初始化失败, 设置币种:{}", elementGroupDo.getName(), tokenDto.getAddress());
+                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                    }
                 }
             });
             elementGroupDo.setStatus(NftGroupStatus.OFFERING.name());
@@ -318,9 +320,11 @@ public class NftCompositeCardServiceImpl extends ServiceImpl<NftCompositeCardMap
             supportTokenList = JSON.parseObject(cardGroupDo.getSupportToken(),
                     new TypeReference<>() {});
             supportTokenList.forEach(tokenDto -> {
-                if (!nftContractBiz.initMarket(cardGroupDo, tokenDto.getAddress())) {
-                    log.error("createCompositeNFT NFT {} 市场初始化失败, 设置币种:{}", cardGroupDo.getName(), tokenDto.getAddress());
-                    throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                if (null != cardGroupDo.getBoxToken() && "".equals(cardGroupDo.getBoxToken())) {
+                    if (!nftContractBiz.initMarket(cardGroupDo, tokenDto.getAddress())) {
+                        log.error("createCompositeNFT NFT {} 市场初始化失败, 设置币种:{}", cardGroupDo.getName(), tokenDto.getAddress());
+                        throw new IdoException(IdoErrorCode.CONTRACT_CALL_FAILURE);
+                    }
                 }
             });
             if (!nftContractBiz.transferBox(cardGroupDo)) {
