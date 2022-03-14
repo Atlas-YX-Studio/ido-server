@@ -122,7 +122,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
         Optional<NftInfoDo> maxInfoDo = infoDos.stream().filter(p -> NftType.COMPOSITE_ELEMENT.getType().equals(p.getType())).max(Comparator.comparing(NftInfoDo::getGroupId));
         Long maxGroupId = maxInfoDo.get().getGroupId();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(maxGroupId).build());
+        NftGroupDo nftGroupDo = nftGroupService.selectByObjectV2(NftGroupDo.builder().elementId(maxGroupId).build());
 
         //name编号递增
         List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(nftGroupDo.getId()).build());
@@ -260,7 +260,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         // TODO: 2022/1/12  debug
         log.info("nftMetaverse create nft param: {}", bean);
         long eleGroupId = bean.getGroupId();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(NftGroupDo.builder().elementId(eleGroupId).build());
+        NftGroupDo nftGroupDo = nftGroupService.selectByObjectV2(NftGroupDo.builder().elementId(eleGroupId).build());
         //name编号递增
         List<NftInfoDo> list = nftInfoService.listByObject(NftInfoDo.builder().groupId(nftGroupDo.getId()).build());
         Optional<NftInfoDo> maxNameInfo = list.stream()
