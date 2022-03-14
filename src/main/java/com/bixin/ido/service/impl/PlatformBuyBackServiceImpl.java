@@ -84,10 +84,9 @@ public class PlatformBuyBackServiceImpl implements IPlatformBuyBackService {
 
             if (resp.getStatusCode() == HttpStatus.OK) {
                 List<JSONArray> values = StarCoinJsonUtil.parseRpcResult(resp);
-                if (CollectionUtils.isEmpty(values)) {
-                    log.error("getChainBuyBackList result is empty {}, {}, {}",
-                            JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
-                }
+                //if (CollectionUtils.isEmpty(values)) {
+                //    log.error("getChainBuyBackList result is empty {}, {}, {}", JSON.toJSONString(resp), url, JSON.toJSONString(httpEntity));
+                //}
                 values.forEach(rs -> {
                     Object[] stcResult = rs.toArray();
                     if ("items".equalsIgnoreCase(String.valueOf(stcResult[0]))) {

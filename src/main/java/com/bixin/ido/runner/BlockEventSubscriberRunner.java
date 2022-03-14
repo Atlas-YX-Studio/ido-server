@@ -116,7 +116,7 @@ public class BlockEventSubscriberRunner implements ApplicationRunner {
                     // 新块产生事件
                     nftMiningUsersService.computeReward(Long.valueOf(eventResult.getBlockNumber()));
                 } else {
-                    log.error("BlockEventSubscriberRunner blockEventDo 为空");
+                    //log.error("BlockEventSubscriberRunner blockEventDo 为空");
                 }
             });
 
