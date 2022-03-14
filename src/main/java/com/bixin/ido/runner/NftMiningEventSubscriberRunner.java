@@ -163,7 +163,7 @@ public class NftMiningEventSubscriberRunner implements ApplicationRunner {
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
         NftGroupDo nftGroupParam = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParam);
+        NftGroupDo nftGroupDo = nftGroupService.selectMulByObject(nftGroupParam).get(0);
         if (nftGroupDo == null) {
             log.error("NftMiningEventSubscriberRunner group 不存在，meta = {}, bogy = {}", meta, body);
             return;

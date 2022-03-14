@@ -662,7 +662,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParm);
+        NftGroupDo nftGroupDo = nftGroupService.selectMulByObject(nftGroupParm).get(0);
         NftInfoDo nftInfoDo = null;
         if (!ObjectUtils.isEmpty(nftGroupDo)) {
             NftInfoDo NftInfoParm = NftInfoDo.builder().groupId(nftGroupDo.getId()).nftId(nftEventDo.getNftId()).build();
@@ -1087,8 +1087,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
      */
     private NftGroupDo saveBoxEvent(NftEventDo nftEventDo, String boxTokenStr) {
         NftGroupDo nftGroupParam = NftGroupDo.builder().boxToken(boxTokenStr).build();
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(nftGroupParam);
-        NftInfoDo nftInfoDo = null;
+        NftGroupDo nftGroupDo = nftGroupService.selectMulByObject(nftGroupParam).get(0);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             log.error("NftEventSubscriberRunner group 不存在，boxToken = {}", boxTokenStr);
         }
