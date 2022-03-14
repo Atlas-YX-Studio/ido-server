@@ -224,7 +224,7 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
         String meta = getMeta(typeTag);
         String body = getBody(typeTag);
         NftGroupDo nftGroupParm = NftGroupDo.builder().nftMeta(meta).nftBody(body).build();
-        log.error("BoxEventSubscriberRunner group info，meta = {}, bogy = {}, {}", meta, body, eventType);
+        log.info("BoxEventSubscriberRunner group info，meta = {}, bogy = {}, {}", meta, body, eventType);
 
         NftGroupDo nftGroupDo = nftGroupService.selectMulByObject(nftGroupParm).get(0);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
