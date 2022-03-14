@@ -208,14 +208,18 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             NftInfoDo info = infoList.get(0);
 
             layerMap.put(count.getAndIncrement(), CreateCompositeCardBeanV2.Layer.builder()
-                    .element_group_id(info.getGroupId())
+                    //todo
+                    //.element_group_id(info.getGroupId())
+                    .element_group_id(10018L)
                     .name(StringUtils.substringBefore(info.getName(), "##").trim())
                     .property(CardElementType.of(compositeElement.getType()).getDesc())
                     .score(compositeElement.getScore())
                     .build());
         });
         CreateCompositeCardBeanV2 createCompositeCardParam = CreateCompositeCardBeanV2.builder()
-                .group_id(nftGroupDo.getId())
+                //todo
+                //.group_id(nftGroupDo.getId())
+                .group_id(10012L)
                 .group_name(nftGroupDo.getName())
                 .sex(bean.getSex())
                 .name(nftGroupDo.getId()
