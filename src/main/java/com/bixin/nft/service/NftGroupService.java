@@ -47,6 +47,8 @@ public interface NftGroupService {
      */
     NftGroupDo selectByObject(NftGroupDo model);
 
+    List<NftGroupDo> selectMulByObject(NftGroupDo model);
+
     /**
      * @explain: 查询列表
      * @param: model  对象参数

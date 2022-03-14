@@ -72,6 +72,11 @@ public class NftGroupServiceImpl implements NftGroupService {
         return nftGroupMapper.selectByPrimaryKeySelective(model);
     }
 
+    @Override
+    public List<NftGroupDo> selectMulByObject(NftGroupDo model) {
+        return nftGroupMapper.selectByPrimaryKeySelectiveList(model);
+    }
+
     /**
      * @explain: 查询列表
      * @param: model  对象参数
