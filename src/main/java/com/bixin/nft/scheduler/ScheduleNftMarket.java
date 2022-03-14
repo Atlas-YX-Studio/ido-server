@@ -264,55 +264,59 @@ public class ScheduleNftMarket {
             List<NFTBoxDto> nftList = entry.getValue();
             String payToken = groupDo.getPayToken();
             groupDo.setPayToken(null);
-            NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
-            if (Objects.isNull(nftGroupDo)) {
-                log.error("ScheduleNftMarket buildNft and nftGroupDo is null");
-                return;
-            }
-            // disabled的不上架
-            if (!nftGroupDo.getEnabled()) {
-                return;
-            }
-            String nftType = NftBoxType.NFT.getDesc();
-            if (NftBoxType.COMPOSITE_CARD.getDesc().equalsIgnoreCase(nftGroupDo.getType())) {
-                nftType = NftBoxType.COMPOSITE_CARD.getDesc();
-            } else if (NftBoxType.COMPOSITE_ELEMENT.getDesc().equalsIgnoreCase(nftGroupDo.getType())) {
-                nftType = NftBoxType.COMPOSITE_ELEMENT.getDesc();
-            }
-            String finalNftType = nftType;
+            List<NftGroupDo> nftGroupDos = nftGroupService.selectMulByObject(groupDo);
+            for(int i = 0; i < nftGroupDos.size(); i++) {
+                //NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
+                NftGroupDo nftGroupDo = nftGroupDos.get(i);
+                //if (Objects.isNull(nftGroupDo)) {
+                //    log.error("ScheduleNftMarket buildNft and nftGroupDo is null");
+                //    return;
+                //}
+                // disabled的不上架
+                if (!nftGroupDo.getEnabled()) {
+                    continue;
+                }
+                String nftType = NftBoxType.NFT.getDesc();
+                if (NftBoxType.COMPOSITE_CARD.getDesc().equalsIgnoreCase(nftGroupDo.getType())) {
+                    nftType = NftBoxType.COMPOSITE_CARD.getDesc();
+                } else if (NftBoxType.COMPOSITE_ELEMENT.getDesc().equalsIgnoreCase(nftGroupDo.getType())) {
+                    nftType = NftBoxType.COMPOSITE_ELEMENT.getDesc();
+                }
+                String finalNftType = nftType;
 
-            nftList.forEach(p -> p.getItems().forEach(so -> {
-                NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
-                NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
-                if (Objects.isNull(nftInfo)) {
-                    log.error("ScheduleNftMarket buildNft and nftInfo is null");
-                    return;
-                }
-                long sellingTime = System.currentTimeMillis();
-                List<NftEventDo> nftEventDos = nftEventService.getALlByPage(nftInfo.getId(), NftEventType.NFT_SELL_EVENT.getDesc(), 1, 0);
-                if (!CollectionUtils.isEmpty(nftEventDos)) {
-                    sellingTime = nftEventDos.get(0).getCreateTime();
-                }
-                NftMarketDo nft = NftMarketDo.builder()
-                        .chainId(so.getId())
-                        .nftBoxId(nftInfo.getId())
-                        .groupId(nftGroupDo.getId())
-                        .type(finalNftType)
-                        .sellType(so.getType())
-                        .name(nftGroupDo.getName())
-                        .nftName(nftInfo.getName())
-                        .owner(so.getSeller())
-                        .payToken(payToken)
-                        .address(starConfig.getNft().getMarket())
-                        .sellPrice(so.getSelling_price())
-                        .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
-                        .icon(nftInfo.getImageLink())
-                        .endTime(so.getEnd_time())
-                        .createTime(sellingTime)
-                        .updateTime(currentTime)
-                        .build();
-                list.add(nft);
-            }));
+                nftList.forEach(p -> p.getItems().forEach(so -> {
+                    NftInfoDo nftParam = NftInfoDo.builder().nftId(so.getId()).groupId(nftGroupDo.getId()).build();
+                    NftInfoDo nftInfo = nftInfoService.selectByObject(nftParam);
+                    if (Objects.isNull(nftInfo)) {
+                        log.error("ScheduleNftMarket buildNft and nftInfo is null");
+                        return;
+                    }
+                    long sellingTime = System.currentTimeMillis();
+                    List<NftEventDo> nftEventDos = nftEventService.getALlByPage(nftInfo.getId(), NftEventType.NFT_SELL_EVENT.getDesc(), 1, 0);
+                    if (!CollectionUtils.isEmpty(nftEventDos)) {
+                        sellingTime = nftEventDos.get(0).getCreateTime();
+                    }
+                    NftMarketDo nft = NftMarketDo.builder()
+                            .chainId(so.getId())
+                            .nftBoxId(nftInfo.getId())
+                            .groupId(nftGroupDo.getId())
+                            .type(finalNftType)
+                            .sellType(so.getType())
+                            .name(nftGroupDo.getName())
+                            .nftName(nftInfo.getName())
+                            .owner(so.getSeller())
+                            .payToken(payToken)
+                            .address(starConfig.getNft().getMarket())
+                            .sellPrice(so.getSelling_price())
+                            .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
+                            .icon(nftInfo.getImageLink())
+                            .endTime(so.getEnd_time())
+                            .createTime(sellingTime)
+                            .updateTime(currentTime)
+                            .build();
+                    list.add(nft);
+                }));
+            }
         });
     }
 
