@@ -72,7 +72,7 @@ public class NftMetaverseController {
                     requestId,
                     lockExpiredTime,
                     lockNextExpiredTime,
-                    () -> nftMetareverseService.compositeCard(bean)
+                    () -> nftMetareverseService.compositeCardV2(bean)
             );
             return R.success(map);
         } catch (BizException ex) {
@@ -81,7 +81,6 @@ public class NftMetaverseController {
             log.error("create nft image exception", e);
             return R.failed("create nft image exception");
         }
-
     }
 
     @PostMapping("/compositeCardV2")
