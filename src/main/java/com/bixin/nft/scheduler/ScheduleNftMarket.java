@@ -326,41 +326,46 @@ public class ScheduleNftMarket {
             List<NFTBoxDto> boxList = entry.getValue();
             String payToken = groupDo.getPayToken();
             groupDo.setPayToken(null);
-            NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
-            if (Objects.isNull(nftGroupDo)) {
-                log.error("ScheduleNftMarket buildBox and nftGroupDo is null");
-                return;
-            }
-            // disabled的不上架
-            if (!nftGroupDo.getEnabled()) {
-                return;
-            }
-            boxList.forEach(p -> p.getItems().forEach(so -> {
-                long sellingTime = System.currentTimeMillis();
-                List<NftEventDo> nftEventDos = nftEventService.getALlByBoxId(so.getId(), NftEventType.BOX_SELL_EVENT.getDesc(), 1, 0);
-                if (!CollectionUtils.isEmpty(nftEventDos)) {
-                    sellingTime = nftEventDos.get(0).getCreateTime();
+            List<NftGroupDo> nftGroupDos = nftGroupService.selectMulByObject(groupDo);
+            for(int i = 0; i < nftGroupDos.size(); i++) {
+                //NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
+                NftGroupDo nftGroupDo = nftGroupDos.get(i);
+                //NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
+                //if (Objects.isNull(nftGroupDo)) {
+                //    log.error("ScheduleNftMarket buildBox and nftGroupDo is null");
+                //    return;
+                //}
+                // disabled的不上架
+                if (!nftGroupDo.getEnabled()) {
+                    return;
                 }
-                NftMarketDo box = NftMarketDo.builder()
-                        .chainId(so.getId())
-                        .nftBoxId(0L)
-                        .groupId(nftGroupDo.getId())
-                        .type(NftBoxType.BOX.getDesc())
-                        .sellType(so.getType())
-                        .name(nftGroupDo.getName())
-                        .owner(so.getSeller())
+                boxList.forEach(p -> p.getItems().forEach(so -> {
+                    long sellingTime = System.currentTimeMillis();
+                    List<NftEventDo> nftEventDos = nftEventService.getALlByBoxId(so.getId(), NftEventType.BOX_SELL_EVENT.getDesc(), 1, 0);
+                    if (!CollectionUtils.isEmpty(nftEventDos)) {
+                        sellingTime = nftEventDos.get(0).getCreateTime();
+                    }
+                    NftMarketDo box = NftMarketDo.builder()
+                            .chainId(so.getId())
+                            .nftBoxId(0L)
+                            .groupId(nftGroupDo.getId())
+                            .type(NftBoxType.BOX.getDesc())
+                            .sellType(so.getType())
+                            .name(nftGroupDo.getName())
+                            .owner(so.getSeller())
 //                        .nftName(null)
-                        .payToken(payToken)
-                        .address(starConfig.getNft().getMarket())
-                        .sellPrice(so.getSelling_price())
-                        .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
-                        .icon(nftGroupDo.getBoxTokenLogo())
-                        .endTime(so.getEnd_time())
-                        .createTime(sellingTime)
-                        .updateTime(currentTime)
-                        .build();
-                list.add(box);
-            }));
+                            .payToken(payToken)
+                            .address(starConfig.getNft().getMarket())
+                            .sellPrice(so.getSelling_price())
+                            .offerPrice(BigDecimal.valueOf(so.getBid_tokens().getValue()))
+                            .icon(nftGroupDo.getBoxTokenLogo())
+                            .endTime(so.getEnd_time())
+                            .createTime(sellingTime)
+                            .updateTime(currentTime)
+                            .build();
+                    list.add(box);
+                }));
+            }
         });
     }
 

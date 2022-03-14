@@ -289,7 +289,7 @@ public class NftInfoController {
     public R boxInfo(@RequestParam("boxToken") String boxToken) {
         NftGroupDo selectNftGroupDo = new NftGroupDo();
         selectNftGroupDo.setBoxToken(boxToken);
-        NftGroupDo nftGroupDo = nftGroupService.selectByObject(selectNftGroupDo);
+        NftGroupDo nftGroupDo = nftGroupService.selectByObjectV2(selectNftGroupDo);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("boxToken不存在");
         }
