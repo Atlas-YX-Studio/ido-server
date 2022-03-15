@@ -19,6 +19,7 @@ import com.bixin.nft.bean.DO.NftInfoDo;
 import com.bixin.nft.bean.bo.CompositeCardBean;
 import com.bixin.nft.bean.bo.CreateCompositeCardBean;
 import com.bixin.nft.bean.bo.CreateCompositeCardBeanV2;
+import com.bixin.nft.bean.vo.NftMetaBodyGroupVo;
 import com.bixin.nft.bean.vo.NftSelfResourceVo;
 import com.bixin.nft.common.enums.CardElementType;
 import com.bixin.nft.common.enums.CardState;
@@ -445,7 +446,17 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             if (CollectionUtils.isEmpty(nftCardGroupList)) {
                 log.error("nftMetaverse get nftCardGroupList is empty");
             }
-            buildCardResource(userAddress, nftCardGroupList, cardList);
+
+            Map<String, NftMetaBodyGroupVo> metaBodyGroupVoMap = new HashMap<>(nftGroups.size());
+            nftGroups.forEach(nftGroup -> {
+                NftMetaBodyGroupVo metaBodyGroupVo = new NftMetaBodyGroupVo(nftGroup.getNftMeta(), nftGroup.getNftBody(), nftGroup.getPayToken(), nftGroup.getEnDescription());
+                if (null == metaBodyGroupVoMap.get(metaBodyGroupVo.key())) {
+                    metaBodyGroupVoMap.put(metaBodyGroupVo.key(), metaBodyGroupVo);
+                }
+                metaBodyGroupVoMap.get(metaBodyGroupVo.key()).groupIds.add(nftGroup.getId());
+                metaBodyGroupVoMap.get(metaBodyGroupVo.key()).elementIds.add(nftGroup.getElementId());
+            });
+            buildCardResourceV2(userAddress, metaBodyGroupVoMap.values().stream().collect(Collectors.toList()), cardList);
         }
         NftSelfResourceVo resourceVo = NftSelfResourceVo.builder()
                 .cardList(cardList)
@@ -596,6 +607,64 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         }
     }
 
+    public void buildCardResourceV2(String userAddress,
+                                    List<NftMetaBodyGroupVo> metaBodyGroupVoMap,
+                                    List<NftSelfResourceVo.CardVo> cardList) {
+        for (NftMetaBodyGroupVo metaBodyGroupVo : metaBodyGroupVoMap) {
+            List<NftInfoDo> nftInfoDos = getNftListFromChainV2("card", userAddress, metaBodyGroupVo);
+            List<Long> cardInfoIds = nftInfoDos.stream().map(NftInfoDo::getId).collect(Collectors.toList());
+            if (CollectionUtils.isEmpty(cardInfoIds)) {
+                log.error("nftMetaverse get cardInfoIds card is empty {}, {}", userAddress, metaBodyGroupVo);
+                continue;
+            }
+
+            QueryWrapper<NftCompositeCard> wrapper = new QueryWrapper<>();
+            wrapper.lambda().in(NftCompositeCard::getInfoId, cardInfoIds);
+            List<NftCompositeCard> compositeCards = compositeCardMapper.selectList(wrapper);
+            if (CollectionUtils.isEmpty(compositeCards)) {
+                log.error("nftMetaverse get compositeCards is empty {}", cardInfoIds);
+                continue;
+            }
+            Map<Long, List<NftInfoDo>> infoMap = nftInfoDos.stream()
+                    .collect(Collectors.groupingBy(NftInfoDo::getId));
+            compositeCards.forEach(p -> {
+                List<NftInfoDo> infoDos = infoMap.get(p.getInfoId());
+                if (CollectionUtils.isEmpty(infoDos)) {
+                    log.error("nftMetaverse get infoMap card is empty {}", p);
+                    return;
+                }
+                List<Long> eleNftIds = NftCompositeCard.getElementIds(p);
+                List<NftCompositeElement> elements = getCompositeElements(new HashSet<>(eleNftIds));
+                if (CollectionUtils.isEmpty(elements)) {
+                    log.error("nftMetaverse get card elements  is empty {}", new HashSet<>(eleNftIds));
+                    return;
+                }
+                BigDecimal sumScore = elements.stream()
+                        .map(NftCompositeElement::getScore)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                NftInfoDo infoDo = infoDos.get(0);
+                NftSelfResourceVo.CardVo cardVo = NftSelfResourceVo.CardVo.builder()
+                        .original(p.getOriginal())
+                        .customName(p.getCustomName())
+                        .occupation(p.getOccupation())
+                        .sex(p.getSex())
+                        .image(infoDo.getImageLink())
+                        .name(infoDo.getName())
+                        .description(metaBodyGroupVo.enDescription)
+                        .groupId(infoDo.getGroupId())
+                        .chainId(infoDo.getNftId())
+                        .nftId(infoDo.getId())
+                        .score(sumScore)
+                        .nftMeta(metaBodyGroupVo.meta)
+                        .nftBody(metaBodyGroupVo.body)
+                        .payToken(metaBodyGroupVo.payToken)
+                        .build();
+                cardList.add(cardVo);
+            });
+        }
+    }
+
     private List<NftInfoDo> getNftListFromChain(String nftType, String userAddress, NftGroupDo nftGroupDo) {
         MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple =
                 chainClientHelper.getNftListResp(userAddress, nftGroupDo.getNftMeta(), nftGroupDo.getNftBody());
@@ -698,6 +767,130 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                     } else {
                         Map<String, Object> groupParam = new HashMap<>();
                         groupParam.put("groupId", nftGroupDo.getId());
+                        groupParam.put("list", Arrays.asList(nftId.getValue()));
+                        List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(groupParam);
+                        if (CollectionUtils.isEmpty(eleInfos)) {
+                            log.error("nftMetaverse get eleInfos is empty");
+                            return;
+                        }
+                        NftInfoDo infoDo = eleInfos.get(0);
+                        // 以链上为准，更新当前owner
+                        if (!StringUtils.equalsIgnoreCase(userAddress, infoDo.getOwner())) {
+                            infoDo.setOwner(userAddress);
+                            nftInfoService.update(infoDo);
+                        }
+                        nftInfoDos.add(infoDo);
+                    }
+                });
+            }
+        });
+        return nftInfoDos;
+    }
+
+
+    private List<NftInfoDo> getNftListFromChainV2(String nftType, String userAddress, NftMetaBodyGroupVo metaBodyGroupVo) {
+        MutableTriple<ResponseEntity<String>, String, HttpEntity<Map<String, Object>>> triple = chainClientHelper.getNftListResp(userAddress, metaBodyGroupVo.meta, metaBodyGroupVo.body);
+        ResponseEntity<String> resp = triple.getLeft();
+        String url = triple.getMiddle();
+        HttpEntity<Map<String, Object>> httpEntity = triple.getRight();
+
+        if (resp.getStatusCode() != HttpStatus.OK) {
+            log.info("nftMetaverse getNftListFromChain 获取失败 {}, {}, {}", JSON.toJSONString(httpEntity), url, JSON.toJSONString(resp));
+            return List.of();
+        }
+        List<JSONArray> values = StarCoinJsonUtil.parseRpcResult(resp);
+        if (CollectionUtils.isEmpty(values)) {
+            return List.of();
+        }
+        List<NftInfoDo> nftInfoDos = Lists.newArrayList();
+        values.forEach(value -> {
+            Object[] stcResult = value.toArray();
+            if ("items".equalsIgnoreCase(String.valueOf(stcResult[0]))) {
+                List<JSONObject> vector = StarCoinJsonUtil.parseVectorObj(stcResult[1]);
+                vector.forEach(el -> {
+                    MutableLong nftId = new MutableLong(0);
+                    List<JSONArray> structValue = StarCoinJsonUtil.parseStructObj(el);
+                    Map<String, Long> eleIdMap = new HashMap<>();
+                    List<Long> eleChainIds = new ArrayList<>();
+                    structValue.forEach(_value -> {
+                        Object[] info = _value.toArray();
+                        if ("id".equals(String.valueOf(info[0]))) {
+                            Map<String, Object> valueMap = (Map<String, Object>) info[1];
+                            nftId.setValue(Long.valueOf((String) valueMap.get("U64")));
+                        }
+                        if (nftType.contains("card") && "type_meta".equals(String.valueOf(info[0]))) {
+                            List<JSONArray> cardElementIds = StarCoinJsonUtil.parseStructObj(info[1]);
+                            for (JSONArray idArray : cardElementIds) {
+                                if (String.valueOf(idArray.get(0)).endsWith("_id")) {
+                                    Map<String, Object> idValueMap = (Map<String, Object>) idArray.get(1);
+                                    long u64 = NumberUtils.toLong(String.valueOf(idValueMap.get("U64")), 0);
+                                    if (u64 > 0) {
+                                        eleChainIds.add(u64);
+                                    }
+                                    eleIdMap.put(String.valueOf(idArray.get(0)), u64);
+                                }
+                            }
+                        }
+                    });
+                    log.info("nftMetaverse get chain nft info:{},{},{},{},{},{}", userAddress, metaBodyGroupVo.groupIds, nftId, eleChainIds, JacksonUtil.toJson(eleIdMap));
+
+                    if (nftType.contains("card")) {
+                        if (metaBodyGroupVo.elementIds.isEmpty() || eleChainIds.isEmpty()) {
+                            log.info("nftMetaverse get elementIds,eleChainIds is empty");
+                            return;
+                        }
+                        Map<String, Object> groupParam = new HashMap<>();
+                        groupParam.put("groupIds", metaBodyGroupVo.elementIds.stream().collect(Collectors.toList()));
+                        groupParam.put("type", NftType.COMPOSITE_ELEMENT.getType());
+                        groupParam.put("list", eleChainIds);
+                        List<NftInfoDo> eleInfos = nftInfoMapper.selectByGroupIdsNftIds(groupParam);
+                        if (CollectionUtils.isEmpty(eleInfos)) {
+                            log.error("nftMetaverse get eleInfos is empty");
+                            return;
+                        }
+                        log.info("nftMetaverse get eleInfos {}", JacksonUtil.toJson(eleInfos));
+                        Map<Long, Long> eleIdmap = eleInfos.stream()
+                                .collect(Collectors.toMap(NftInfoDo::getNftId, NftInfoDo::getId));
+                        Map<String, Object> paramMap = new HashMap<>();
+                        eleIdMap.forEach((column, var) -> {
+                            Long eleNftId = eleIdmap.get(var);
+                            paramMap.put(column, Objects.nonNull(eleNftId) ? eleNftId : 0);
+                        });
+                        log.info("nftMetaverse get newCards info {}", JacksonUtil.toJson(paramMap));
+                        List<NftCompositeCard> newCards = compositeCardMapper.selectByMap(paramMap);
+                        if (CollectionUtils.isEmpty(newCards)) {
+                            log.error("nftMetaverse get newCards is empty");
+                            return;
+                        }
+                        long nftInfoId = newCards.get(newCards.size() - 1).getInfoId();
+                        NftInfoDo nftInfoDo = nftInfoService.selectById(nftInfoId);
+                        if (ObjectUtils.isEmpty(nftInfoDo)) {
+                            log.error("nftMetaverse NFTInfo不存在, metaBodyGroupVo:{}，nftId:{}", metaBodyGroupVo, nftInfoId);
+                            return;
+                        }
+                        // 以链上为准，更新当前owner
+                        boolean hasUpdate = false;
+                        if (!StringUtils.equalsIgnoreCase(userAddress, nftInfoDo.getOwner())) {
+                            nftInfoDo.setOwner(userAddress);
+                            hasUpdate = true;
+                        }
+                        if (!nftInfoDo.getCreated()
+                                || Objects.isNull(nftInfoDo.getNftId()) || nftInfoDo.getNftId() <= 0
+                                || !NftInfoState.SUCCESS.getDesc().equals(nftInfoDo.getState())) {
+                            nftInfoDo.setOwner(userAddress);
+                            nftInfoDo.setNftId(nftId.getValue());
+                            nftInfoDo.setCreated(true);
+                            nftInfoDo.setState(NftInfoState.SUCCESS.getDesc());
+                            hasUpdate = true;
+                        }
+                        if (hasUpdate) {
+                            nftInfoService.update(nftInfoDo);
+                        }
+                        nftInfoDos.add(nftInfoDo);
+                    } else {
+                        Map<String, Object> groupParam = new HashMap<>();
+                        //todo leeqiang
+                        //groupParam.put("groupId", nftGroupDo.getId());
                         groupParam.put("list", Arrays.asList(nftId.getValue()));
                         List<NftInfoDo> eleInfos = nftInfoMapper.selectByNftIds(groupParam);
                         if (CollectionUtils.isEmpty(eleInfos)) {
