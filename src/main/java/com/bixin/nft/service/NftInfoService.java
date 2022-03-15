@@ -70,7 +70,11 @@ public interface NftInfoService {
 
     List<NftInfoVo> getUnStakingNftList(String userAddress);
 
+    List<NftInfoVo> getUnStakingNftListV2(String userAddress);
+
     int selectCountBySelective(NftInfoDo model);
 
     List<NftCollectionVo> getUnSellNftList(String userAddress);
+
+    List<NftCollectionVo> getUnSellNftListV2(String userAddress);
 }

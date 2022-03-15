@@ -61,6 +61,8 @@ public interface NftInfoMapper {
 
     List<NftInfoDo> selectByGroupIdsNftIds(Map<String, Object> map);
 
+    List<NftInfoDo> selectByTypeGroupIdsNftIds(Map<String, Object> map);
+
     int selectCountBySelective(NftInfoDo model);
 
 }

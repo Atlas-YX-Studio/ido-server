@@ -843,7 +843,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                         groupParam.put("groupIds", metaBodyGroupVo.elementIds.stream().collect(Collectors.toList()));
                         groupParam.put("type", NftType.COMPOSITE_ELEMENT.getType());
                         groupParam.put("list", eleChainIds);
-                        List<NftInfoDo> eleInfos = nftInfoMapper.selectByGroupIdsNftIds(groupParam);
+                        List<NftInfoDo> eleInfos = nftInfoMapper.selectByTypeGroupIdsNftIds(groupParam);
                         if (CollectionUtils.isEmpty(eleInfos)) {
                             log.error("nftMetaverse get eleInfos is empty");
                             return;

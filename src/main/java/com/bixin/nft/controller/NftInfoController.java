@@ -361,7 +361,7 @@ public class NftInfoController {
      */
     @GetMapping("/unused/list")
     public R unusedList(@RequestParam String address) {
-        return R.success(nftInfoService.getUnStakingNftList(address));
+        return R.success(nftInfoService.getUnStakingNftListV2(address));
     }
 
     /**

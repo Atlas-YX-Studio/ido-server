@@ -74,7 +74,7 @@
       </if>
     </where>
   </select>
-  <select id="selectByGroupIdsNftIds" parameterType="map" resultMap="BaseResultMap">
+  <select id="selectByTypeGroupIdsNftIds" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from nft_info
@@ -84,6 +84,25 @@
       </if>
       <if test="groupIds != null">
         and group_id in
+        <foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="list != null">
+        and nft_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+  </select>
+  <select id="selectByGroupIdsNftIds" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from nft_info
+    <where>
+      <if test="groupIds != null">
+        group_id in
         <foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
           #{item}
         </foreach>
