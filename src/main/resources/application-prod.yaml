@@ -6,7 +6,8 @@ spring:
   datasource:
     url: jdbc:mysql://prd-starcoin.cluster-ct4tlgfmee0j.ap-southeast-1.rds.amazonaws.com/ido_server?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: admin
-    password: Z1P8q4moD9NjAZxC9CDc
+    #password: Z1P8q4moD9NjAZxC9CDc
+    password: xxxx
 
 ---
 ## redis config
