@@ -68,4 +68,10 @@ ido:
       nft-mining-address: "0xa85291039ddad8845d5097624c81c3fd"
       nft-mining-module: "NFTMining"
       nft-mining-stc-fee: 0.01
+      mining-day-reward: 288
+      mining-block-reward: 0.02
+      unit-price: 100
+      mining-address: "0xa85291039ddad8845d5097624c81c3fd"
+      mining-module: "NFTMining"
+      mining-stc-fee: 0.01
 

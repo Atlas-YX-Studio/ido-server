@@ -266,7 +266,7 @@ public class ScheduleNftMarket {
             groupDo.setPayToken(null);
             NftGroupDo nftGroupDo = nftGroupService.selectByObject(groupDo);
             if (Objects.isNull(nftGroupDo)) {
-                log.error("ScheduleNftMarket buildNft and nftGroupDo is null");
+                log.error("ScheduleNftMarket buildNft and nftGroupDo is null, {}", groupDo.toString());
                 return;
             }
             // disabled的不上架
