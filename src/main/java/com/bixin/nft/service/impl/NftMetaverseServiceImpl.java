@@ -229,9 +229,9 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
                 .layers(layerMap)
                 .build();
         // TODO: 2022/1/13
-        log.info("nftMetaverse create nft image param: {}", createCompositeCardParam);
 
         String paramValue = JacksonUtil.toJson(createCompositeCardParam);
+        log.info("why create nft image param: {}", paramValue);
         MutableTriple<ResponseEntity<String>, String, HttpEntity<String>> triple = httpClientHelper.getCreateImgResp(paramValue);
         ResponseEntity<String> resp = triple.getLeft();
         String url = triple.getMiddle();
