@@ -286,12 +286,15 @@ public class NftInfoController {
      * @return
      */
     @GetMapping("/box/info")
-    public R boxInfo(@RequestParam("boxToken") String boxToken) {
+    public R boxInfo(@RequestParam("boxToken") String boxToken, @RequestParam(value = "userAddress", defaultValue = "") String userAddress) {
         NftGroupDo selectNftGroupDo = new NftGroupDo();
         selectNftGroupDo.setBoxToken(boxToken);
         NftGroupDo nftGroupDo = nftGroupService.selectByObject(selectNftGroupDo);
         if (ObjectUtils.isEmpty(nftGroupDo)) {
             return R.failed("boxToken不存在");
+        }
+        if (!StringUtils.isEmpty(userAddress)) {
+            nftGroupDo.setOwner(userAddress);
         }
         NftGroupVo nftGroupVo = BeanCopyUtil.copyProperties(nftGroupDo, () -> {
             NftGroupVo vo = new NftGroupVo();
