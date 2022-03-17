@@ -177,6 +177,9 @@ public class NftMarketServiceImpl implements NftMarketService {
                 sortValue += " asc";
             }
         }
+        if ("etime".equalsIgnoreCase(sortRule.trim())) {
+            sortValue += ", mm.sell_type desc";
+        }
         paramMap.put("sort", sortValue);
 
         return nftMarketMapper.selectPages(paramMap);
