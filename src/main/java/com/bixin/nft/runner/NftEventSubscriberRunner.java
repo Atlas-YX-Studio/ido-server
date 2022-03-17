@@ -1076,6 +1076,7 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
             sellRecordDo.setNftBody(nftGroupDo.getNftBody());
             sellRecordDo.setIcon(nftGroupDo.getBoxTokenLogo());
             sellRecordDo.setName(nftGroupDo.getSeriesName());
+            sellRecordDo.setGroupId(nftGroupDo.getId());
         }
         tradingRecordService.insert(sellRecordDo);
     }
