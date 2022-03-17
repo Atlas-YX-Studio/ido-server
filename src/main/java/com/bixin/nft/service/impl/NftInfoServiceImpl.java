@@ -261,7 +261,8 @@ public class NftInfoServiceImpl implements NftInfoService {
                     selectNftInfoDo.setNftId(nftId.getValue());
                     NftInfoDo nftInfoDo = nftInfoService.selectByObject(selectNftInfoDo);
                     if (ObjectUtils.isEmpty(nftInfoDo)) {
-                        log.error("NFTInfo不存在, groupId:{}，nftId:{}", nftGroupDo.getId(), nftId.getValue());
+                        //todo
+                        log.error("why NFTInfo not exist, user:{} groupId:{}，nftId:{}", userAddress, nftGroupDo.getId(), nftId.getValue());
                         return;
                     }
                     // 以链上为准，更新当前owner
