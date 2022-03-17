@@ -243,7 +243,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
 
             //leeqiang
             //todo
-            log.info("why request result {}", map);
+            log.info("why info id:{} request result:{}", newInsertNftInfo.getId(), map);
             map.put("status", "success");
             map.put("url","https://imagedelivery.net/3mRLd_IbBrrQFSP57PNsVw/1131c2fa-f996-4fe4-49fd-01c37c088d00/public");
             //todo
