@@ -240,6 +240,13 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
         boolean hasResult = false;
         if (resp.getStatusCode() == HttpStatus.OK) {
             Map<String, String> map = JacksonUtil.readValue(resp.getBody(), Map.class);
+
+            //leeqiang
+            //todo
+            map.put("status", "success");
+            map.put("url","https://imagedelivery.net/3mRLd_IbBrrQFSP57PNsVw/1131c2fa-f996-4fe4-49fd-01c37c088d00/public");
+            //todo
+
             if ("success".equalsIgnoreCase(map.get("status"))) {
                 imageUrl = map.get("url");
                 nftInfoService.update(NftInfoDo.builder().
@@ -249,8 +256,7 @@ public class NftMetaverseServiceImpl implements NftMetareverseService {
             }
         }
         if (!hasResult) {
-            throw new BizException("create nft img is failed, resp: "
-                    + resp + "， param: " + paramValue + ", url: " + url);
+            throw new BizException("create nft img is failed, resp: " + resp + "， param: " + paramValue + ", url: " + url);
         }
         Map<String, Object> result = Map.of("nftInfoId", newNftInfo.getId(),
                 "image", imageUrl,
