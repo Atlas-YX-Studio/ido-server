@@ -13,30 +13,28 @@ import java.io.IOException;
 /**
  * @Author renjian
  * @Date 2022/3/21 15:46
- * 跨域filter，允许Domain:https://kikoverse.com  允许所有header
+ * 跨域filter，允许所有域  允许所有header
  */
 @Slf4j
 @WebFilter("/*")
 @Component
 public class CrosFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String allowDomain = "https://kikoverse.com";
+
         HttpServletResponse response = (HttpServletResponse)servletResponse;
-        log.info("domaincontanter:" + allowDomain);
-        String originHeader = ((HttpServletRequest) servletRequest).getHeader("Origin");
-        if (allowDomain.equals(originHeader)) {
-            setAccessControl(response, originHeader);
-        }
+
+        setAccessControl(response);
 
         if(((HttpServletRequest)servletRequest).getMethod().equals("OPTIONS")) {
             response.setStatus(200);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
+//        filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    public void setAccessControl(HttpServletResponse res,String origin) {
-        res.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+    public void setAccessControl(HttpServletResponse res) {
+        res.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         res.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET, PUT, OPTIONS, DELETE, PATCH");
         res.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
         res.addHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
