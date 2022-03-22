@@ -506,6 +506,62 @@ public class NftContractBiz {
         nftKikoCatDo.setInfoId(nftInfoDo.getId());
         nftKikoCatDo = nftKikoCatMapper.selectByPrimaryKeySelective(nftKikoCatDo);
 
+
+        log.error("{}", "todo");
+        log.error("{}", nftInfoDo.getName());
+        log.error("{}", imageInfoApi + nftInfoDo.getId());
+        log.error("{}", nftGroupDo.getEnDescription());
+        log.error("{}", nftKikoCatDo.getBackground());
+        log.error("{}", nftKikoCatDo.getFur());
+        log.error("{}", nftKikoCatDo.getClothes());
+        log.error("{}", nftKikoCatDo.getFacialExpression());
+        log.error("{}", nftKikoCatDo.getHead());
+        log.error("{}", nftKikoCatDo.getAccessories());
+        log.error("{}", nftKikoCatDo.getEyes());
+        log.error("{}", nftKikoCatDo.getHat());
+        log.error("{}", nftKikoCatDo.getCostume());
+        log.error("{}", nftKikoCatDo.getMakeup());
+        log.error("{}", nftKikoCatDo.getShoes());
+        log.error("{}", nftKikoCatDo.getMouth());
+        log.error("{}", nftKikoCatDo.getEarring());
+        log.error("{}", nftKikoCatDo.getNecklace());
+        log.error("{}", nftKikoCatDo.getNeck());
+        log.error("{}", nftKikoCatDo.getHair());
+        log.error("{}", nftKikoCatDo.getHorn());
+        log.error("{}", nftKikoCatDo.getHands());
+        log.error("{}", nftKikoCatDo.getBody());
+        log.error("{}", nftKikoCatDo.getSkin());
+        log.error("{}", nftKikoCatDo.getTattoo());
+        log.error("{}", nftKikoCatDo.getPeople());
+        log.error("{}", nftKikoCatDo.getCharacteristic());
+        log.error("{}", nftKikoCatDo.getHobby());
+        log.error("{}", nftKikoCatDo.getZodiac());
+        log.error("{}", nftKikoCatDo.getAction());
+        log.error("{}", nftKikoCatDo.getToys());
+        log.error("{}", nftKikoCatDo.getFruits());
+        log.error("{}", nftKikoCatDo.getVegetables()));
+        log.error("{}", nftKikoCatDo.getMeat());
+        log.error("{}", nftKikoCatDo.getBeverages());
+        log.error("{}", nftKikoCatDo.getFood());
+        log.error("{}", nftKikoCatDo.getVehicle());
+        log.error("{}", nftKikoCatDo.getWeather());
+        log.error("{}", nftKikoCatDo.getMonth());
+        log.error("{}", nftKikoCatDo.getSports());
+        log.error("{}", nftKikoCatDo.getMusic());
+        log.error("{}", nftKikoCatDo.getMovies());
+        log.error("{}", nftKikoCatDo.getSeason());
+        log.error("{}", nftKikoCatDo.getOutfit());
+        log.error("{}", nftKikoCatDo.getFace());
+        log.error("{}", nftKikoCatDo.getArm());
+        log.error("{}", nftKikoCatDo.getLeg());
+        log.error("{}", nftKikoCatDo.getFoot());
+        log.error("{}", nftKikoCatDo.getWeapon());
+        log.error("{}", nftKikoCatDo.getHelmet());
+        log.error("{}", nftKikoCatDo.getArmor());
+        log.error("{}", nftKikoCatDo.getMecha());
+        log.error("{}", nftKikoCatDo.getPants());
+        log.error("{}", nftKikoCatDo.getSkirt());
+
         ScriptFunctionObj scriptFunctionObj = ScriptFunctionObj
                 .builder()
                 .moduleAddress(address)
