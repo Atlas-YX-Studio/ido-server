@@ -539,7 +539,7 @@ public class NftContractBiz {
         log.error("{}", nftKikoCatDo.getAction());
         log.error("{}", nftKikoCatDo.getToys());
         log.error("{}", nftKikoCatDo.getFruits());
-        log.error("{}", nftKikoCatDo.getVegetables()));
+        log.error("{}", nftKikoCatDo.getVegetables());
         log.error("{}", nftKikoCatDo.getMeat());
         log.error("{}", nftKikoCatDo.getBeverages());
         log.error("{}", nftKikoCatDo.getFood());
