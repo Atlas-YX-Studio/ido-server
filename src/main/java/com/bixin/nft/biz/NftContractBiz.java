@@ -566,8 +566,7 @@ public class NftContractBiz {
                         Bytes.valueOf(BcsSerializeHelper.serializeString(nftKikoCatDo.getSkirt()))
                 ))
                 .build();
-        //return contractService.callFunction(address, scriptFunctionObj);
-        return contractService.callFunction("0xa85291039ddad8845d5097624c81c3fd", scriptFunctionObj);
+        return contractService.callFunction(address, scriptFunctionObj);
     }
 
     /**
