@@ -60,8 +60,6 @@ public class ContractService {
         load("0x8355417c88d969f656935244641256ad");
         load("0x7ed4261b68ddb20158109794bbab3ae7");
         starcoinClient = new StarcoinClient(starConfig.getClient().getUrl(), starConfig.getClient().getChainId());
-        log.info("length 0x8355417c88d969f656935244641256ad {}", keyMap.get("0x8355417c88d969f656935244641256ad").length());
-        log.info("length 0x7ed4261b68ddb20158109794bbab3ae7 {}", keyMap.get("0x7ed4261b68ddb20158109794bbab3ae7").length());
     }
 
     private void load(String address) {
