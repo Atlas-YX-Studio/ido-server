@@ -293,6 +293,7 @@ public class ScheduleNftMarket {
                 //兼容老数据
                 List<NftEventDo> oldNftEventDos = nftEventService.getALlByPage(nftInfo.getId(), NftEventType.NFT_SELL_EVENT.getDesc(), 1, 0);
                 if (!CollectionUtils.isEmpty(nftEventDos) || !CollectionUtils.isEmpty(oldNftEventDos)) {
+                    //todo
                     sellingTime = nftEventDos.get(0).getCreateTime();
                 }
                 NftMarketDo nft = NftMarketDo.builder()
@@ -338,6 +339,7 @@ public class ScheduleNftMarket {
                 List<NftEventDo> nftEventDos = nftEventService.getALlByBoxId(so.getId(), NftEventType.BOX_SELL_EVENT_V2.getDesc(), 1, 0);
                 List<NftEventDo> oldNftEventDos = nftEventService.getALlByBoxId(so.getId(), NftEventType.BOX_SELL_EVENT.getDesc(), 1, 0);
                 if (!CollectionUtils.isEmpty(nftEventDos) || !CollectionUtils.isEmpty(oldNftEventDos)) {
+                    //todo
                     sellingTime = nftEventDos.get(0).getCreateTime();
                 }
                 NftMarketDo box = NftMarketDo.builder()
