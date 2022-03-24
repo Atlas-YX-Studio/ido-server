@@ -48,7 +48,7 @@ public class NftSellEventtDto {
                 .sellingPrice(dto.getSelling_price())
                 .bider("")
                 .bidPrice(BigDecimal.ZERO)
-                .type(NftEventType.NFT_SELL_EVENT.getDesc())
+                .type(NftEventType.NFT_SELL_EVENT_V2.getDesc())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
         PayTokenCode payTokenCode = dto.getPay_token_code();

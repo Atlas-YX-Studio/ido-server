@@ -135,7 +135,7 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
                 String tagString = getEventName(eventResult.getTypeTag());
                 NftEventDo nftEventDo = null;
                 // 开盲盒
-                if (NftEventType.BOX_OPEN_EVENT.getDesc().equals(tagString)) {
+                if (NftEventType.BOX_OPEN_EVENT_V2.getDesc().equals(tagString)) {
                     log.info("BoxEventSubscriberRunner 铸造");
                     BoxOpenEventDto dto = mapper.convertValue(data, BoxOpenEventDto.class);
                     nftEventDo = BoxOpenEventDto.of(dto);
@@ -245,7 +245,7 @@ public class BoxEventSubscriberRunner implements ApplicationRunner {
         nftEventDo.setGroupId(nftGroupDo.getId());
 
         try {
-            if (NftEventType.BOX_OPEN_EVENT.getDesc().equals(eventType)) {
+            if (NftEventType.BOX_OPEN_EVENT_V2.getDesc().equals(eventType)) {
                 nftInfoDo.setOwner(nftEventDo.getCreator());
                 nftInfoDo.setUpdateTime(System.currentTimeMillis());
                 nftInfoService.update(nftInfoDo);

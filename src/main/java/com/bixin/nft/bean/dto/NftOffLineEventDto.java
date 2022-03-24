@@ -57,7 +57,7 @@ public class NftOffLineEventDto {
                 .sellingPrice(dto.getSelling_price())
                 .bider(dto.getBidder())
                 .bidPrice(dto.getBid_price())
-                .type(NftEventType.NFT_OFFLINE_EVENT.getDesc())
+                .type(NftEventType.NFT_OFFLINE_EVENT_V2.getDesc())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
         PayTokenCode payTokenCode = dto.getPay_token_code();

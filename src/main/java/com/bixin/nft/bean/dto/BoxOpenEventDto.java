@@ -33,7 +33,7 @@ public class BoxOpenEventDto {
                 .sellingPrice(BigDecimal.ZERO)
                 .bider("")
                 .bidPrice(BigDecimal.ZERO)
-                .type(NftEventType.BOX_OPEN_EVENT.getDesc())
+                .type(NftEventType.BOX_OPEN_EVENT_V2.getDesc())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
         builder.payToken("");

@@ -71,7 +71,7 @@ public class BoxBidEventDto {
                 .sellingPrice(dto.getSelling_price())
                 .bider(dto.getBidder())
                 .bidPrice(dto.getBid_price())
-                .type(NftEventType.BOX_BID_EVENT.getDesc())
+                .type(NftEventType.BOX_BID_EVENT_V2.getDesc())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
 

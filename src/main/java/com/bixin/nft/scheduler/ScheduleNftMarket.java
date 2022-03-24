@@ -289,7 +289,7 @@ public class ScheduleNftMarket {
                     return;
                 }
                 long sellingTime = System.currentTimeMillis();
-                List<NftEventDo> nftEventDos = nftEventService.getALlByPage(nftInfo.getId(), NftEventType.NFT_SELL_EVENT.getDesc(), 1, 0);
+                List<NftEventDo> nftEventDos = nftEventService.getALlByPage(nftInfo.getId(), NftEventType.NFT_SELL_EVENT_V2.getDesc(), 1, 0);
                 if (!CollectionUtils.isEmpty(nftEventDos)) {
                     sellingTime = nftEventDos.get(0).getCreateTime();
                 }
@@ -333,7 +333,7 @@ public class ScheduleNftMarket {
             }
             boxList.forEach(p -> p.getItems().forEach(so -> {
                 long sellingTime = System.currentTimeMillis();
-                List<NftEventDo> nftEventDos = nftEventService.getALlByBoxId(so.getId(), NftEventType.BOX_SELL_EVENT.getDesc(), 1, 0);
+                List<NftEventDo> nftEventDos = nftEventService.getALlByBoxId(so.getId(), NftEventType.BOX_SELL_EVENT_V2.getDesc(), 1, 0);
                 if (!CollectionUtils.isEmpty(nftEventDos)) {
                     sellingTime = nftEventDos.get(0).getCreateTime();
                 }

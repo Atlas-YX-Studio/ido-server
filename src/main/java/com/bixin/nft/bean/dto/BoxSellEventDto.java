@@ -62,7 +62,7 @@ public class BoxSellEventDto {
                 .sellingPrice(dto.getSelling_price())
                 .bider("")
                 .bidPrice(BigDecimal.ZERO)
-                .type(NftEventType.BOX_SELL_EVENT.getDesc())
+                .type(NftEventType.BOX_SELL_EVENT_V2.getDesc())
                 .createTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()))
                 .updateTime(LocalDateTimeUtil.getMilliByTime(LocalDateTime.now()));
         PayTokenCode payTokenCode = dto.getPay_token_code();
