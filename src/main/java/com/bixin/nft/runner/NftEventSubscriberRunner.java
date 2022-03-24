@@ -138,22 +138,22 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                     return;
                 }
                 String tagString = getEventName(eventResult.getTypeTag());
-                if (NftEventType.NFT_SELL_EVENT_V2.getDesc().equals(tagString)) {
+                if (NftEventType.NFT_SELL_EVENT_V2.getDesc().equals(tagString) || NftEventType.NFT_SELL_EVENT.getDesc().equals(tagString)) {
                     // nft售卖
                     handleNftSellEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.NFT_BID_EVENT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.NFT_BID_EVENT_V2.getDesc().equals(tagString) || NftEventType.NFT_BID_EVENT.getDesc().equals(tagString)) {
                     // nft出价
                     handleNftBidEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.NFT_BUY_EVENT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.NFT_BUY_EVENT_V2.getDesc().equals(tagString) || NftEventType.NFT_BUY_EVENT.getDesc().equals(tagString)) {
                     // nft购买
                     handleNftBuyEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.NFT_CHANGE_PRICE_EVENT.getDesc().equals(tagString)) {
                     // nft修改价格
                     handleNftChangePriceEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.NFT_OFFLINE_EVENT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.NFT_OFFLINE_EVENT_V2.getDesc().equals(tagString) || NftEventType.NFT_OFFLINE_EVENT.getDesc().equals(tagString)) {
                     // nft取消
                     handleNftOfflineEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.NFT_ACCEPT_BID_EVENTT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.NFT_ACCEPT_BID_EVENT_V2.getDesc().equals(tagString) || NftEventType.NFT_ACCEPT_BID_EVENT.getDesc().equals(tagString)) {
                     // nft接受报价
                     handleNftAcceptBidEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.NFT_BUY_BACK_SELL_EVENT.getDesc().equals(tagString)) {
@@ -162,22 +162,22 @@ public class NftEventSubscriberRunner implements ApplicationRunner {
                 } else if (NftEventType.BOX_OFFERING_SELL_EVENT.getDesc().equals(tagString)) {
                     // 盲盒发售
                     handleBoxOfferingSellEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.BOX_SELL_EVENT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.BOX_SELL_EVENT_V2.getDesc().equals(tagString) || NftEventType.BOX_SELL_EVENT.getDesc().equals(tagString)) {
                     // 盲盒出售
                     handleBoxSellEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.BOX_BID_EVENT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.BOX_BID_EVENT_V2.getDesc().equals(tagString) || NftEventType.BOX_BID_EVENT.getDesc().equals(tagString)) {
                     // 盲盒出价
                     handleBoxBidEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.BOX_BUY_EVENT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.BOX_BUY_EVENT_V2.getDesc().equals(tagString) || NftEventType.BOX_BUY_EVENT.getDesc().equals(tagString)) {
                     // 盲盒购买
                     handleBoxBuyEvent(data, eventResult.getTypeTag());
                 } else if (NftEventType.BOX_CHANGE_PRICE_EVENT.getDesc().equals(tagString)) {
                     // 盲盒修改价格
                     handleBoxChangePriceEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.BOX_OFFLINE_EVENT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.BOX_OFFLINE_EVENT_V2.getDesc().equals(tagString) || NftEventType.BOX_OFFLINE_EVENT.getDesc().equals(tagString)) {
                     // 盲盒取消
                     handleBoxOfflineEvent(data, eventResult.getTypeTag());
-                } else if (NftEventType.BOX_ACCEPT_BID_EVENT_V2.getDesc().equals(tagString)) {
+                } else if (NftEventType.BOX_ACCEPT_BID_EVENT_V2.getDesc().equals(tagString) || NftEventType.BOX_ACCEPT_BID_EVENT.getDesc().equals(tagString)) {
                     // 盲盒接受报价
                     handleBoxAcceptBidEvent(data, eventResult.getTypeTag());
                 } else {

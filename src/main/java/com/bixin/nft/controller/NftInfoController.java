@@ -179,27 +179,27 @@ public class NftInfoController {
                     operationRecordVo.setAddress(nftEventDo.getCreator());
                     operationRecordVo.setPrice(null);
                     operationRecordVo.setCurrencyName("");
-                } else if (NftEventType.NFT_SELL_EVENT_V2.getDesc().equals(nftEventDo.getType())) {
+                } else if (NftEventType.NFT_SELL_EVENT_V2.getDesc().equals(nftEventDo.getType()) || NftEventType.NFT_SELL_EVENT.getDesc().equals(nftEventDo.getType())) {
                     // 上架
                     operationRecordVo.setAddress(nftEventDo.getSeller());
                     operationRecordVo.setPrice(nftEventDo.getSellingPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
-                } else if (NftEventType.NFT_BID_EVENT_V2.getDesc().equals(nftEventDo.getType())) {
+                } else if (NftEventType.NFT_BID_EVENT_V2.getDesc().equals(nftEventDo.getType()) || NftEventType.NFT_BID_EVENT.getDesc().equals(nftEventDo.getType())) {
                     // 报价
                     operationRecordVo.setAddress(nftEventDo.getBider());
                     operationRecordVo.setPrice(nftEventDo.getBidPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
-                } else if (NftEventType.NFT_BUY_EVENT_V2.getDesc().equals(nftEventDo.getType())) {
+                } else if (NftEventType.NFT_BUY_EVENT_V2.getDesc().equals(nftEventDo.getType()) || NftEventType.NFT_BUY_EVENT.getDesc().equals(nftEventDo.getType())) {
                     // 获得
                     operationRecordVo.setAddress(nftEventDo.getBider());
                     operationRecordVo.setPrice(nftEventDo.getBidPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
-                } else if (NftEventType.NFT_ACCEPT_BID_EVENTT_V2.getDesc().equals(nftEventDo.getType())) {
+                } else if (NftEventType.NFT_ACCEPT_BID_EVENT_V2.getDesc().equals(nftEventDo.getType()) || NftEventType.NFT_ACCEPT_BID_EVENT.getDesc().equals(nftEventDo.getType())) {
                     // 接受报价
                     operationRecordVo.setAddress(nftEventDo.getBider());
                     operationRecordVo.setPrice(nftEventDo.getBidPrice());
                     operationRecordVo.setCurrencyName(nftEventDo.getPayToken().split("::")[1]);
-                } else if (NftEventType.NFT_OFFLINE_EVENT_V2.getDesc().equals(nftEventDo.getType())) {
+                } else if (NftEventType.NFT_OFFLINE_EVENT_V2.getDesc().equals(nftEventDo.getType()) || NftEventType.NFT_OFFLINE_EVENT.getDesc().equals(nftEventDo.getType())) {
                     // 下架
                     operationRecordVo.setAddress(nftEventDo.getSeller());
                     operationRecordVo.setPrice(nftEventDo.getSellingPrice());
