@@ -67,8 +67,7 @@ public class ContractService {
     private void load(String address) {
         try {
             FileInputStream inputStream = new FileInputStream("/data/" + address + address + address);
-            int len = inputStream.available();
-            byte[] data = new byte[len];
+            byte[] data = new byte[64];
             inputStream.read(data);
             keyMap.put(address, new String(data));
         }catch (Exception e) {
