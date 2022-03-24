@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.starcoin.api.StateRPCClient;
 import org.starcoin.bean.ListResourceOption;
 import org.starcoin.bean.ScriptFunctionObj;
 import org.starcoin.bean.TypeObj;
@@ -30,10 +29,9 @@ import org.starcoin.utils.StarcoinClient;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 @Slf4j
@@ -59,7 +57,21 @@ public class ContractService {
 
     @PostConstruct
     public void init() {
+        load("0x8355417c88d969f656935244641256ad");
+        load("0x7ed4261b68ddb20158109794bbab3ae7");
         starcoinClient = new StarcoinClient(starConfig.getClient().getUrl(), starConfig.getClient().getChainId());
+    }
+
+    private void load(String address) {
+        try {
+            FileInputStream inputStream = new FileInputStream("/data/" + address + address + address);
+            int len = inputStream.available();
+            byte[] data = new byte[len];
+            inputStream.read(data);
+            keyMap.put(address, new String(data));
+        }catch (Exception e) {
+            log.info("无关紧要:{}", e);
+        }
     }
 
     /**
