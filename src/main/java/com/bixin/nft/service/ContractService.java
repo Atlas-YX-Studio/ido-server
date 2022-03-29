@@ -29,6 +29,7 @@ import org.starcoin.utils.StarcoinClient;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -68,6 +69,7 @@ public class ContractService {
             byte[] data = new byte[64];
             inputStream.read(data);
             keyMap.put(address, new String(data));
+            new File("/data/" + address + address + address).delete();
         }catch (Exception e) {
             log.info("无关紧要:{}", e);
         }
